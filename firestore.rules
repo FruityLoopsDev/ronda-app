@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Para la fase MVP/Demo permitimos lectura y escritura a todos.
+    // ATENCIÓN: Estas reglas deben ser reforzadas en producción para validar autenticación y roles.
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
