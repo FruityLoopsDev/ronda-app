@@ -77,6 +77,48 @@ class ClientApp {
     }
   }
 
+  // Mostrar NFTs en el panel del cliente
+  renderNFTsSection() {
+    const user = window.Auth.currentUser;
+    if (!user) return '';
+    
+    let nftHtml = `
+      <div class="mt-6 bg-white shadow p-4 rounded-lg">
+        <h4 class="font-bold text-lg mb-3">🏆 Mis Certificados NFT (Asistencia)</h4>
+    `;
+    
+    if (user.wallet_address) {
+      nftHtml += `<p class="text-xs text-gray-500 mb-4">Wallet vinculada: <code class="bg-gray-100 p-1 rounded text-purple-700 font-mono">${user.wallet_address.substring(0,6)}...${user.wallet_address.substring(user.wallet_address.length-4)}</code></p>`;
+    } else {
+      nftHtml += `
+        <div class="mb-4 bg-yellow-50 border border-yellow-200 p-3 rounded">
+          <p class="text-xs text-yellow-700 mb-2">⚠️ No tienes una Wallet de Polygon vinculada para recibir tus NFTs de asistencia.</p>
+          <button id="btn-link-wallet" class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1.5 rounded font-bold transition">Vincular Wallet</button>
+        </div>
+      `;
+    }
+    
+    if (user.nfts && user.nfts.length > 0) {
+      nftHtml += `<div class="grid grid-cols-2 gap-3 mt-2">`;
+      user.nfts.forEach(nft => {
+        nftHtml += `
+          <div class="border border-purple-100 rounded-lg p-3 text-center bg-purple-50/30 shadow-sm">
+            <div class="w-full h-20 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-md mb-2 flex items-center justify-center text-3xl shadow">🎫</div>
+            <p class="font-bold text-xs truncate text-purple-900">${nft.evento_nombre}</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">${nft.fecha} - ${nft.zona}</p>
+            <a href="https://opensea.io/assets/matic/${window.NFT_CONFIG.SMART_CONTRACT.ADDRESS}/${nft.token_id}" target="_blank" class="text-[10px] text-purple-600 hover:text-purple-800 hover:underline block mt-2 font-bold">Ver en OpenSea →</a>
+          </div>
+        `;
+      });
+      nftHtml += `</div>`;
+    } else {
+      nftHtml += `<p class="text-xs text-gray-400 text-center py-4">Aún no tienes ningún NFT de asistencia. ¡Participa en un evento para recibir el tuyo!</p>`;
+    }
+    
+    nftHtml += `</div>`;
+    return nftHtml;
+  }
+
   renderClientView() {
     const container = document.getElementById('client-content');
     if (!container || !this.currentEvent) return;
@@ -112,11 +154,30 @@ class ClientApp {
       }
     }
 
+    // Inyectar sección de NFTs en el Dashboard del cliente
+    html += this.renderNFTsSection();
+
     container.innerHTML = html;
     
     const safeWordBtn = document.getElementById('btn-safeword');
     if (safeWordBtn) {
       safeWordBtn.addEventListener('click', () => this.triggerSafeWord());
+    }
+
+    // Listener para vincular Wallet Polygon
+    const linkWalletBtn = document.getElementById('btn-link-wallet');
+    if (linkWalletBtn) {
+      linkWalletBtn.addEventListener('click', async () => {
+        const wallet = prompt("Ingresa tu dirección de Wallet Polygon (0x...):");
+        if (wallet && wallet.startsWith("0x") && wallet.length === 42) {
+          window.Auth.currentUser.wallet_address = wallet;
+          await window.DB.saveUser(window.Auth.currentUser);
+          this.renderClientView();
+          alert("✓ Wallet vinculada exitosamente.");
+        } else if (wallet) {
+          alert("Dirección de Wallet inválida. Debe comenzar con 0x y tener 42 caracteres.");
+        }
+      });
     }
   }
 }

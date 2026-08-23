@@ -60,6 +60,16 @@ class HostConsole {
     console.log(`Ronda ${this.currentEvent.currentRound} iniciada. Matches:`, matches);
   }
 
+  // Finalizar evento y emitir NFTs
+  async finalizarEvento() {
+    if (!this.currentEvent) return;
+    if (confirm("¿Estás seguro de que deseas finalizar la noche? Esto emitirá los NFTs de asistencia a todos los participantes.")) {
+      console.log("[Host] Finalizando evento y emitiendo NFTs...");
+      await window.DB.confirmarSala(this.currentEvent.id, this.currentEvent.participants);
+      this.renderDashboard();
+    }
+  }
+
   renderDashboard() {
     const container = document.getElementById('admin-content');
     if (!container || !this.currentEvent) return;
@@ -74,6 +84,7 @@ class HostConsole {
       <div class="flex space-x-2 mb-4">
         <button id="btn-scan" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Scan QR Entrada (Simular)</button>
         <button id="btn-next-round" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Iniciar Próxima Ronda</button>
+        <button id="btn-end-event" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Finalizar Noche (NFT)</button>
       </div>
       
       <div class="bg-gray-100 p-4 rounded">
@@ -86,7 +97,7 @@ class HostConsole {
         html += `<li>${m.tableId}: ${m.p1.name} ❤️ ${m.p2.name} (Afinidad: ${m.weight.toFixed(2)})</li>`;
       });
     } else {
-      html += `<li>Esperando iniciar la ronda.</li>`;
+      html += `<li>Esperando iniciar la ronda o evento finalizado.</li>`;
     }
 
     html += `</ul></div>`;
@@ -101,6 +112,10 @@ class HostConsole {
     
     document.getElementById('btn-next-round').addEventListener('click', () => {
       this.generateNextRound();
+    });
+
+    document.getElementById('btn-end-event').addEventListener('click', () => {
+      this.finalizarEvento();
     });
   }
 }

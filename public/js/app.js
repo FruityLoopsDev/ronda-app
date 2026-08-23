@@ -39,10 +39,8 @@ function initApp() {
       // Mostrar vista según el rol
       if (window.Auth.currentUser.role === 'client') {
         switchView('view-client');
-        document.getElementById('client-content').innerText = JSON.stringify(window.Auth.currentUser, null, 2);
       } else if (window.Auth.currentUser.role === 'admin') {
         switchView('view-admin');
-        document.getElementById('admin-content').innerText = "Cargando datos de la sala para: " + window.Auth.currentUser.venueId;
       }
     } else {
       roleNav.classList.add('hidden');

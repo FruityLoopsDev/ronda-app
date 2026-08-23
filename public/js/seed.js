@@ -4,10 +4,10 @@ if (window.RondaConfig.isDemo) {
   console.log("Poblando base de datos en memoria (Modo Demo)...");
 
   const demoUsers = [
-    { uid: 'u1', name: 'Juan Pérez', role: 'client', gender: 'M', orientation: 'F', age: 28 },
-    { uid: 'u2', name: 'María Gómez', role: 'client', gender: 'F', orientation: 'M', age: 26 },
-    { uid: 'u3', name: 'Carlos Díaz', role: 'client', gender: 'M', orientation: 'F', age: 30 },
-    { uid: 'u4', name: 'Ana Silva', role: 'client', gender: 'F', orientation: 'M', age: 27 },
+    { uid: 'u1', name: 'Juan Pérez', role: 'client', gender: 'M', orientation: 'F', age: 28, wallet_address: '0x1111111111111111111111111111111111111111', nfts: [] },
+    { uid: 'u2', name: 'María Gómez', role: 'client', gender: 'F', orientation: 'M', age: 26, wallet_address: '0x2222222222222222222222222222222222222222', nfts: [] },
+    { uid: 'u3', name: 'Carlos Díaz', role: 'client', gender: 'M', orientation: 'F', age: 30, wallet_address: '0x3333333333333333333333333333333333333333', nfts: [] },
+    { uid: 'u4', name: 'Ana Silva', role: 'client', gender: 'F', orientation: 'M', age: 27, wallet_address: '0x4444444444444444444444444444444444444444', nfts: [] },
     { uid: 'admin1', name: 'Admin Bar Central', role: 'admin', venueId: 'v1' }
   ];
 

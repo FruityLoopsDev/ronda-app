@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RONDA - Preview de Diseño Premium</title>
+  <!-- Tailwind CSS CDN para renderizado rápido de la maqueta -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Outfit & Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.15), transparent 40%),
+                  #0b071e;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      color: #fff;
+    }
+    .glass-input:focus {
+      border-color: rgba(167, 139, 250, 0.5);
+      box-shadow: 0 0 15px rgba(167, 139, 250, 0.15);
+      outline: none;
+    }
+    .neon-text-purple {
+      text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+    }
+    .neon-border-purple {
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    }
+    /* Estilos dinámicos para los cambios de pestaña en el preview */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col antialiased">
+
+  <!-- Header -->
+  <header class="w-full py-5 px-6 glass border-b border-white/5 flex justify-between items-center z-20">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-lg text-white shadow-lg neon-border-purple">
+        R
+      </div>
+      <div>
+        <h1 class="text-2xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-pink-500">
+          RONDA
+        </h1>
+        <p class="text-[10px] text-purple-300 uppercase tracking-widest -mt-1 font-semibold">Speed Dating System</p>
+      </div>
+    </div>
+    
+    <!-- Selector de Vistas para la Demo Interactiva -->
+    <div class="flex bg-white/5 p-1 rounded-full border border-white/10 text-xs">
+      <button onclick="switchTab('tab-login')" class="tab-btn px-4 py-1.5 rounded-full font-semibold bg-purple-600 text-white transition-all">Login</button>
+      <button onclick="switchTab('tab-client')" class="tab-btn px-4 py-1.5 rounded-full font-semibold text-slate-300 hover:text-white transition-all">Cliente</button>
+      <button onclick="switchTab('tab-host')" class="tab-btn px-4 py-1.5 rounded-full font-semibold text-slate-300 hover:text-white transition-all">Anfitrión</button>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center relative">
+    
+    <!-- Glows de fondo decorativos -->
+    <div class="absolute -top-12 -left-12 w-64 h-64 bg-purple-700/20 rounded-full filter blur-[80px] pointer-events-none"></div>
+    <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-pink-700/20 rounded-full filter blur-[80px] pointer-events-none"></div>
+
+    <!-- PESTAÑA 1: LOGIN -->
+    <section id="tab-login" class="tab-content active space-y-6">
+      <div class="text-center space-y-2">
+        <h2 class="text-4xl font-extrabold text-white leading-tight">Encuentros reales, al instante.</h2>
+        <p class="text-slate-400 text-sm">Escanea el código del bar para iniciar tu noche.</p>
+      </div>
+
+      <div class="glass rounded-3xl p-8 space-y-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-purple-300 uppercase tracking-wider mb-2">Código de la Sala</label>
+            <input type="text" placeholder="Ej: BOG-ZONAT-12" class="w-full glass-input px-4 py-3.5 rounded-xl text-center text-lg font-bold tracking-widest uppercase transition-all">
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <button class="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-bold tracking-wide transition-all duration-300 transform active:scale-[0.98] shadow-lg shadow-purple-900/30">
+            Conectarse como Cliente
+          </button>
+          
+          <div class="flex items-center my-4">
+            <hr class="flex-grow border-white/10">
+            <span class="px-3 text-xs text-slate-500 uppercase tracking-widest">o administrador</span>
+            <hr class="flex-grow border-white/10">
+          </div>
+
+          <button class="w-full py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white font-semibold transition-all duration-300">
+            Acceso Consola Anfitrión
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 2: CLIENTE EN CITA -->
+    <section id="tab-client" class="tab-content space-y-6">
+      <!-- Tarjeta Principal de Cita -->
+      <div class="glass rounded-3xl p-8 text-center relative overflow-hidden">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-600/20 rounded-full blur-2xl"></div>
+        
+        <div class="inline-flex px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-bold tracking-widest uppercase mb-6">
+          ✨ Cita Activa - Ronda 3
+        </div>
+
+        <h2 class="text-3xl font-extrabold text-white leading-tight">Mesa 5</h2>
+        <p class="text-slate-400 text-sm mt-1">Conociendo a:</p>
+        <p class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300 mt-2 font-display">Gabriela, 26 años</p>
+
+        <!-- Cronómetro Dinámico Circular/Visual -->
+        <div class="my-8 flex justify-center">
+          <div class="relative w-44 h-44 rounded-full flex items-center justify-center border-4 border-white/5 shadow-inner">
+            <div class="absolute inset-0 rounded-full border-4 border-t-purple-500 border-r-pink-500 border-b-purple-500/20 border-l-purple-500/20 animate-spin" style="animation-duration: 8s;"></div>
+            <div class="text-center">
+              <span class="text-4xl font-extrabold text-white tracking-wider block font-display">03:42</span>
+              <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-1 block">Minutos restantes</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-400 italic">"¡Pregúntale cuál es su destino de viaje ideal!"</p>
+      </div>
+
+      <!-- Protocolo de Seguridad Rápido (Safe-word) -->
+      <div class="glass rounded-2xl p-4 border-red-500/20 hover:border-red-500/30 transition-all">
+        <button class="w-full flex items-center justify-between text-left text-red-400 hover:text-red-300 transition-colors">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center">
+              🛡️
+            </div>
+            <div>
+              <p class="text-sm font-bold">Solicitar Asistencia Silenciosa</p>
+              <p class="text-[10px] text-slate-500">Un miembro del staff se acercará a la mesa.</p>
+            </div>
+          </div>
+          <span class="text-lg">➔</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 3: CONSOLA ANFITRIÓN -->
+    <section id="tab-host" class="tab-content space-y-6">
+      <div class="glass rounded-3xl p-6 space-y-6">
+        <!-- Encabezado de la Sala -->
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-xl font-bold text-white">Bar Central Bogotá</h2>
+            <p class="text-xs text-slate-400">Sala: BOG-ZONAT-12</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+            En Curso
+          </span>
+        </div>
+
+        <!-- Métrica de Participantes -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+            <span class="text-xs text-slate-400 block mb-1">Participantes</span>
+            <span class="text-2xl font-extrabold text-white font-display">28</span>
+          </div>
+          <div class="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+            <span class="text-xs text-slate-400 block mb-1">Ronda Actual</span>
+            <span class="text-2xl font-extrabold text-purple-400 font-display">3 / 8</span>
+          </div>
+        </div>
+
+        <!-- Acciones Directas -->
+        <div class="space-y-3">
+          <button class="w-full py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-bold tracking-wide transition-all shadow-md">
+            🔔 Cambiar de Ronda (MEM-RR)
+          </button>
+          
+          <button class="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300">
+            📷 Simular Escaneo QR Entrada
+          </button>
+        </div>
+
+        <!-- Vista de Distribución de Mesas -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold text-purple-300 uppercase tracking-wider">Distribución de Mesas</h3>
+          
+          <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <div class="glass p-3 rounded-xl flex justify-between items-center text-xs">
+              <span class="font-bold text-white">Mesa 1</span>
+              <span class="text-slate-400">Carlos ↔ Paula</span>
+              <span class="text-emerald-400 font-semibold font-display">89% Match</span>
+            </div>
+            <div class="glass p-3 rounded-xl flex justify-between items-center text-xs">
+              <span class="font-bold text-white">Mesa 2</span>
+              <span class="text-slate-400">Andrés ↔ Laura</span>
+              <span class="text-purple-400 font-semibold font-display">74% Match</span>
+            </div>
+            <div class="glass p-3 rounded-xl flex justify-between items-center text-xs">
+              <span class="font-bold text-white">Mesa 3</span>
+              <span class="text-slate-400">Felipe ↔ Sofía</span>
+              <span class="text-pink-400 font-semibold font-display">95% Match</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="w-full py-6 text-center text-xs text-slate-500 border-t border-white/5 glass mt-auto">
+    RONDA App &copy; 2026. Todos los derechos reservados.
+  </footer>
+
+  <!-- Script interactivo sencillo para cambiar de pestaña en la Demo -->
+  <script>
+    function switchTab(tabId) {
+      // Ocultar todos los contenidos de pestaña
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Mostrar la pestaña seleccionada
+      document.getElementById(tabId).classList.add('active');
+      
+      // Actualizar estilos de los botones
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-purple-600', 'text-white');
+        btn.classList.add('text-slate-300');
+      });
+      
+      // Seleccionar botón cliqueado
+      event.currentTarget.classList.add('bg-purple-600', 'text-white');
+      event.currentTarget.classList.remove('text-slate-300');
+    }
+  </script>
+</body>
+</html>

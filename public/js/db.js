@@ -47,6 +47,65 @@ class DatabaseInterface {
     return event;
   }
 
+  // Finaliza el evento y emite los NFTs correspondientes
+  async confirmarSala(eventId, usersConfirmed) {
+    console.log(`[DB] Confirmando sala para el evento: ${eventId}...`);
+    
+    if (this.isDemo) {
+      const event = this.memoryDb.events[eventId];
+      if (!event) return null;
+      
+      event.status = 'finished';
+      event.participants = usersConfirmed;
+      
+      // Emitir NFTs a cada usuario confirmado
+      for (const userId of usersConfirmed) {
+        const user = this.memoryDb.users[userId];
+        if (user && user.wallet_address) {
+          try {
+            // 1. Simular subida a IPFS
+            const eventInfoForNFT = {
+              eventId: event.id,
+              local: { nombre: 'Bar Central Bogotá', zona: 'Zona T' },
+              fecha: new Date().toLocaleDateString(),
+              matchesCount: event.activeMatches ? event.activeMatches.length : 0
+            };
+            
+            const ipfsResult = await window.NFTUtils.uploadMetadataToPinata(eventInfoForNFT, user.role);
+            
+            if (ipfsResult.success) {
+              // 2. Simular acuñación en Polygon
+              const mintResult = await window.NFTUtils.mintNFT(user.wallet_address, event.id, ipfsResult.ipfsHash);
+              
+              if (mintResult.success) {
+                // 3. Añadir el NFT al perfil de usuario
+                if (!user.nfts) user.nfts = [];
+                user.nfts.push({
+                  token_id: mintResult.tokenId,
+                  evento_nombre: `Ronda #${event.id} — Bar Central`,
+                  zona: 'Zona T',
+                  fecha: eventInfoForNFT.fecha,
+                  image_url: 'https://gateway.pinata.cloud/ipfs/QmZ1Yx4xW3HnyK92Uptg9v1iL1p2y6z3w5V7y8e9rT5y3m', // Mock image
+                  transactionHash: mintResult.transactionHash
+                });
+                
+                await this.saveUser(user);
+                console.log(`[DB] NFT guardado exitosamente para el usuario ${user.name}`);
+              }
+            }
+          } catch (err) {
+            console.error(`[DB] Error mintando NFT para ${user.name}:`, err);
+          }
+        }
+      }
+      
+      await this.saveEvent(event);
+      return event;
+    }
+    // TODO: Implementación real en Firebase Firestore
+    return null;
+  }
+
   // Permite escuchar cambios en tiempo real simulados
   subscribeToEvent(eventId, callback) {
     if (this.isDemo) {

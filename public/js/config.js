@@ -20,6 +20,8 @@ async function initConfig() {
   await loadScript('/js/bar.js');
   await loadScript('/js/client.js');
   await loadScript('/js/matches.js');
+  await loadScript('/js/nft-config.js');
+  await loadScript('/js/nft-utils.js');
   console.log("Configuración inicial cargada.");
 }
 

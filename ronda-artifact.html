@@ -12,11 +12,11 @@
   <!-- Firebase SDKs (Compat version for simplicity without bundlers, or Modular) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getAuth, connectAuthEmulator } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     
     // To be configured in firebase-config.js
-    window.firebaseModules = { initializeApp, getFirestore, getAuth };
+    window.firebaseModules = { initializeApp, getFirestore, connectFirestoreEmulator, getAuth, connectAuthEmulator };
   </script>
 </head>
 <body class="bg-gray-100 text-gray-900 font-sans antialiased overflow-hidden w-screen h-screen">
