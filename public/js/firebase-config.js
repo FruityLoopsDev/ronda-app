@@ -1,18 +1,18 @@
 // Configuración para el entorno de Firebase.
 // Esta configuración puede variar dependiendo del entorno (Demo vs Producción).
 
-const DEMO_MODE = true; // Si es true, usa datos en memoria en lugar de Firebase real.
+const DEMO_MODE = false; // Si es true, usa datos en memoria en lugar de Firebase real.
 
 window.RondaConfig = {
   isDemo: DEMO_MODE,
   firebaseConfig: {
-    // Reemplaza con tus credenciales de Firebase cuando pases a producción real.
-    apiKey: "AIzaSyDummyKeyForDemo",
-    authDomain: "ronda-app-demo.firebaseapp.com",
-    projectId: "ronda-app-demo",
-    storageBucket: "ronda-app-demo.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef123456"
+    apiKey: "AIzaSyA55U4CwLAv5tlNPGvO-OkRBB0qJHbTNKQ",
+    authDomain: "ronda-uno.firebaseapp.com",
+    projectId: "ronda-uno",
+    storageBucket: "ronda-uno.firebasestorage.app",
+    messagingSenderId: "391712707230",
+    appId: "1:391712707230:web:3a5461ef25e71c4dc6e18f",
+    measurementId: "G-RH65BSDMP5"
   }
 };
 

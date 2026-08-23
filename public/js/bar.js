@@ -31,12 +31,20 @@ class HostConsole {
   }
 
   // Simulación de escáner QR
-  simulateQRScan(userId) {
+  async simulateQRScan(userId) {
     if (!this.currentEvent) return;
     console.log(`[Escáner QR] Añadiendo usuario ${userId} a la sala...`);
     if (!this.currentEvent.participants.includes(userId)) {
       this.currentEvent.participants.push(userId);
-      window.DB.saveEvent(this.currentEvent);
+      await window.DB.saveEvent(this.currentEvent);
+      
+      // Si no es demo o si el usuario existe, actualizar su activeEventId
+      const user = await window.DB.getUser(userId);
+      if (user) {
+        user.activeEventId = this.currentEvent.id;
+        await window.DB.saveUser(user);
+        console.log(`[Escáner QR] activeEventId actualizado para el usuario: ${userId}`);
+      }
     }
   }
 
@@ -105,9 +113,13 @@ class HostConsole {
     container.innerHTML = html;
     
     // Asignar listeners
-    document.getElementById('btn-scan').addEventListener('click', () => {
-      // Agrega un usuario demo a la sala
-      this.simulateQRScan(`u${Math.floor(Math.random() * 100) + 5}`);
+    document.getElementById('btn-scan').addEventListener('click', async () => {
+      const clientUid = prompt("Ingresa el UID del cliente a registrar en la sala (deja vacío para simular uno aleatorio):");
+      if (clientUid && clientUid.trim() !== "") {
+        await this.simulateQRScan(clientUid.trim());
+      } else {
+        await this.simulateQRScan(`u${Math.floor(Math.random() * 100) + 5}`);
+      }
     });
     
     document.getElementById('btn-next-round').addEventListener('click', () => {

@@ -17,23 +17,28 @@ function initApp() {
   const btnDemoLogin = document.getElementById('btn-demo-login');
   const btnDemoHost = document.getElementById('btn-demo-host');
   const userMenu = document.getElementById('user-menu');
+  const tabs = [...document.querySelectorAll('.tab')];
 
   // Funciones de Vista
   function switchView(viewId) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
     
     const activeView = document.getElementById(viewId);
     if(activeView) {
-      activeView.classList.remove('hidden');
-      activeView.classList.add('active');
+      activeView.classList.add('on');
     }
+
+    // Actualizar aria-selected en los tabs
+    tabs.forEach(tab => {
+      const isMatch = tab.id.replace('nav-', 'view-') === viewId;
+      tab.setAttribute('aria-selected', isMatch);
+    });
   }
 
   function updateNavbar() {
     if (window.Auth.currentUser) {
-      roleNav.classList.remove('hidden');
-      userMenu.innerHTML = `<span class="mr-4">Hola, ${window.Auth.currentUser.name}</span> <button id="btn-logout" class="bg-red-600 px-3 py-1 rounded hover:bg-red-500">Salir</button>`;
+      roleNav.style.display = 'flex';
+      userMenu.innerHTML = `<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-right: 14px; align-self: center; color: var(--humo);">Hola, ${window.Auth.currentUser.name}</span> <button id="btn-logout" class="btn-mini">Salir</button>`;
       document.getElementById('btn-logout').addEventListener('click', () => window.Auth.logout());
       
       // Mostrar vista según el rol
@@ -43,8 +48,8 @@ function initApp() {
         switchView('view-admin');
       }
     } else {
-      roleNav.classList.add('hidden');
-      userMenu.innerHTML = `<button id="btn-login" class="bg-purple-600 px-3 py-1 rounded hover:bg-purple-500">Ingresar</button>`;
+      roleNav.style.display = 'none';
+      userMenu.innerHTML = `<button id="btn-login" class="btn-mini pri">Ingresar</button>`;
       switchView('view-auth');
     }
   }

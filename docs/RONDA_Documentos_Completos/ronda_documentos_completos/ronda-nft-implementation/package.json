@@ -1,0 +1,39 @@
+{
+  "name": "ronda-nft",
+  "version": "1.0.0",
+  "description": "RONDA NFT Integration - Event attendance certificates on Polygon",
+  "type": "module",
+  "scripts": {
+    "deploy:mumbai": "hardhat run scripts/deploy-nft.js --network mumbai",
+    "deploy:polygon": "hardhat run scripts/deploy-nft.js --network polygon",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "compile": "hardhat compile",
+    "node:local": "hardhat node",
+    "verify:mumbai": "hardhat verify --network mumbai",
+    "verify:polygon": "hardhat verify --network polygon"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@typechain/ethers-v6": "^11.1.2",
+    "@typechain/hardhat": "^9.1.0",
+    "chai": "^4.3.10",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
+    "hardhat": "^2.19.2",
+    "hardhat-gas-reporter": "^1.0.9",
+    "typechain": "^8.3.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "axios": "^1.6.2",
+    "form-data": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
