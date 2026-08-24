@@ -349,11 +349,13 @@
 
       /* Edit Profile Modal Instagram Style */
       .edit-modal-top {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
+        width: 100%;
+        box-sizing: border-box;
         padding-bottom: 14px;
-        border-bottom: 1px solid var(--linea);
+        border-bottom: 1px solid rgba(243, 237, 226, 0.1);
         margin-bottom: 18px;
       }
       .modal-nav-btn {
@@ -364,14 +366,27 @@
         font-size: 14px;
         font-weight: 500;
         cursor: pointer;
-        padding: 4px 6px;
-        transition: color 0.2s;
+        padding: 6px 8px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        justify-self: start;
+        text-align: left;
+        white-space: nowrap;
       }
-      .modal-nav-btn:hover { color: var(--papel); }
+      .modal-nav-btn:hover {
+        color: var(--papel);
+        background: rgba(243, 237, 226, 0.06);
+      }
       .modal-nav-btn.ambar-btn {
         color: var(--luz);
         font-weight: 700;
-        font-size: 15px;
+        font-size: 14.5px;
+        justify-self: end;
+        text-align: right;
+      }
+      .modal-nav-btn.ambar-btn:hover {
+        color: #ffbf47;
+        background: rgba(240, 168, 48, 0.12);
       }
       .modal-nav-title {
         font-family: var(--font-display);
@@ -379,7 +394,9 @@
         font-weight: 700;
         margin: 0;
         color: var(--papel);
-        letter-spacing: 0.02em;
+        letter-spacing: 0.03em;
+        text-align: center;
+        white-space: nowrap;
       }
       .edit-avatar-section {
         display: flex;
