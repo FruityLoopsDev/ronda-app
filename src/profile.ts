@@ -172,6 +172,13 @@ export class ProfileService {
     document.getElementById('btn-save-advanced-settings')?.addEventListener('click', async () => {
       await this.saveAdvancedSettings();
     });
+
+    // Botón de Cerrar Sesión dentro de Mi Perfil
+    document.getElementById('btn-profile-logout')?.addEventListener('click', () => {
+      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        Auth.logout();
+      }
+    });
   }
 
   openEditModal() {

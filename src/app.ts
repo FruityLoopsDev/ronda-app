@@ -94,17 +94,12 @@ function initApp() {
         : `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--luz);"></span>`;
 
       userMenu.innerHTML = `
-        <div class="user-badge" id="btn-open-profile" style="cursor: pointer;" title="Ver mi perfil">
+        <div class="user-badge" id="btn-open-profile" style="cursor: pointer;" title="Toca para ver o editar tu perfil">
           ${avatarMini}
           <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo);">Hola, <b style="color:var(--papel);">${displayName}</b></span>
           <span style="font-size: 10px; color: var(--luz);">👤</span>
         </div>
-        <button id="btn-logout" class="btn-mini" style="font-size: 10px; padding: 3px 8px; border-radius: 999px; cursor: pointer;">Salir</button>
       `;
-      document.getElementById('btn-logout')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        Auth.logout();
-      });
       document.getElementById('btn-open-profile')?.addEventListener('click', () => {
         if (Auth.currentUser) {
           Profile.setCurrentUser(Auth.currentUser);
