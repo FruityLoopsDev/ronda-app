@@ -3,6 +3,7 @@ import { Auth } from './auth.js';
 import { RondaConfig } from './firebase-config.js';
 import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
+import { Profile } from './profile.js';
 
 // app.js: Orquestador principal de la vista y eventos de RONDA
 
@@ -71,19 +72,49 @@ function initApp() {
     }
   }
 
+    // Inicializar servicio de perfil
+    Profile.init();
+
+    // Event listener para volver a eventos desde el perfil
+    document.getElementById('btn-back-to-events')?.addEventListener('click', () => {
+      const user = Auth.currentUser;
+      if (user?.activeEventId) {
+        switchView('view-client');
+      } else {
+        switchView('view-lobby');
+      }
+    });
+
   function updateNavbar() {
     const user = Auth.currentUser;
     if (user) {
       const displayName = user.name ? user.name.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'Usuario');
+      const avatarMini = user.photoURL 
+        ? `<img src="${user.photoURL}" style="width:16px; height:16px; border-radius:50%; object-fit:cover;">`
+        : `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--luz);"></span>`;
+
       userMenu.innerHTML = `
-        <div class="user-badge">
-          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--luz);"></span>
+        <div class="user-badge" id="btn-open-profile" style="cursor: pointer;" title="Ver mi perfil">
+          ${avatarMini}
           <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo);">Hola, <b style="color:var(--papel);">${displayName}</b></span>
-          <button id="btn-logout" class="btn-mini" style="font-size: 10px; padding: 2px 8px; border-radius: 999px; cursor: pointer;">Salir</button>
+          <span style="font-size: 10px; color: var(--luz);">👤</span>
         </div>
+        <button id="btn-logout" class="btn-mini" style="font-size: 10px; padding: 3px 8px; border-radius: 999px; cursor: pointer;">Salir</button>
       `;
-      document.getElementById('btn-logout')?.addEventListener('click', () => Auth.logout());
+      document.getElementById('btn-logout')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        Auth.logout();
+      });
+      document.getElementById('btn-open-profile')?.addEventListener('click', () => {
+        if (Auth.currentUser) {
+          Profile.setCurrentUser(Auth.currentUser);
+          switchView('view-profile');
+        }
+      });
       
+      // Sincronizar datos del perfil
+      Profile.setCurrentUser(user);
+
       // Mostrar vista según el rol
       if (user.role === 'client') {
         if (user.activeEventId) {

@@ -6,9 +6,28 @@ export interface User {
   uid: string;
   role: string;
   name?: string;
+  email?: string;
+  username?: string;
+  photoURL?: string;
   age?: number;
   gender?: string;
   orientation?: string;
+  bio?: string;
+  favoriteCocktail?: string;
+  preferredZones?: string[];
+  ageRangePreference?: { min: number; max: number };
+  isVerified?: boolean;
+  safeword?: string;
+  emergencyContact?: string;
+  stats?: {
+    roundsPlayed?: number;
+    venuesVisited?: number;
+    matchesCount?: number;
+  };
+  privacySettings?: {
+    shareDrinkStats?: boolean;
+    marketingConsent?: boolean;
+  };
   activeEventId?: string;
   wallet_address?: string;
   nfts?: any[];

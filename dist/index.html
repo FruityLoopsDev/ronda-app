@@ -102,8 +102,156 @@
         .tel { width: 100%; max-width: 100%; }
         .tel-in { padding: 16px 14px; border-radius: 24px; }
       }
+      
+      /* Estilos Instagram Profile */
+      .profile-header-grid {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+      .avatar-story-ring {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        padding: 2.5px;
+        background: linear-gradient(45deg, var(--vino), var(--luz), var(--botella));
+        position: relative;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+      }
+      .avatar-story-ring:active { transform: scale(0.95); }
+      .avatar-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--barra-alta);
+        border: 2px solid var(--barra);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--luz);
+      }
+      .avatar-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+      .avatar-badge-plus {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 22px;
+        height: 22px;
+        background: var(--luz);
+        color: var(--tinta);
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--barra);
+      }
+      .profile-stats-row {
+        display: flex;
+        flex: 1;
+        justify-content: space-around;
+        text-align: center;
+      }
+      .stat-item { display: flex; flex-direction: column; }
+      .stat-num { font-family: var(--font-mono); font-size: 17px; font-weight: 700; color: var(--papel); }
+      .stat-label { font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+      
+      /* Highlights Bubbles */
+      .highlights-scroll {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        padding: 10px 0 14px;
+        scrollbar-width: none;
+      }
+      .highlights-scroll::-webkit-scrollbar { display: none; }
+      .highlight-bubble {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .bubble-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 1px solid var(--linea);
+        background: var(--barra-alta);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: border-color 0.2s;
+      }
+      .highlight-bubble:hover .bubble-circle { border-color: var(--luz); }
+      .bubble-label { font-size: 9.5px; font-family: var(--font-mono); color: var(--humo); max-width: 60px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      
+      /* Profile Tabs */
+      .profile-tabs-bar {
+        display: flex;
+        border-bottom: 1px solid var(--linea);
+        margin: 10px 0 14px;
+      }
+      .profile-tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--humo);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+        border-top: none; border-left: none; border-right: none;
+        transition: all 0.2s;
+      }
+      .profile-tab-btn.active {
+        color: var(--luz);
+        border-bottom: 2px solid var(--luz);
+        font-weight: 700;
+      }
+      .profile-tab-content { display: none; }
+      .profile-tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+      
+      /* Switch Toggle */
+      .switch-toggle {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 20px;
+      }
+      .switch-toggle input { opacity: 0; width: 0; height: 0; }
+      .switch-slider {
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(243,237,226,.15);
+        transition: .3s;
+        border-radius: 20px;
+      }
+      .switch-slider:before {
+        position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+        background-color: var(--papel);
+        transition: .3s;
+        border-radius: 50%;
+      }
+      input:checked + .switch-slider { background-color: var(--botella); }
+      input:checked + .switch-slider:before { transform: translateX(18px); }
     </style>
-      <script type="module" crossorigin src="/assets/index-zLftnJVR.js"></script>
+      <script type="module" crossorigin src="/assets/index-BLVKpfzC.js"></script>
     </head>
 <body>
   <!-- Sprite de Iconos Vectoriales RONDA -->
@@ -279,6 +427,260 @@
       </div>
     </div>
   </section>
+
+  <!-- Vista: Mi Perfil (Estilo Instagram con Opciones Avanzadas) -->
+  <section id="view-profile" class="panel">
+    <div class="fila" style="justify-content: center; margin: 0 auto; width: 100%;">
+      <div class="tel" style="width: 100%; max-width: 400px; margin: 0 auto;">
+        <div class="tel-in" style="padding-bottom: 24px;">
+          
+          <!-- Top bar de perfil -->
+          <div class="status" style="justify-content: space-between; align-items: center;">
+            <button id="btn-back-to-events" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 0; font-size: 11px; cursor: pointer;">
+              ← Ver eventos
+            </button>
+            <span id="profile-top-handle" style="font-weight: 700;">MI PERFIL</span>
+            <span style="font-size: 14px; cursor: pointer;" onclick="document.querySelector('[data-tab=settings]').click();">⚙️</span>
+          </div>
+
+          <!-- Input oculto para subir foto de perfil -->
+          <input type="file" id="input-profile-photo" accept="image/*" style="display: none;">
+
+          <div class="pant" style="margin-top: 6px;">
+            
+            <!-- Header Instagram: Avatar + Stats -->
+            <div class="profile-header-grid">
+              <div class="avatar-story-ring" id="btn-change-avatar" title="Toca para cambiar foto">
+                <div class="avatar-inner">
+                  <img id="profile-avatar-img" alt="Avatar">
+                  <span id="profile-avatar-placeholder">R</span>
+                </div>
+                <span class="avatar-badge-plus">📸</span>
+              </div>
+
+              <div class="profile-stats-row">
+                <div class="stat-item">
+                  <span class="stat-num" id="stat-rounds">12</span>
+                  <span class="stat-label">Rondas</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-num" id="stat-venues">3</span>
+                  <span class="stat-label">Bares</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-num" id="stat-matches">5</span>
+                  <span class="stat-label">Matches</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Identidad & Bio -->
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 20px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
+                <span id="profile-kyc-badge" class="chip ambar" style="font-size: 8.5px; padding: 2px 7px;">🛡️ KYC Verificado</span>
+              </div>
+              <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 2px 0 6px;">@julio.ronda</p>
+              <p id="profile-display-bio" style="font-size: 12.5px; color: var(--papel); margin: 0 0 6px; line-height: 1.35;"></p>
+              <p id="profile-display-meta" style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); margin: 0;"></p>
+            </div>
+
+            <!-- Botones de Acción Estilo Instagram -->
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button id="btn-edit-profile-open" class="btn" style="flex: 1; font-size: 11px; padding: 8px; border-radius: 999px; background: rgba(243,237,226,.08); border-color: var(--linea);">
+                ✏️ Editar perfil
+              </button>
+              <button id="btn-profile-qr" class="btn ambar" style="font-size: 11px; padding: 8px 14px; border-radius: 999px;" onclick="alert('🎟️ Tu Pasaporte QR está activo para ingresar a salas verificadas.');">
+                🎟️ Pasaporte
+              </button>
+            </div>
+
+            <!-- Highlights (Burbujas de Historias Destacadas) -->
+            <div class="highlights-scroll">
+              <div class="highlight-bubble" onclick="Profile.openEditModal();">
+                <div class="bubble-circle">🍸</div>
+                <span class="bubble-label" id="hl-cocktail-val">Negroni</span>
+              </div>
+              <div class="highlight-bubble" onclick="document.querySelector('[data-tab=settings]').click();">
+                <div class="bubble-circle">📍</div>
+                <span class="bubble-label" id="hl-zone-val">Zona G</span>
+              </div>
+              <div class="highlight-bubble" onclick="alert('🛡️ Verificación Biométrica completada. Cero perfiles falsos.');">
+                <div class="bubble-circle">🛡️</div>
+                <span class="bubble-label">KYC 100%</span>
+              </div>
+              <div class="highlight-bubble" onclick="document.querySelector('[data-tab=passport]').click();">
+                <div class="bubble-circle">🎫</div>
+                <span class="bubble-label">-25% Bares</span>
+              </div>
+            </div>
+
+            <!-- Barra de Pestañas (Tabs) -->
+            <div class="profile-tabs-bar">
+              <button class="profile-tab-btn active" data-tab="about">👤 Sobre mí</button>
+              <button class="profile-tab-btn" data-tab="passport">🎫 Pasaporte NFTs</button>
+              <button class="profile-tab-btn" data-tab="settings">⚙️ Ajustes</button>
+            </div>
+
+            <!-- TAB 1: SOBRE MÍ -->
+            <div id="tab-content-about" class="profile-tab-content active">
+              <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px; font-size: 12px;">
+                <div class="kv"><span>Género</span><b id="about-gender">Hombre</b></div>
+                <div class="kv"><span>Interés</span><b id="about-orientation">Mujeres</b></div>
+                <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
+                <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
+                <div class="rule"></div>
+                <p style="font-size: 11px; color: var(--humo); margin: 4px 0 0; line-height: 1.4;">
+                  ✨ <i>En las rondas de 6 minutos, estos datos ayudan a romper el hielo naturalmente sin preguntas aburridas.</i>
+                </p>
+              </div>
+            </div>
+
+            <!-- TAB 2: PASAPORTE & NFTS -->
+            <div id="tab-content-passport" class="profile-tab-content">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; text-align: center;">
+                  <div style="font-size: 28px; margin-bottom: 4px;">🍸</div>
+                  <b style="font-size: 11px; color: var(--luz); display: block;">CARONTE VIP</b>
+                  <span style="font-size: 9.5px; color: var(--humo);">-25% Mar–Jue</span>
+                </div>
+                <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; text-align: center;">
+                  <div style="font-size: 28px; margin-bottom: 4px;">🍷</div>
+                  <b style="font-size: 11px; color: var(--botella); display: block;">LA MARÍA CLUB</b>
+                  <span style="font-size: 9.5px; color: var(--humo);">-25% Cóctel Autor</span>
+                </div>
+              </div>
+              <div class="aviso" style="margin-top: 12px; font-size: 11px;">
+                🎟️ Tu billetera digital descentralizada custodia tus pases de asistencia de forma invisible.
+              </div>
+            </div>
+
+            <!-- TAB 3: AJUSTES & OPCIONES AVANZADAS -->
+            <div id="tab-content-settings" class="profile-tab-content">
+              <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px;">
+                
+                <!-- Safeword / Asistencia Discreta -->
+                <p style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 6px;">
+                  ⚠️ Asistencia Discreta en Mesa
+                </p>
+                <p style="font-size: 11px; color: var(--humo); margin-bottom: 8px;">
+                  Palabra clave que se enviará al anfitrión de sala si solicitas asistencia en medio de una cita incómoda:
+                </p>
+                <input type="text" id="setting-safeword" class="ronda-input" placeholder="Ej. Martini Azul" style="margin-bottom: 12px;">
+
+                <div class="rule"></div>
+
+                <!-- Zonas de Bogotá -->
+                <p style="font-size: 11px; color: var(--papel); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 8px;">
+                  📍 Zonas Preferidas de Bogotá
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; margin-bottom: 12px;">
+                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" class="zone-checkbox" value="Zona G" checked> Zona G
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" class="zone-checkbox" value="Quinta Camacho" checked> Quinta Camacho
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" class="zone-checkbox" value="Usaquén"> Usaquén
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" class="zone-checkbox" value="Chapinero Alto"> Chapinero Alto
+                  </label>
+                </div>
+
+                <div class="rule"></div>
+
+                <!-- Habeas Data & Privacidad -->
+                <p style="font-size: 11px; color: var(--papel); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 8px;">
+                  🔒 Privacidad (Ley 1581 Habeas Data)
+                </p>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                  <span style="font-size: 11px; color: var(--humo); max-width: 80%;">Compartir estadísticas de consumo anónimas (RONDA Signals)</span>
+                  <label class="switch-toggle">
+                    <input type="checkbox" id="setting-share-drinks" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+                  <span style="font-size: 11px; color: var(--humo); max-width: 80%;">Recibir avisos de equilibrio de mesas por WhatsApp</span>
+                  <label class="switch-toggle">
+                    <input type="checkbox" id="setting-marketing" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <button id="btn-save-advanced-settings" class="btn ambar" style="width: 100%; font-size: 11px; padding: 10px;">
+                  Guardar Opciones Avanzadas
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal: Editar Perfil (Estilo Instagram) -->
+  <div id="modal-edit-profile" class="modal-overlay">
+    <div class="tel" style="width: 100%; max-width: 390px;">
+      <div class="tel-in" style="padding: 20px;">
+        <div class="status" style="justify-content: space-between;">
+          <button id="btn-edit-profile-close" class="btn-mini" style="background:transparent; border:none; color:var(--humo); cursor:pointer;">Cancelar</button>
+          <span>Editar Perfil</span>
+          <button id="btn-save-edit-profile" class="btn-mini" style="background:transparent; border:none; color:var(--luz); font-weight:700; cursor:pointer;">Listo</button>
+        </div>
+
+        <div class="pant" style="margin-top: 14px;">
+          <div style="text-align: center; margin-bottom: 16px;">
+            <button class="btn-outline" onclick="document.getElementById('input-profile-photo').click();" style="font-size: 11px;">
+              📸 Cambiar foto de perfil
+            </button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Nombre completo</label>
+            <input type="text" id="edit-name" class="ronda-input" placeholder="Tu nombre">
+
+            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Nombre de usuario</label>
+            <input type="text" id="edit-username" class="ronda-input" placeholder="@usuario">
+
+            <div style="display: flex; gap: 10px;">
+              <div style="flex: 1;">
+                <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Edad</label>
+                <input type="number" id="edit-age" class="ronda-input" min="18" max="99">
+              </div>
+              <div style="flex: 1;">
+                <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Género</label>
+                <select id="edit-gender" class="ronda-input">
+                  <option value="Hombre">Hombre</option>
+                  <option value="Mujer">Mujer</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+            </div>
+
+            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Me interesa conocer</label>
+            <select id="edit-orientation" class="ronda-input">
+              <option value="Mujeres">Mujeres</option>
+              <option value="Hombres">Hombres</option>
+              <option value="Ambos">Ambos</option>
+            </select>
+
+            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Cóctel de Autor Favorito</label>
+            <input type="text" id="edit-cocktail" class="ronda-input" placeholder="Ej. Negroni Ahumado, Gin Tonic...">
+
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Presentación / Bio</label>
+              <span id="bio-char-count" style="font-size: 9.5px; color: var(--humo); font-family: var(--font-mono);">0/150</span>
+            </div>
+            <textarea id="edit-bio" class="ronda-input" rows="3" maxlength="150" placeholder="Escribe algo sobre ti para tus citas..." style="resize: none;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Vista: Cliente -->
   <section id="view-client" class="panel">
