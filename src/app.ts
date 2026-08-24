@@ -5,6 +5,7 @@ import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
 import { Profile } from './profile.js';
 import { calculateAge, getZodiacSign } from './utils.js';
+import { RondaDialog } from './dialog.js';
 
 // app.js: Orquestador principal de la vista y eventos de RONDA
 
@@ -152,7 +153,11 @@ function initApp() {
       const orientation = document.getElementById('profile-orientation').value;
 
       if (!name || !age || !gender || !orientation) {
-        alert("Por favor completa todos los campos del perfil.");
+        await RondaDialog.alert({
+          title: 'Datos Incompletos',
+          message: 'Por favor completa todos los campos requeridos de tu perfil.',
+          icon: '📝'
+        });
         return;
       }
 
@@ -170,9 +175,14 @@ function initApp() {
         modalProfile.classList.remove('active');
         
         dispatchEvent(new CustomEvent('auth:login', { detail: user }));
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error al guardar perfil:", err);
-        alert("Error al guardar: " + err.message);
+        await RondaDialog.alert({
+          title: 'Error al Guardar',
+          message: 'No se pudieron guardar los cambios: ' + err.message,
+          icon: '⚠️',
+          type: 'danger'
+        });
       } finally {
         btnSaveProfile.textContent = "Guardar Perfil";
         btnSaveProfile.disabled = false;
@@ -348,7 +358,7 @@ function initApp() {
     regBirthInput.addEventListener('change', updateZodiacBadge);
   }
 
-  document.getElementById('btn-real-register')?.addEventListener('click', () => {
+  document.getElementById('btn-real-register')?.addEventListener('click', async () => {
     const email = (document.getElementById('reg-email') as HTMLInputElement).value;
     const password = (document.getElementById('reg-password') as HTMLInputElement).value;
     const name = (document.getElementById('reg-name') as HTMLInputElement).value.trim();
@@ -357,13 +367,22 @@ function initApp() {
     const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
 
     if (!name || !birthDate || !gender || !orientation) {
-      alert("Completa todos los datos para crear tu perfil.");
+      await RondaDialog.alert({
+        title: 'Datos Requeridos',
+        message: 'Por favor completa todos los datos para crear tu perfil de citas.',
+        icon: '📝'
+      });
       return;
     }
 
     const age = calculateAge(birthDate);
     if (age < 18) {
-      alert("Debes tener al menos 18 años para crear una cuenta en RONDA.");
+      await RondaDialog.alert({
+        title: 'Edad Mínima',
+        message: 'Debes tener al menos 18 años para crear una cuenta y participar en las noches RONDA.',
+        icon: '🔞',
+        type: 'danger'
+      });
       return;
     }
 
@@ -383,8 +402,13 @@ function initApp() {
     }).then((user) => {
       // Successfully registered.
       triggerLoginAnimation();
-    }).catch(err => {
-      alert("Error en registro: " + err.message);
+    }).catch(async (err) => {
+      await RondaDialog.alert({
+        title: 'Error de Registro',
+        message: 'No se pudo crear la cuenta: ' + err.message,
+        icon: '⚠️',
+        type: 'danger'
+      });
     }).finally(() => {
       btn.textContent = 'Crear Cuenta y Entrar';
       btn.disabled = false;

@@ -1048,6 +1048,39 @@
     </div>
   </section>
 
+  <!-- Modal: Diálogo Elegante de Confirmación / Alertas (Reemplazo de confirm/alert nativos) -->
+  <div id="modal-ronda-dialog" class="modal-overlay" style="z-index: 10000;">
+    <div class="tel" style="width: 100%; max-width: 360px; box-shadow: 0 30px 70px rgba(0,0,0,0.85), 0 0 40px rgba(240,168,48,0.12); border: 1px solid rgba(240,168,48,0.35); background: #1a1120; border-radius: 24px;">
+      <div class="tel-in" style="padding: 26px 20px 22px; text-align: center;">
+        
+        <!-- Icono / Sello del Diálogo -->
+        <div id="dialog-icon-container" style="width: 58px; height: 58px; margin: 0 auto 16px; border-radius: 50%; background: rgba(240,168,48,0.12); border: 1.5px solid rgba(240,168,48,0.4); display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 0 20px rgba(240,168,48,0.2);">
+          <span id="dialog-icon">🍸</span>
+        </div>
+
+        <!-- Título del Diálogo -->
+        <h3 id="dialog-title" style="font-family: var(--font-display); font-size: 21px; font-weight: 700; color: var(--papel); margin: 0 0 8px; letter-spacing: -0.01em;">
+          Confirmar Acción
+        </h3>
+
+        <!-- Mensaje / Pregunta -->
+        <p id="dialog-message" style="font-size: 13px; color: var(--humo); line-height: 1.48; margin: 0 0 22px; font-family: var(--font-body);">
+          ¿Deseas transferir tu reserva a la nueva sala?
+        </p>
+
+        <!-- Botones de Acción Estilo RONDA -->
+        <div id="dialog-actions" style="display: flex; gap: 10px; justify-content: center;">
+          <button id="btn-dialog-cancel" class="btn" style="flex: 1; font-size: 12px; padding: 11px; border-radius: 999px; background: rgba(243,237,226,.06); border-color: var(--linea); color: var(--humo); font-weight: 600;">
+            ✕ Cancelar
+          </button>
+          <button id="btn-dialog-confirm" class="btn ambar" style="flex: 1; font-size: 12px; padding: 11px; border-radius: 999px; font-weight: 700;">
+            ✓ Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Gestión de Reservas -->
   <div id="modal-manage-reservations" class="modal-overlay">
     <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">

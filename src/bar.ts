@@ -1,4 +1,5 @@
 import { DB } from './db.js';
+import { RondaDialog } from './dialog.js';
 
 // bar.js: Motor de Rotación y Consola del Anfitrión (Producción)
 
@@ -164,18 +165,33 @@ class HostConsoleService {
     console.log(`[Motor] Ronda ${r} generada en Firestore.`);
   }
 
-  showScannerInstruction() {
-    alert(`✓ Pide a los clientes ingresar el código del evento en sus celulares:\n\nCÓDIGO: ${this.currentEvent.id.toUpperCase()}`);
+  async showScannerInstruction() {
+    await RondaDialog.alert({
+      title: 'Código de Sala',
+      message: `Pide a los asistentes ingresar el código del evento en sus teléfonos:\n\nCÓDIGO: ${this.currentEvent.id.toUpperCase()}`,
+      icon: '📱'
+    });
   }
 
   async endEventAndMint() {
     if (!this.currentEvent) return;
     if (this.currentEvent.status === 'finished') {
-      alert("Este evento ya ha finalizado.");
+      await RondaDialog.alert({
+        title: 'Evento Finalizado',
+        message: 'Este evento ya ha finalizado previamente.',
+        icon: 'ℹ️'
+      });
       return;
     }
 
-    const confirmEnd = confirm("¿Estás seguro de finalizar el evento y emitir los certificados NFT a los asistentes?");
+    const confirmEnd = await RondaDialog.confirm({
+      title: 'Finalizar Evento y Emitir NFTs',
+      message: '¿Estás seguro de finalizar el evento y emitir los certificados NFT a los asistentes en la red Polygon?',
+      icon: '🎫',
+      confirmText: '✓ Finalizar y Emitir',
+      cancelText: '✕ Cancelar'
+    });
+
     if (confirmEnd) {
       const btnEnd = document.getElementById('btn-end-e');
       if (btnEnd) {
@@ -184,10 +200,19 @@ class HostConsoleService {
       }
       try {
         await DB.confirmarSala(this.currentEvent.id, this.currentEvent.participants);
-        alert("✓ Evento finalizado. NFTs emitidos en la blockchain Polygon.");
-      } catch (err) {
+        await RondaDialog.alert({
+          title: 'Certificados Emitidos',
+          message: 'Evento finalizado con éxito. Los NFTs de asistencia han sido emitidos en la blockchain Polygon.',
+          icon: '✨'
+        });
+      } catch (err: any) {
         console.error("Error al finalizar evento:", err);
-        alert("Error al emitir NFTs: " + err.message);
+        await RondaDialog.alert({
+          title: 'Error de Emisión',
+          message: 'No se pudieron emitir los NFTs: ' + err.message,
+          icon: '⚠️',
+          type: 'danger'
+        });
       }
     }
   }

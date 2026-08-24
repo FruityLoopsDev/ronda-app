@@ -1,6 +1,7 @@
 import { DB, User } from './db.js';
 import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
+import { RondaDialog } from './dialog.js';
 
 export class ProfileService {
   private currentUser: User | null = null;
@@ -154,7 +155,12 @@ export class ProfileService {
         }
       } catch (err: any) {
         console.error('Error al procesar foto:', err);
-        alert('No se pudo procesar la imagen: ' + err.message);
+        await RondaDialog.alert({
+          title: 'Error de Imagen',
+          message: 'No se pudo procesar la imagen: ' + err.message,
+          icon: '📸',
+          type: 'danger'
+        });
       }
     });
 
@@ -200,8 +206,16 @@ export class ProfileService {
     });
 
     // Botón de Cerrar Sesión dentro de Mi Perfil / Ajustes
-    document.getElementById('btn-profile-logout')?.addEventListener('click', () => {
-      if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+    document.getElementById('btn-profile-logout')?.addEventListener('click', async () => {
+      const confirmed = await RondaDialog.confirm({
+        title: 'Cerrar Sesión',
+        message: '¿Estás seguro de que deseas cerrar sesión de tu cuenta en este dispositivo?',
+        icon: '🔒',
+        type: 'danger',
+        confirmText: '✓ Cerrar Sesión',
+        cancelText: '✕ Mantener Abierta'
+      });
+      if (confirmed) {
         Auth.logout();
       }
     });

@@ -2,6 +2,7 @@ import { DB, User, Reservation } from './db.js';
 import { Auth } from './auth.js';
 import { OfflineSync } from './offline-sync.js';
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
+import { RondaDialog } from './dialog.js';
 
 // client.ts: Lógica del Cliente, Eventos, Mapas, Cócteles, Anfitrión, Bloqueo de Salas y Revelación de Matches 10 AM
 
@@ -344,7 +345,15 @@ class ClientAppService {
       const newEvt = RONDA_EVENTS.find(e => e.id === select.value);
       if (!newEvt) return;
 
-      if (confirm(`¿Deseas transferir tu reserva a ${newEvt.venueName} (${newEvt.dayDate})?`)) {
+      const confirmed = await RondaDialog.confirm({
+        title: 'Cambiar de Sala o Fecha',
+        message: `¿Deseas transferir tu reserva a ${newEvt.venueName} (${newEvt.dayDate}) sin ningún costo adicional?`,
+        icon: '🔄',
+        confirmText: '✓ Transferir Reserva',
+        cancelText: '✕ Mantener Actual'
+      });
+
+      if (confirmed) {
         user.activeEventId = newEvt.id;
         user.activeReservation = {
           eventId: newEvt.id,
@@ -369,7 +378,16 @@ class ClientAppService {
     });
 
     document.getElementById('btn-mgr-cancel-res')?.addEventListener('click', async () => {
-      if (confirm('¿Estás seguro de cancelar tu reserva? Tu cupo se liberará para la lista de espera y tu crédito quedará guardado para tu siguiente cita.')) {
+      const confirmed = await RondaDialog.confirm({
+        title: 'Cancelar Reserva',
+        message: '¿Estás seguro de cancelar tu reserva? Tu cupo se liberará para la lista de espera y tu crédito quedará guardado 100% para tu siguiente cita sin ningún strike.',
+        icon: '⚠️',
+        type: 'danger',
+        confirmText: '✓ Cancelar Reserva',
+        cancelText: '✕ No Cancelar'
+      });
+
+      if (confirmed) {
         delete user.activeReservation;
         delete user.activeEventId;
         await DB.saveUser(user);
@@ -606,7 +624,11 @@ class ClientAppService {
     if (!this.selectedEvent) return;
     const user = Auth.currentUser;
     if (!user) {
-      alert('Por favor inicia sesión para completar tu reserva.');
+      await RondaDialog.alert({
+        title: 'Iniciar Sesión',
+        message: 'Por favor inicia sesión o regístrate para completar tu reserva.',
+        icon: '🔒'
+      });
       return;
     }
 
@@ -631,7 +653,12 @@ class ClientAppService {
         window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
         this.renderWaitlistView(user.activeWaitlist);
       } catch (err: any) {
-        alert('Error: ' + err.message);
+        await RondaDialog.alert({
+          title: 'Error de Registro',
+          message: 'No se pudo completar la solicitud: ' + err.message,
+          icon: '⚠️',
+          type: 'danger'
+        });
       } finally {
         if (btn) { btn.textContent = '⏳ Unirme a Lista de Espera'; btn.disabled = false; }
       }
@@ -762,7 +789,11 @@ class ClientAppService {
 
   triggerSafeWord() {
     console.warn("¡Safe-word activado! Notificando a seguridad y anfitrión...");
-    alert("Hemos notificado discretamente al anfitrión del bar con tu palabra clave. Alguien del equipo se acercará a tu mesa.");
+    RondaDialog.alert({
+      title: 'Asistencia en Camino',
+      message: 'Hemos notificado discretamente al anfitrión de sala con tu palabra clave de seguridad. Un miembro del equipo se acercará a tu mesa de inmediato.',
+      icon: '🛡️'
+    });
   }
 
   startTimer(durationSeconds: number) {
@@ -902,7 +933,7 @@ class ClientAppService {
                 💬 Escribirle por WhatsApp (${m.name.split(' ')[0]})
               </a>
               
-              <button class="btn" style="background: rgba(26,18,11,0.06); color: #1a120b; border: 1px solid rgba(26,18,11,0.2); font-size: 11px; padding: 9px; font-weight: 600;" onclick="alert('🎟️ Cupón de 2ª cita activado: -25% en tu próxima mesa de dos en ${postState.venueName}.');">
+              <button class="btn btn-voucher-2nd-date" style="background: rgba(26,18,11,0.06); color: #1a120b; border: 1px solid rgba(26,18,11,0.2); font-size: 11px; padding: 9px; font-weight: 600;" data-venue="${postState.venueName}">
                 🍸 Invitar a 2ª Cita (-25% en ${postState.venueName})
               </button>
             </div>
@@ -922,6 +953,18 @@ class ClientAppService {
         </button>
       </div>
     `;
+
+    // Vincular botón de voucher de segunda cita
+    container.querySelectorAll('.btn-voucher-2nd-date').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const venue = (e.currentTarget as HTMLElement).getAttribute('data-venue') || 'el local';
+        RondaDialog.alert({
+          title: 'Cupón de 2ª Cita Activado',
+          message: `¡Disfruta un -25% de descuento en tu cuenta en ${venue} para tu próxima visita de a dos! Presenta tu pasaporte digital en el local.`,
+          icon: '🍸'
+        });
+      });
+    });
 
     // Iniciar reloj hacia las 10:00 AM si aún no está revelado
     if (!isRevealed) {
