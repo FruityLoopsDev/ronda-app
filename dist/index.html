@@ -481,7 +481,7 @@
         color: var(--papel);
       }
     </style>
-      <script type="module" crossorigin src="/assets/index-CUCgG39b.js"></script>
+      <script type="module" crossorigin src="/assets/index-ChCqhJD_.js"></script>
     </head>
 <body>
   <!-- Sprite de Iconos Vectoriales RONDA -->
@@ -669,11 +669,11 @@
           
           <!-- Top bar de perfil -->
           <div class="status" style="justify-content: space-between; align-items: center;">
-            <button id="btn-back-to-events" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 0; font-size: 11px; cursor: pointer;">
+            <button id="btn-back-to-events" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 4px 0; font-size: 11px; cursor: pointer; font-family: var(--font-mono);">
               ← Ver eventos
             </button>
-            <span id="profile-top-handle" style="font-weight: 700;">MI PERFIL</span>
-            <span style="font-size: 14px; cursor: pointer;" onclick="document.querySelector('[data-tab=settings]').click();">⚙️</span>
+            <span id="profile-top-handle" style="font-weight: 700; letter-spacing: 0.08em;">MI PERFIL</span>
+            <button id="btn-open-settings-top" style="background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1;" title="Ajustes y Privacidad">⚙️</button>
           </div>
 
           <!-- Input oculto para subir foto de perfil -->
@@ -734,7 +734,7 @@
                 <div class="bubble-circle">🍸</div>
                 <span class="bubble-label" id="hl-cocktail-val">Negroni</span>
               </div>
-              <div class="highlight-bubble" onclick="document.querySelector('[data-tab=settings]').click();">
+              <div class="highlight-bubble" onclick="Profile.openSettingsModal();">
                 <div class="bubble-circle">📍</div>
                 <span class="bubble-label" id="hl-zone-val">Zona G</span>
               </div>
@@ -790,67 +790,14 @@
 
             <!-- TAB 3: AJUSTES & OPCIONES AVANZADAS -->
             <div id="tab-content-settings" class="profile-tab-content">
-              <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px;">
-                
-                <!-- Safeword / Asistencia Discreta -->
-                <p style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 6px;">
-                  ⚠️ Asistencia Discreta en Mesa
+              <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 18px; text-align: center;">
+                <div style="font-size: 30px; margin-bottom: 6px;">⚙️</div>
+                <h4 style="font-family: var(--font-display); font-size: 17px; margin: 0 0 6px; color: var(--papel);">Ajustes de Privacidad & Seguridad</h4>
+                <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px; line-height: 1.4;">
+                  Configura tu palabra de auxilio (Safeword), tus zonas frecuentes en Bogotá y tus preferencias de Habeas Data.
                 </p>
-                <p style="font-size: 11px; color: var(--humo); margin-bottom: 8px;">
-                  Palabra clave que se enviará al anfitrión de sala si solicitas asistencia en medio de una cita incómoda:
-                </p>
-                <input type="text" id="setting-safeword" class="ronda-input" placeholder="Ej. Martini Azul" style="margin-bottom: 12px;">
-
-                <div class="rule"></div>
-
-                <!-- Zonas de Bogotá -->
-                <p style="font-size: 11px; color: var(--papel); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 8px;">
-                  📍 Zonas Preferidas de Bogotá
-                </p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; margin-bottom: 12px;">
-                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" class="zone-checkbox" value="Zona G" checked> Zona G
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" class="zone-checkbox" value="Quinta Camacho" checked> Quinta Camacho
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" class="zone-checkbox" value="Usaquén"> Usaquén
-                  </label>
-                  <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" class="zone-checkbox" value="Chapinero Alto"> Chapinero Alto
-                  </label>
-                </div>
-
-                <div class="rule"></div>
-
-                <!-- Habeas Data & Privacidad -->
-                <p style="font-size: 11px; color: var(--papel); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 8px;">
-                  🔒 Privacidad (Ley 1581 Habeas Data)
-                </p>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-                  <span style="font-size: 11px; color: var(--humo); max-width: 80%;">Compartir estadísticas de consumo anónimas (RONDA Signals)</span>
-                  <label class="switch-toggle">
-                    <input type="checkbox" id="setting-share-drinks" checked>
-                    <span class="switch-slider"></span>
-                  </label>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
-                  <span style="font-size: 11px; color: var(--humo); max-width: 80%;">Recibir avisos de equilibrio de mesas por WhatsApp</span>
-                  <label class="switch-toggle">
-                    <input type="checkbox" id="setting-marketing" checked>
-                    <span class="switch-slider"></span>
-                  </label>
-                </div>
-
-                <button id="btn-save-advanced-settings" class="btn ambar" style="width: 100%; font-size: 11px; padding: 10px;">
-                  Guardar Opciones Avanzadas
-                </button>
-
-                <div class="rule" style="margin: 18px 0 14px;"></div>
-
-                <button id="btn-profile-logout" class="btn" style="width: 100%; font-size: 11px; padding: 10px; border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.12); cursor: pointer; font-weight: 700;">
-                  🚪 Cerrar Sesión
+                <button id="btn-open-settings-tab" class="btn ambar" style="width: 100%; font-size: 12px; padding: 11px;">
+                  ⚙️ Abrir Panel de Ajustes
                 </button>
               </div>
             </div>
@@ -860,6 +807,88 @@
       </div>
     </div>
   </section>
+
+  <!-- Modal: Ajustes y Opciones Avanzadas (Estilo Instagram Premium) -->
+  <div id="modal-settings" class="modal-overlay">
+    <div class="tel" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
+      <div class="tel-in" style="padding: 20px 18px 24px;">
+        
+        <!-- Header del Modal -->
+        <div class="edit-modal-top">
+          <button id="btn-settings-close" class="modal-nav-btn">Cerrar</button>
+          <h3 class="modal-nav-title">Ajustes</h3>
+          <button id="btn-save-settings-top" class="modal-nav-btn ambar-btn">Guardar</button>
+        </div>
+
+        <div class="pant" style="margin-top: 4px;">
+          
+          <!-- Safeword / Asistencia Discreta -->
+          <div style="background: rgba(240,168,48,.06); border: 1px dashed rgba(240,168,48,.35); border-radius: var(--r); padding: 14px; margin-bottom: 16px;">
+            <p style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 6px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+              ⚠️ ASISTENCIA DISCRETA EN MESA
+            </p>
+            <p style="font-size: 11.5px; color: var(--humo); margin: 0 0 10px; line-height: 1.35;">
+              Palabra clave que se enviará al anfitrión de sala si solicitas asistencia en medio de una cita incómoda:
+            </p>
+            <input type="text" id="setting-safeword" class="ronda-input-premium" placeholder="Ej. Martini Azul" value="Martini Azul" style="margin-bottom: 0;">
+          </div>
+
+          <!-- Zonas de Bogotá -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px; margin-bottom: 16px;">
+            <p style="font-size: 11px; color: var(--papel); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+              📍 ZONAS PREFERIDAS DE BOGOTÁ
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" class="zone-checkbox" value="Zona G" checked style="accent-color: var(--luz);"> Zona G
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" class="zone-checkbox" value="Quinta Camacho" checked style="accent-color: var(--luz);"> Quinta Camacho
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" class="zone-checkbox" value="Usaquén" style="accent-color: var(--luz);"> Usaquén
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" class="zone-checkbox" value="Chapinero Alto" style="accent-color: var(--luz);"> Chapinero Alto
+              </label>
+            </div>
+          </div>
+
+          <!-- Habeas Data & Privacidad -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px; margin-bottom: 16px;">
+            <p style="font-size: 11px; color: var(--papel); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+              🔒 PRIVACIDAD (LEY 1581 HABEAS DATA)
+            </p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <span style="font-size: 11.5px; color: var(--humo); max-width: 78%; line-height: 1.3;">Compartir estadísticas de consumo anónimas (RONDA Signals)</span>
+              <label class="switch-toggle">
+                <input type="checkbox" id="setting-share-drinks" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 11.5px; color: var(--humo); max-width: 78%; line-height: 1.3;">Recibir avisos de equilibrio de mesas por WhatsApp</span>
+              <label class="switch-toggle">
+                <input type="checkbox" id="setting-marketing" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <button id="btn-save-advanced-settings" class="btn ambar" style="width: 100%; font-size: 12px; padding: 12px; margin-bottom: 14px;">
+            Guardar Opciones Avanzadas
+          </button>
+
+          <div class="rule" style="margin: 12px 0 16px;"></div>
+
+          <button id="btn-profile-logout" class="btn" style="width: 100%; font-size: 12px; padding: 12px; border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            🚪 Cerrar Sesión
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Editar Perfil (Estilo Instagram Premium) -->
   <div id="modal-edit-profile" class="modal-overlay">

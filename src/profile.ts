@@ -168,12 +168,29 @@ export class ProfileService {
       await this.saveEditedProfile();
     });
 
-    // Guardar Opciones Avanzadas
+    // Abrir Modal de Ajustes (Desde botón superior ⚙️ o pestaña)
+    document.getElementById('btn-open-settings-top')?.addEventListener('click', () => {
+      this.openSettingsModal();
+    });
+
+    document.getElementById('btn-open-settings-tab')?.addEventListener('click', () => {
+      this.openSettingsModal();
+    });
+
+    document.getElementById('btn-settings-close')?.addEventListener('click', () => {
+      this.closeSettingsModal();
+    });
+
+    // Guardar Opciones Avanzadas (Botón inferior o botón cabecera)
     document.getElementById('btn-save-advanced-settings')?.addEventListener('click', async () => {
       await this.saveAdvancedSettings();
     });
 
-    // Botón de Cerrar Sesión dentro de Mi Perfil
+    document.getElementById('btn-save-settings-top')?.addEventListener('click', async () => {
+      await this.saveAdvancedSettings();
+    });
+
+    // Botón de Cerrar Sesión dentro de Mi Perfil / Ajustes
     document.getElementById('btn-profile-logout')?.addEventListener('click', () => {
       if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
         Auth.logout();
@@ -268,18 +285,47 @@ export class ProfileService {
     }
   }
 
+  openSettingsModal() {
+    if (!this.currentUser) return;
+    const user = this.currentUser;
+
+    const modal = document.getElementById('modal-settings');
+    if (!modal) return;
+
+    const inputSafeword = document.getElementById('setting-safeword') as HTMLInputElement;
+    const chkDrinkStats = document.getElementById('setting-share-drinks') as HTMLInputElement;
+    const chkMarketing = document.getElementById('setting-marketing') as HTMLInputElement;
+
+    if (inputSafeword) inputSafeword.value = user.safeword || 'Martini Azul';
+    if (chkDrinkStats) chkDrinkStats.checked = user.privacySettings?.shareDrinkStats !== false;
+    if (chkMarketing) chkMarketing.checked = user.privacySettings?.marketingConsent !== false;
+
+    // Sincronizar zonas
+    const zones = user.preferredZones || ['Zona G', 'Quinta Camacho'];
+    document.querySelectorAll('.zone-checkbox').forEach((chk: any) => {
+      chk.checked = zones.includes(chk.value);
+    });
+
+    modal.classList.add('active');
+  }
+
+  closeSettingsModal() {
+    const modal = document.getElementById('modal-settings');
+    if (modal) modal.classList.remove('active');
+  }
+
   async saveAdvancedSettings() {
     if (!this.currentUser) return;
 
     const btn = document.getElementById('btn-save-advanced-settings') as HTMLButtonElement;
-    btn.textContent = 'Guardando ajustes...';
-    btn.disabled = true;
+    const btnTop = document.getElementById('btn-save-settings-top') as HTMLButtonElement;
+    if (btn) { btn.textContent = 'Guardando...'; btn.disabled = true; }
+    if (btnTop) { btnTop.textContent = 'Guardando...'; btnTop.disabled = true; }
 
     try {
-      const safeword = (document.getElementById('setting-safeword') as HTMLInputElement).value.trim();
-      const emergencyContact = (document.getElementById('setting-emergency') as HTMLInputElement).value.trim();
-      const shareDrinkStats = (document.getElementById('setting-share-drinks') as HTMLInputElement).checked;
-      const marketingConsent = (document.getElementById('setting-marketing') as HTMLInputElement).checked;
+      const safeword = (document.getElementById('setting-safeword') as HTMLInputElement)?.value.trim();
+      const shareDrinkStats = (document.getElementById('setting-share-drinks') as HTMLInputElement)?.checked;
+      const marketingConsent = (document.getElementById('setting-marketing') as HTMLInputElement)?.checked;
 
       // Zonas seleccionadas
       const selectedZones: string[] = [];
@@ -288,7 +334,6 @@ export class ProfileService {
       });
 
       this.currentUser.safeword = safeword || 'Martini Azul';
-      this.currentUser.emergencyContact = emergencyContact;
       if (selectedZones.length > 0) {
         this.currentUser.preferredZones = selectedZones;
       }
@@ -299,13 +344,14 @@ export class ProfileService {
 
       await DB.saveUser(this.currentUser);
       this.render();
-      this.showToast('Ajustes y seguridad guardados');
+      this.closeSettingsModal();
+      this.showToast('Ajustes y privacidad guardados');
     } catch (err: any) {
       console.error('Error guardando ajustes:', err);
       alert('Error: ' + err.message);
     } finally {
-      btn.textContent = 'Guardar Opciones Avanzadas';
-      btn.disabled = false;
+      if (btn) { btn.textContent = 'Guardar Opciones Avanzadas'; btn.disabled = false; }
+      if (btnTop) { btnTop.textContent = 'Guardar'; btnTop.disabled = false; }
     }
   }
 
