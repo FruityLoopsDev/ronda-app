@@ -817,19 +817,18 @@
 
     <!-- Barra de Pestañas (Tabs) -->
     <div class="profile-tabs-bar">
-      <button class="profile-tab-btn active" data-tab="about">👤 Sobre mí</button>
-      <button class="profile-tab-btn" data-tab="passport">🎫 Pasaporte NFTs</button>
-      <button class="profile-tab-btn" data-tab="settings">⚙️ Ajustes</button>
+      <button class="profile-tab-btn active" data-tab="about" style="flex: 1;">👤 Sobre mí</button>
+      <button class="profile-tab-btn" data-tab="passport" style="flex: 1;">🎫 Pasaporte & Pases</button>
     </div>
 
     <!-- TAB 1: SOBRE MÍ -->
     <div id="tab-content-about" class="profile-tab-content active">
-      <div style="background: rgba(28, 19, 36, 0.65); backdrop-filter: blur(12px); border: 1px solid var(--linea); border-radius: var(--r); padding: 16px; font-size: 12.5px;">
+      <div style="background: rgba(28, 19, 36, 0.65); backdrop-filter: blur(12px); border: 1px solid var(--linea); border-radius: var(--r); padding: 18px; font-size: 12.5px;">
         <div class="kv"><span>Género</span><b id="about-gender">Hombre</b></div>
         <div class="kv"><span>Interés</span><b id="about-orientation">Mujeres</b></div>
         <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
         <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
-        <div class="rule" style="margin: 10px 0 8px;"></div>
+        <div class="rule" style="margin: 12px 0 10px;"></div>
         <p style="font-size: 11.5px; color: var(--humo); margin: 4px 0 0; line-height: 1.45;">
           ✨ <i>En las rondas de 6 minutos, estos datos ayudan a romper el hielo naturalmente sin preguntas aburridas.</i>
         </p>
@@ -839,33 +838,19 @@
     <!-- TAB 2: PASAPORTE & NFTS -->
     <div id="tab-content-passport" class="profile-tab-content">
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 14px; padding: 14px; text-align: center;">
-          <div style="font-size: 30px; margin-bottom: 4px;">🍸</div>
-          <b style="font-size: 11.5px; color: var(--luz); display: block;">CARONTE VIP</b>
+        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 16px; padding: 16px 14px; text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 6px;">🍸</div>
+          <b style="font-size: 12px; color: var(--luz); display: block;">CARONTE VIP</b>
           <span style="font-size: 10px; color: var(--humo);">-25% Mar–Jue</span>
         </div>
-        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 14px; padding: 14px; text-align: center;">
-          <div style="font-size: 30px; margin-bottom: 4px;">🍷</div>
-          <b style="font-size: 11.5px; color: var(--botella); display: block;">LA MARÍA CLUB</b>
+        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 16px; padding: 16px 14px; text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 6px;">🍷</div>
+          <b style="font-size: 12px; color: var(--botella); display: block;">LA MARÍA CLUB</b>
           <span style="font-size: 10px; color: var(--humo);">-25% Cóctel Autor</span>
         </div>
       </div>
-      <div class="aviso" style="margin-top: 14px; font-size: 11.5px;">
+      <div class="aviso" style="margin-top: 14px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
         🎟️ Tu billetera digital descentralizada custodia tus pases de asistencia de forma invisible.
-      </div>
-    </div>
-
-    <!-- TAB 3: AJUSTES & OPCIONES AVANZADAS -->
-    <div id="tab-content-settings" class="profile-tab-content">
-      <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: var(--r); padding: 20px 16px; text-align: center;">
-        <div style="font-size: 32px; margin-bottom: 6px;">⚙️</div>
-        <h4 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px; color: var(--papel);">Ajustes de Privacidad & Seguridad</h4>
-        <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px; line-height: 1.45;">
-          Configura tu palabra de auxilio (Safeword), tus zonas frecuentes en Bogotá y tus preferencias de Habeas Data.
-        </p>
-        <button id="btn-open-settings-tab" class="btn ambar" style="width: 100%; font-size: 12px; padding: 12px;">
-          ⚙️ Abrir Panel de Ajustes
-        </button>
       </div>
     </div>
   </section>
