@@ -52,7 +52,7 @@ Total Duration: ${c-l}ms`),J.resolve({didRun:!0,sequenceNumbersCollected:r,targe
             <span class="chip ${e.chipClass}">${e.statusLabel}</span>
           </div>
         </article>
-      `}),e.innerHTML=t,e.querySelectorAll(`.noche-card`).forEach(e=>{e.addEventListener(`click`,e=>{let t=e.currentTarget.getAttribute(`data-event-id`);t&&this.openEventModal(t)})})}openEventModal(e){let t=_x.find(t=>t.id===e);if(!t)return;this.selectedEvent=t;let n=document.getElementById(`modal-event-detail`);if(!n)return;let r=document.getElementById(`modal-event-date`),i=document.getElementById(`modal-event-venue`),a=document.getElementById(`modal-event-address`),o=document.getElementById(`modal-event-rounds`),s=document.getElementById(`modal-event-age`),c=document.getElementById(`modal-event-time`),l=document.getElementById(`modal-event-status-badge`),u=document.getElementById(`modal-event-balance-tag`),d=document.getElementById(`modal-event-bar-fill`),f=document.getElementById(`modal-event-bar-empty`),p=document.getElementById(`modal-event-registered`),m=document.getElementById(`modal-event-needed`),h=document.getElementById(`modal-event-cocktail`),g=document.getElementById(`modal-event-price`),_=document.getElementById(`modal-event-price-sub`),ee=document.getElementById(`btn-confirm-event-booking`);r&&(r.textContent=t.dayDate),i&&(i.textContent=t.venueName),a&&(a.textContent=`📍 ${t.venueAddress}`),o&&(o.textContent=t.roundsInfo),s&&(s.textContent=t.ageRange),c&&(c.textContent=t.timeRange),l&&(l.textContent=t.statusLabel,l.className=`chip ${t.chipClass}`),u&&(u.textContent=t.balanceTag),d&&(d.style.width=`${t.balancePercent1}%`,d.style.background=t.status===`ok`?`var(--botella)`:`var(--luz)`),f&&(f.style.width=`${t.balancePercent2}%`),p&&(p.textContent=t.registeredText),m&&(m.textContent=t.neededText),h&&(h.textContent=t.cocktailIncluded),g&&(g.innerHTML=`${t.priceFormatted} <small style="display: inline; font-size: 11px; color: var(--humo);">COP</small>`),_&&(_.textContent=t.priceSub),ee&&(ee.textContent=t.status===`lleno`?`🎟️ Unirme a Lista de Espera (${t.priceFormatted} COP)`:`🎟️ Reservar Cóctel de Autor (${t.priceFormatted} COP)`,ee.disabled=!1),n.classList.add(`active`)}closeEventModal(){let e=document.getElementById(`modal-event-detail`);e&&e.classList.remove(`active`)}async confirmBooking(){if(!this.selectedEvent)return;let e=mx.currentUser;if(!e){alert(`Por favor inicia sesión para completar tu reserva.`);return}let t=document.getElementById(`btn-confirm-event-booking`);t&&(t.textContent=`Generando tu Pasaporte QR...`,t.disabled=!0);try{let t=this.selectedEvent;e.activeEventId=t.id,e.activeReservation={eventId:t.id,venueName:t.venueName,venueAddress:t.venueAddress,dayDate:t.dayDate,tableNumber:t.tableNumber,cocktailName:t.cocktailIncluded,bookingCode:t.bookingCode,priceFormatted:t.priceFormatted},await px.saveUser(e),this.closeEventModal(),this.showToast(`¡Reserva confirmada en ${t.venueName}!`),window.dispatchEvent(new CustomEvent(`view:switch`,{detail:`view-client`})),this.renderClientView()}catch(e){console.error(`Error al confirmar reserva:`,e),alert(`Hubo un error al procesar tu reserva: `+e.message)}finally{t&&(t.textContent=`🎟️ Reservar Cóctel de Autor`,t.disabled=!1)}}getMyCurrentMatch(){if(!this.currentEvent||!this.currentEvent.activeMatches)return null;let e=mx.currentUser?.uid;return this.currentEvent.activeMatches.find(t=>t.p1.uid===e||t.p2.uid===e)}triggerSafeWord(){console.warn(`¡Safe-word activado! Notificando a seguridad y anfitrión...`),alert(`Hemos notificado discretamente al anfitrión del bar con tu palabra clave. Alguien del equipo se acercará a tu mesa.`)}startTimer(e){this.stopTimer();let t=e,n=document.getElementById(`match-timer`);this.timerInterval=setInterval(()=>{if(t<=0)this.stopTimer(),n&&(n.innerText=`¡Ronda finalizada!`);else{if(n){let e=Math.floor(t/60),r=t%60;n.innerText=`${e}:${r.toString().padStart(2,`0`)}`,t<60?n.style.color=`var(--vino)`:n.style.color=`var(--luz)`}t--}},1e3)}stopTimer(){this.timerInterval&&=(clearInterval(this.timerInterval),null)}async handleVote(e,t){let n=mx.currentUser?.uid,r=this.currentEvent?.id||`ronda-demo`;try{await gx.pushVote(n,e,t,r),this.showToast(t?`¡Preferencia mutua guardada! 😉`:`Voto registrado.`);let i=document.getElementById(`btn-vote-yes`),a=document.getElementById(`btn-vote-no`);i&&(i.disabled=!0),a&&(a.disabled=!0)}catch(e){console.error(`Error guardando voto:`,e),alert(`Error guardando tu voto.`)}}renderClientView(){let e=document.getElementById(`client-content`);if(!e)return;let t=mx.currentUser;if(!t)return;let n=t.activeReservation||{venueName:`CARONTE Cocktail Bar`,venueAddress:`Cra. 4A #66-22 · Zona G, Bogotá`,dayDate:`Martes 25 de marzo · 20:00`,tableNumber:`07`,cocktailName:`Negroni Ahumado`,bookingCode:`#RND-4471`,priceFormatted:`$45.000`},r=this.getMyCurrentMatch();if(r){let n=r.p1.uid===t.uid?r.p2:r.p1;e.innerHTML=`
+      `}),e.innerHTML=t,e.querySelectorAll(`.noche-card`).forEach(e=>{e.addEventListener(`click`,e=>{let t=e.currentTarget.getAttribute(`data-event-id`);t&&this.openEventModal(t)})})}openEventModal(e){let t=_x.find(t=>t.id===e);if(!t)return;this.selectedEvent=t;let n=document.getElementById(`modal-event-detail`);if(!n)return;let r=document.getElementById(`modal-event-date`),i=document.getElementById(`modal-event-venue`),a=document.getElementById(`modal-event-address`),o=document.getElementById(`modal-event-rounds`),s=document.getElementById(`modal-event-age`),c=document.getElementById(`modal-event-time`),l=document.getElementById(`modal-event-status-badge`),u=document.getElementById(`modal-event-balance-tag`),d=document.getElementById(`modal-event-bar-fill`),f=document.getElementById(`modal-event-bar-empty`),p=document.getElementById(`modal-event-registered`),m=document.getElementById(`modal-event-needed`),h=document.getElementById(`modal-event-cocktail`),g=document.getElementById(`modal-event-price`),_=document.getElementById(`modal-event-price-sub`),ee=document.getElementById(`btn-confirm-event-booking`);r&&(r.textContent=t.dayDate),i&&(i.textContent=t.venueName),a&&(a.textContent=`📍 ${t.venueAddress}`),o&&(o.textContent=t.roundsInfo),s&&(s.textContent=t.ageRange),c&&(c.textContent=t.timeRange),l&&(l.textContent=t.statusLabel,l.className=`chip ${t.chipClass}`),u&&(u.textContent=t.balanceTag),d&&(d.style.width=`${t.balancePercent1}%`,d.style.background=t.status===`ok`?`var(--botella)`:`var(--luz)`),f&&(f.style.width=`${t.balancePercent2}%`),p&&(p.textContent=t.registeredText),m&&(m.textContent=t.neededText),h&&(h.textContent=t.cocktailIncluded),g&&(g.innerHTML=`${t.priceFormatted} <small style="display: inline; font-size: 11px; color: var(--humo);">COP</small>`),_&&(_.textContent=t.priceSub),ee&&(ee.textContent=t.status===`lleno`?`🎟️ Unirme a Lista de Espera (${t.priceFormatted} COP)`:`🎟️ Reservar Cóctel de Autor (${t.priceFormatted} COP)`,ee.disabled=!1),n.classList.add(`active`)}closeEventModal(){let e=document.getElementById(`modal-event-detail`);e&&e.classList.remove(`active`)}async confirmBooking(){if(!this.selectedEvent)return;let e=mx.currentUser;if(!e){alert(`Por favor inicia sesión para completar tu reserva.`);return}let t=document.getElementById(`btn-confirm-event-booking`);t&&(t.textContent=`Generando tu Pasaporte QR...`,t.disabled=!0);try{let t=this.selectedEvent;e.activeEventId=t.id,e.activeReservation={eventId:t.id,venueName:t.venueName,venueAddress:t.venueAddress,dayDate:t.dayDate,tableNumber:t.tableNumber,cocktailName:t.cocktailIncluded,bookingCode:t.bookingCode,priceFormatted:t.priceFormatted},await px.saveUser(e),this.closeEventModal(),this.showToast(`¡Reserva confirmada en ${t.venueName}!`),window.dispatchEvent(new CustomEvent(`view:switch`,{detail:`view-client`})),this.renderClientView()}catch(e){console.error(`Error al confirmar reserva:`,e),alert(`Hubo un error al procesar tu reserva: `+e.message)}finally{t&&(t.textContent=`🎟️ Reservar Cóctel de Autor`,t.disabled=!1)}}getMyCurrentMatch(){if(!this.currentEvent||!this.currentEvent.activeMatches)return null;let e=mx.currentUser?.uid;return this.currentEvent.activeMatches.find(t=>t.p1.uid===e||t.p2.uid===e)}triggerSafeWord(){console.warn(`¡Safe-word activado! Notificando a seguridad y anfitrión...`),alert(`Hemos notificado discretamente al anfitrión del bar con tu palabra clave. Alguien del equipo se acercará a tu mesa.`)}startTimer(e){this.stopTimer();let t=e,n=document.getElementById(`match-timer`);this.timerInterval=setInterval(()=>{if(t<=0)this.stopTimer(),n&&(n.innerText=`¡Ronda finalizada!`);else{if(n){let e=Math.floor(t/60),r=t%60;n.innerText=`${e}:${r.toString().padStart(2,`0`)}`,t<60?n.style.color=`var(--vino)`:n.style.color=`var(--luz)`}t--}},1e3)}stopTimer(){this.timerInterval&&=(clearInterval(this.timerInterval),null)}async handleVote(e,t){let n=mx.currentUser?.uid,r=this.currentEvent?.id||`ronda-demo`;try{await gx.pushVote(n,e,t,r),this.showToast(t?`¡Preferencia mutua guardada! 😉`:`Voto registrado.`);let i=document.getElementById(`btn-vote-yes`),a=document.getElementById(`btn-vote-no`);i&&(i.disabled=!0),a&&(a.disabled=!0)}catch(e){console.error(`Error guardando voto:`,e),alert(`Error guardando tu voto.`)}}renderClientView(){let e=document.getElementById(`client-content`);if(!e)return;let t=mx.currentUser;if(!t)return;let n=t.activeReservation||{venueName:`CARONTE Cocktail Bar`,venueAddress:`Cra. 4A #66-22 · Zona G, Bogotá`,dayDate:`Martes 25 de marzo · 20:00`,tableNumber:`07`,cocktailName:`Negroni Ahumado`,bookingCode:`#RND-4471`,priceFormatted:`$45.000`},r=this.getMyCurrentMatch();if(r){let i=r.p1.uid===t.uid?r.p2:r.p1;e.innerHTML=`
         <div class="noche-card ok">
           <div class="ronda-head" style="margin-bottom: 15px;">
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -63,7 +63,7 @@ Total Duration: ${c-l}ms`),J.resolve({didRun:!0,sequenceNumbersCollected:r,targe
           </div>
           
           <div class="frente" style="margin: 10px 0;">
-            <h4 style="font-family: var(--font-display); font-size: 28px; margin: 0 0 4px;">${n.name}</h4>
+            <h4 style="font-family: var(--font-display); font-size: 28px; margin: 0 0 4px;">${i.name}</h4>
             <p style="margin: 0; color: var(--humo); font-size: 13px;">Te espera en la <b>MESA ${r.tableId}</b></p>
           </div>
           
@@ -74,43 +74,57 @@ Total Duration: ${c-l}ms`),J.resolve({didRun:!0,sequenceNumbersCollected:r,targe
           
           <div class="acciones" style="flex-direction: column; gap: 10px;">
             <div style="display: flex; gap: 10px; width: 100%;">
-              <button id="btn-vote-no" class="btn" style="flex: 1; border-color: var(--vino); color: var(--vino);" data-target="${n.uid}">No</button>
-              <button id="btn-vote-yes" class="btn si" style="flex: 1;" data-target="${n.uid}">Sí</button>
+              <button id="btn-vote-no" class="btn" style="flex: 1; border-color: var(--vino); color: var(--vino);" data-target="${i.uid}">No</button>
+              <button id="btn-vote-yes" class="btn si" style="flex: 1;" data-target="${i.uid}">Sí</button>
             </div>
             <button id="btn-safeword" class="btn" style="border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); width: 100%; font-weight: 700; font-size: 11px;">⚠️ Solicitar Asistencia Discreta</button>
           </div>
         </div>
-      `,setTimeout(()=>this.startTimer(300),100)}else e.innerHTML=`
-        <div class="cab-pant" style="margin-bottom: 12px;">
-          <h3 style="font-family: var(--font-display); font-size: 22px;">Tu reserva</h3>
-          <span style="font-family: var(--font-mono); color: var(--luz); font-weight: 700;">${n.bookingCode}</span>
+      `,setTimeout(()=>this.startTimer(300),100),e.innerHTML=`
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
+          <h3 style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--papel); margin: 0; letter-spacing: -0.01em;">Tu reserva</h3>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--luz); background: rgba(240,168,48,0.12); border: 1px solid rgba(240,168,48,0.35); padding: 4px 10px; border-radius: 999px; font-weight: 700; letter-spacing: 0.04em;">${n.bookingCode}</span>
         </div>
         
-        <div class="reserva" style="background: var(--papel); color: var(--tinta); border-radius: 12px; padding: 20px 18px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          <p class="res-tit" style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: 0.1em; margin: 0 0 2px;">RONDA</p>
-          <p class="res-sub" style="font-size: 12.5px; color: #555; margin: 0 0 12px;">${n.dayDate}</p>
+        <div class="reserva-pass">
+          <div class="reserva-pass-notch-left"></div>
+          <div class="reserva-pass-notch-right"></div>
+
+          <div style="text-align: center; margin-bottom: 14px;">
+            <p style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: 0.22em; margin: 0 0 3px; color: #17101d;">R O N D A</p>
+            <p style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #73675a; margin: 0;">${n.dayDate}</p>
+          </div>
           
-          <div class="kv" style="font-size: 12px; margin-bottom: 4px;"><span style="color:#666;">Local</span><b>${n.venueName}</b></div>
-          <div class="kv" style="font-size: 12px; margin-bottom: 10px;"><span style="color:#666;">Dirección</span><b>${n.venueAddress}</b></div>
+          <div style="font-size: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+            <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Local</span>
+            <b style="color: #17101d; font-family: var(--font-display); font-size: 14.5px;">${n.venueName}</b>
+          </div>
+          <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+            <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Dirección</span>
+            <b style="color: #332b38; text-align: right; font-family: var(--font-mono); font-size: 11px; font-weight: 500;">${n.venueAddress}</b>
+          </div>
           
-          <div class="rule" style="border-color: rgba(0,0,0,0.12); margin: 10px 0 12px;"></div>
+          <div class="reserva-pass-divider"></div>
           
-          <p class="mesa-num" style="font-family: var(--font-mono); font-size: 38px; font-weight: 800; color: var(--tinta); margin: 0; line-height: 1; text-align: center;">${n.tableNumber}</p>
-          <p class="mesa-lab" style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: #777; text-align: center; letter-spacing: 0.1em; margin: 2px 0 12px;">Tu mesa de salida</p>
+          <div style="text-align: center; margin: 8px 0 14px;">
+            <p style="font-family: var(--font-display); font-size: 48px; font-weight: 800; color: #17101d; margin: 0; line-height: 0.95;">${n.tableNumber}</p>
+            <p style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.16em; margin: 4px 0 0;">Tu mesa de salida</p>
+          </div>
           
-          <div style="background: rgba(46,107,84,0.12); border: 1px solid rgba(46,107,84,0.3); border-radius: 8px; padding: 8px 10px; margin-bottom: 14px; text-align: center;">
-            <p class="coctel" style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0;">🍸 Incluye: Cóctel de Autor</p>
-            <span style="font-size: 10.5px; color: #444;">${n.cocktailName}</span>
+          <div style="background: rgba(46,107,84,0.12); border: 1px solid rgba(46,107,84,0.3); border-radius: 12px; padding: 10px 12px; margin-bottom: 16px; text-align: center;">
+            <p style="font-size: 12px; color: var(--botella); font-weight: 700; margin: 0 0 2px;">🍸 Incluye: Cóctel de Autor</p>
+            <span style="font-size: 11px; color: #3a3340; font-family: var(--font-mono);">${n.cocktailName}</span>
           </div>
 
-          <div class="qr" id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 132px; height: 132px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; padding: 6px; background: #fff; border-radius: 6px;"></div>
-          <p class="res-pie" style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #777; margin: 0;">Enséñalo en barra al llegar para tu cóctel</p>
+          <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
+          
+          <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
         </div>
 
-        <div class="aviso" style="margin-top: 16px; font-size: 11.5px;">
-          ⚠️ No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
+        <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
+          ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
         </div>
-      `,this.renderQRCode(`qr-client`);let i=document.getElementById(`btn-safeword`);i&&i.addEventListener(`click`,()=>this.triggerSafeWord());let a=document.getElementById(`btn-vote-yes`),o=document.getElementById(`btn-vote-no`);a&&o&&(a.addEventListener(`click`,()=>this.handleVote(a.getAttribute(`data-target`)||``,!0)),o.addEventListener(`click`,()=>this.handleVote(o.getAttribute(`data-target`)||``,!1)))}renderQRCode(e){let t=document.getElementById(e);if(!t)return;t.innerHTML=``;let n=103,r=()=>(n=n*1103515245+12345&2147483647)/2147483647;for(let e=0;e<121;e++){let n=document.createElement(`i`),i=Math.floor(e/11),a=e%11,o=i<3&&a<3||i<3&&a>7||i>7&&a<3;n.style.background=o||r()>.48?`var(--tinta)`:`transparent`,n.style.borderRadius=`1px`,t.appendChild(n)}}showToast(e){let t=document.createElement(`div`);t.style.cssText=`
+      `,this.renderQRCode(`qr-client`)}let i=document.getElementById(`btn-safeword`);i&&i.addEventListener(`click`,()=>this.triggerSafeWord());let a=document.getElementById(`btn-vote-yes`),o=document.getElementById(`btn-vote-no`);a&&o&&(a.addEventListener(`click`,()=>this.handleVote(a.getAttribute(`data-target`)||``,!0)),o.addEventListener(`click`,()=>this.handleVote(o.getAttribute(`data-target`)||``,!1)))}renderQRCode(e){let t=document.getElementById(e);if(!t)return;t.innerHTML=``;let n=103,r=()=>(n=n*1103515245+12345&2147483647)/2147483647;for(let e=0;e<121;e++){let n=document.createElement(`i`),i=Math.floor(e/11),a=e%11,o=i<3&&a<3||i<3&&a>7||i>7&&a<3;n.style.background=o||r()>.48?`var(--tinta)`:`transparent`,n.style.borderRadius=`1px`,t.appendChild(n)}}showToast(e){let t=document.createElement(`div`);t.style.cssText=`
       position: fixed;
       bottom: 30px;
       left: 50%;

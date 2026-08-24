@@ -433,37 +433,50 @@ class ClientAppService {
         </div>
       `;
       setTimeout(() => this.startTimer(300), 100);
-    } else {
       // Mostrar ticket de Reserva / Pasaporte QR Oficial
       container.innerHTML = `
-        <div class="cab-pant" style="margin-bottom: 12px;">
-          <h3 style="font-family: var(--font-display); font-size: 22px;">Tu reserva</h3>
-          <span style="font-family: var(--font-mono); color: var(--luz); font-weight: 700;">${res.bookingCode}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
+          <h3 style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--papel); margin: 0; letter-spacing: -0.01em;">Tu reserva</h3>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--luz); background: rgba(240,168,48,0.12); border: 1px solid rgba(240,168,48,0.35); padding: 4px 10px; border-radius: 999px; font-weight: 700; letter-spacing: 0.04em;">${res.bookingCode}</span>
         </div>
         
-        <div class="reserva" style="background: var(--papel); color: var(--tinta); border-radius: 12px; padding: 20px 18px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          <p class="res-tit" style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: 0.1em; margin: 0 0 2px;">RONDA</p>
-          <p class="res-sub" style="font-size: 12.5px; color: #555; margin: 0 0 12px;">${res.dayDate}</p>
+        <div class="reserva-pass">
+          <div class="reserva-pass-notch-left"></div>
+          <div class="reserva-pass-notch-right"></div>
+
+          <div style="text-align: center; margin-bottom: 14px;">
+            <p style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: 0.22em; margin: 0 0 3px; color: #17101d;">R O N D A</p>
+            <p style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #73675a; margin: 0;">${res.dayDate}</p>
+          </div>
           
-          <div class="kv" style="font-size: 12px; margin-bottom: 4px;"><span style="color:#666;">Local</span><b>${res.venueName}</b></div>
-          <div class="kv" style="font-size: 12px; margin-bottom: 10px;"><span style="color:#666;">Dirección</span><b>${res.venueAddress}</b></div>
+          <div style="font-size: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+            <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Local</span>
+            <b style="color: #17101d; font-family: var(--font-display); font-size: 14.5px;">${res.venueName}</b>
+          </div>
+          <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+            <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Dirección</span>
+            <b style="color: #332b38; text-align: right; font-family: var(--font-mono); font-size: 11px; font-weight: 500;">${res.venueAddress}</b>
+          </div>
           
-          <div class="rule" style="border-color: rgba(0,0,0,0.12); margin: 10px 0 12px;"></div>
+          <div class="reserva-pass-divider"></div>
           
-          <p class="mesa-num" style="font-family: var(--font-mono); font-size: 38px; font-weight: 800; color: var(--tinta); margin: 0; line-height: 1; text-align: center;">${res.tableNumber}</p>
-          <p class="mesa-lab" style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: #777; text-align: center; letter-spacing: 0.1em; margin: 2px 0 12px;">Tu mesa de salida</p>
+          <div style="text-align: center; margin: 8px 0 14px;">
+            <p style="font-family: var(--font-display); font-size: 48px; font-weight: 800; color: #17101d; margin: 0; line-height: 0.95;">${res.tableNumber}</p>
+            <p style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.16em; margin: 4px 0 0;">Tu mesa de salida</p>
+          </div>
           
-          <div style="background: rgba(46,107,84,0.12); border: 1px solid rgba(46,107,84,0.3); border-radius: 8px; padding: 8px 10px; margin-bottom: 14px; text-align: center;">
-            <p class="coctel" style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0;">🍸 Incluye: Cóctel de Autor</p>
-            <span style="font-size: 10.5px; color: #444;">${res.cocktailName}</span>
+          <div style="background: rgba(46,107,84,0.12); border: 1px solid rgba(46,107,84,0.3); border-radius: 12px; padding: 10px 12px; margin-bottom: 16px; text-align: center;">
+            <p style="font-size: 12px; color: var(--botella); font-weight: 700; margin: 0 0 2px;">🍸 Incluye: Cóctel de Autor</p>
+            <span style="font-size: 11px; color: #3a3340; font-family: var(--font-mono);">${res.cocktailName}</span>
           </div>
 
-          <div class="qr" id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 132px; height: 132px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; padding: 6px; background: #fff; border-radius: 6px;"></div>
-          <p class="res-pie" style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #777; margin: 0;">Enséñalo en barra al llegar para tu cóctel</p>
+          <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
+          
+          <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
         </div>
 
-        <div class="aviso" style="margin-top: 16px; font-size: 11.5px;">
-          ⚠️ No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
+        <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
+          ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
         </div>
       `;
 
