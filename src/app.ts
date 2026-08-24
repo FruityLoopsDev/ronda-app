@@ -99,12 +99,10 @@ function initApp() {
         : `<span>${initials}</span>`;
 
       userMenu.innerHTML = `
-        <div class="user-badge" id="btn-open-profile" title="Ver mi perfil">
+        <div class="user-badge" id="btn-open-profile" title="Mi perfil" aria-label="Abrir perfil">
           <div class="user-badge-avatar">
             ${avatarContent}
           </div>
-          <span class="user-badge-name">${displayName}</span>
-          <span class="user-badge-chevron">❯</span>
         </div>
       `;
       document.getElementById('btn-open-profile')?.addEventListener('click', () => {
