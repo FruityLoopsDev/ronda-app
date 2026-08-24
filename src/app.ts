@@ -87,17 +87,20 @@ function initApp() {
 
   function updateNavbar() {
     const user = Auth.currentUser;
-    if (user) {
+    if (user && userMenu) {
       const displayName = user.name ? user.name.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'Usuario');
-      const avatarMini = user.photoURL 
-        ? `<img src="${user.photoURL}" style="width:16px; height:16px; border-radius:50%; object-fit:cover;">`
-        : `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--luz);"></span>`;
+      const initials = (user.name ? user.name.substring(0, 2) : (displayName ? displayName.substring(0, 2) : 'R')).toUpperCase();
+      const avatarContent = user.photoURL 
+        ? `<img src="${user.photoURL}" alt="${displayName}">`
+        : `<span>${initials}</span>`;
 
       userMenu.innerHTML = `
-        <div class="user-badge" id="btn-open-profile" style="cursor: pointer;" title="Toca para ver o editar tu perfil">
-          ${avatarMini}
-          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo);">Hola, <b style="color:var(--papel);">${displayName}</b></span>
-          <span style="font-size: 10px; color: var(--luz);">👤</span>
+        <div class="user-badge" id="btn-open-profile" title="Ver mi perfil">
+          <div class="user-badge-avatar">
+            ${avatarContent}
+          </div>
+          <span class="user-badge-name">${displayName}</span>
+          <span class="user-badge-chevron">❯</span>
         </div>
       `;
       document.getElementById('btn-open-profile')?.addEventListener('click', () => {
