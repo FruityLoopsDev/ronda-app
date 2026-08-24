@@ -168,6 +168,11 @@ class ClientAppService {
       this.closeEventModal();
     });
 
+    // Cerrar modal de gestión de reservas
+    document.getElementById('btn-manage-reservations-close')?.addEventListener('click', () => {
+      this.closeManageReservationsModal();
+    });
+
     // Confirmar reserva desde el modal
     document.getElementById('btn-confirm-event-booking')?.addEventListener('click', async () => {
       await this.confirmBooking();
@@ -175,6 +180,210 @@ class ClientAppService {
 
     // Volver a la cartelera desde la reserva del cliente
     document.getElementById('btn-client-back-feed')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
+    });
+  }
+
+  openManageReservationsModal() {
+    this.renderManageReservationsModal();
+    const modal = document.getElementById('modal-manage-reservations');
+    if (modal) modal.classList.add('active');
+  }
+
+  closeManageReservationsModal() {
+    const modal = document.getElementById('modal-manage-reservations');
+    if (modal) modal.classList.remove('active');
+  }
+
+  renderManageReservationsModal() {
+    const container = document.getElementById('manage-reservations-content');
+    if (!container) return;
+
+    const user = Auth.currentUser;
+    if (!user) {
+      container.innerHTML = `<p style="text-align: center; color: var(--humo); font-size: 13px;">Inicia sesión para ver tus reservas.</p>`;
+      return;
+    }
+
+    const res = user.activeReservation;
+    const waitlist = user.activeWaitlist;
+
+    let html = '';
+
+    if (res) {
+      html += `
+        <div style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <p style="font-size: 11px; font-family: var(--font-mono); color: var(--luz); text-transform: uppercase; font-weight: 700; margin: 0; letter-spacing: 0.08em;">
+              🎟️ RESERVA PRÓXIMA ACTIVA
+            </p>
+            <span class="chip ${res.status === 'checked_in' ? 'verde' : 'ambar'}" style="font-size: 9.5px; padding: 2px 8px;">
+              ${res.status === 'checked_in' ? 'En Barra' : 'Confirmada'}
+            </span>
+          </div>
+
+          <div style="background: rgba(243,237,226,.05); border: 1px solid var(--linea); border-radius: 16px; padding: 16px; margin-bottom: 14px;">
+            <h4 style="font-family: var(--font-display); font-size: 20px; color: var(--papel); margin: 0 0 4px;">${res.venueName}</h4>
+            <p style="font-family: var(--font-mono); font-size: 11px; color: var(--luz); margin: 0 0 8px;">${res.dayDate}</p>
+            <p style="font-size: 11.5px; color: var(--humo); margin: 0 0 12px;">📍 ${res.venueAddress}</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; margin-bottom: 14px; background: rgba(0,0,0,0.25); padding: 10px 12px; border-radius: 10px;">
+              <div><span style="color: var(--humo);">Mesa:</span> <b style="color: var(--papel);">${res.tableNumber}</b></div>
+              <div><span style="color: var(--humo);">Código:</span> <b style="color: var(--luz);">${res.bookingCode}</b></div>
+            </div>
+
+            <!-- Acciones de Gestión -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button id="btn-mgr-view-ticket" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                🎟️ Ver Pasaporte QR / Ticket
+              </button>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <a href="${res.mapsUrl || '#'}" target="_blank" class="btn" style="text-decoration: none; text-align: center; font-size: 11px; padding: 9px; background: rgba(243,237,226,.06); border-color: var(--linea);">
+                  📍 Maps / Waze
+                </a>
+                <button id="btn-mgr-calendar" class="btn" style="font-size: 11px; padding: 9px; background: rgba(243,237,226,.06); border-color: var(--linea);">
+                  📅 Calendario
+                </button>
+              </div>
+
+              <!-- Cambiar Sala / Fecha -->
+              <div id="box-change-venue" style="margin-top: 6px; border-top: 1px dashed var(--linea); padding-top: 10px;">
+                <label style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); display: block; margin-bottom: 6px;">🔄 Cambiar de Sala o Fecha (Sin costo):</label>
+                <div style="display: flex; gap: 8px;">
+                  <select id="select-change-event" class="ronda-input-premium" style="margin-bottom: 0; font-size: 11.5px; padding: 8px 10px; flex: 1;">
+                    ${RONDA_EVENTS.filter(e => e.id !== res.eventId && e.status !== 'lleno').map(e => `
+                      <option value="${e.id}">${e.venueName} (${e.dayDate.split('·')[0].trim()})</option>
+                    `).join('')}
+                  </select>
+                  <button id="btn-submit-change-event" class="btn" style="font-size: 11px; padding: 8px 12px; font-weight: 700; border-color: var(--luz); color: var(--luz); white-space: nowrap;">
+                    Cambiar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Cancelar Reserva -->
+              <button id="btn-mgr-cancel-res" class="btn" style="font-size: 11px; color: #f08ca8; background: rgba(155,39,72,.12); border-color: var(--vino); padding: 9px; margin-top: 4px; font-weight: 600;">
+                ❌ Cancelar Reserva (Sin Strike)
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (waitlist) {
+      html += `
+        <div style="background: rgba(240,168,48,.08); border: 1px dashed rgba(240,168,48,.35); border-radius: 16px; padding: 16px; margin-bottom: 16px; text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 6px;">⏳</div>
+          <h4 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 4px; color: var(--papel);">${waitlist.venueName}</h4>
+          <span class="chip ambar" style="font-size: 10px; margin-bottom: 10px;">Turno #${waitlist.position} en Lista de Espera</span>
+          <p style="font-size: 12px; color: var(--humo); line-height: 1.4; margin: 8px 0 14px;">Te notificaremos en cuanto se abra una mesa en la sala.</p>
+          <button id="btn-mgr-leave-wl" class="btn" style="font-size: 11px; color: var(--humo); border-color: var(--linea); padding: 8px 14px;">
+            Salir de la Lista
+          </button>
+        </div>
+      `;
+    } else {
+      html += `
+        <div style="text-align: center; padding: 30px 16px; background: rgba(243,237,226,.04); border-radius: 16px; border: 1px solid var(--linea); margin-bottom: 16px;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🎟️</div>
+          <h4 style="font-family: var(--font-display); font-size: 20px; margin: 0 0 6px; color: var(--papel);">No tienes reservas activas</h4>
+          <p style="font-size: 12px; color: var(--humo); margin: 0 0 18px; line-height: 1.45;">
+            Explora las noches de speed dating programadas de esta semana en Bogotá.
+          </p>
+          <button id="btn-mgr-go-discovery" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px 20px;">
+            Explorar Cartelera de Eventos
+          </button>
+        </div>
+      `;
+    }
+
+    // Historial de Citas Pasadas
+    html += `
+      <div style="border-top: 1px solid var(--linea); padding-top: 14px; margin-top: 14px;">
+        <p style="font-size: 11px; font-family: var(--font-mono); color: var(--humo); text-transform: uppercase; font-weight: 700; margin: 0 0 10px; letter-spacing: 0.08em;">
+          🏛️ HISTORIAL DE CITAS PASADAS
+        </p>
+        <div style="background: rgba(243,237,226,.03); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <b style="font-size: 12px; color: var(--papel); display: block;">La María Quinta Camacho</b>
+            <span style="font-size: 10.5px; color: var(--humo);">12 de marzo · 9 rondas · 3 matches ✨</span>
+          </div>
+          <span class="chip verde" style="font-size: 9px; padding: 2px 6px;">Completada</span>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
+
+    // Vincular Eventos dentro del Modal de Gestión
+    document.getElementById('btn-mgr-view-ticket')?.addEventListener('click', () => {
+      this.closeManageReservationsModal();
+      window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
+      this.renderClientView();
+    });
+
+    document.getElementById('btn-mgr-calendar')?.addEventListener('click', () => {
+      if (!res) return;
+      const start = new Date(Date.now() + 86400000);
+      const end = new Date(start.getTime() + 105 * 60000);
+      downloadICSFile(
+        `Cita RONDA en ${res.venueName}`,
+        `Tu reserva confirmada (${res.bookingCode}). Mesa de salida: ${res.tableNumber}. Cóctel: ${res.cocktailName}.`,
+        res.venueAddress,
+        start,
+        end
+      );
+      this.showToast('📅 Archivo de calendario descargado');
+    });
+
+    document.getElementById('btn-submit-change-event')?.addEventListener('click', async () => {
+      const select = document.getElementById('select-change-event') as HTMLSelectElement;
+      if (!select || !select.value) return;
+      const newEvt = RONDA_EVENTS.find(e => e.id === select.value);
+      if (!newEvt) return;
+
+      if (confirm(`¿Deseas transferir tu reserva a ${newEvt.venueName} (${newEvt.dayDate})?`)) {
+        user.activeEventId = newEvt.id;
+        user.activeReservation = {
+          eventId: newEvt.id,
+          venueName: newEvt.venueName,
+          venueAddress: newEvt.venueAddress,
+          mapsUrl: newEvt.mapsUrl,
+          dayDate: newEvt.dayDate,
+          tableNumber: newEvt.tableNumber,
+          cocktailName: newEvt.cocktailIncluded,
+          cocktailDesc: newEvt.cocktailDesc,
+          cocktailImg: newEvt.cocktailImg,
+          bookingCode: newEvt.bookingCode,
+          priceFormatted: newEvt.priceFormatted,
+          hostTips: newEvt.hostTips,
+          status: 'confirmed'
+        };
+        await DB.saveUser(user);
+        this.showToast(`¡Reserva cambiada con éxito a ${newEvt.venueName}!`);
+        this.renderManageReservationsModal();
+      }
+    });
+
+    document.getElementById('btn-mgr-cancel-res')?.addEventListener('click', async () => {
+      if (confirm('¿Estás seguro de cancelar tu reserva? Tu cupo se liberará para la lista de espera y tu crédito quedará guardado para tu siguiente cita.')) {
+        delete user.activeReservation;
+        delete user.activeEventId;
+        await DB.saveUser(user);
+        this.showToast('Reserva cancelada. Crédito disponible para tu siguiente cita.');
+        this.renderManageReservationsModal();
+      }
+    });
+
+    document.getElementById('btn-mgr-leave-wl')?.addEventListener('click', async () => {
+      delete user.activeWaitlist;
+      await DB.saveUser(user);
+      this.showToast('Has salido de la lista de espera.');
+      this.renderManageReservationsModal();
+    });
+
+    document.getElementById('btn-mgr-go-discovery')?.addEventListener('click', () => {
+      this.closeManageReservationsModal();
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
     });
   }
@@ -203,6 +412,23 @@ class ClientAppService {
     if (!feed) return;
 
     let html = '';
+    const user = Auth.currentUser;
+    if (user?.activeReservation) {
+      const r = user.activeReservation;
+      html += `
+        <div style="background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.35); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <div>
+            <span style="font-size: 10.5px; font-family: var(--font-mono); color: var(--luz); font-weight: 700; text-transform: uppercase; display: block;">🎟️ RESERVA CONFIRMADA</span>
+            <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel); display: block; margin: 2px 0;">${r.venueName}</b>
+            <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">${r.dayDate.split('·')[0].trim()} · Mesa ${r.tableNumber}</span>
+          </div>
+          <button id="btn-feed-manage-res" class="btn ambar" style="font-size: 11.5px; padding: 8px 14px; font-weight: 700; white-space: nowrap; border-radius: 999px;">
+            Gestionar
+          </button>
+        </div>
+      `;
+    }
+
     RONDA_EVENTS.forEach((evt) => {
       const balanceHtml = evt.status !== 'lleno' ? `
         <div class="barra-balance">
@@ -238,6 +464,12 @@ class ClientAppService {
     });
 
     feed.innerHTML = html;
+
+    // Vincular botón de gestión en el feed
+    document.getElementById('btn-feed-manage-res')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.openManageReservationsModal();
+    });
 
     // Vincular click en cada tarjeta de evento
     feed.querySelectorAll('.noche-card').forEach((card) => {
@@ -678,17 +910,23 @@ class ClientAppService {
           <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
         </div>
 
-        <!-- Acciones Post-Reserva (Mapas, Calendario, Check-in Demo) -->
+        <!-- Acciones Post-Reserva (Mapas, Calendario, Gestionar, Check-in Demo) -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 18px;">
-          <a href="${res.mapsUrl || '#'}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            📍 Abrir en Google Maps / Waze
-          </a>
-          
-          <button id="btn-add-calendar" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            📅 Agregar al Calendario (.ics)
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <a href="${res.mapsUrl || '#'}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              📍 Maps / Waze
+            </a>
+            
+            <button id="btn-add-calendar" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              📅 Calendario
+            </button>
+          </div>
+
+          <button id="btn-open-manage-from-ticket" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            ⚙️ Gestionar / Cambiar Sala o Cancelar
           </button>
 
-          <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
             ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Demo)' : '🍸 Simular Llegada al Bar (Canjear Cóctel)'}
           </button>
         </div>
@@ -699,6 +937,11 @@ class ClientAppService {
       `;
 
       this.renderQRCode('qr-client');
+
+      // Gestión de Reserva desde Ticket
+      document.getElementById('btn-open-manage-from-ticket')?.addEventListener('click', () => {
+        this.openManageReservationsModal();
+      });
 
       // Acciones de Calendario y Check-in
       document.getElementById('btn-add-calendar')?.addEventListener('click', () => {

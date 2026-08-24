@@ -850,8 +850,8 @@
       <button id="btn-edit-profile-open" class="btn" style="flex: 1; font-size: 12px; padding: 9px; border-radius: 999px; background: rgba(243,237,226,.08); border-color: var(--linea);">
         ✏️ Editar perfil
       </button>
-      <button id="btn-profile-qr" class="btn ambar" style="font-size: 12px; padding: 9px 16px; border-radius: 999px;" onclick="alert('🎟️ Tu Pasaporte QR está activo para ingresar a salas verificadas.');">
-        🎟️ Pasaporte
+      <button id="btn-profile-qr" class="btn ambar" style="font-size: 12px; padding: 9px 16px; border-radius: 999px;">
+        🎟️ Mis Reservas
       </button>
     </div>
 
@@ -915,6 +915,25 @@
       </div>
     </div>
   </section>
+
+  <!-- Modal: Gestión de Reservas -->
+  <div id="modal-manage-reservations" class="modal-overlay">
+    <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
+      <div class="tel-in" style="padding: 20px 18px 24px;">
+        
+        <!-- Header del Modal -->
+        <div class="edit-modal-top">
+          <button id="btn-manage-reservations-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar">✕</button>
+          <h3 class="modal-nav-title">Mis Reservas</h3>
+          <span style="width: 36px; height: 36px;"></span>
+        </div>
+
+        <div id="manage-reservations-content" class="pant" style="margin-top: 4px;">
+          <!-- Dinámico -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Ajustes y Opciones Avanzadas (Estilo Instagram Premium) -->
   <div id="modal-settings" class="modal-overlay">

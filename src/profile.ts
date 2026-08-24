@@ -1,5 +1,6 @@
 import { DB, User } from './db.js';
 import { Auth } from './auth.js';
+import { ClientApp } from './client.js';
 
 export class ProfileService {
   private currentUser: User | null = null;
@@ -155,6 +156,11 @@ export class ProfileService {
         console.error('Error al procesar foto:', err);
         alert('No se pudo procesar la imagen: ' + err.message);
       }
+    });
+
+    // Abrir Gestor de Reservas desde el Perfil
+    document.getElementById('btn-profile-qr')?.addEventListener('click', () => {
+      ClientApp.openManageReservationsModal();
     });
 
     // Abrir Modal de Edición de Perfil

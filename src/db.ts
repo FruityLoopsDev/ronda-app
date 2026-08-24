@@ -2,6 +2,24 @@ import { doc, getDoc, setDoc, onSnapshot, collection, addDoc, Unsubscribe } from
 import { RondaConfig, RondaServices } from "./firebase-config.js";
 
 // Basic Types
+export interface Reservation {
+  id?: string;
+  eventId: string;
+  venueName: string;
+  venueAddress: string;
+  mapsUrl: string;
+  dayDate: string;
+  tableNumber: string;
+  cocktailName: string;
+  cocktailDesc?: string;
+  cocktailImg?: string;
+  bookingCode: string;
+  priceFormatted: string;
+  hostTips?: string[];
+  status?: 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
+  createdAt?: string;
+}
+
 export interface User {
   uid: string;
   role: string;
@@ -39,21 +57,8 @@ export interface User {
     joinedAt: string;
     status: 'waiting' | 'spot_available';
   };
-  activeReservation?: {
-    eventId: string;
-    venueName: string;
-    venueAddress: string;
-    mapsUrl: string;
-    dayDate: string;
-    tableNumber: string;
-    cocktailName: string;
-    cocktailDesc?: string;
-    cocktailImg?: string;
-    bookingCode: string;
-    priceFormatted: string;
-    hostTips?: string[];
-    status?: 'confirmed' | 'checked_in' | 'seated';
-  };
+  activeReservation?: Reservation;
+  reservationsHistory?: Reservation[];
   wallet_address?: string;
   nfts?: any[];
 }
