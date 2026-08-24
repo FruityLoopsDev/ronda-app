@@ -72,18 +72,22 @@ function initApp() {
     }
   }
 
-    // Inicializar servicio de perfil
-    Profile.init();
+  // Escuchar cambio de vista dinámico
+  window.addEventListener('view:switch', (e: any) => {
+    switchView(e.detail);
+    if (e.detail === 'view-lobby') {
+      ClientApp.renderDiscoveryFeed();
+    }
+  });
 
-    // Event listener para volver a eventos desde el perfil
-    document.getElementById('btn-back-to-events')?.addEventListener('click', () => {
-      const user = Auth.currentUser;
-      if (user?.activeEventId) {
-        switchView('view-client');
-      } else {
-        switchView('view-lobby');
-      }
-    });
+  // Inicializar servicio de perfil
+  Profile.init();
+
+  // Event listener para volver a eventos desde el perfil
+  document.getElementById('btn-back-to-events')?.addEventListener('click', () => {
+    switchView('view-lobby');
+    ClientApp.renderDiscoveryFeed();
+  });
 
   function updateNavbar() {
     const user = Auth.currentUser;

@@ -29,6 +29,16 @@ export interface User {
     marketingConsent?: boolean;
   };
   activeEventId?: string;
+  activeReservation?: {
+    eventId: string;
+    venueName: string;
+    venueAddress: string;
+    dayDate: string;
+    tableNumber: string;
+    cocktailName: string;
+    bookingCode: string;
+    priceFormatted: string;
+  };
   wallet_address?: string;
   nfts?: any[];
 }

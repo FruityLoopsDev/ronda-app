@@ -1,16 +1,112 @@
-import { DB } from './db.js';
+import { DB, User } from './db.js';
 import { Auth } from './auth.js';
-import { RondaServices } from './firebase-config.js';
 import { OfflineSync } from './offline-sync.js';
 
-// client.js: Lógica del Cliente en la App (Participante de RONDA - Producción)
+// client.ts: Lógica del Cliente y Gestión de Eventos en RONDA
+
+export interface RondaEvent {
+  id: string;
+  venueName: string;
+  venueAddress: string;
+  dayDate: string;
+  timeRange: string;
+  roundsInfo: string;
+  ageRange: string;
+  cocktailIncluded: string;
+  price: number;
+  priceFormatted: string;
+  priceSub: string;
+  status: 'escaso' | 'ok' | 'lleno';
+  statusLabel: string;
+  chipClass: string;
+  balanceTag: string;
+  balancePercent1: number;
+  balancePercent2: number;
+  registeredText: string;
+  neededText: string;
+  tableNumber: string;
+  bookingCode: string;
+}
+
+export const RONDA_EVENTS: RondaEvent[] = [
+  {
+    id: 'rnd-caronte-mar-25',
+    venueName: 'CARONTE Cocktail Bar',
+    venueAddress: 'Cra. 4A #66-22 · Zona G, Bogotá',
+    dayDate: 'Martes 25 de marzo · 20:00',
+    timeRange: '20:00 a 21:45',
+    roundsInfo: '9 rondas de 6 min · 1 campanada',
+    ageRange: '25–34 años',
+    cocktailIncluded: 'Negroni Ahumado o mocktail premium de la casa',
+    price: 45000,
+    priceFormatted: '$45.000',
+    priceSub: 'Sube a $55.000 al equilibrarse',
+    status: 'escaso',
+    statusLabel: 'Escaso',
+    chipClass: 'ambar',
+    balanceTag: 'Tu lado va escaso',
+    balancePercent1: 62,
+    balancePercent2: 38,
+    registeredText: '12 apuntadas',
+    neededText: 'faltan 3 · Lado B',
+    tableNumber: '07',
+    bookingCode: '#RND-4471'
+  },
+  {
+    id: 'rnd-lamaria-mie-26',
+    venueName: 'La María Quinta Camacho',
+    venueAddress: 'Calle 70A #9-44 · Quinta Camacho, Bogotá',
+    dayDate: 'Miércoles 26 de marzo · 20:00',
+    timeRange: '20:00 a 21:45',
+    roundsInfo: '9 rondas de 6 min · Noche de vinos y tapas',
+    ageRange: '35–49 años',
+    cocktailIncluded: 'Tinto de Verano Especiado o Copa Reserva',
+    price: 55000,
+    priceFormatted: '$55.000',
+    priceSub: 'Incluye 1er Cóctel de Autor',
+    status: 'ok',
+    statusLabel: 'Confirmado',
+    chipClass: 'verde',
+    balanceTag: 'Sala equilibrada',
+    balancePercent1: 50,
+    balancePercent2: 50,
+    registeredText: '12 apuntadas',
+    neededText: '12 confirmados (100%)',
+    tableNumber: '04',
+    bookingCode: '#RND-8923'
+  },
+  {
+    id: 'rnd-patio-jue-27',
+    venueName: 'Patio Poca Prisa',
+    venueAddress: 'Cra. 5 #69-26 · Chapinero Alto, Bogotá',
+    dayDate: 'Jueves 27 de marzo · 20:30',
+    timeRange: '20:30 a 22:15',
+    roundsInfo: '9 rondas de 6 min · Temática: Cine & Arte',
+    ageRange: '28–38 años',
+    cocktailIncluded: 'Gin Tonic Botánico o Infusión Fría',
+    price: 65000,
+    priceFormatted: '$65.000',
+    priceSub: 'Jueves, tarifa alta',
+    status: 'lleno',
+    statusLabel: 'Lista de espera',
+    chipClass: 'gris',
+    balanceTag: 'Últimos cupos en rotación',
+    balancePercent1: 90,
+    balancePercent2: 10,
+    registeredText: '18 apuntados',
+    neededText: 'Lista de espera abierta',
+    tableNumber: '02',
+    bookingCode: '#RND-9104'
+  }
+];
 
 class ClientAppService {
+  currentEvent: any = null;
+  selectedEvent: RondaEvent | null = null;
+  unsubscribe: any = null;
+  timerInterval: any = null;
+
   constructor() {
-    this.currentEvent = null;
-    this.unsubscribe = null;
-    this.timerInterval = null;
-    
     // Escuchar el login para montar la vista
     addEventListener('auth:login', (e: any) => {
       if (e.detail.role === 'client') {
@@ -21,46 +117,220 @@ class ClientAppService {
     addEventListener('auth:logout', () => {
       if (this.unsubscribe) this.unsubscribe();
       this.stopTimer();
+      this.selectedEvent = null;
+    });
+
+    this.setupModalListeners();
+  }
+
+  setupModalListeners() {
+    // Cerrar modal de detalle de evento
+    document.getElementById('btn-event-detail-close')?.addEventListener('click', () => {
+      this.closeEventModal();
+    });
+
+    // Confirmar reserva desde el modal
+    document.getElementById('btn-confirm-event-booking')?.addEventListener('click', async () => {
+      await this.confirmBooking();
+    });
+
+    // Volver a la cartelera desde la reserva del cliente
+    document.getElementById('btn-client-back-feed')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
     });
   }
 
   async initClientDashboard(user: any) {
     console.log("Iniciando Dashboard Cliente...");
     
-    // Configurar interfaz inicial
-    const eventCode = (document.getElementById('event-code') as HTMLInputElement);
-    if (eventCode) eventCode.value = user.activeEventId || '';
-
-    // If the user doesn't have an active event, render the discovery feed
-    if (!user.activeEventId) {
-      this.renderDiscoveryFeed();
+    // Si el usuario tiene una reserva activa, renderizar la vista de cliente
+    if (user.activeReservation || user.activeEventId) {
+      this.renderClientView();
       return;
     }
-    
-    // Validar si tiene evento activo
-    const eventId = user.activeEventId;
-    if (eventId) {
-      if (this.unsubscribe) this.unsubscribe();
-      this.unsubscribe = DB.subscribeToEvent(eventId, (eventData) => {
-        this.currentEvent = eventData;
-        this.renderClientView();
+
+    // Si no tiene reserva, renderizar la cartelera
+    this.renderDiscoveryFeed();
+  }
+
+  renderDiscoveryFeed() {
+    const feed = document.getElementById('discovery-feed');
+    if (!feed) return;
+
+    let html = '';
+    RONDA_EVENTS.forEach((evt) => {
+      const balanceHtml = evt.status !== 'lleno' ? `
+        <div class="barra-balance">
+          <i style="width:${evt.balancePercent1}%;background:${evt.status === 'ok' ? 'var(--botella)' : 'var(--luz)'}"></i>
+          <i style="width:${evt.balancePercent2}%;background:rgba(243,237,226,.22)"></i>
+        </div>
+        <div class="leyenda">
+          <span>${evt.registeredText}</span>
+          <span>${evt.neededText}</span>
+        </div>
+      ` : '';
+
+      html += `
+        <article class="noche-card ${evt.status}" data-event-id="${evt.id}" style="cursor: pointer; transition: transform 0.2s, border-color 0.2s;">
+          <div class="dia">${evt.dayDate}</div>
+          <div class="local">${evt.venueName}</div>
+          <div class="detalle">${evt.roundsInfo} · ${evt.ageRange}</div>
+          ${balanceHtml}
+          <div class="linea-precio">
+            <div class="precio">
+              ${evt.priceFormatted}
+              <small>${evt.priceSub}</small>
+            </div>
+            <span class="chip ${evt.chipClass}">${evt.statusLabel}</span>
+          </div>
+        </article>
+      `;
+    });
+
+    feed.innerHTML = html;
+
+    // Vincular click en cada tarjeta de evento
+    feed.querySelectorAll('.noche-card').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        const target = (e.currentTarget as HTMLElement).getAttribute('data-event-id');
+        if (target) {
+          this.openEventModal(target);
+        }
       });
+    });
+  }
+
+  openEventModal(eventId: string) {
+    const event = RONDA_EVENTS.find(e => e.id === eventId);
+    if (!event) return;
+
+    this.selectedEvent = event;
+    const modal = document.getElementById('modal-event-detail');
+    if (!modal) return;
+
+    // Poblar campos del modal
+    const elDate = document.getElementById('modal-event-date');
+    const elVenue = document.getElementById('modal-event-venue');
+    const elAddress = document.getElementById('modal-event-address');
+    const elRounds = document.getElementById('modal-event-rounds');
+    const elAge = document.getElementById('modal-event-age');
+    const elTime = document.getElementById('modal-event-time');
+    const elBadge = document.getElementById('modal-event-status-badge');
+    const elBalanceTag = document.getElementById('modal-event-balance-tag');
+    const elBarFill = document.getElementById('modal-event-bar-fill');
+    const elBarEmpty = document.getElementById('modal-event-bar-empty');
+    const elReg = document.getElementById('modal-event-registered');
+    const elNeed = document.getElementById('modal-event-needed');
+    const elCocktail = document.getElementById('modal-event-cocktail');
+    const elPrice = document.getElementById('modal-event-price');
+    const elPriceSub = document.getElementById('modal-event-price-sub');
+    const btnBook = document.getElementById('btn-confirm-event-booking') as HTMLButtonElement;
+
+    if (elDate) elDate.textContent = event.dayDate;
+    if (elVenue) elVenue.textContent = event.venueName;
+    if (elAddress) elAddress.textContent = `📍 ${event.venueAddress}`;
+    if (elRounds) elRounds.textContent = event.roundsInfo;
+    if (elAge) elAge.textContent = event.ageRange;
+    if (elTime) elTime.textContent = event.timeRange;
+
+    if (elBadge) {
+      elBadge.textContent = event.statusLabel;
+      elBadge.className = `chip ${event.chipClass}`;
+    }
+
+    if (elBalanceTag) elBalanceTag.textContent = event.balanceTag;
+    if (elBarFill) {
+      elBarFill.style.width = `${event.balancePercent1}%`;
+      elBarFill.style.background = event.status === 'ok' ? 'var(--botella)' : 'var(--luz)';
+    }
+    if (elBarEmpty) elBarEmpty.style.width = `${event.balancePercent2}%`;
+    if (elReg) elReg.textContent = event.registeredText;
+    if (elNeed) elNeed.textContent = event.neededText;
+    if (elCocktail) elCocktail.textContent = event.cocktailIncluded;
+
+    if (elPrice) {
+      elPrice.innerHTML = `${event.priceFormatted} <small style="display: inline; font-size: 11px; color: var(--humo);">COP</small>`;
+    }
+    if (elPriceSub) elPriceSub.textContent = event.priceSub;
+
+    if (btnBook) {
+      if (event.status === 'lleno') {
+        btnBook.textContent = `🎟️ Unirme a Lista de Espera (${event.priceFormatted} COP)`;
+      } else {
+        btnBook.textContent = `🎟️ Reservar Cóctel de Autor (${event.priceFormatted} COP)`;
+      }
+      btnBook.disabled = false;
+    }
+
+    modal.classList.add('active');
+  }
+
+  closeEventModal() {
+    const modal = document.getElementById('modal-event-detail');
+    if (modal) modal.classList.remove('active');
+  }
+
+  async confirmBooking() {
+    if (!this.selectedEvent) return;
+    const user = Auth.currentUser;
+    if (!user) {
+      alert('Por favor inicia sesión para completar tu reserva.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-confirm-event-booking') as HTMLButtonElement;
+    if (btn) {
+      btn.textContent = 'Generando tu Pasaporte QR...';
+      btn.disabled = true;
+    }
+
+    try {
+      const evt = this.selectedEvent;
+      user.activeEventId = evt.id;
+      user.activeReservation = {
+        eventId: evt.id,
+        venueName: evt.venueName,
+        venueAddress: evt.venueAddress,
+        dayDate: evt.dayDate,
+        tableNumber: evt.tableNumber,
+        cocktailName: evt.cocktailIncluded,
+        bookingCode: evt.bookingCode,
+        priceFormatted: evt.priceFormatted
+      };
+
+      await DB.saveUser(user);
+      this.closeEventModal();
+      
+      // Feedback Toast
+      this.showToast(`¡Reserva confirmada en ${evt.venueName}!`);
+
+      // Cambiar a la vista del cliente
+      window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
+      this.renderClientView();
+    } catch (err: any) {
+      console.error('Error al confirmar reserva:', err);
+      alert('Hubo un error al procesar tu reserva: ' + err.message);
+    } finally {
+      if (btn) {
+        btn.textContent = `🎟️ Reservar Cóctel de Autor`;
+        btn.disabled = false;
+      }
     }
   }
 
   // Verifica si el cliente actual está en alguna mesa activa
   getMyCurrentMatch() {
     if (!this.currentEvent || !this.currentEvent.activeMatches) return null;
-    const myUid = Auth.currentUser.uid;
-    return this.currentEvent.activeMatches.find(m => m.p1.uid === myUid || m.p2.uid === myUid);
+    const myUid = Auth.currentUser?.uid;
+    return this.currentEvent.activeMatches.find((m: any) => m.p1.uid === myUid || m.p2.uid === myUid);
   }
 
   triggerSafeWord() {
-    console.warn("¡Safe-word activado! Notificando a seguridad y bloqueando al usuario...");
-    alert("Hemos notificado discretamente a la seguridad del bar. Quédate donde estás, alguien se acercará pronto.");
+    console.warn("¡Safe-word activado! Notificando a seguridad y anfitrión...");
+    alert("Hemos notificado discretamente al anfitrión del bar con tu palabra clave. Alguien del equipo se acercará a tu mesa.");
   }
 
-  startTimer(durationSeconds) {
+  startTimer(durationSeconds: number) {
     this.stopTimer();
     let timeLeft = durationSeconds;
     const el = document.getElementById('match-timer');
@@ -69,27 +339,17 @@ class ClientAppService {
       if (timeLeft <= 0) {
         this.stopTimer();
         if (el) {
-          if (!navigator.onLine) {
-            el.innerText = "Esperando conexión para tu próxima mesa...";
-            el.style.fontSize = "16px";
-            el.style.color = "var(--ambar)";
-          } else {
-            el.innerText = "¡Ronda finalizada!";
-          }
+          el.innerText = "¡Ronda finalizada!";
         }
-        console.log("DING! Cambio de mesa.");
       } else {
         if(el) {
           const mins = Math.floor(timeLeft / 60);
           const secs = timeLeft % 60;
           el.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
-          // Alerta roja de vino si queda menos de un minuto
           if (timeLeft < 60) {
             el.style.color = "var(--vino)";
-            el.classList.add("fin");
           } else {
             el.style.color = "var(--luz)";
-            el.classList.remove("fin");
           }
         }
         timeLeft--;
@@ -104,159 +364,53 @@ class ClientAppService {
     }
   }
 
-  async handleVote(targetUid, isYes) {
-    console.log(`Votaste ${isYes ? 'SÍ' : 'NO'} por el usuario ${targetUid}`);
-    alert(`¡Preferencia guardada! ${isYes ? 'Esperemos que sea mutuo 😉' : 'Anotado.'}`);
-    
-    const myUid = Auth.currentUser.uid;
-    const eventId = this.currentEvent.id;
+  async handleVote(targetUid: string, isYes: boolean) {
+    const myUid = Auth.currentUser?.uid;
+    const eventId = this.currentEvent?.id || 'ronda-demo';
     
     try {
-      const result = await OfflineSync.pushVote(myUid, targetUid, isYes, eventId);
-      console.log("[Client] Resultado de voto:", result.status);
+      await OfflineSync.pushVote(myUid, targetUid, isYes, eventId);
+      this.showToast(isYes ? '¡Preferencia mutua guardada! 😉' : 'Voto registrado.');
 
-      // Deshabilitar botones
-      const btnYes = document.getElementById('btn-vote-yes');
-      const btnNo = document.getElementById('btn-vote-no');
+      const btnYes = document.getElementById('btn-vote-yes') as HTMLButtonElement;
+      const btnNo = document.getElementById('btn-vote-no') as HTMLButtonElement;
       if (btnYes) btnYes.disabled = true;
       if (btnNo) btnNo.disabled = true;
     } catch (e) {
-      console.error("Error crítico guardando voto:", e);
-      alert("Error inesperado guardando tu voto. Se intentará de nuevo.");
+      console.error("Error guardando voto:", e);
+      alert("Error guardando tu voto.");
     }
-  }
-
-  // Mostrar NFTs en el panel del cliente
-  renderNFTsSection() {
-    const user = Auth.currentUser;
-    if (!user) return '';
-    
-    let nftHtml = `
-      <div class="noche-card mt-6" style="margin-top:20px;">
-        <h4 style="margin-bottom: 15px;">🏆 Mis Certificados NFT</h4>
-    `;
-    
-    if (user.wallet_address) {
-      nftHtml += `<p style="font-size: 11px; color: var(--humo); margin-bottom: 15px;">Wallet: <code style="color: var(--luz);">${user.wallet_address.substring(0,6)}...${user.wallet_address.substring(user.wallet_address.length-4)}</code></p>`;
-    } else {
-      nftHtml += `
-        <div style="background: rgba(240,168,48,0.1); border: 1px solid var(--luz); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-          <p style="font-size: 12px; color: var(--luz); margin-bottom: 10px;">⚠️ No tienes una Wallet vinculada para recibir tus NFTs de asistencia.</p>
-          <button id="btn-link-wallet" class="btn si" style="width: 100%; font-size: 11px; padding: 8px;">Vincular Wallet</button>
-        </div>
-      `;
-    }
-    
-    if (user.nfts && user.nfts.length > 0) {
-      nftHtml += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">`;
-      user.nfts.forEach(nft => {
-        nftHtml += `
-          <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 8px; padding: 10px; text-align: center;">
-            <div style="font-size: 24px; margin-bottom: 5px;">🎫</div>
-            <p style="font-weight: bold; font-size: 12px; color: var(--papel);">${nft.evento_nombre}</p>
-            <p style="font-size: 9px; color: var(--humo);">${nft.fecha}</p>
-          </div>
-        `;
-      });
-      nftHtml += `</div>`;
-    } else {
-      nftHtml += `<p style="font-size: 11px; color: var(--humo); text-align: center;">Aún no tienes ningún NFT. ¡Participa en un evento para recibir el tuyo!</p>`;
-    }
-    
-    nftHtml += `</div>`;
-    return nftHtml;
-  }
-
-  renderDiscoveryFeed() {
-    const feed = document.getElementById('discovery-feed');
-    if (!feed) return;
-
-    feed.innerHTML = `
-      <article class="noche-card escaso" style="cursor: pointer;">
-        <div class="dia">Martes 25 · 20:00</div>
-        <div class="local">CARONTE Cocktail Bar</div>
-        <div class="detalle">9 rondas de 6 min · acaba a las 21:45</div>
-        <div class="barra-balance">
-          <i style="width:62%;background:var(--luz)"></i>
-          <i style="width:38%;background:rgba(243,237,226,.22)"></i>
-        </div>
-        <div class="leyenda">
-          <span>12 apuntadas</span>
-          <span>faltan 3 · Lado B</span>
-        </div>
-        <div class="linea-precio">
-          <div class="precio">
-            $45.000
-            <small>Sube a $55.000 al equilibrarse</small>
-          </div>
-          <span class="chip ambar">Tu lado va escaso</span>
-        </div>
-      </article>
-
-      <article class="noche-card ok" style="cursor: pointer;">
-        <div class="dia">Miércoles 26 · 20:00</div>
-        <div class="local">La María Quinta Camacho · gastrobar</div>
-        <div class="detalle">Noche de vinos · 35–49 años</div>
-        <div class="linea-precio">
-          <div class="precio">
-            $55.000
-            <small>Incluye 1er Cóctel de Autor</small>
-          </div>
-          <span class="chip verde">Confirmado 12/12</span>
-        </div>
-      </article>
-
-      <article class="noche-card lleno" style="cursor: pointer;">
-        <div class="dia">Jueves 27 · 20:30</div>
-        <div class="local">Patio Poca Prisa</div>
-        <div class="detalle">Temática: cine · 28–38 años</div>
-        <div class="linea-precio">
-          <div class="precio">
-            $65.000
-            <small>Jueves, tarifa alta</small>
-          </div>
-          <span class="chip gris">Lista de espera</span>
-        </div>
-      </article>
-    `;
   }
 
   renderClientView() {
     const container = document.getElementById('client-content');
-    if (!container || !this.currentEvent) return;
-    
-    let html = "";
-    const match = this.getMyCurrentMatch();
-    const isWaiting = this.currentEvent.currentRound === 0;
+    if (!container) return;
 
-    if (isWaiting) {
-      // Mostrar ticket de ingreso (Check-In completado exitosamente)
-      html += `
-        <div class="lobby-box">
-          <svg class="icon-svg" style="color: var(--luz); margin-bottom: 10px; width: 32px; height: 32px;"><use href="#icon-reserva"></use></svg>
-          <p style="font-family: var(--font-display); font-size: 22px; font-weight: 800; margin: 0 0 4px;">RONDA</p>
-          <p style="font-size: 12px; color: var(--humo); text-transform: uppercase; letter-spacing: 0.1em;">Ingresaste al Bar Correctamente</p>
-          
-          <div class="reserva" style="margin-top: 15px; text-align: left; background: var(--papel); color: var(--tinta);">
-            <p class="res-tit">RONDA</p>
-            <p class="res-sub">Sala #${this.currentEvent.id.toUpperCase()}</p>
-            <div class="kv"><span>Usuario</span><b>${Auth.currentUser.name}</b></div>
-            <div class="kv"><span>Lobby Estado</span><b>Confirmado y Esperando</b></div>
-            <div class="rule"></div>
-            <p class="res-pie" style="margin-top: 5px;">El anfitrión arrancará la primera ronda pronto.</p>
-          </div>
-        </div>
-      `;
-    } else if (match) {
-      const partner = match.p1.uid === Auth.currentUser.uid ? match.p2 : match.p1;
-      html += `
+    const user = Auth.currentUser;
+    if (!user) return;
+
+    const res = user.activeReservation || {
+      venueName: 'CARONTE Cocktail Bar',
+      venueAddress: 'Cra. 4A #66-22 · Zona G, Bogotá',
+      dayDate: 'Martes 25 de marzo · 20:00',
+      tableNumber: '07',
+      cocktailName: 'Negroni Ahumado',
+      bookingCode: '#RND-4471',
+      priceFormatted: '$45.000'
+    };
+
+    const match = this.getMyCurrentMatch();
+
+    if (match) {
+      const partner = match.p1.uid === user.uid ? match.p2 : match.p1;
+      container.innerHTML = `
         <div class="noche-card ok">
           <div class="ronda-head" style="margin-bottom: 15px;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <svg class="icon-svg" style="color: var(--luz);"><use href="#icon-mesa"></use></svg>
-              <span class="ronda-n">Ronda ${this.currentEvent.currentRound}</span>
+              <span class="ronda-n">Ronda ${this.currentEvent?.currentRound || 1} de 9</span>
             </div>
-            <span class="chip ambar">Cita Activa</span>
+            <span class="chip ambar">Cita en Marcha</span>
           </div>
           
           <div class="frente" style="margin: 10px 0;">
@@ -265,45 +419,57 @@ class ClientAppService {
           </div>
           
           <div style="margin: 20px 0; text-align: center;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px;">
-              <svg class="icon-svg" style="color: var(--luz);"><use href="#icon-cronometro"></use></svg>
-              <span style="font-size: 11px; text-transform: uppercase; color: var(--humo); letter-spacing: 0.1em;">Tiempo restante</span>
-            </div>
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--humo); letter-spacing: 0.1em;">Tiempo restante</span>
             <h1 id="match-timer" style="font-family: var(--font-mono); font-size: 48px; color: var(--luz); margin: 0; font-variant-numeric: tabular-nums;">05:00</h1>
           </div>
           
-          <div class="acciones" style="flex-direction: column;">
-            <div style="display: flex; gap: 10px; margin-bottom: 10px; width: 100%;">
+          <div class="acciones" style="flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 10px; width: 100%;">
               <button id="btn-vote-no" class="btn" style="flex: 1; border-color: var(--vino); color: var(--vino);" data-target="${partner.uid}">No</button>
               <button id="btn-vote-yes" class="btn si" style="flex: 1;" data-target="${partner.uid}">Sí</button>
             </div>
-            <button id="btn-safeword" class="btn" style="border-color: var(--vino); color: var(--vino); width: 100%; font-weight: 700; font-size: 11px;">⚠️ Solicitar Asistencia Discreta</button>
+            <button id="btn-safeword" class="btn" style="border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); width: 100%; font-weight: 700; font-size: 11px;">⚠️ Solicitar Asistencia Discreta</button>
           </div>
         </div>
       `;
-      // Iniciar timer
       setTimeout(() => this.startTimer(300), 100);
     } else {
-      this.stopTimer();
-      // Descanso en Barra (Mesa fantasma)
-      html += `
-        <div class="noche-card escaso" style="text-align: center; padding: 25px 15px;">
-          <svg class="icon-svg" style="color: var(--luz); width: 36px; height: 36px; margin-bottom: 12px;"><use href="#icon-chip"></use></svg>
-          <h3 style="font-family: var(--font-display); font-size: 22px; margin-bottom: 6px;">Ronda de Descanso</h3>
-          <p style="color: var(--humo); font-size: 13px; max-width: 250px; margin: 0 auto 15px;">
-            Te toca descansar esta ronda. Pide una bebida en la barra y recarga energías.
-          </p>
-          <div class="aviso" style="margin: 0;">
-            <b>Mesa de Espera:</b> Ve a la barra. Te reincorporas la próxima ronda.
+      // Mostrar ticket de Reserva / Pasaporte QR Oficial
+      container.innerHTML = `
+        <div class="cab-pant" style="margin-bottom: 12px;">
+          <h3 style="font-family: var(--font-display); font-size: 22px;">Tu reserva</h3>
+          <span style="font-family: var(--font-mono); color: var(--luz); font-weight: 700;">${res.bookingCode}</span>
+        </div>
+        
+        <div class="reserva" style="background: var(--papel); color: var(--tinta); border-radius: 12px; padding: 20px 18px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <p class="res-tit" style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: 0.1em; margin: 0 0 2px;">RONDA</p>
+          <p class="res-sub" style="font-size: 12.5px; color: #555; margin: 0 0 12px;">${res.dayDate}</p>
+          
+          <div class="kv" style="font-size: 12px; margin-bottom: 4px;"><span style="color:#666;">Local</span><b>${res.venueName}</b></div>
+          <div class="kv" style="font-size: 12px; margin-bottom: 10px;"><span style="color:#666;">Dirección</span><b>${res.venueAddress}</b></div>
+          
+          <div class="rule" style="border-color: rgba(0,0,0,0.12); margin: 10px 0 12px;"></div>
+          
+          <p class="mesa-num" style="font-family: var(--font-mono); font-size: 38px; font-weight: 800; color: var(--tinta); margin: 0; line-height: 1; text-align: center;">${res.tableNumber}</p>
+          <p class="mesa-lab" style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: #777; text-align: center; letter-spacing: 0.1em; margin: 2px 0 12px;">Tu mesa de salida</p>
+          
+          <div style="background: rgba(46,107,84,0.12); border: 1px solid rgba(46,107,84,0.3); border-radius: 8px; padding: 8px 10px; margin-bottom: 14px; text-align: center;">
+            <p class="coctel" style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0;">🍸 Incluye: Cóctel de Autor</p>
+            <span style="font-size: 10.5px; color: #444;">${res.cocktailName}</span>
           </div>
+
+          <div class="qr" id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 132px; height: 132px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; padding: 6px; background: #fff; border-radius: 6px;"></div>
+          <p class="res-pie" style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #777; margin: 0;">Enséñalo en barra al llegar para tu cóctel</p>
+        </div>
+
+        <div class="aviso" style="margin-top: 16px; font-size: 11.5px;">
+          ⚠️ No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
         </div>
       `;
+
+      this.renderQRCode('qr-client');
     }
 
-    // Inyectar sección de NFTs
-    html += this.renderNFTsSection();
-    container.innerHTML = html;
-    
     const safeWordBtn = document.getElementById('btn-safeword');
     if (safeWordBtn) {
       safeWordBtn.addEventListener('click', () => this.triggerSafeWord());
@@ -312,24 +478,55 @@ class ClientAppService {
     const btnVoteYes = document.getElementById('btn-vote-yes');
     const btnVoteNo = document.getElementById('btn-vote-no');
     if (btnVoteYes && btnVoteNo) {
-      btnVoteYes.addEventListener('click', () => this.handleVote(btnVoteYes.getAttribute('data-target'), true));
-      btnVoteNo.addEventListener('click', () => this.handleVote(btnVoteNo.getAttribute('data-target'), false));
+      btnVoteYes.addEventListener('click', () => this.handleVote(btnVoteYes.getAttribute('data-target') || '', true));
+      btnVoteNo.addEventListener('click', () => this.handleVote(btnVoteNo.getAttribute('data-target') || '', false));
     }
+  }
 
-    const linkWalletBtn = document.getElementById('btn-link-wallet');
-    if (linkWalletBtn) {
-      linkWalletBtn.addEventListener('click', async () => {
-        const wallet = prompt("Ingresa tu dirección de Wallet Polygon (0x...):");
-        if (wallet && wallet.startsWith("0x") && wallet.length === 42) {
-          Auth.currentUser.wallet_address = wallet;
-          await DB.saveUser(Auth.currentUser);
-          this.renderClientView();
-          alert("✓ Wallet vinculada exitosamente.");
-        } else if (wallet) {
-          alert("Dirección de Wallet inválida. Debe comenzar con 0x y tener 42 caracteres.");
-        }
-      });
+  renderQRCode(elementId: string) {
+    const qr = document.getElementById(elementId);
+    if (!qr) return;
+    qr.innerHTML = '';
+    let s = 103;
+    const rnd = () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+    for (let i = 0; i < 121; i++) {
+      const c = document.createElement('i');
+      const r = Math.floor(i / 11);
+      const co = i % 11;
+      const esquina = (r < 3 && co < 3) || (r < 3 && co > 7) || (r > 7 && co < 3);
+      c.style.background = (esquina || rnd() > 0.48) ? 'var(--tinta)' : 'transparent';
+      c.style.borderRadius = '1px';
+      qr.appendChild(c);
     }
+  }
+
+  showToast(message: string) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--barra-alta);
+      color: var(--luz);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--luz);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      z-index: 9999;
+      pointer-events: none;
+      animation: fadeIn 0.3s ease;
+      white-space: nowrap;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.4s ease';
+      setTimeout(() => toast.remove(), 400);
+    }, 2800);
   }
 }
 
