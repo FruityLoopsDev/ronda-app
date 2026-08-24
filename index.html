@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RONDA — Citas rápidas en días valle</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/assets/ronda-tokens.css">
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <!-- Firebase SDKs (Compat version for simplicity without bundlers, or Modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      connectFirestoreEmulator,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      collection,
+      addDoc,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { 
+      getAuth, 
+      connectAuthEmulator,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { 
+      getFunctions, 
+      connectFunctionsEmulator,
+      httpsCallable 
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-functions.js";
+    
+    window.firebaseModules = { 
+      initializeApp, 
+      getFirestore, 
+      connectFirestoreEmulator, 
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      collection,
+      addDoc,
+      onSnapshot,
+      serverTimestamp,
+      getAuth, 
+      connectAuthEmulator,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged,
+      getFunctions,
+      connectFunctionsEmulator,
+      httpsCallable
+    };
+  </script>
+
+    <style>
+      .ronda-input {
+        margin-bottom: 10px; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); 
+        background: rgba(243,237,226,.06); color: var(--papel); outline: none; 
+        font-family: 'Space Grotesk', sans-serif; width: 100%; box-sizing: border-box;
+      }
+      .ronda-input:focus { border-color: var(--ambar); }
+      .noche-card.lobby-card { border: 1px solid var(--linea); padding: 15px; text-align: left; }
+      .noche-card.lobby-card.escaso { border-color: var(--ambar); }
+      .noche-card.lobby-card.ok { border-color: var(--botella); }
+      .noche-card.lobby-card h4 { font-family: var(--font-display); font-size: 20px; margin: 4px 0 8px; }
+      .noche-card.lobby-card .meta { font-family: var(--font-mono); font-size: 10px; color: var(--humo); text-transform: uppercase; letter-spacing: 0.05em; }
+      .noche-card.lobby-card .price { font-size: 22px; font-weight: 700; margin-top: 10px; color: var(--luz); }
+      .btn-outline { background: transparent; border: 1px solid var(--ambar); color: var(--ambar); border-radius: 20px; padding: 4px 12px; font-size: 10px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer;}
+      .btn-outline.verde { border-color: var(--botella); color: var(--botella); }
+      .btn-outline.gris { border-color: var(--linea); color: var(--humo); }
+      
+      /* Animación de Login */
+      @keyframes loginSuccess {
+        0% { transform: scale(1); opacity: 1; filter: blur(0); }
+        50% { transform: scale(1.05); filter: blur(2px); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; filter: blur(0); }
+      }
+      .login-anim {
+        animation: loginSuccess 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      }
+      
+      /* Modales Elegantes Mobile-First */
+      .modal-overlay .tel { width: 100%; max-width: 400px; margin: auto; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-radius: 20px; overflow: hidden; }
+      .modal-overlay .tel-in { background: var(--noche); border-radius: 20px; border: 1px solid rgba(243,237,226,0.1); padding: 30px 20px; }
+      
+      /* Footer */
+      .ronda-footer {
+        text-align: center;
+        padding: 30px 0;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--humo);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-top: auto;
+      }
+    </style>
+    </head>
+<body>
+  <!-- Sprite de Iconos Vectoriales RONDA -->
+  <div style="display: none;">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="icon-cronometro" viewBox="0 0 24 24">
+          <line x1="9" y1="2" x2="15" y2="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></line>
+          <circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+          <line x1="12" y1="13" x2="12" y2="7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></line>
+        </symbol>
+        <symbol id="icon-mesa" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+          <circle cx="12" cy="12" r="2.4" fill="currentColor"></circle>
+        </symbol>
+        <symbol id="icon-mapa-mesas" viewBox="0 0 24 24">
+          <circle cx="6" cy="6" r="3" fill="currentColor"></circle>
+          <circle cx="18" cy="6" r="3" fill="currentColor"></circle>
+          <circle cx="6" cy="18" r="3" fill="currentColor"></circle>
+          <circle cx="18" cy="18" r="3" fill="currentColor"></circle>
+          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        </symbol>
+        <symbol id="icon-chip" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="7" fill="currentColor"></circle>
+        </symbol>
+        <symbol id="icon-reserva" viewBox="0 0 24 24">
+          <rect x="5" y="3" width="14" height="18" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1.6 2.2"></rect>
+          <line x1="8" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="1.4"></line>
+          <line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="1.4"></line>
+          <line x1="8" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.4"></line>
+        </symbol>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Modal: Completar Perfil -->
+  <div id="modal-profile" class="modal-overlay">
+    <div class="tel">
+      <div class="tel-in" style="min-height: auto; padding: 20px;">
+        <div class="status"><span>RONDA</span><span>Perfil</span></div>
+        <div class="pant text-center" style="text-align: center; padding: 0;">
+          <h3 class="logo" style="font-size: 32px; margin-bottom: 10px;">R<em>O</em>NDA</h3>
+          <p class="detalle" style="margin-bottom: 20px;">Por favor, completa tus datos para ingresar al evento.</p>
+          <div class="acciones" style="flex-direction: column; gap: 10px;">
+            <input type="text" id="profile-name" placeholder="Nombre completo" style="padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif;">
+            <input type="number" id="profile-age" placeholder="Edad" min="18" max="99" style="padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif;">
+            
+            <select id="profile-gender">
+              <option value="" disabled selected>Mi género</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+              <option value="X">No binario</option>
+            </select>
+            
+            <select id="profile-orientation" style="padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif;">
+              <option value="" disabled selected>Busco conocer</option>
+              <option value="F">Mujeres</option>
+              <option value="M">Hombres</option>
+              <option value="A">Todos / Cualquiera</option>
+            </select>
+
+            <div id="kyc-container" style="margin-top: 10px; border: 1px dashed var(--linea); padding: 10px; border-radius: 8px; position: relative;">
+              <p style="font-size: 11px; color: var(--luz); margin-bottom: 5px;">Verificación Biométrica Obligatoria</p>
+              <video id="kyc-video" style="width: 100%; border-radius: 8px; display: none;" autoplay playsinline></video>
+              <canvas id="kyc-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;"></canvas>
+              <button id="btn-start-kyc" class="btn" style="width: 100%; font-size: 12px; margin-bottom: 5px;">📸 Iniciar Verificación</button>
+              <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Muestra tu rostro y tu documento a la cámara</p>
+            </div>
+
+            <button id="btn-save-profile" class="btn ambar" style="margin-top: 10px;" disabled>Guardar Perfil</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="wrap">
+
+  <header class="top" style="position: relative;">
+    <div class="marca" style="justify-content: center; width: 100%;">
+      <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
+        <h1 class="logo">R<em>O</em>NDA</h1>
+      </div>
+    </div>
+    <div id="user-menu" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 10px;"></div>
+  </header>
+
+  
+  <!-- Vista: Login / Auth -->
+  <section id="view-auth" class="panel on">
+    <div class="fila" style="justify-content: center; margin-top: 40px;">
+      <div class="tel">
+        <div class="tel-in" style="min-height: auto; padding-bottom: 20px;">
+          <div class="status"><span>RONDA</span><span>Auth</span></div>
+          <div class="pant text-center" style="text-align: center;">
+            <div class="cab-pant" style="justify-content: center;">
+              <h3>Bienvenido</h3>
+            </div>
+            <p class="detalle" style="margin-bottom: 20px;">Inicia sesión o crea una cuenta.</p>
+            
+            <!-- FORM LOGIN -->
+            <div id="login-form" class="acciones" style="flex-direction: column;">
+              <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
+              <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
+              <button id="btn-real-login" class="btn ambar">Ingresar</button>
+              <button id="btn-show-register" class="btn" style="background: transparent; margin-top: 10px; font-size: 12px;">¿No tienes cuenta? Regístrate</button>
+            </div>
+
+            <!-- FORM REGISTRO SUTIL (2 PASOS) -->
+            <div id="register-form" class="acciones" style="flex-direction: column; display: none;">
+              
+              <!-- Paso 1 -->
+              <div id="reg-step-1">
+                <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
+                <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input">
+                <button id="btn-next-step" class="btn ambar">Continuar</button>
+              </div>
+
+              <!-- Paso 2 -->
+              <div id="reg-step-2" style="display: none; text-align: left;">
+                <p style="font-size: 11px; margin-bottom: 10px; color: var(--humo);">Último paso para completar tu perfil</p>
+                <input type="text" id="reg-name" placeholder="Tu Nombre (Ej. Juan)" class="ronda-input">
+                <div style="display: flex; gap: 10px;">
+                  <input type="number" id="reg-age" placeholder="Edad" class="ronda-input" style="flex: 1;">
+                  <select id="reg-gender" class="ronda-input" style="flex: 1;">
+                    <option value="" disabled selected>Género</option>
+                    <option value="Hombre">Hombre</option>
+                    <option value="Mujer">Mujer</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <select id="reg-interest" class="ronda-input" style="margin-top: 10px; width: 100%;">
+                  <option value="" disabled selected>Me interesa conocer...</option>
+                  <option value="Mujeres">Mujeres</option>
+                  <option value="Hombres">Hombres</option>
+                  <option value="Ambos">Ambos</option>
+                </select>
+                <button id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
+              </div>
+
+              <button id="btn-show-login" class="btn" style="background: transparent; margin-top: 10px; font-size: 12px;">Volver al Login</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vista: Lobby / Discovery (Esta Semana) -->
+  <section id="view-lobby" class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <h2 class="h2" style="font-size: 42px; line-height: 1.1; margin-bottom: 20px;">Esta<br>semana</h2>
+      <div style="text-align: right; color: var(--humo); font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;">
+        25-34 - Zona G
+      </div>
+    </div>
+    
+    <div class="fila" style="justify-content: center;">
+      <div class="tel" style="width: 100%; max-width: 400px; padding: 0;">
+        <div class="tel-in" style="min-height: auto; padding: 15px 10px; background: transparent; border: none; box-shadow: none;">
+          
+          <div id="discovery-feed" style="display: flex; flex-direction: column; gap: 15px;">
+            <!-- Renderizado dinámicamente desde client.ts -->
+          </div>
+
+          <div style="border: 1px dashed var(--ambar); border-radius: 12px; padding: 15px; margin-top: 20px; font-size: 11px; color: var(--humo); line-height: 1.4;">
+            <p style="margin: 0;">Si el jueves no se equilibra antes de las <b>20:00 del martes</b>, se cancela y te devolvemos el importe + $20.000 de saldo.</p>
+          </div>
+          
+          <div style="text-align: center; margin-top: 20px; font-family: var(--font-mono); font-size: 9px; color: var(--humo); letter-spacing: 0.1em;">
+            DESCUBRIR - PRECIO POR ESCASEZ DE LADO
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vista: Cliente -->
+  <section id="view-client" class="panel">
+    <p class="rotulo">Lado consumidor</p>
+    <h2 class="h2">Eliges la noche, no la persona</h2>
+    <div id="client-content">Cargando perfil...</div>
+    
+    <div class="fila" style="margin-top: 20px;">
+      <!-- Tarjeta de Reserva de ejemplo -->
+      <div>
+        <div class="tel"><div class="tel-in">
+          <div class="status"><span>20:12 <span id="offline-indicator" style="display:none; color: #ff5252; font-size: 10px; margin-left: 4px;">🔴 Local</span></span><span>Confirmada</span></div>
+          <div class="pant">
+            <div class="cab-pant"><h3>Tu reserva</h3><span>#RND-4471</span></div>
+            <div class="reserva">
+              <p class="res-tit">RONDA</p>
+              <p class="res-sub">Martes 25 de marzo · 20:00</p>
+              <div class="kv"><span>Local</span><b>Bar Trinquete</b></div>
+              <div class="kv"><span>Dirección</span><b>Cra. 4 #52-84</b></div>
+              <div class="rule"></div>
+              <p class="mesa-num">07</p>
+              <p class="mesa-lab">Tu mesa de salida</p>
+              <p class="coctel">🍹 Incluye: Coctel de autor</p>
+              <div class="qr" id="qr" aria-label="Código de acceso"></div>
+              <p class="res-pie">Enséñalo en barra al llegar</p>
+            </div>
+            <div class="aviso" style="margin-top:22px">No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vista: Anfitrión (Bar) -->
+  <section id="view-admin" class="panel">
+    <p class="rotulo">Producto en sala</p>
+    <h2 class="h2">90 minutos, 9 rondas, una campana</h2>
+    <div id="admin-content">Cargando sala...</div>
+    
+    <div class="fila" style="margin-top: 20px;">
+      <div>
+        <div class="tel"><div class="tel-in">
+          <div class="status"><span>20:34</span><span>Bar Trinquete</span></div>
+          <div class="pant">
+            <div class="ronda-head">
+              <span class="ronda-n" id="rotulo-ronda">Ronda 4 de 9</span>
+              <span class="chip ambar" id="estado-ronda">En marcha</span>
+            </div>
+            <p class="crono" id="crono">05:12</p>
+            <div class="progreso"><i id="barra-crono" style="width:86%"></i></div>
+
+            <div class="frente">
+              <h4 id="nombre">Marta</h4>
+              <p id="edad">31 años · mesa 7</p>
+            </div>
+
+            <div class="acciones">
+              <button class="btn" id="btn-no">No</button>
+              <button class="btn si" id="btn-si">Sí</button>
+            </div>
+            <div class="campana" id="campana">🔔 <span>Al sonar la campana pasas a la <b>mesa 3</b>.</span></div>
+            <div class="mapa" id="mapa"></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid var(--linea); font-family: var(--font-mono); font-size: 10px; color: var(--humo); display: flex; justify-content: space-between; align-items: center;">
+    <span>RONDA System © 2026</span>
+    <span>v2.0.4-prod</span>
+  </footer>
+  <!-- Animación Flash Overlay (Opcional para login) -->
+  <div id="login-flash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--ambar); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;"></div>
+
+  <footer class="ronda-footer">
+    Hecho por amor ❤️ a Colombia 🇨🇴 <br>
+    <span style="opacity: 0.5; margin-top: 5px; display: inline-block;">v1.0.1</span>
+  </footer>
+</div>
+
+<script type="module" src="/src/app.ts"></script>
+
+<!-- Scripts decorativos de la maqueta adaptados -->
+<script>
+/* ---- QR decorativo determinista ---- */
+const qr=document.getElementById('qr');
+if(qr){
+  let s=99;
+  const rnd=()=>(s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff;
+  for(let i=0;i<121;i++){
+    const c=document.createElement('i');
+    const r=Math.floor(i/11),co=i%11;
+    const esquina=(r<3&&co<3)||(r<3&&co>7)||(r>7&&co<3);
+    c.style.background = (esquina||rnd()>.48) ? 'var(--tinta)' : 'transparent';
+    qr.appendChild(c);
+  }
+}
+</script>
+</body>
+</html>

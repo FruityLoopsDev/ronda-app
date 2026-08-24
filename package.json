@@ -1,0 +1,35 @@
+{
+  "name": "ronda-app",
+  "version": "1.0.0",
+  "description": "> **Plataforma B2B2C para la reactivación comercial de bares y gastrobares en días de baja afluencia.**   > Citas rápidas (speed dating) de 90 minutos con garantía de equilibrio, verificación de identidad y algoritmo de rotación con memoria.   > **Versión:** 1.0 (Planificación e Identidad) · **Mercado Objetivo:** Bogotá, Colombia (Zona G, Quinta Camacho y Chapinero Alto).",
+  "main": "build.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FruityLoopsDev/ronda-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/FruityLoopsDev/ronda-app/issues"
+  },
+  "homepage": "https://github.com/FruityLoopsDev/ronda-app#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "firebase": "^12.18.0",
+    "localforage": "^1.10.0"
+  }
+}

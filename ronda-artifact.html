@@ -60,14 +60,14 @@
     <!-- Barra Superior / Navegación -->
     <header id="app-header" class="bg-purple-800 text-white p-4 shadow-md flex justify-between items-center z-10">
       <h1 class="text-xl font-bold tracking-wider">RONDA</h1>
-      <nav id="role-nav" class="hidden space-x-4 text-sm font-medium">
+      <nav id="role-nav" class="space-x-4 text-sm font-medium">
         <button id="nav-client" class="hover:text-purple-300">Cliente</button>
         <button id="nav-admin" class="hover:text-purple-300">Anfitrión</button>
         <button id="nav-network" class="hover:text-purple-300">Red</button>
         <button id="nav-superadmin" class="hover:text-purple-300">Super Admin</button>
       </nav>
       <div id="user-menu" class="text-sm">
-        <button id="btn-login" class="bg-purple-600 px-3 py-1 rounded hover:bg-purple-500">Ingresar</button>
+
       </div>
     </header>
 
@@ -75,11 +75,11 @@
     <main id="main-content" class="flex-1 overflow-y-auto relative w-full h-full bg-gray-50">
       
       <!-- Vista: Login / Auth -->
-      <section id="view-auth" class="view-section active flex items-center justify-center h-full">
+      <section id="view-auth" class="view-section hidden flex items-center justify-center h-full">
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full text-center">
           <h2 class="text-2xl font-bold text-purple-800 mb-6">Bienvenido a Ronda</h2>
-          <button id="btn-demo-login" class="w-full bg-blue-600 text-white py-2 rounded mb-4 hover:bg-blue-700">Entrar modo Demo (Cliente)</button>
-          <button id="btn-demo-host" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Entrar modo Demo (Anfitrión)</button>
+          
+          
         </div>
       </section>
 

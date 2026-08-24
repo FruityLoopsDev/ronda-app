@@ -1,6 +1,9 @@
+import { DB } from './db.js';
+import { RondaConfig } from './firebase-config.js';
+
 // seed.js: Poblar la base de datos en memoria para el modo DEMO
 
-if (window.RondaConfig.isDemo) {
+if (RondaConfig.isDemo) {
   console.log("Poblando base de datos en memoria (Modo Demo)...");
 
   const demoUsers = [
@@ -28,9 +31,9 @@ if (window.RondaConfig.isDemo) {
   };
 
   // Guardar en DB simulada
-  demoUsers.forEach(u => window.DB.saveUser(u));
-  window.DB.memoryDb.venues['v1'] = demoVenue;
-  window.DB.saveEvent(demoEvent);
+  demoUsers.forEach(u => DB.saveUser(u));
+  DB.memoryDb.venues['v1'] = demoVenue;
+  DB.saveEvent(demoEvent);
 
-  console.log("Base de datos poblada.", window.DB.memoryDb);
+  console.log("Base de datos poblada.", DB.memoryDb);
 }

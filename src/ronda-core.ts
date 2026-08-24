@@ -1,7 +1,7 @@
 // ronda-core.js: Motor Algorítmico MEM-RR (Memory-Driven Round-Robin)
 // Patente pendiente: Algoritmo de rotación B2B2C con evasión de colisiones históricas.
 
-class RondaEngine {
+class RondaEngineService {
   constructor() {
     // Matriz de colisiones históricas: trackea cuántas veces i y j se han cruzado.
     this.collisionMatrix = new Map();
@@ -102,4 +102,4 @@ class RondaEngine {
   }
 }
 
-window.RondaEngine = new RondaEngine();
+export const RondaEngine = new RondaEngineService();

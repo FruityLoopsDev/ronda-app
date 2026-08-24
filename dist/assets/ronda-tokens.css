@@ -1,0 +1,43 @@
+/* RONDA — Sistema de marca v2.0 — tokens de diseño */
+:root {
+  /* Color */
+  --noche: #16101B;
+  --barra: #221826;
+  --barra-alta: #2C2033;
+  --luz: #F0A830;
+  --botella: #2E6B54;
+  --vino: #9B2748;
+  --papel: #F3EDE2;
+  --tinta: #1B1520;
+  --humo: rgba(243, 237, 226, .62);
+  --linea: rgba(243, 237, 226, .14);
+
+  /* Radios */
+  --r: 14px;
+  --r-lg: 20px;
+  --r-papel: 8px;
+
+  /* Espaciado (base 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Breakpoints (referencia, usar en media queries) */
+  --bp-tablet: 481px;
+  --bp-desktop: 1025px;
+
+  /* Tipografia */
+  --font-display: 'Bodoni Moda', Georgia, serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Transiciones */
+  --ease-fast: 150ms ease;
+  --ease-medium: 250ms ease-out;
+  --ease-timer: 400ms ease;
+}

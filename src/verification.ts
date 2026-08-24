@@ -1,3 +1,6 @@
+import { DB } from './db.js';
+import { RondaConfig } from './firebase-config.js';
+
 // verification.js: Módulo de Seguridad y Geolocalización
 // Implementa Geolocalización, OCR (Tesseract.js) y Biometría facial (MediaPipe)
 
@@ -37,8 +40,8 @@ class VerificationService {
     
     // Aquí se conectaría a Firebase GeoQueries (GeoFirestore o simular distancia)
     // Para el MVP, devolvemos el evento demo 'e1' del 'v1'
-    if (window.RondaConfig.isDemo) {
-       return [window.DB.memoryDb.events['e1']];
+    if (RondaConfig.isDemo) {
+       return [DB.memoryDb.events['e1']];
     }
     return [];
   }
@@ -48,9 +51,9 @@ class VerificationService {
   // Carga dinámica de Tesseract y MediaPipe desde CDN
   async loadVerificationLibraries() {
     console.log("Cargando librerías de seguridad...");
-    await window.loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js");
-    await window.loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js");
-    await window.loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js");
+    
+    
+    
     console.log("Librerías cargadas.");
   }
 
@@ -72,29 +75,53 @@ class VerificationService {
       minDetectionConfidence: 0.5
     });
     
-    faceDetection.onResults((results) => {
-      // Dibujar resultados en canvas y verificar si hay una persona viva
-      const canvasCtx = canvasElement.getContext('2d');
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-      
-      if (results.detections.length > 0) {
-        // Se detectó un rostro
-        console.log("Rostro detectado. Procediendo a validar vivo/falso...");
-        // TODO: Lógica adicional anti-spoofing
-      }
-    });
+    return new Promise((resolve, reject) => {
+      let isOcrRunning = false;
 
-    // Iniciar Cámara
-    const camera = new Camera(videoElement, {
-      onFrame: async () => {
-        await faceDetection.send({image: videoElement});
-      },
-      width: 640,
-      height: 480
+      faceDetection.onResults(async (results) => {
+        // Dibujar resultados en canvas
+        const canvasCtx = canvasElement.getContext('2d');
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+        
+        if (results.detections.length > 0) {
+          // Se detectó un rostro
+          const statusEl = document.getElementById('kyc-status');
+          if (statusEl && !isOcrRunning) {
+            statusEl.textContent = "Rostro detectado. Escaneando ID...";
+          }
+
+          if (!isOcrRunning) {
+            isOcrRunning = true;
+            try {
+              const imageDataUrl = canvasElement.toDataURL('image/jpeg');
+              const ocrResult = await this.scanDocumentOCR(imageDataUrl);
+              
+              if (ocrResult.success) {
+                if (this.camera) this.camera.stop();
+                resolve(true);
+              } else {
+                isOcrRunning = false;
+              }
+            } catch (err) {
+              console.error("OCR Falló:", err);
+              isOcrRunning = false;
+            }
+          }
+        }
+      });
+
+      // Iniciar Cámara
+      this.camera = new Camera(videoElement, {
+        onFrame: async () => {
+          await faceDetection.send({image: videoElement});
+        },
+        width: 640,
+        height: 480
+      });
+      this.camera.start();
+      console.log("Cámara iniciada para verificación real.");
     });
-    camera.start();
-    console.log("Cámara iniciada para verificación.");
   }
 
   async scanDocumentOCR(imageBlobOrUrl) {
@@ -105,9 +132,10 @@ class VerificationService {
     await worker.terminate();
     
     // Parseo de texto para validar cédula (CC de Colombia)
-    const isValid = ret.data.text.includes("REPUBLICA DE COLOMBIA") || ret.data.text.includes("CEDULA DE CIUDADANIA");
+    const upperText = ret.data.text.toUpperCase();
+    const isValid = upperText.includes("REPUBLICA DE COLOMBIA") || upperText.includes("CEDULA DE CIUDADANIA");
     return { success: isValid, rawText: ret.data.text };
   }
 }
 
-window.Verification = new VerificationService();
+export const Verification = new VerificationService();

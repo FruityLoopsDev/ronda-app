@@ -58,4 +58,4 @@ class MatchService {
   }
 }
 
-window.MatchService = new MatchService();
+export const MatchService = new MatchService();
