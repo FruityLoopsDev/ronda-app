@@ -354,29 +354,38 @@ Total Duration: ${c-l}ms`),J.resolve({didRun:!0,sequenceNumbersCollected:r,targe
             </div>
           </div>
 
-          <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
-          
-          <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
+          ${r?`
+            <div style="background: rgba(46,107,84,0.12); border: 1.5px dashed var(--botella); border-radius: 12px; padding: 14px; text-align: center; margin: 8px 0 4px;">
+              <span style="font-size: 24px; display: block; margin-bottom: 2px;">🍸</span>
+              <b style="color: var(--botella); font-family: var(--font-display); font-size: 15px; display: block;">Cóctel Canjeado</b>
+              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">Acceso a sala validado · Asiento: Mesa ${n.tableNumber}</span>
+            </div>
+          `:`
+            <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
+            <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
+          `}
         </div>
 
-        <!-- Acciones Post-Reserva (Mapas, Calendario, Gestionar, Check-in Demo) -->
+        <!-- Acciones Post-Reserva -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 18px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <a href="${n.mapsUrl||`#`}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-              📍 Maps / Waze
-            </a>
-            
-            <button id="btn-add-calendar" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-              📅 Calendario
-            </button>
-          </div>
+          ${r?``:`
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <a href="${n.mapsUrl||`#`}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                📍 Maps / Waze
+              </a>
+              
+              <button id="btn-add-calendar" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                📅 Calendario
+              </button>
+            </div>
 
-          <button id="btn-open-manage-from-ticket" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ⚙️ Gestionar / Cambiar Sala o Cancelar
-          </button>
+            <button id="btn-open-manage-from-ticket" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              ⚙️ Gestionar / Cambiar Sala o Cancelar
+            </button>
+          `}
 
           <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ${r?`🔔 Iniciar Ronda 1 (Demo)`:`🍸 Simular Llegada al Bar (Canjear Cóctel)`}
+            ${r?`🔔 Iniciar Ronda 1 (Tomar Asiento)`:`🍸 Simular Llegada al Bar (Canjear Cóctel)`}
           </button>
 
           <button id="btn-sim-direct-10am" class="btn" style="font-size: 11px; color: var(--luz); border-color: rgba(240,168,48,.3); background: rgba(240,168,48,.06); padding: 9px; margin-top: 4px;">
@@ -384,9 +393,11 @@ Total Duration: ${c-l}ms`),J.resolve({didRun:!0,sequenceNumbersCollected:r,targe
           </button>
         </div>
 
-        <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
-          ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
-        </div>
+        ${r?``:`
+          <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
+            ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
+          </div>
+        `}
       `,this.renderQRCode(`qr-client`),document.getElementById(`btn-open-manage-from-ticket`)?.addEventListener(`click`,()=>{this.openManageReservationsModal()}),document.getElementById(`btn-add-calendar`)?.addEventListener(`click`,()=>{let e=new Date(Date.now()+864e5),t=new Date(e.getTime()+63e5);bx(`Cita RONDA en ${n.venueName}`,`Tu reserva confirmada (${n.bookingCode}). Mesa de salida: ${n.tableNumber}. Incluye cóctel de autor: ${n.cocktailName}.`,n.venueAddress,e,t),this.showToast(`📅 Archivo de calendario descargado`)}),document.getElementById(`btn-simulate-checkin`)?.addEventListener(`click`,async()=>{r?(this.currentEvent={id:n.eventId,currentRound:1,activeMatches:[{tableId:n.tableNumber,p1:{uid:t.uid,name:t.name||`Tú`},p2:{uid:`user_camila_demo`,name:`Camila (28) · Arquitecta`}}]},this.showToast(`🔔 ¡Campanada! Toma asiento en la mesa `+n.tableNumber),this.renderClientView()):(n.status=`checked_in`,t.activeReservation=n,await mx.saveUser(t),this.showToast(`🍸 ¡Cóctel canjeado en barra! Disfruta la previa.`),this.renderClientView())}),document.getElementById(`btn-sim-direct-10am`)?.addEventListener(`click`,async()=>{t.postEventState={eventId:n.eventId,venueName:n.venueName,dayDate:n.dayDate,revealTimeIso:new Date(Date.now()+504e5).toISOString(),isRevealed:!1,matches:[{id:`match_camila`,name:`Camila Ospina`,age:28,profession:`Arquitecta de Interiores`,zone:`Zona G`,cocktail:`Negroni Ahumado`,icebreakerSummary:`Ambos coincidieron en gusto por el Negroni Ahumado, diseño urbano y viajes por Colombia.`,whatsappPhone:`573124567890`}]},await mx.saveUser(t),this.showToast(`⏳ ¡Correspondencia sellada! Abriendo cuenta atrás a las 10:00 AM.`),this.renderClientView()})}let i=document.getElementById(`btn-safeword`);i&&i.addEventListener(`click`,()=>this.triggerSafeWord());let a=document.getElementById(`btn-vote-yes`),o=document.getElementById(`btn-vote-no`);a&&o&&(a.addEventListener(`click`,()=>this.handleVote(a.getAttribute(`data-target`)||``,!0)),o.addEventListener(`click`,()=>this.handleVote(o.getAttribute(`data-target`)||``,!1)))}renderQRCode(e){let t=document.getElementById(e);if(!t)return;t.innerHTML=``;let n=103,r=()=>(n=n*1103515245+12345&2147483647)/2147483647;for(let e=0;e<121;e++){let n=document.createElement(`i`),i=Math.floor(e/11),a=e%11,o=i<3&&a<3||i<3&&a>7||i>7&&a<3;n.style.background=o||r()>.48?`var(--tinta)`:`transparent`,n.style.borderRadius=`1px`,t.appendChild(n)}}showToast(e){let t=document.createElement(`div`);t.style.cssText=`
       position: fixed;
       bottom: 30px;

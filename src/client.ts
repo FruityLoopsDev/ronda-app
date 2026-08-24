@@ -1182,29 +1182,38 @@ class ClientAppService {
             </div>
           </div>
 
-          <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
-          
-          <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
+          ${!isCheckedIn ? `
+            <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
+            <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
+          ` : `
+            <div style="background: rgba(46,107,84,0.12); border: 1.5px dashed var(--botella); border-radius: 12px; padding: 14px; text-align: center; margin: 8px 0 4px;">
+              <span style="font-size: 24px; display: block; margin-bottom: 2px;">🍸</span>
+              <b style="color: var(--botella); font-family: var(--font-display); font-size: 15px; display: block;">Cóctel Canjeado</b>
+              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">Acceso a sala validado · Asiento: Mesa ${res.tableNumber}</span>
+            </div>
+          `}
         </div>
 
-        <!-- Acciones Post-Reserva (Mapas, Calendario, Gestionar, Check-in Demo) -->
+        <!-- Acciones Post-Reserva -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 18px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <a href="${res.mapsUrl || '#'}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-              📍 Maps / Waze
-            </a>
-            
-            <button id="btn-add-calendar" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
-              📅 Calendario
-            </button>
-          </div>
+          ${!isCheckedIn ? `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <a href="${res.mapsUrl || '#'}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                📍 Maps / Waze
+              </a>
+              
+              <button id="btn-add-calendar" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 11.5px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                📅 Calendario
+              </button>
+            </div>
 
-          <button id="btn-open-manage-from-ticket" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ⚙️ Gestionar / Cambiar Sala o Cancelar
-          </button>
+            <button id="btn-open-manage-from-ticket" class="btn" style="background: rgba(243,237,226,.06); border-color: var(--linea); font-size: 12px; padding: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              ⚙️ Gestionar / Cambiar Sala o Cancelar
+            </button>
+          ` : ''}
 
           <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Demo)' : '🍸 Simular Llegada al Bar (Canjear Cóctel)'}
+            ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Tomar Asiento)' : '🍸 Simular Llegada al Bar (Canjear Cóctel)'}
           </button>
 
           <button id="btn-sim-direct-10am" class="btn" style="font-size: 11px; color: var(--luz); border-color: rgba(240,168,48,.3); background: rgba(240,168,48,.06); padding: 9px; margin-top: 4px;">
@@ -1212,9 +1221,11 @@ class ClientAppService {
           </button>
         </div>
 
-        <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
-          ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
-        </div>
+        ${!isCheckedIn ? `
+          <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
+            ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar: pierdes la entrada y <b>1 strike</b>.
+          </div>
+        ` : ''}
       `;
 
       this.renderQRCode('qr-client');
