@@ -865,9 +865,9 @@
         <div class="bubble-circle">📍</div>
         <span class="bubble-label" id="hl-zone-val">Zona G</span>
       </div>
-      <div class="highlight-bubble" onclick="alert('🛡️ Verificación Biométrica completada. Cero perfiles falsos.');">
-        <div class="bubble-circle">🛡️</div>
-        <span class="bubble-label">KYC 100%</span>
+      <div class="highlight-bubble" onclick="Profile.openSettingsModal();">
+        <div class="bubble-circle">⚙️</div>
+        <span class="bubble-label">Ajustes</span>
       </div>
       <div class="highlight-bubble" onclick="document.querySelector('[data-tab=passport]').click();">
         <div class="bubble-circle">🎫</div>
@@ -930,6 +930,17 @@
 
         <div class="pant" style="margin-top: 4px;">
           
+          <!-- KYC Biometría & Cédula Verificada -->
+          <div style="background: rgba(46,107,84,.1); border: 1px solid rgba(46,107,84,.35); border-radius: var(--r); padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <p style="font-size: 11px; color: #79D3AC; font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 3px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                🛡️ VERIFICACIÓN BIOMÉTRICA (KYC)
+              </p>
+              <span style="font-size: 11px; color: var(--humo);">Cédula de Colombia validada · Cero perfiles falsos</span>
+            </div>
+            <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px;">100% OK</span>
+          </div>
+
           <!-- Safeword / Asistencia Discreta -->
           <div style="background: rgba(240,168,48,.06); border: 1px dashed rgba(240,168,48,.35); border-radius: var(--r); padding: 14px; margin-bottom: 16px;">
             <p style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 6px; font-weight: 700; display: flex; align-items: center; gap: 6px;">

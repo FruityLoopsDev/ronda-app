@@ -73,6 +73,23 @@ export interface Event {
   activeMatches?: Match[];
 }
 
+function cleanFirestoreData(obj: any): any {
+  if (obj === null || obj === undefined) return null;
+  if (Array.isArray(obj)) {
+    return obj.map(item => cleanFirestoreData(item)).filter(item => item !== undefined);
+  }
+  if (typeof obj === 'object') {
+    const cleaned: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== undefined) {
+        cleaned[key] = cleanFirestoreData(value);
+      }
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
 export class DatabaseInterface {
   isDemo: boolean;
   memoryDb: {
@@ -108,7 +125,8 @@ export class DatabaseInterface {
       return user;
     }
     const docRef = doc(this._getFirestore(), 'users', user.uid);
-    await setDoc(docRef, user, { merge: true });
+    const sanitized = cleanFirestoreData(user);
+    await setDoc(docRef, sanitized, { merge: true });
     return user;
   }
 

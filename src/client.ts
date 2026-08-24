@@ -60,9 +60,9 @@ export const RONDA_EVENTS: RondaEvent[] = [
     priceFormatted: '$45.000',
     priceSub: 'Sube a $55.000 al equilibrarse',
     status: 'escaso',
-    statusLabel: 'Escaso',
+    statusLabel: 'Por confirmar',
     chipClass: 'ambar',
-    balanceTag: 'Tu lado va escaso',
+    balanceTag: 'Tu lado por confirmar',
     balancePercent1: 62,
     balancePercent2: 38,
     registeredText: '12 apuntadas',
@@ -393,7 +393,7 @@ class ClientAppService {
 
     try {
       user.activeEventId = evt.id;
-      user.activeWaitlist = undefined;
+      delete user.activeWaitlist;
       user.activeReservation = {
         eventId: evt.id,
         venueName: evt.venueName,
@@ -466,7 +466,7 @@ class ClientAppService {
       if (!user) return;
       const evt = RONDA_EVENTS.find(e => e.id === waitlist.eventId) || RONDA_EVENTS[2];
       user.activeEventId = evt.id;
-      user.activeWaitlist = undefined;
+      delete user.activeWaitlist;
       user.activeReservation = {
         eventId: evt.id,
         venueName: evt.venueName,
@@ -490,7 +490,7 @@ class ClientAppService {
     document.getElementById('btn-leave-waitlist')?.addEventListener('click', async () => {
       const user = Auth.currentUser;
       if (!user) return;
-      user.activeWaitlist = undefined;
+      delete user.activeWaitlist;
       await DB.saveUser(user);
       this.showToast('Has salido de la lista de espera.');
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
