@@ -10,6 +10,8 @@ export interface User {
   username?: string;
   photoURL?: string;
   age?: number;
+  birthDate?: string;
+  zodiacSign?: string;
   gender?: string;
   orientation?: string;
   bio?: string;
@@ -29,15 +31,28 @@ export interface User {
     marketingConsent?: boolean;
   };
   activeEventId?: string;
+  activeWaitlist?: {
+    eventId: string;
+    venueName: string;
+    dayDate: string;
+    position: number;
+    joinedAt: string;
+    status: 'waiting' | 'spot_available';
+  };
   activeReservation?: {
     eventId: string;
     venueName: string;
     venueAddress: string;
+    mapsUrl: string;
     dayDate: string;
     tableNumber: string;
     cocktailName: string;
+    cocktailDesc?: string;
+    cocktailImg?: string;
     bookingCode: string;
     priceFormatted: string;
+    hostTips?: string[];
+    status?: 'confirmed' | 'checked_in' | 'seated';
   };
   wallet_address?: string;
   nfts?: any[];

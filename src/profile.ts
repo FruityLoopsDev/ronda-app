@@ -63,8 +63,9 @@ export class ProfileService {
     // Meta details
     const cocktail = user.favoriteCocktail || 'Negroni Ahumado';
     const zone = (user.preferredZones && user.preferredZones.length > 0) ? user.preferredZones.join(', ') : 'Zona G';
+    const zodiac = user.zodiacSign || '♏ Escorpio';
     if (profileMeta) {
-      profileMeta.innerHTML = `🍸 <b>${cocktail}</b> · 📍 <b>${zone}</b>`;
+      profileMeta.innerHTML = `🍸 <b>${cocktail}</b> · 📍 <b>${zone}</b> · <b>${zodiac}</b>`;
     }
 
     // Avatar image
@@ -92,11 +93,13 @@ export class ProfileService {
     // Populate Tab 1: Sobre Mí
     const aboutGender = document.getElementById('about-gender');
     const aboutOrientation = document.getElementById('about-orientation');
+    const aboutZodiac = document.getElementById('about-zodiac');
     const aboutZones = document.getElementById('about-zones');
     const aboutCocktail = document.getElementById('about-cocktail');
 
     if (aboutGender) aboutGender.textContent = user.gender === 'M' ? 'Hombre' : (user.gender === 'F' ? 'Mujer' : (user.gender || 'No especificado'));
     if (aboutOrientation) aboutOrientation.textContent = user.orientation === 'F' ? 'Mujeres' : (user.orientation === 'M' ? 'Hombres' : (user.orientation || 'Ambos'));
+    if (aboutZodiac) aboutZodiac.textContent = zodiac;
     if (aboutZones) aboutZones.textContent = zone;
     if (aboutCocktail) aboutCocktail.textContent = cocktail;
 

@@ -4,6 +4,7 @@ import { RondaConfig } from './firebase-config.js';
 import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
 import { Profile } from './profile.js';
+import { calculateAge, getZodiacSign } from './utils.js';
 
 // app.js: Orquestador principal de la vista y eventos de RONDA
 
@@ -314,24 +315,72 @@ function initApp() {
     }
   });
 
+  // Cálculo en vivo de edad y signo zodiacal en el registro
+  const regBirthInput = document.getElementById('reg-birthdate') as HTMLInputElement;
+  const regZodiacPreview = document.getElementById('reg-zodiac-preview');
+
+  if (regBirthInput && regZodiacPreview) {
+    const updateZodiacBadge = () => {
+      const birthDate = regBirthInput.value;
+      if (!birthDate) {
+        regZodiacPreview.style.display = 'none';
+        return;
+      }
+      const age = calculateAge(birthDate);
+      const zodiac = getZodiacSign(birthDate);
+
+      if (age < 18) {
+        regZodiacPreview.style.display = 'flex';
+        regZodiacPreview.style.color = 'var(--vino)';
+        regZodiacPreview.style.background = 'rgba(155,39,72,.15)';
+        regZodiacPreview.style.borderColor = 'rgba(155,39,72,.4)';
+        regZodiacPreview.innerHTML = `⚠️ Edad: ${age} años (Debes tener al menos 18 años para ingresar a RONDA)`;
+      } else {
+        regZodiacPreview.style.display = 'flex';
+        regZodiacPreview.style.color = 'var(--luz)';
+        regZodiacPreview.style.background = 'rgba(240,168,48,0.12)';
+        regZodiacPreview.style.borderColor = 'rgba(240,168,48,0.3)';
+        regZodiacPreview.innerHTML = `🎂 <b>${age} años</b> &nbsp;·&nbsp; ${zodiac.emoji}`;
+      }
+    };
+
+    regBirthInput.addEventListener('input', updateZodiacBadge);
+    regBirthInput.addEventListener('change', updateZodiacBadge);
+  }
+
   document.getElementById('btn-real-register')?.addEventListener('click', () => {
     const email = (document.getElementById('reg-email') as HTMLInputElement).value;
     const password = (document.getElementById('reg-password') as HTMLInputElement).value;
-    const name = (document.getElementById('reg-name') as HTMLInputElement).value;
-    const age = parseInt((document.getElementById('reg-age') as HTMLInputElement).value, 10);
+    const name = (document.getElementById('reg-name') as HTMLInputElement).value.trim();
+    const birthDate = (document.getElementById('reg-birthdate') as HTMLInputElement).value;
     const gender = (document.getElementById('reg-gender') as HTMLSelectElement).value;
     const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
 
-    if (!name || !age || !gender || !orientation) {
+    if (!name || !birthDate || !gender || !orientation) {
       alert("Completa todos los datos para crear tu perfil.");
       return;
     }
+
+    const age = calculateAge(birthDate);
+    if (age < 18) {
+      alert("Debes tener al menos 18 años para crear una cuenta en RONDA.");
+      return;
+    }
+
+    const zodiac = getZodiacSign(birthDate);
 
     const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
     btn.textContent = 'Creando cuenta...';
     btn.disabled = true;
 
-    Auth.registerWithEmail(email, password, { name, age, gender, orientation }).then((user) => {
+    Auth.registerWithEmail(email, password, { 
+      name, 
+      birthDate,
+      zodiacSign: zodiac.emoji,
+      age, 
+      gender, 
+      orientation 
+    }).then((user) => {
       // Successfully registered.
       triggerLoginAnimation();
     }).catch(err => {

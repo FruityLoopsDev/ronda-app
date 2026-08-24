@@ -79,6 +79,8 @@ export class AuthService {
         uid: uid,
         role: role,
         name: profileData.name || 'Anónimo',
+        birthDate: profileData.birthDate || '',
+        zodiacSign: profileData.zodiacSign || '',
         age: profileData.age || 0,
         gender: profileData.gender || '',
         orientation: profileData.orientation || '',

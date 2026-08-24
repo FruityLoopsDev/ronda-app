@@ -576,7 +576,7 @@
         color: var(--papel);
       }
     </style>
-      <script type="module" crossorigin src="/assets/index-C2p0d-X5.js"></script>
+      <script type="module" crossorigin src="/assets/index-BiDuvgwo.js"></script>
     </head>
 <body>
   <!-- Sprite de Iconos Vectoriales RONDA -->
@@ -694,21 +694,31 @@
         <div id="reg-step-2" style="display: none; text-align: left;">
           <p style="font-size: 11.5px; margin-bottom: 12px; color: var(--humo);">Último paso para completar tu perfil</p>
           <input type="text" id="reg-name" placeholder="Tu Nombre (Ej. Juan)" class="ronda-input">
+          
+          <!-- Fecha de Nacimiento y Cálculo de Zodíaco en Vivo -->
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); display: block; margin-bottom: 4px;">Fecha de Nacimiento</label>
+            <input type="date" id="reg-birthdate" class="ronda-input" style="margin-bottom: 4px;" max="2008-01-01">
+            <div id="reg-zodiac-preview" style="font-family: var(--font-mono); font-size: 11.5px; color: var(--luz); background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.25); padding: 5px 10px; border-radius: 8px; display: none; margin-top: 4px; align-items: center; gap: 6px;">
+              <!-- e.g. 🎂 29 años · ♏ Escorpio -->
+            </div>
+          </div>
+
           <div style="display: flex; gap: 10px;">
-            <input type="number" id="reg-age" placeholder="Edad" class="ronda-input" style="flex: 1;">
             <select id="reg-gender" class="ronda-input" style="flex: 1;">
               <option value="" disabled selected>Género</option>
               <option value="Hombre">Hombre</option>
               <option value="Mujer">Mujer</option>
               <option value="Otro">Otro</option>
             </select>
+            <select id="reg-interest" class="ronda-input" style="flex: 1;">
+              <option value="" disabled selected>Busco conocer</option>
+              <option value="Mujeres">Mujeres</option>
+              <option value="Hombres">Hombres</option>
+              <option value="Ambos">Ambos</option>
+            </select>
           </div>
-          <select id="reg-interest" class="ronda-input" style="margin-top: 10px; width: 100%;">
-            <option value="" disabled selected>Me interesa conocer...</option>
-            <option value="Mujeres">Mujeres</option>
-            <option value="Hombres">Hombres</option>
-            <option value="Ambos">Ambos</option>
-          </select>
+
           <button id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
         </div>
 
@@ -826,6 +836,7 @@
       <div style="background: rgba(28, 19, 36, 0.65); backdrop-filter: blur(12px); border: 1px solid var(--linea); border-radius: var(--r); padding: 18px; font-size: 12.5px;">
         <div class="kv"><span>Género</span><b id="about-gender">Hombre</b></div>
         <div class="kv"><span>Interés</span><b id="about-orientation">Mujeres</b></div>
+        <div class="kv"><span>Signo Zodíaco</span><b id="about-zodiac">♏ Escorpio</b></div>
         <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
         <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
         <div class="rule" style="margin: 12px 0 10px;"></div>
@@ -1036,10 +1047,13 @@
           <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: var(--r); padding: 16px; margin-bottom: 14px;">
             <div id="modal-event-date" class="dia" style="color: var(--luz); margin-bottom: 4px;">Martes 25 · 20:00</div>
             <h3 id="modal-event-venue" class="local" style="font-size: 22px; margin: 0 0 6px; color: var(--papel);">CARONTE Cocktail Bar</h3>
-            <p id="modal-event-address" style="font-size: 11.5px; color: var(--humo); margin: 0 0 10px; display: flex; align-items: center; gap: 4px;">
+            <p id="modal-event-address" style="font-size: 11.5px; color: var(--humo); margin: 0 0 8px; display: flex; align-items: center; gap: 4px;">
               📍 Cra. 4A #66-22 · Zona G, Bogotá
             </p>
-            <div class="rule" style="margin: 8px 0 10px;"></div>
+            <a id="modal-event-maps-link" href="#" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--luz); background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.3); padding: 5px 10px; border-radius: 999px; text-decoration: none; margin-bottom: 10px;">
+              📍 Abrir ubicación en Google Maps
+            </a>
+            <div class="rule" style="margin: 6px 0 10px;"></div>
             <div class="kv" style="font-size: 11.5px; margin-bottom: 4px;"><span>Dinámica</span><b id="modal-event-rounds">9 rondas de 6 min</b></div>
             <div class="kv" style="font-size: 11.5px; margin-bottom: 4px;"><span>Segmento</span><b id="modal-event-age">25–34 años</b></div>
             <div class="kv" style="font-size: 11.5px; margin-bottom: 0;"><span>Horario</span><b id="modal-event-time">20:00 a 21:45</b></div>
@@ -1061,13 +1075,23 @@
             </div>
           </div>
 
-          <!-- Incluye Cóctel de Autor -->
-          <div style="background: rgba(46,107,84,.12); border: 1px solid rgba(46,107,84,.4); border-radius: var(--r); padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 26px;">🍸</span>
+          <!-- Incluye Cóctel de Autor con Foto Sin Fondo -->
+          <div style="background: rgba(46,107,84,.14); border: 1px solid rgba(46,107,84,.4); border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px;">
+            <img id="modal-event-cocktail-img" src="/assets/coctel-negroni.svg" alt="Cóctel" style="width: 52px; height: 62px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
             <div>
-              <b style="font-size: 12px; color: #79D3AC; display: block;">Incluye: 1er Cóctel de Autor</b>
-              <span id="modal-event-cocktail" style="font-size: 11px; color: var(--humo);">Negroni Ahumado o mocktail premium</span>
+              <b style="font-size: 11.5px; color: #79D3AC; text-transform: uppercase; letter-spacing: 0.05em; display: block;">🍸 Cóctel de Autor Incluido</b>
+              <h4 id="modal-event-cocktail" style="font-size: 14px; font-family: var(--font-display); margin: 2px 0 3px; color: var(--papel);">Negroni Ahumado</h4>
+              <p id="modal-event-cocktail-desc" style="font-size: 11px; color: var(--humo); margin: 0; line-height: 1.35;">Campari infusionado en madera de roble, Vermut Rosso y Gin botánico con piel de naranja caramelizada.</p>
             </div>
+          </div>
+
+          <!-- Recomendaciones del Anfitrión -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px;">
+            <p style="font-size: 11px; font-family: var(--font-mono); color: var(--luz); text-transform: uppercase; font-weight: 700; margin: 0 0 8px; letter-spacing: 0.06em;">
+              💡 TIPS DEL ANFITRIÓN
+            </p>
+            <ul id="modal-event-host-tips" style="margin: 0; padding-left: 14px; list-style: none;">
+            </ul>
           </div>
 
           <!-- Precio y Desglose -->
