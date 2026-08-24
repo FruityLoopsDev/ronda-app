@@ -155,20 +155,62 @@
         object-fit: cover;
       }
       
-      /* Footer */
-      .ronda-footer {
-        width: 100%;
-        padding: 0 0 24px;
-        margin-top: auto;
+      /* Global Responsive Luxury Container */
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 10px 18px 50px;
+        box-sizing: border-box;
       }
       
+      .noche-card {
+        background: rgba(28, 19, 36, 0.65);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(243, 237, 226, 0.09);
+        border-radius: 18px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+      .noche-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(240, 168, 48, 0.35);
+        box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.6);
+      }
+      .noche-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3.5px;
+        background: var(--linea);
+      }
+      .noche-card.escaso::before { background: var(--luz); }
+      .noche-card.ok::before { background: var(--botella); }
+      .noche-card.lleno::before { background: rgba(243, 237, 226, 0.2); }
+      
+      .auth-card {
+        background: rgba(28, 19, 36, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(243, 237, 226, 0.1);
+        border-radius: 24px;
+        padding: 28px 22px;
+        text-align: center;
+      }
+
       /* Responsive container adjustments */
       @media (max-width: 480px) {
-        .wrap { padding: 0 12px 60px; }
+        .wrap { padding: 8px 14px 40px; }
         .h2 { font-size: 26px; }
-        .logo { font-size: 32px; letter-spacing: 0.15em; }
-        .tel { width: 100%; max-width: 100%; }
-        .tel-in { padding: 16px 14px; border-radius: 24px; }
+        .logo { font-size: 30px; letter-spacing: 0.14em; }
+        .noche-card { padding: 16px 16px; }
       }
       
       /* Estilos Instagram Profile */
@@ -545,234 +587,207 @@
   
   <!-- Vista: Login / Auth -->
   <section id="view-auth" class="panel on">
-    <div class="fila" style="justify-content: center; margin-top: 40px;">
-      <div class="tel">
-        <div class="tel-in" style="min-height: auto; padding-bottom: 20px;">
-          <div class="status"><span>RONDA</span><span>Auth</span></div>
-          <div class="pant text-center" style="text-align: center;">
-            <div class="cab-pant" style="justify-content: center;">
-              <h3>Bienvenido</h3>
-            </div>
-            <p class="detalle" style="margin-bottom: 20px;">Inicia sesión o crea una cuenta.</p>
-            
-            <!-- FORM LOGIN -->
-            <div id="login-form" class="acciones" style="flex-direction: column;">
-              <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
-              <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
-              <button id="btn-real-login" class="btn ambar">Ingresar</button>
-              <button id="btn-show-register" class="btn" style="background: transparent; margin-top: 10px; font-size: 12px;">¿No tienes cuenta? Regístrate</button>
-            </div>
-
-            <!-- FORM REGISTRO SUTIL (2 PASOS) -->
-            <div id="register-form" class="acciones" style="flex-direction: column; display: none;">
-              
-              <!-- Paso 1 -->
-              <div id="reg-step-1">
-                <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
-                <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input">
-                <button id="btn-next-step" class="btn ambar">Continuar</button>
-              </div>
-
-              <!-- Paso 2 -->
-              <div id="reg-step-2" style="display: none; text-align: left;">
-                <p style="font-size: 11px; margin-bottom: 10px; color: var(--humo);">Último paso para completar tu perfil</p>
-                <input type="text" id="reg-name" placeholder="Tu Nombre (Ej. Juan)" class="ronda-input">
-                <div style="display: flex; gap: 10px;">
-                  <input type="number" id="reg-age" placeholder="Edad" class="ronda-input" style="flex: 1;">
-                  <select id="reg-gender" class="ronda-input" style="flex: 1;">
-                    <option value="" disabled selected>Género</option>
-                    <option value="Hombre">Hombre</option>
-                    <option value="Mujer">Mujer</option>
-                    <option value="Otro">Otro</option>
-                  </select>
-                </div>
-                <select id="reg-interest" class="ronda-input" style="margin-top: 10px; width: 100%;">
-                  <option value="" disabled selected>Me interesa conocer...</option>
-                  <option value="Mujeres">Mujeres</option>
-                  <option value="Hombres">Hombres</option>
-                  <option value="Ambos">Ambos</option>
-                </select>
-                <button id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
-              </div>
-
-              <button id="btn-show-login" class="btn" style="background: transparent; margin-top: 10px; font-size: 18px; line-height: 1; padding: 6px; color: var(--humo);" title="Atrás">←</button>
-            </div>
-
-          </div>
-        </div>
+    <div class="auth-card" style="margin-top: 20px;">
+      <h3 style="font-family: var(--font-display); font-size: 26px; margin: 0 0 4px; color: var(--papel);">Bienvenido</h3>
+      <p class="detalle" style="margin-bottom: 22px;">Inicia sesión o crea una cuenta.</p>
+      
+      <!-- FORM LOGIN -->
+      <div id="login-form" class="acciones" style="flex-direction: column;">
+        <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
+        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
+        <button id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
+        <button id="btn-show-register" class="btn" style="background: transparent; margin-top: 10px; font-size: 12px; border: none; color: var(--humo);">¿No tienes cuenta? <b style="color: var(--luz);">Regístrate</b></button>
       </div>
+
+      <!-- FORM REGISTRO SUTIL (2 PASOS) -->
+      <div id="register-form" class="acciones" style="flex-direction: column; display: none;">
+        
+        <!-- Paso 1 -->
+        <div id="reg-step-1">
+          <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
+          <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input">
+          <button id="btn-next-step" class="btn ambar" style="margin-top: 6px;">Continuar</button>
+        </div>
+
+        <!-- Paso 2 -->
+        <div id="reg-step-2" style="display: none; text-align: left;">
+          <p style="font-size: 11.5px; margin-bottom: 12px; color: var(--humo);">Último paso para completar tu perfil</p>
+          <input type="text" id="reg-name" placeholder="Tu Nombre (Ej. Juan)" class="ronda-input">
+          <div style="display: flex; gap: 10px;">
+            <input type="number" id="reg-age" placeholder="Edad" class="ronda-input" style="flex: 1;">
+            <select id="reg-gender" class="ronda-input" style="flex: 1;">
+              <option value="" disabled selected>Género</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Mujer">Mujer</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <select id="reg-interest" class="ronda-input" style="margin-top: 10px; width: 100%;">
+            <option value="" disabled selected>Me interesa conocer...</option>
+            <option value="Mujeres">Mujeres</option>
+            <option value="Hombres">Hombres</option>
+            <option value="Ambos">Ambos</option>
+          </select>
+          <button id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
+        </div>
+
+        <button id="btn-show-login" class="btn" style="background: transparent; margin-top: 10px; font-size: 18px; line-height: 1; padding: 6px; color: var(--humo); border: none;" title="Atrás">←</button>
+      </div>
+
     </div>
   </section>
 
   <!-- Vista: Lobby / Discovery (Esta Semana) -->
   <section id="view-lobby" class="panel">
-    <div class="fila" style="justify-content: center; margin: 0 auto; width: 100%;">
-      <div class="tel" style="width: 100%; max-width: 400px; margin: 0 auto;">
-        <div class="tel-in">
-          <div class="status">
-            <span>20:12</span>
-            <span>RONDA · Bogotá</span>
-          </div>
-          <div class="pant">
-            <div class="cab-pant">
-              <h3>Esta semana</h3>
-              <span>25–34 · Zona G</span>
-            </div>
-            
-            <div id="discovery-feed">
-              <!-- Renderizado dinámicamente con las clases oficiales desde client.ts -->
-            </div>
+    <div class="cab-pant" style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0 18px;">
+      <h3 style="font-family: var(--font-display); font-size: 30px; font-weight: 700; margin: 0; color: var(--papel); letter-spacing: -0.01em;">Esta semana</h3>
+      <span class="chip gris" style="font-size: 11px; padding: 5px 12px;">25–34 · Zona G</span>
+    </div>
+    
+    <div id="discovery-feed">
+      <!-- Renderizado dinámicamente con las clases oficiales desde client.ts -->
+    </div>
 
-            <div class="aviso">
-              Si el jueves no se equilibra antes de las <b>20:00 del martes</b>, se cancela y te devolvemos el importe + $20.000 de saldo.
-            </div>
-          </div>
-        </div>
-        <p class="pie-tel">Descubrir · precio por escasez de lado</p>
-      </div>
+    <div class="aviso" style="margin-top: 16px;">
+      Si el jueves no se equilibra antes de las <b>20:00 del martes</b>, se cancela y te devolvemos el importe + $20.000 de saldo.
     </div>
   </section>
 
   <!-- Vista: Mi Perfil (Estilo Instagram con Opciones Avanzadas) -->
   <section id="view-profile" class="panel">
-    <div class="fila" style="justify-content: center; margin: 0 auto; width: 100%;">
-      <div class="tel" style="width: 100%; max-width: 400px; margin: 0 auto;">
-        <div class="tel-in" style="padding-bottom: 24px;">
-          
-          <!-- Top bar de perfil -->
-          <div class="status" style="justify-content: space-between; align-items: center;">
-            <button id="btn-back-to-events" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 4px 6px; font-size: 18px; line-height: 1; cursor: pointer;" title="Atrás">
-              ←
-            </button>
-            <span id="profile-top-handle" style="font-weight: 700; letter-spacing: 0.08em;">MI PERFIL</span>
-            <button id="btn-open-settings-top" style="background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1;" title="Ajustes y Privacidad">⚙️</button>
-          </div>
+    <!-- Top bar de perfil -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--linea);">
+      <button id="btn-back-to-events" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 4px 6px; font-size: 18px; line-height: 1; cursor: pointer;" title="Atrás">
+        ←
+      </button>
+      <span id="profile-top-handle" style="font-weight: 700; letter-spacing: 0.1em; font-family: var(--font-mono); font-size: 11.5px; color: var(--papel);">MI PERFIL</span>
+      <button id="btn-open-settings-top" style="background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1;" title="Ajustes y Privacidad">⚙️</button>
+    </div>
 
-          <!-- Input oculto para subir foto de perfil -->
-          <input type="file" id="input-profile-photo" accept="image/*" style="display: none;">
+    <!-- Input oculto para subir foto de perfil -->
+    <input type="file" id="input-profile-photo" accept="image/*" style="display: none;">
 
-          <div class="pant" style="margin-top: 6px;">
-            
-            <!-- Header Instagram: Avatar + Stats -->
-            <div class="profile-header-grid">
-              <div class="avatar-story-ring" id="btn-change-avatar" title="Toca para cambiar foto">
-                <div class="avatar-inner">
-                  <img id="profile-avatar-img" alt="Avatar">
-                  <span id="profile-avatar-placeholder">R</span>
-                </div>
-                <span class="avatar-badge-plus">📸</span>
-              </div>
+    <!-- Header Instagram: Avatar + Stats -->
+    <div class="profile-header-grid" style="margin-bottom: 18px;">
+      <div class="avatar-story-ring" id="btn-change-avatar" title="Toca para cambiar foto">
+        <div class="avatar-inner">
+          <img id="profile-avatar-img" alt="Avatar">
+          <span id="profile-avatar-placeholder">R</span>
+        </div>
+        <span class="avatar-badge-plus">📸</span>
+      </div>
 
-              <div class="profile-stats-row">
-                <div class="stat-item">
-                  <span class="stat-num" id="stat-rounds">12</span>
-                  <span class="stat-label">Rondas</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-num" id="stat-venues">3</span>
-                  <span class="stat-label">Bares</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-num" id="stat-matches">5</span>
-                  <span class="stat-label">Matches</span>
-                </div>
-              </div>
-            </div>
+      <div class="profile-stats-row">
+        <div class="stat-item">
+          <span class="stat-num" id="stat-rounds">12</span>
+          <span class="stat-label">Rondas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="stat-venues">3</span>
+          <span class="stat-label">Bares</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="stat-matches">5</span>
+          <span class="stat-label">Matches</span>
+        </div>
+      </div>
+    </div>
 
-            <!-- Identidad & Bio -->
-            <div style="margin-bottom: 12px;">
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 20px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
-                <span id="profile-kyc-badge" class="chip ambar" style="font-size: 8.5px; padding: 2px 7px;">🛡️ KYC Verificado</span>
-              </div>
-              <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 2px 0 6px;">@julio.ronda</p>
-              <p id="profile-display-bio" style="font-size: 12.5px; color: var(--papel); margin: 0 0 6px; line-height: 1.35;"></p>
-              <p id="profile-display-meta" style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); margin: 0;"></p>
-            </div>
+    <!-- Identidad & Bio -->
+    <div style="margin-bottom: 16px;">
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
+        <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px;">🛡️ KYC Verificado</span>
+      </div>
+      <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;">@julio.ronda</p>
+      <p id="profile-display-bio" style="font-size: 13px; color: var(--papel); margin: 0 0 6px; line-height: 1.4;"></p>
+      <p id="profile-display-meta" style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); margin: 0;"></p>
+    </div>
 
-            <!-- Botones de Acción Estilo Instagram -->
-            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-              <button id="btn-edit-profile-open" class="btn" style="flex: 1; font-size: 11px; padding: 8px; border-radius: 999px; background: rgba(243,237,226,.08); border-color: var(--linea);">
-                ✏️ Editar perfil
-              </button>
-              <button id="btn-profile-qr" class="btn ambar" style="font-size: 11px; padding: 8px 14px; border-radius: 999px;" onclick="alert('🎟️ Tu Pasaporte QR está activo para ingresar a salas verificadas.');">
-                🎟️ Pasaporte
-              </button>
-            </div>
+    <!-- Botones de Acción Estilo Instagram -->
+    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+      <button id="btn-edit-profile-open" class="btn" style="flex: 1; font-size: 12px; padding: 9px; border-radius: 999px; background: rgba(243,237,226,.08); border-color: var(--linea);">
+        ✏️ Editar perfil
+      </button>
+      <button id="btn-profile-qr" class="btn ambar" style="font-size: 12px; padding: 9px 16px; border-radius: 999px;" onclick="alert('🎟️ Tu Pasaporte QR está activo para ingresar a salas verificadas.');">
+        🎟️ Pasaporte
+      </button>
+    </div>
 
-            <!-- Highlights (Burbujas de Historias Destacadas) -->
-            <div class="highlights-scroll">
-              <div class="highlight-bubble" onclick="Profile.openEditModal();">
-                <div class="bubble-circle">🍸</div>
-                <span class="bubble-label" id="hl-cocktail-val">Negroni</span>
-              </div>
-              <div class="highlight-bubble" onclick="Profile.openSettingsModal();">
-                <div class="bubble-circle">📍</div>
-                <span class="bubble-label" id="hl-zone-val">Zona G</span>
-              </div>
-              <div class="highlight-bubble" onclick="alert('🛡️ Verificación Biométrica completada. Cero perfiles falsos.');">
-                <div class="bubble-circle">🛡️</div>
-                <span class="bubble-label">KYC 100%</span>
-              </div>
-              <div class="highlight-bubble" onclick="document.querySelector('[data-tab=passport]').click();">
-                <div class="bubble-circle">🎫</div>
-                <span class="bubble-label">-25% Bares</span>
-              </div>
-            </div>
+    <!-- Highlights (Burbujas de Historias Destacadas) -->
+    <div class="highlights-scroll" style="margin-bottom: 14px;">
+      <div class="highlight-bubble" onclick="Profile.openEditModal();">
+        <div class="bubble-circle">🍸</div>
+        <span class="bubble-label" id="hl-cocktail-val">Negroni</span>
+      </div>
+      <div class="highlight-bubble" onclick="Profile.openSettingsModal();">
+        <div class="bubble-circle">📍</div>
+        <span class="bubble-label" id="hl-zone-val">Zona G</span>
+      </div>
+      <div class="highlight-bubble" onclick="alert('🛡️ Verificación Biométrica completada. Cero perfiles falsos.');">
+        <div class="bubble-circle">🛡️</div>
+        <span class="bubble-label">KYC 100%</span>
+      </div>
+      <div class="highlight-bubble" onclick="document.querySelector('[data-tab=passport]').click();">
+        <div class="bubble-circle">🎫</div>
+        <span class="bubble-label">-25% Bares</span>
+      </div>
+    </div>
 
-            <!-- Barra de Pestañas (Tabs) -->
-            <div class="profile-tabs-bar">
-              <button class="profile-tab-btn active" data-tab="about">👤 Sobre mí</button>
-              <button class="profile-tab-btn" data-tab="passport">🎫 Pasaporte NFTs</button>
-              <button class="profile-tab-btn" data-tab="settings">⚙️ Ajustes</button>
-            </div>
+    <!-- Barra de Pestañas (Tabs) -->
+    <div class="profile-tabs-bar">
+      <button class="profile-tab-btn active" data-tab="about">👤 Sobre mí</button>
+      <button class="profile-tab-btn" data-tab="passport">🎫 Pasaporte NFTs</button>
+      <button class="profile-tab-btn" data-tab="settings">⚙️ Ajustes</button>
+    </div>
 
-            <!-- TAB 1: SOBRE MÍ -->
-            <div id="tab-content-about" class="profile-tab-content active">
-              <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px; font-size: 12px;">
-                <div class="kv"><span>Género</span><b id="about-gender">Hombre</b></div>
-                <div class="kv"><span>Interés</span><b id="about-orientation">Mujeres</b></div>
-                <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
-                <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
-                <div class="rule"></div>
-                <p style="font-size: 11px; color: var(--humo); margin: 4px 0 0; line-height: 1.4;">
-                  ✨ <i>En las rondas de 6 minutos, estos datos ayudan a romper el hielo naturalmente sin preguntas aburridas.</i>
-                </p>
-              </div>
-            </div>
+    <!-- TAB 1: SOBRE MÍ -->
+    <div id="tab-content-about" class="profile-tab-content active">
+      <div style="background: rgba(28, 19, 36, 0.65); backdrop-filter: blur(12px); border: 1px solid var(--linea); border-radius: var(--r); padding: 16px; font-size: 12.5px;">
+        <div class="kv"><span>Género</span><b id="about-gender">Hombre</b></div>
+        <div class="kv"><span>Interés</span><b id="about-orientation">Mujeres</b></div>
+        <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
+        <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
+        <div class="rule" style="margin: 10px 0 8px;"></div>
+        <p style="font-size: 11.5px; color: var(--humo); margin: 4px 0 0; line-height: 1.45;">
+          ✨ <i>En las rondas de 6 minutos, estos datos ayudan a romper el hielo naturalmente sin preguntas aburridas.</i>
+        </p>
+      </div>
+    </div>
 
-            <!-- TAB 2: PASAPORTE & NFTS -->
-            <div id="tab-content-passport" class="profile-tab-content">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; text-align: center;">
-                  <div style="font-size: 28px; margin-bottom: 4px;">🍸</div>
-                  <b style="font-size: 11px; color: var(--luz); display: block;">CARONTE VIP</b>
-                  <span style="font-size: 9.5px; color: var(--humo);">-25% Mar–Jue</span>
-                </div>
-                <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; text-align: center;">
-                  <div style="font-size: 28px; margin-bottom: 4px;">🍷</div>
-                  <b style="font-size: 11px; color: var(--botella); display: block;">LA MARÍA CLUB</b>
-                  <span style="font-size: 9.5px; color: var(--humo);">-25% Cóctel Autor</span>
-                </div>
-              </div>
-              <div class="aviso" style="margin-top: 12px; font-size: 11px;">
-                🎟️ Tu billetera digital descentralizada custodia tus pases de asistencia de forma invisible.
-              </div>
-            </div>
+    <!-- TAB 2: PASAPORTE & NFTS -->
+    <div id="tab-content-passport" class="profile-tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 14px; padding: 14px; text-align: center;">
+          <div style="font-size: 30px; margin-bottom: 4px;">🍸</div>
+          <b style="font-size: 11.5px; color: var(--luz); display: block;">CARONTE VIP</b>
+          <span style="font-size: 10px; color: var(--humo);">-25% Mar–Jue</span>
+        </div>
+        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 14px; padding: 14px; text-align: center;">
+          <div style="font-size: 30px; margin-bottom: 4px;">🍷</div>
+          <b style="font-size: 11.5px; color: var(--botella); display: block;">LA MARÍA CLUB</b>
+          <span style="font-size: 10px; color: var(--humo);">-25% Cóctel Autor</span>
+        </div>
+      </div>
+      <div class="aviso" style="margin-top: 14px; font-size: 11.5px;">
+        🎟️ Tu billetera digital descentralizada custodia tus pases de asistencia de forma invisible.
+      </div>
+    </div>
 
-            <!-- TAB 3: AJUSTES & OPCIONES AVANZADAS -->
-            <div id="tab-content-settings" class="profile-tab-content">
-              <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 18px; text-align: center;">
-                <div style="font-size: 30px; margin-bottom: 6px;">⚙️</div>
-                <h4 style="font-family: var(--font-display); font-size: 17px; margin: 0 0 6px; color: var(--papel);">Ajustes de Privacidad & Seguridad</h4>
-                <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px; line-height: 1.4;">
-                  Configura tu palabra de auxilio (Safeword), tus zonas frecuentes en Bogotá y tus preferencias de Habeas Data.
-                </p>
-                <button id="btn-open-settings-tab" class="btn ambar" style="width: 100%; font-size: 12px; padding: 11px;">
-                  ⚙️ Abrir Panel de Ajustes
-                </button>
-              </div>
-            </div>
+    <!-- TAB 3: AJUSTES & OPCIONES AVANZADAS -->
+    <div id="tab-content-settings" class="profile-tab-content">
+      <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: var(--r); padding: 20px 16px; text-align: center;">
+        <div style="font-size: 32px; margin-bottom: 6px;">⚙️</div>
+        <h4 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px; color: var(--papel);">Ajustes de Privacidad & Seguridad</h4>
+        <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px; line-height: 1.45;">
+          Configura tu palabra de auxilio (Safeword), tus zonas frecuentes en Bogotá y tus preferencias de Habeas Data.
+        </p>
+        <button id="btn-open-settings-tab" class="btn ambar" style="width: 100%; font-size: 12px; padding: 12px;">
+          ⚙️ Abrir Panel de Ajustes
+        </button>
+      </div>
+    </div>
+  </section>
 
           </div>
         </div>
@@ -1025,24 +1040,16 @@
 
   <!-- Vista: Cliente / Reserva Activa -->
   <section id="view-client" class="panel">
-    <div class="fila" style="justify-content: center; margin: 0 auto; width: 100%;">
-      <div class="tel" style="width: 100%; max-width: 400px; margin: 0 auto;">
-        <div class="tel-in" style="padding-bottom: 24px;">
-          <div class="status" style="justify-content: space-between; align-items: center;">
-            <button id="btn-client-back-feed" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 4px 6px; font-size: 18px; line-height: 1; cursor: pointer;" title="Atrás">
-              ←
-            </button>
-            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--humo);">
-              <span id="offline-indicator" style="display:none; color: #ff5252; font-size: 10px; margin-right: 4px;">🔴 Local</span>
-              Reserva Confirmada
-            </span>
-          </div>
-          <div class="pant" style="padding: 10px 14px 20px;">
-            <div id="client-content">Cargando reserva...</div>
-          </div>
-        </div>
-      </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--linea);">
+      <button id="btn-client-back-feed" class="btn-mini" style="background: transparent; border: none; color: var(--luz); padding: 4px 6px; font-size: 18px; line-height: 1; cursor: pointer;" title="Atrás">
+        ←
+      </button>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo);">
+        <span id="offline-indicator" style="display:none; color: #ff5252; font-size: 10px; margin-right: 4px;">🔴 Local</span>
+        Reserva Confirmada
+      </span>
     </div>
+    <div id="client-content">Cargando reserva...</div>
   </section>
 
   <!-- Vista: Anfitrión (Bar) -->
