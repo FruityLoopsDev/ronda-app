@@ -196,6 +196,23 @@ export class ProfileService {
     (document.getElementById('edit-gender') as HTMLSelectElement).value = user.gender || 'Hombre';
     (document.getElementById('edit-orientation') as HTMLSelectElement).value = user.orientation || 'Mujeres';
 
+    // Sync Avatar Preview in Modal
+    const editImg = document.getElementById('edit-avatar-img') as HTMLImageElement;
+    const editPh = document.getElementById('edit-avatar-placeholder');
+    if (user.photoURL) {
+      if (editImg) {
+        editImg.src = user.photoURL;
+        editImg.style.display = 'block';
+      }
+      if (editPh) editPh.style.display = 'none';
+    } else {
+      if (editImg) editImg.style.display = 'none';
+      if (editPh) {
+        editPh.style.display = 'flex';
+        editPh.textContent = user.name ? user.name.substring(0, 2).toUpperCase() : 'R';
+      }
+    }
+
     // Char counter
     const bioEl = document.getElementById('edit-bio') as HTMLTextAreaElement;
     const counter = document.getElementById('bio-char-count');

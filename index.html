@@ -301,6 +301,123 @@
       }
       input:checked + .switch-slider { background-color: var(--botella); }
       input:checked + .switch-slider:before { transform: translateX(18px); }
+
+      /* Edit Profile Modal Instagram Style */
+      .edit-modal-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--linea);
+        margin-bottom: 18px;
+      }
+      .modal-nav-btn {
+        background: transparent;
+        border: none;
+        color: var(--humo);
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 4px 6px;
+        transition: color 0.2s;
+      }
+      .modal-nav-btn:hover { color: var(--papel); }
+      .modal-nav-btn.ambar-btn {
+        color: var(--luz);
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .modal-nav-title {
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--papel);
+        letter-spacing: 0.02em;
+      }
+      .edit-avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .edit-avatar-circle {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: var(--barra-alta);
+        border: 2.5px solid var(--luz);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--luz);
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      }
+      .btn-change-photo-link {
+        background: transparent;
+        border: none;
+        color: var(--luz);
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 4px 8px;
+      }
+      .btn-change-photo-link:hover { opacity: 0.85; }
+      
+      .edit-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .edit-field {
+        display: flex;
+        flex-direction: column;
+      }
+      .edit-field label {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        color: var(--humo);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .ronda-input-premium {
+        background: rgba(243,237,226,.05);
+        border: 1px solid var(--linea);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        color: var(--papel);
+        font-family: var(--font-body);
+        outline: none;
+        transition: border-color 0.2s, background 0.2s;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .ronda-input-premium:focus {
+        border-color: var(--luz);
+        background: rgba(243,237,226,.09);
+      }
+      select.ronda-input-premium {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23F0A830' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px;
+      }
+      select.ronda-input-premium option {
+        background: var(--barra-alta);
+        color: var(--papel);
+      }
     </style>
     </head>
 <body>
@@ -678,38 +795,52 @@
     </div>
   </section>
 
-  <!-- Modal: Editar Perfil (Estilo Instagram) -->
+  <!-- Modal: Editar Perfil (Estilo Instagram Premium) -->
   <div id="modal-edit-profile" class="modal-overlay">
-    <div class="tel" style="width: 100%; max-width: 390px;">
-      <div class="tel-in" style="padding: 20px;">
-        <div class="status" style="justify-content: space-between;">
-          <button id="btn-edit-profile-close" class="btn-mini" style="background:transparent; border:none; color:var(--humo); cursor:pointer;">Cancelar</button>
-          <span>Editar Perfil</span>
-          <button id="btn-save-edit-profile" class="btn-mini" style="background:transparent; border:none; color:var(--luz); font-weight:700; cursor:pointer;">Listo</button>
+    <div class="tel" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
+      <div class="tel-in" style="padding: 20px 18px 24px;">
+        
+        <!-- Header del Modal -->
+        <div class="edit-modal-top">
+          <button id="btn-edit-profile-close" class="modal-nav-btn">Cancelar</button>
+          <h3 class="modal-nav-title">Editar Perfil</h3>
+          <button id="btn-save-edit-profile" class="modal-nav-btn ambar-btn">Listo</button>
         </div>
 
-        <div class="pant" style="margin-top: 14px;">
-          <div style="text-align: center; margin-bottom: 16px;">
-            <button class="btn-outline" onclick="document.getElementById('input-profile-photo').click();" style="font-size: 11px;">
-              📸 Cambiar foto de perfil
+        <div class="pant" style="margin-top: 4px;">
+          
+          <!-- Avatar Central & Cambiar Foto -->
+          <div class="edit-avatar-section">
+            <div class="edit-avatar-circle" onclick="document.getElementById('input-profile-photo').click();">
+              <img id="edit-avatar-img" alt="Avatar Preview">
+              <span id="edit-avatar-placeholder">R</span>
+            </div>
+            <button type="button" class="btn-change-photo-link" onclick="document.getElementById('input-profile-photo').click();">
+              Cambiar foto de perfil
             </button>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Nombre completo</label>
-            <input type="text" id="edit-name" class="ronda-input" placeholder="Tu nombre">
+          <!-- Campos del Formulario -->
+          <div class="edit-form-group">
+            
+            <div class="edit-field">
+              <label>Nombre completo</label>
+              <input type="text" id="edit-name" class="ronda-input-premium" placeholder="Tu nombre">
+            </div>
 
-            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Nombre de usuario</label>
-            <input type="text" id="edit-username" class="ronda-input" placeholder="@usuario">
+            <div class="edit-field">
+              <label>Nombre de usuario</label>
+              <input type="text" id="edit-username" class="ronda-input-premium" placeholder="@usuario">
+            </div>
 
             <div style="display: flex; gap: 10px;">
-              <div style="flex: 1;">
-                <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Edad</label>
-                <input type="number" id="edit-age" class="ronda-input" min="18" max="99">
+              <div class="edit-field" style="flex: 1;">
+                <label>Edad</label>
+                <input type="number" id="edit-age" class="ronda-input-premium" min="18" max="99">
               </div>
-              <div style="flex: 1;">
-                <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Género</label>
-                <select id="edit-gender" class="ronda-input">
+              <div class="edit-field" style="flex: 1;">
+                <label>Género</label>
+                <select id="edit-gender" class="ronda-input-premium">
                   <option value="Hombre">Hombre</option>
                   <option value="Mujer">Mujer</option>
                   <option value="Otro">Otro</option>
@@ -717,21 +848,28 @@
               </div>
             </div>
 
-            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Me interesa conocer</label>
-            <select id="edit-orientation" class="ronda-input">
-              <option value="Mujeres">Mujeres</option>
-              <option value="Hombres">Hombres</option>
-              <option value="Ambos">Ambos</option>
-            </select>
-
-            <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Cóctel de Autor Favorito</label>
-            <input type="text" id="edit-cocktail" class="ronda-input" placeholder="Ej. Negroni Ahumado, Gin Tonic...">
-
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <label style="font-size: 10px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">Presentación / Bio</label>
-              <span id="bio-char-count" style="font-size: 9.5px; color: var(--humo); font-family: var(--font-mono);">0/150</span>
+            <div class="edit-field">
+              <label>Me interesa conocer</label>
+              <select id="edit-orientation" class="ronda-input-premium">
+                <option value="Mujeres">Mujeres</option>
+                <option value="Hombres">Hombres</option>
+                <option value="Ambos">Ambos (Todos)</option>
+              </select>
             </div>
-            <textarea id="edit-bio" class="ronda-input" rows="3" maxlength="150" placeholder="Escribe algo sobre ti para tus citas..." style="resize: none;"></textarea>
+
+            <div class="edit-field">
+              <label>Cóctel de Autor Favorito</label>
+              <input type="text" id="edit-cocktail" class="ronda-input-premium" placeholder="Ej. Negroni Ahumado, Gin Tonic...">
+            </div>
+
+            <div class="edit-field">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                <label style="margin-bottom: 0;">Presentación / Bio</label>
+                <span id="bio-char-count" style="font-size: 9.5px; color: var(--humo); font-family: var(--font-mono);">0/150</span>
+              </div>
+              <textarea id="edit-bio" class="ronda-input-premium" rows="3" maxlength="150" placeholder="Escribe algo sobre ti para tus citas..." style="resize: none;"></textarea>
+            </div>
+
           </div>
         </div>
       </div>
