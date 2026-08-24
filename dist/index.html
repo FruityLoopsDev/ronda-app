@@ -432,50 +432,60 @@
       input:checked + .switch-slider { background-color: var(--botella); }
       input:checked + .switch-slider:before { transform: translateX(18px); }
 
-      /* Edit Profile Modal Instagram Style */
+      /* Modal Top Bar (Minimalist Icon Buttons + Centered Title) */
       .edit-modal-top {
         display: grid;
-        grid-template-columns: 1fr auto 1fr;
+        grid-template-columns: 40px 1fr 40px;
         align-items: center;
         width: 100%;
         box-sizing: border-box;
         padding-bottom: 14px;
-        border-bottom: 1px solid rgba(243, 237, 226, 0.1);
-        margin-bottom: 18px;
+        border-bottom: 1px solid rgba(243, 237, 226, 0.08);
+        margin-bottom: 20px;
       }
-      .modal-nav-btn {
-        background: transparent;
-        border: none;
-        color: var(--humo);
-        font-family: var(--font-body);
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        padding: 6px 8px;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        justify-self: start;
-        text-align: left;
-        white-space: nowrap;
-      }
-      .modal-nav-btn:hover {
-        color: var(--papel);
+      .modal-icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
         background: rgba(243, 237, 226, 0.06);
+        border: 1px solid rgba(243, 237, 226, 0.12);
+        color: var(--humo);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        justify-self: start;
+        padding: 0;
+        box-sizing: border-box;
       }
-      .modal-nav-btn.ambar-btn {
+      .modal-icon-btn:hover {
+        background: rgba(243, 237, 226, 0.15);
+        color: var(--papel);
+        transform: scale(1.08);
+      }
+      .modal-icon-btn:active {
+        transform: scale(0.92);
+      }
+      .modal-icon-btn.confirm-btn {
         color: var(--luz);
-        font-weight: 700;
-        font-size: 14.5px;
-        justify-self: end;
-        text-align: right;
-      }
-      .modal-nav-btn.ambar-btn:hover {
-        color: #ffbf47;
+        border-color: rgba(240, 168, 48, 0.4);
         background: rgba(240, 168, 48, 0.12);
+        font-size: 18px;
+        font-weight: 700;
+        justify-self: end;
+      }
+      .modal-icon-btn.confirm-btn:hover {
+        background: rgba(240, 168, 48, 0.25);
+        border-color: var(--luz);
+        box-shadow: 0 0 14px rgba(240, 168, 48, 0.35);
+        transform: scale(1.08);
       }
       .modal-nav-title {
         font-family: var(--font-display);
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
         margin: 0;
         color: var(--papel);
@@ -566,7 +576,7 @@
         color: var(--papel);
       }
     </style>
-      <script type="module" crossorigin src="/assets/index-CtHVHrP3.js"></script>
+      <script type="module" crossorigin src="/assets/index-C2p0d-X5.js"></script>
     </head>
 <body>
   <!-- Sprite de Iconos Vectoriales RONDA -->
@@ -860,12 +870,6 @@
     </div>
   </section>
 
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Modal: Ajustes y Opciones Avanzadas (Estilo Instagram Premium) -->
   <div id="modal-settings" class="modal-overlay">
     <div class="tel" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
@@ -873,9 +877,9 @@
         
         <!-- Header del Modal -->
         <div class="edit-modal-top">
-          <button id="btn-settings-close" class="modal-nav-btn">Cerrar</button>
+          <button id="btn-settings-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar">✕</button>
           <h3 class="modal-nav-title">Ajustes</h3>
-          <button id="btn-save-settings-top" class="modal-nav-btn ambar-btn">Guardar</button>
+          <button id="btn-save-settings-top" class="modal-icon-btn confirm-btn" title="Guardar" aria-label="Guardar">✓</button>
         </div>
 
         <div class="pant" style="margin-top: 4px;">
@@ -933,8 +937,8 @@
             </div>
           </div>
 
-          <button id="btn-save-advanced-settings" class="btn ambar" style="width: 100%; font-size: 12px; padding: 12px; margin-bottom: 14px;">
-            Guardar Opciones Avanzadas
+          <button id="btn-save-advanced-settings" class="btn ambar" style="width: 100%; font-size: 12px; padding: 12px; margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            ✓ Guardar Opciones Avanzadas
           </button>
 
           <div class="rule" style="margin: 12px 0 16px;"></div>
@@ -955,9 +959,9 @@
         
         <!-- Header del Modal -->
         <div class="edit-modal-top">
-          <button id="btn-edit-profile-close" class="modal-nav-btn">Cancelar</button>
+          <button id="btn-edit-profile-close" class="modal-icon-btn" title="Cancelar" aria-label="Cancelar">✕</button>
           <h3 class="modal-nav-title">Editar Perfil</h3>
-          <button id="btn-save-edit-profile" class="modal-nav-btn ambar-btn">Listo</button>
+          <button id="btn-save-edit-profile" class="modal-icon-btn confirm-btn" title="Guardar" aria-label="Guardar">✓</button>
         </div>
 
         <div class="pant" style="margin-top: 4px;">
@@ -1036,9 +1040,9 @@
         
         <!-- Header del Modal -->
         <div class="edit-modal-top">
-          <button id="btn-event-detail-close" class="modal-nav-btn" style="font-size: 18px; line-height: 1; padding: 4px 8px;" title="Atrás">←</button>
+          <button id="btn-event-detail-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar">✕</button>
           <h3 class="modal-nav-title">Detalle de Reserva</h3>
-          <span id="modal-event-status-badge" class="chip ambar" style="justify-self: end; font-size: 9px;">Escaso</span>
+          <span id="modal-event-status-badge" class="chip ambar" style="justify-self: end; font-size: 9.5px; padding: 4px 8px;">Escaso</span>
         </div>
 
         <div class="pant" style="margin-top: 4px;">

@@ -252,8 +252,10 @@ export class ProfileService {
     if (!this.currentUser) return;
 
     const btn = document.getElementById('btn-save-edit-profile') as HTMLButtonElement;
-    btn.textContent = 'Guardando...';
-    btn.disabled = true;
+    if (btn) {
+      btn.style.opacity = '0.5';
+      btn.disabled = true;
+    }
 
     try {
       const name = (document.getElementById('edit-name') as HTMLInputElement).value.trim();
@@ -280,8 +282,11 @@ export class ProfileService {
       console.error('Error al guardar perfil:', err);
       alert('Error: ' + err.message);
     } finally {
-      btn.textContent = 'Listo';
-      btn.disabled = false;
+      if (btn) {
+        btn.textContent = '✓';
+        btn.style.opacity = '1';
+        btn.disabled = false;
+      }
     }
   }
 
@@ -320,7 +325,7 @@ export class ProfileService {
     const btn = document.getElementById('btn-save-advanced-settings') as HTMLButtonElement;
     const btnTop = document.getElementById('btn-save-settings-top') as HTMLButtonElement;
     if (btn) { btn.textContent = 'Guardando...'; btn.disabled = true; }
-    if (btnTop) { btnTop.textContent = 'Guardando...'; btnTop.disabled = true; }
+    if (btnTop) { btnTop.style.opacity = '0.5'; btnTop.disabled = true; }
 
     try {
       const safeword = (document.getElementById('setting-safeword') as HTMLInputElement)?.value.trim();
@@ -350,8 +355,8 @@ export class ProfileService {
       console.error('Error guardando ajustes:', err);
       alert('Error: ' + err.message);
     } finally {
-      if (btn) { btn.textContent = 'Guardar Opciones Avanzadas'; btn.disabled = false; }
-      if (btnTop) { btnTop.textContent = 'Guardar'; btnTop.disabled = false; }
+      if (btn) { btn.textContent = '✓ Guardar Opciones Avanzadas'; btn.disabled = false; }
+      if (btnTop) { btnTop.textContent = '✓'; btnTop.style.opacity = '1'; btnTop.disabled = false; }
     }
   }
 
