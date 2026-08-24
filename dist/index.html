@@ -575,8 +575,140 @@
         background: var(--barra-alta);
         color: var(--papel);
       }
+
+      /* Bloqueo de Tarjetas de Eventos */
+      .noche-card.bloqueada {
+        opacity: 0.45;
+        filter: grayscale(0.85);
+        cursor: not-allowed !important;
+        position: relative;
+        transition: all 0.3s ease;
+        border-color: rgba(243, 237, 226, 0.08) !important;
+      }
+      .noche-card.bloqueada:hover {
+        opacity: 0.55;
+        transform: none !important;
+      }
+
+      /* Experiencia de Matches: Sobre Vintage y Sello de Lacre */
+      .envelope-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        margin: 0 auto 16px;
+        perspective: 1200px;
+      }
+      .vintage-envelope {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        background: linear-gradient(145deg, #2b1c18, #180f0c);
+        border-radius: 16px;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(240, 168, 48, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .envelope-flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 110px;
+        background: linear-gradient(180deg, #3a221b 0%, #251612 100%);
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        transform-origin: top;
+        transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 4;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      }
+      .envelope-flap.open {
+        transform: rotateX(180deg);
+        z-index: 1;
+      }
+      .envelope-pocket {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(0deg, #221411 0%, #170d0b 100%);
+        clip-path: polygon(0 35px, 50% 0, 100% 35px, 100% 100%, 0 100%);
+        z-index: 3;
+        border-top: 1px solid rgba(240, 168, 48, 0.15);
+      }
+      .wax-seal {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 66px;
+        height: 66px;
+        background: radial-gradient(circle at 35% 35%, #d90429, #9b111e 60%, #590d22 100%);
+        border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(155, 17, 30, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 6px rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 5;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: sealPulse 2.5s infinite ease-in-out;
+      }
+      .wax-seal:hover {
+        transform: translateX(-50%) scale(1.08);
+        box-shadow: 0 12px 30px rgba(217, 4, 41, 0.85);
+      }
+      .wax-seal.cracking {
+        animation: sealCrack 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .wax-seal-inner {
+        font-family: var(--font-display);
+        font-size: 26px;
+        font-weight: 800;
+        color: #ffd778;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 10px rgba(255, 215, 120, 0.5);
+        user-select: none;
+      }
+      @keyframes sealPulse {
+        0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 8px 24px rgba(155, 17, 30, 0.6); }
+        50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 12px 28px rgba(217, 4, 41, 0.85); }
+      }
+      @keyframes sealCrack {
+        0% { transform: translateX(-50%) scale(1); }
+        40% { transform: translateX(-50%) scale(1.25) rotate(8deg); filter: brightness(1.4); }
+        100% { transform: translateX(-50%) scale(0) rotate(20deg); opacity: 0; }
+      }
+
+      /* Carta Antigua Desplegada */
+      .vintage-letter-parchment {
+        background: #fdfaf3;
+        color: #1a120b;
+        border-radius: 14px;
+        padding: 24px 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 35px rgba(184, 134, 11, 0.1);
+        border: 1px solid #d4af37;
+        position: relative;
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        display: none;
+      }
+      .vintage-letter-parchment.revealed {
+        display: block;
+        transform: translateY(0);
+        opacity: 1;
+        animation: letterSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes letterSlideUp {
+        0% { transform: translateY(40px) scale(0.94); opacity: 0; }
+        100% { transform: translateY(0) scale(1); opacity: 1; }
+      }
     </style>
-      <script type="module" crossorigin src="/assets/index-B91d2z3j.js"></script>
+      <script type="module" crossorigin src="/assets/index-D96mrNOC.js"></script>
     </head>
 <body>
   <!-- Sprite de Iconos Vectoriales RONDA -->

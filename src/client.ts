@@ -1,9 +1,9 @@
-import { DB, User } from './db.js';
+import { DB, User, Reservation } from './db.js';
 import { Auth } from './auth.js';
 import { OfflineSync } from './offline-sync.js';
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 
-// client.ts: Lógica del Cliente, Eventos, Mapas, Cócteles, Anfitrión y Lista de Espera
+// client.ts: Lógica del Cliente, Eventos, Mapas, Cócteles, Anfitrión, Bloqueo de Salas y Revelación de Matches 10 AM
 
 export interface RondaEvent {
   id: string;
@@ -144,6 +144,7 @@ class ClientAppService {
   selectedEvent: RondaEvent | null = null;
   unsubscribe: any = null;
   timerInterval: any = null;
+  countdownInterval: any = null;
 
   constructor() {
     // Escuchar el login para montar la vista
@@ -156,6 +157,7 @@ class ClientAppService {
     addEventListener('auth:logout', () => {
       if (this.unsubscribe) this.unsubscribe();
       this.stopTimer();
+      this.stopCountdown();
       this.selectedEvent = null;
     });
 
@@ -362,6 +364,7 @@ class ClientAppService {
         await DB.saveUser(user);
         this.showToast(`¡Reserva cambiada con éxito a ${newEvt.venueName}!`);
         this.renderManageReservationsModal();
+        this.renderDiscoveryFeed();
       }
     });
 
@@ -372,6 +375,7 @@ class ClientAppService {
         await DB.saveUser(user);
         this.showToast('Reserva cancelada. Crédito disponible para tu siguiente cita.');
         this.renderManageReservationsModal();
+        this.renderDiscoveryFeed();
       }
     });
 
@@ -380,6 +384,7 @@ class ClientAppService {
       await DB.saveUser(user);
       this.showToast('Has salido de la lista de espera.');
       this.renderManageReservationsModal();
+      this.renderDiscoveryFeed();
     });
 
     document.getElementById('btn-mgr-go-discovery')?.addEventListener('click', () => {
@@ -391,8 +396,8 @@ class ClientAppService {
   async initClientDashboard(user: any) {
     console.log("Iniciando Dashboard Cliente...", user);
     
-    // Si el usuario tiene una reserva activa, renderizar la vista de cliente
-    if (user.activeReservation || user.activeEventId) {
+    // Si el usuario tiene estado de post-evento (revelación de correspondencia) o reserva activa
+    if (user.postEventState || user.activeReservation || user.activeEventId) {
       this.renderClientView();
       return;
     }
@@ -413,8 +418,10 @@ class ClientAppService {
 
     let html = '';
     const user = Auth.currentUser;
-    if (user?.activeReservation) {
-      const r = user.activeReservation;
+    const hasActiveBooking = Boolean(user?.activeReservation);
+
+    if (hasActiveBooking) {
+      const r = user!.activeReservation!;
       html += `
         <div style="background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.35); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
           <div>
@@ -430,6 +437,9 @@ class ClientAppService {
     }
 
     RONDA_EVENTS.forEach((evt) => {
+      const isThisBooked = user?.activeReservation?.eventId === evt.id;
+      const isLocked = hasActiveBooking && !isThisBooked;
+
       const balanceHtml = evt.status !== 'lleno' ? `
         <div class="barra-balance">
           <i style="width:${evt.balancePercent1}%;background:${evt.status === 'ok' ? 'var(--botella)' : 'var(--luz)'}"></i>
@@ -446,8 +456,12 @@ class ClientAppService {
         </div>
       `;
 
+      const statusBadge = isLocked 
+        ? `<span class="chip gris" style="background: rgba(243,237,226,.08); color: var(--humo);">🔒 Bloqueado</span>`
+        : `<span class="chip ${evt.chipClass}">${isThisBooked ? '✓ Tu Reserva' : evt.statusLabel}</span>`;
+
       html += `
-        <article class="noche-card ${evt.status}" data-event-id="${evt.id}" style="cursor: pointer;">
+        <article class="noche-card ${evt.status} ${isLocked ? 'bloqueada' : ''}" data-event-id="${evt.id}" data-locked="${isLocked}" style="cursor: ${isLocked ? 'not-allowed' : 'pointer'};">
           <div class="dia">${evt.dayDate}</div>
           <div class="local">${evt.venueName}</div>
           <div class="detalle">${evt.roundsInfo} · ${evt.ageRange}</div>
@@ -457,7 +471,7 @@ class ClientAppService {
               ${evt.priceFormatted}
               <small>${evt.priceSub}</small>
             </div>
-            <span class="chip ${evt.chipClass}">${evt.statusLabel}</span>
+            ${statusBadge}
           </div>
         </article>
       `;
@@ -474,7 +488,14 @@ class ClientAppService {
     // Vincular click en cada tarjeta de evento
     feed.querySelectorAll('.noche-card').forEach((card) => {
       card.addEventListener('click', (e) => {
+        const isLocked = (e.currentTarget as HTMLElement).getAttribute('data-locked') === 'true';
         const target = (e.currentTarget as HTMLElement).getAttribute('data-event-id');
+        
+        if (isLocked) {
+          this.showToast(`🔒 Ya tienes 1 reserva activa en ${user?.activeReservation?.venueName}. Gestiona tu reserva si deseas cambiar de fecha.`);
+          return;
+        }
+
         if (target) {
           this.openEventModal(target);
         }
@@ -651,6 +672,7 @@ class ClientAppService {
       // Cambiar a la vista del cliente
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
       this.renderClientView();
+      this.renderDiscoveryFeed();
     } catch (err: any) {
       console.error('Error al confirmar reserva:', err);
       alert('Hubo un error al procesar tu reserva: ' + err.message);
@@ -717,6 +739,7 @@ class ClientAppService {
       await DB.saveUser(user);
       this.showToast('🎉 ¡Cupo asignado en Patio Poca Prisa!');
       this.renderClientView();
+      this.renderDiscoveryFeed();
     });
 
     document.getElementById('btn-leave-waitlist')?.addEventListener('click', async () => {
@@ -726,6 +749,7 @@ class ClientAppService {
       await DB.saveUser(user);
       this.showToast('Has salido de la lista de espera.');
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
+      this.renderDiscoveryFeed();
     });
   }
 
@@ -775,6 +799,13 @@ class ClientAppService {
     }
   }
 
+  stopCountdown() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
+    }
+  }
+
   async handleVote(targetUid: string, isYes: boolean) {
     const myUid = Auth.currentUser?.uid;
     const eventId = this.currentEvent?.id || 'ronda-demo';
@@ -793,6 +824,171 @@ class ClientAppService {
     }
   }
 
+  // Experiencia "El Día Después": Revelación de Matches a las 10:00 AM
+  renderDayAfterMatchesView(postState: any) {
+    const container = document.getElementById('client-content');
+    if (!container) return;
+
+    const user = Auth.currentUser;
+    if (!user) return;
+
+    this.stopCountdown();
+
+    const isRevealed = postState.isRevealed;
+
+    container.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
+        <h3 style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--papel); margin: 0;">El Día Después</h3>
+        <span class="chip ${isRevealed ? 'verde' : 'ambar'}">${isRevealed ? 'Correspondencia Abierta' : '10:00 AM'}</span>
+      </div>
+
+      <!-- SOBRE CERRADO CON SELLO DE LACRE ROJO -->
+      <div id="envelope-section" style="${isRevealed ? 'display: none;' : 'display: block;'}">
+        <div style="text-align: center; margin-bottom: 18px;">
+          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--luz); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700;">
+            ⏳ REVELACIÓN DE AFINIDADES MUTUAS
+          </span>
+          <h2 id="countdown-reveal" style="font-family: var(--font-mono); font-size: 36px; font-weight: 800; color: var(--papel); margin: 6px 0; font-variant-numeric: tabular-nums;">
+            04h : 18m : 32s
+          </h2>
+          <p style="font-size: 12px; color: var(--humo); margin: 0; line-height: 1.45; max-width: 320px; margin: 0 auto;">
+            El anfitrión ha sellado los resultados de anoche en <b>${postState.venueName}</b>. Toca el sello de cera para descubrir si hubo match.
+          </p>
+        </div>
+
+        <div class="envelope-wrapper">
+          <div class="vintage-envelope">
+            <div id="envelope-flap" class="envelope-flap"></div>
+            <div id="wax-seal-btn" class="wax-seal" title="Toca para romper el sello y abrir correspondencia">
+              <span class="wax-seal-inner">R</span>
+            </div>
+            <div class="envelope-pocket"></div>
+          </div>
+        </div>
+
+        <button id="btn-simulate-10am" class="btn ambar" style="width: 100%; font-size: 12.5px; font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          ✨ Romper Sello de Cera (Abrir Correspondencia)
+        </button>
+      </div>
+
+      <!-- CARTA ANTIGUA DESPLEGADA -->
+      <div id="letter-parchment" class="vintage-letter-parchment ${isRevealed ? 'revealed' : ''}">
+        <div style="text-align: center; border-bottom: 1px dashed rgba(26,18,11,0.25); padding-bottom: 12px; margin-bottom: 16px;">
+          <p style="font-family: var(--font-display); font-size: 20px; font-weight: 800; letter-spacing: 0.2em; color: #1a120b; margin: 0 0 3px;">R O N D A</p>
+          <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.1em;">Correspondencia Confidencial · 10:00 AM</span>
+        </div>
+
+        <p style="font-family: var(--font-display); font-style: italic; font-size: 14.5px; color: #2b1c18; margin: 0 0 14px; line-height: 1.5;">
+          Apreciado/a <b>${user.name || 'Invitado/a'}</b>, tras el cruce de votaciones anoche en <b>${postState.venueName}</b>, nos complace presentarte tu correspondencia de afinidad mutua:
+        </p>
+
+        <!-- Match Card Destacado -->
+        ${postState.matches.map((m: any) => `
+          <div style="background: rgba(240,168,48,0.12); border: 1.5px solid #d4af37; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 18px; color: #1a120b;">${m.name} (${m.age})</b>
+                <span style="font-size: 11px; color: #73675a; display: block; font-family: var(--font-mono);">${m.profession} · ${m.zone}</span>
+              </div>
+              <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px; background: #2e6b54; color: #fff;">Match Mutuo ✓</span>
+            </div>
+
+            <p style="font-size: 12px; color: #3d2b1f; margin: 6px 0 12px; line-height: 1.4; font-style: italic;">
+              "${m.icebreakerSummary}"
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <a href="https://wa.me/${m.whatsappPhone}?text=${encodeURIComponent('¡Hola ' + m.name.split(' ')[0] + '! Tuvimos match en RONDA ' + postState.venueName + ' 🍸')}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: #25d366; color: #fff; font-weight: 700; font-size: 12px; padding: 11px; border: none; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(37,211,102,0.3);">
+                💬 Escribirle por WhatsApp (${m.name.split(' ')[0]})
+              </a>
+              
+              <button class="btn" style="background: rgba(26,18,11,0.06); color: #1a120b; border: 1px solid rgba(26,18,11,0.2); font-size: 11px; padding: 9px; font-weight: 600;" onclick="alert('🎟️ Cupón de 2ª cita activado: -25% en tu próxima mesa de dos en ${postState.venueName}.');">
+                🍸 Invitar a 2ª Cita (-25% en ${postState.venueName})
+              </button>
+            </div>
+          </div>
+        `).join('')}
+
+        <div style="border-top: 1px dashed rgba(26,18,11,0.25); padding-top: 12px; margin-top: 16px; text-align: right;">
+          <p style="font-family: var(--font-display); font-size: 13.5px; font-style: italic; margin: 0; color: #5a4a3a;">
+            Afectuosamente,<br>
+            <b>El Anfitrión de Sala</b><br>
+            <small style="font-family: var(--font-mono); font-size: 10px; color: #8c7b6b;">RONDA System · Bogotá</small>
+          </p>
+        </div>
+
+        <button id="btn-done-matches" class="btn ambar" style="width: 100%; margin-top: 18px; font-size: 12px; font-weight: 700; padding: 12px;">
+          Explorar Próxima Cartelera de Eventos
+        </button>
+      </div>
+    `;
+
+    // Iniciar reloj hacia las 10:00 AM si aún no está revelado
+    if (!isRevealed) {
+      let secondsLeft = 4 * 3600 + 18 * 60 + 32;
+      const elCount = document.getElementById('countdown-reveal');
+      this.countdownInterval = setInterval(() => {
+        if (secondsLeft <= 0) {
+          this.stopCountdown();
+          this.triggerOpenLetterAnimation(postState);
+        } else {
+          secondsLeft--;
+          const hrs = Math.floor(secondsLeft / 3600);
+          const mins = Math.floor((secondsLeft % 3600) / 60);
+          const secs = secondsLeft % 60;
+          if (elCount) {
+            elCount.textContent = `${hrs.toString().padStart(2, '0')}h : ${mins.toString().padStart(2, '0')}m : ${secs.toString().padStart(2, '0')}s`;
+          }
+        }
+      }, 1000);
+
+      document.getElementById('wax-seal-btn')?.addEventListener('click', () => {
+        this.triggerOpenLetterAnimation(postState);
+      });
+
+      document.getElementById('btn-simulate-10am')?.addEventListener('click', () => {
+        this.triggerOpenLetterAnimation(postState);
+      });
+    }
+
+    document.getElementById('btn-done-matches')?.addEventListener('click', async () => {
+      delete user.postEventState;
+      delete user.activeReservation;
+      delete user.activeEventId;
+      await DB.saveUser(user);
+      window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
+      this.renderDiscoveryFeed();
+    });
+  }
+
+  triggerOpenLetterAnimation(postState: any) {
+    const waxSeal = document.getElementById('wax-seal-btn');
+    const flap = document.getElementById('envelope-flap');
+    const letter = document.getElementById('letter-parchment');
+    const envelopeSection = document.getElementById('envelope-section');
+
+    if (waxSeal) waxSeal.classList.add('cracking');
+
+    setTimeout(() => {
+      if (flap) flap.classList.add('open');
+    }, 350);
+
+    setTimeout(async () => {
+      if (envelopeSection) envelopeSection.style.display = 'none';
+      if (letter) {
+        letter.classList.add('revealed');
+      }
+
+      const user = Auth.currentUser;
+      if (user && user.postEventState) {
+        user.postEventState.isRevealed = true;
+        await DB.saveUser(user);
+      }
+
+      this.showToast('💌 ¡Correspondencia abierta! Has tenido match mutuo ✨');
+    }, 700);
+  }
+
   renderClientView() {
     const container = document.getElementById('client-content');
     if (!container) return;
@@ -800,7 +996,14 @@ class ClientAppService {
     const user = Auth.currentUser;
     if (!user) return;
 
+    // Si tiene correspondencia del día después
+    if (user.postEventState) {
+      this.renderDayAfterMatchesView(user.postEventState);
+      return;
+    }
+
     const res = user.activeReservation || {
+      eventId: 'rnd-caronte-mar-25',
       venueName: 'CARONTE Cocktail Bar',
       venueAddress: 'Cra. 4A #66-22 · Zona G, Bogotá',
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cra+4A+66-22+Zona+G+Bogota',
@@ -845,9 +1048,40 @@ class ClientAppService {
             </div>
             <button id="btn-safeword" class="btn" style="border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); width: 100%; font-weight: 700; font-size: 11px;">⚠️ Solicitar Asistencia Discreta</button>
           </div>
+
+          <button id="btn-sim-finish-event" class="btn" style="margin-top: 14px; font-size: 11px; color: var(--luz); border-color: var(--linea); width: 100%;">
+            ✨ Simular Fin de Evento (Pasar a las 10:00 AM)
+          </button>
         </div>
       `;
       setTimeout(() => this.startTimer(300), 100);
+
+      document.getElementById('btn-sim-finish-event')?.addEventListener('click', async () => {
+        this.stopTimer();
+        this.currentEvent = null;
+        user.postEventState = {
+          eventId: res.eventId,
+          venueName: res.venueName,
+          dayDate: res.dayDate,
+          revealTimeIso: new Date(Date.now() + 14 * 3600000).toISOString(),
+          isRevealed: false,
+          matches: [
+            {
+              id: 'match_camila',
+              name: 'Camila Ospina',
+              age: 28,
+              profession: 'Arquitecta de Interiores',
+              zone: 'Zona G',
+              cocktail: 'Negroni Ahumado',
+              icebreakerSummary: 'Ambos coincidieron en pasión por los viajes, cócteles de autor y arquitectura.',
+              whatsappPhone: '573124567890'
+            }
+          ]
+        };
+        await DB.saveUser(user);
+        this.showToast('🔔 ¡Evento concluido! Resultados sellados para las 10:00 AM.');
+        this.renderClientView();
+      });
     } else {
       // Estado de la Reserva (Confirmada / En Barra / En Ronda)
       const isCheckedIn = res.status === 'checked_in';
@@ -929,6 +1163,10 @@ class ClientAppService {
           <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
             ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Demo)' : '🍸 Simular Llegada al Bar (Canjear Cóctel)'}
           </button>
+
+          <button id="btn-sim-direct-10am" class="btn" style="font-size: 11px; color: var(--luz); border-color: rgba(240,168,48,.3); background: rgba(240,168,48,.06); padding: 9px; margin-top: 4px;">
+            💌 Simular Día Siguiente (Sobre de Matches 10:00 AM)
+          </button>
         </div>
 
         <div class="aviso" style="margin-top: 18px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
@@ -980,6 +1218,31 @@ class ClientAppService {
           this.showToast('🔔 ¡Campanada! Toma asiento en la mesa ' + res.tableNumber);
           this.renderClientView();
         }
+      });
+
+      document.getElementById('btn-sim-direct-10am')?.addEventListener('click', async () => {
+        user.postEventState = {
+          eventId: res.eventId,
+          venueName: res.venueName,
+          dayDate: res.dayDate,
+          revealTimeIso: new Date(Date.now() + 14 * 3600000).toISOString(),
+          isRevealed: false,
+          matches: [
+            {
+              id: 'match_camila',
+              name: 'Camila Ospina',
+              age: 28,
+              profession: 'Arquitecta de Interiores',
+              zone: 'Zona G',
+              cocktail: 'Negroni Ahumado',
+              icebreakerSummary: 'Ambos coincidieron en gusto por el Negroni Ahumado, diseño urbano y viajes por Colombia.',
+              whatsappPhone: '573124567890'
+            }
+          ]
+        };
+        await DB.saveUser(user);
+        this.showToast('⏳ ¡Correspondencia sellada! Abriendo cuenta atrás a las 10:00 AM.');
+        this.renderClientView();
       });
     }
 

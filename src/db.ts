@@ -59,6 +59,23 @@ export interface User {
   };
   activeReservation?: Reservation;
   reservationsHistory?: Reservation[];
+  postEventState?: {
+    eventId: string;
+    venueName: string;
+    dayDate: string;
+    revealTimeIso: string;
+    isRevealed: boolean;
+    matches: {
+      id: string;
+      name: string;
+      age: number;
+      profession: string;
+      zone: string;
+      cocktail: string;
+      icebreakerSummary: string;
+      whatsappPhone: string;
+    }[];
+  };
   wallet_address?: string;
   nfts?: any[];
 }
