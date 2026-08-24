@@ -74,8 +74,15 @@ function initApp() {
   function updateNavbar() {
     const user = Auth.currentUser;
     if (user) {
-      userMenu.innerHTML = `<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-right: 14px; align-self: center; color: var(--humo);">Hola, ${user.name || user.email}</span> <button id="btn-logout" class="btn-mini">Salir</button>`;
-      document.getElementById('btn-logout').addEventListener('click', () => Auth.logout());
+      const displayName = user.name ? user.name.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'Usuario');
+      userMenu.innerHTML = `
+        <div class="user-badge">
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--luz);"></span>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo);">Hola, <b style="color:var(--papel);">${displayName}</b></span>
+          <button id="btn-logout" class="btn-mini" style="font-size: 10px; padding: 2px 8px; border-radius: 999px; cursor: pointer;">Salir</button>
+        </div>
+      `;
+      document.getElementById('btn-logout')?.addEventListener('click', () => Auth.logout());
       
       // Mostrar vista según el rol
       if (user.role === 'client') {

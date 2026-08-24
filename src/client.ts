@@ -172,49 +172,52 @@ class ClientAppService {
     if (!feed) return;
 
     feed.innerHTML = `
-      <div class="noche-card lobby-card escaso">
-        <div class="meta">MARTES 25 - 20:00</div>
-        <h4>CARONTE Cocktail Bar</h4>
-        <p style="color: var(--humo); font-size: 11px; margin: 0 0 10px;">9 rondas de 6 min - acaba a las 21:45</p>
-        <div style="border-bottom: 2px solid var(--ambar); width: 100%; margin-bottom: 8px;"></div>
-        <div style="display: flex; justify-content: space-between; font-size: 10px; font-family: var(--font-mono); text-transform: uppercase; color: var(--humo); margin-bottom: 10px;">
+      <article class="noche-card escaso" style="cursor: pointer;">
+        <div class="dia">Martes 25 · 20:00</div>
+        <div class="local">CARONTE Cocktail Bar</div>
+        <div class="detalle">9 rondas de 6 min · acaba a las 21:45</div>
+        <div class="barra-balance">
+          <i style="width:62%;background:var(--luz)"></i>
+          <i style="width:38%;background:rgba(243,237,226,.22)"></i>
+        </div>
+        <div class="leyenda">
           <span>12 apuntadas</span>
-          <span>faltan 3 - Lado B</span>
+          <span>faltan 3 · Lado B</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-          <div>
-            <div class="price">$45.000</div>
-            <div style="font-size: 10px; color: var(--humo); margin-top: 4px; line-height: 1.2;">Sube a<br>$55.000 al<br>equilibrarse</div>
+        <div class="linea-precio">
+          <div class="precio">
+            $45.000
+            <small>Sube a $55.000 al equilibrarse</small>
           </div>
-          <button class="btn-outline">TU LADO VA ESCASO</button>
+          <span class="chip ambar">Tu lado va escaso</span>
         </div>
-      </div>
+      </article>
 
-      <div class="noche-card lobby-card ok">
-        <div class="meta">MIÉRCOLES 26 - 20:00</div>
-        <h4>La María Quinta Camacho · gastrobar</h4>
-        <p style="color: var(--humo); font-size: 11px; margin: 0 0 10px;">Noche de vinos - 35-49 años</p>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
-          <div>
-            <div class="price">$55.000</div>
-            <div style="font-size: 10px; color: var(--humo); margin-top: 4px;">Incluye 1ª<br>consumición</div>
+      <article class="noche-card ok" style="cursor: pointer;">
+        <div class="dia">Miércoles 26 · 20:00</div>
+        <div class="local">La María Quinta Camacho · gastrobar</div>
+        <div class="detalle">Noche de vinos · 35–49 años</div>
+        <div class="linea-precio">
+          <div class="precio">
+            $55.000
+            <small>Incluye 1er Cóctel de Autor</small>
           </div>
-          <button class="btn-outline verde">CONFIRMADO 12/12</button>
+          <span class="chip verde">Confirmado 12/12</span>
         </div>
-      </div>
+      </article>
 
-      <div class="noche-card lobby-card" style="border-color: rgba(243,237,226,0.1);">
-        <div class="meta">JUEVES 27 - 20:30</div>
-        <h4>Patio Poca Prisa</h4>
-        <p style="color: var(--humo); font-size: 11px; margin: 0 0 10px;">Temática cine - 28-38 años</p>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
-          <div>
-            <div class="price">$65.000</div>
-            <div style="font-size: 10px; color: var(--humo); margin-top: 4px;">Jueves,<br>tarifa alta</div>
+      <article class="noche-card lleno" style="cursor: pointer;">
+        <div class="dia">Jueves 27 · 20:30</div>
+        <div class="local">Patio Poca Prisa</div>
+        <div class="detalle">Temática: cine · 28–38 años</div>
+        <div class="linea-precio">
+          <div class="precio">
+            $65.000
+            <small>Jueves, tarifa alta</small>
           </div>
-          <button class="btn-outline gris">LISTA DE ESPERA</button>
+          <span class="chip gris">Lista de espera</span>
         </div>
-      </div>
+      </article>
     `;
   }
 
