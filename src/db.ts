@@ -65,6 +65,22 @@ export interface User {
     dayDate: string;
     revealTimeIso: string;
     isRevealed: boolean;
+    isLetterBurned?: boolean;
+    chatExpiresAtIso?: string;
+    chatHistory?: {
+      id: string;
+      sender: 'me' | 'partner';
+      text: string;
+      time: string;
+      timestamp: number;
+    }[];
+    secondDateBooking?: {
+      venueName: string;
+      date: string;
+      time: string;
+      discountCode: string;
+      status: 'pending' | 'confirmed';
+    };
     matches: {
       id: string;
       name: string;
@@ -73,9 +89,14 @@ export interface User {
       zone: string;
       cocktail: string;
       icebreakerSummary: string;
-      whatsappPhone: string;
+      whatsappPhone?: string;
     }[];
   };
+  serviceRequests?: {
+    serviceName: string;
+    requestedAt: string;
+    status: 'pending' | 'scheduled' | 'completed';
+  }[];
   wallet_address?: string;
   nfts?: any[];
 }

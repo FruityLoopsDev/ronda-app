@@ -401,6 +401,17 @@ export class ProfileService {
       btn.addEventListener('click', async (e) => {
         const serviceName = (e.currentTarget as HTMLElement).getAttribute('data-service') || 'Servicio RONDA';
         this.closeServicesModal();
+        if (this.currentUser) {
+          if (!this.currentUser.serviceRequests) {
+            this.currentUser.serviceRequests = [];
+          }
+          this.currentUser.serviceRequests.push({
+            serviceName,
+            requestedAt: new Date().toISOString(),
+            status: 'pending'
+          });
+          await DB.saveUser(this.currentUser);
+        }
         await RondaDialog.alert({
           title: 'Solicitud Recibida',
           message: `Hemos notificado a nuestro equipo de Concierge para agendar tu ${serviceName}. Te contactaremos por el canal seguro de la app con la fecha y hora disponible.`,

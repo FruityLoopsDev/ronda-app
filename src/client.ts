@@ -291,11 +291,44 @@ class ClientAppService {
     });
 
     document.getElementById('btn-chat-plan-2nd-date')?.addEventListener('click', async () => {
-      await RondaDialog.alert({
-        title: 'Segunda Cita RONDA (-25%)',
-        message: '¡Excelente decisión! Tienen reservado un cupón de cortesía con -25% de descuento en el local para coordinar su segunda cita presencial en un ambiente seguro y privado.',
-        icon: '🍸'
+      const user = Auth.currentUser;
+      const venueName = user?.postEventState?.venueName || 'CARONTE Cocktail Bar';
+      
+      const confirmed = await RondaDialog.confirm({
+        title: 'Coordinar 2ª Cita con -25%',
+        message: `¿Deseas activar tu reserva especial de 2ª Cita en ${venueName} con -25% de descuento en carta para este Viernes a las 20:30?`,
+        icon: '🍸',
+        confirmText: '✓ Activar Reserva Especial',
+        cancelText: '✕ Pensarlo Más Tarde'
       });
+
+      if (confirmed && user && user.postEventState) {
+        user.postEventState.secondDateBooking = {
+          venueName,
+          date: 'Viernes 28 de marzo',
+          time: '20:30',
+          discountCode: 'RONDA-2DATE-25',
+          status: 'confirmed'
+        };
+
+        const now = new Date();
+        const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        const confirmationMsg: any = {
+          id: 'msg_2nd_date_' + Date.now(),
+          sender: 'partner',
+          text: `🎉 ¡Segunda cita confirmada por RONDA! Tenemos reservada nuestra mesa para 2 en ${venueName} con -25% de descuento el Viernes a las 20:30. ¡Nos vemos allá! 🍸`,
+          time: timeStr,
+          timestamp: Date.now()
+        };
+
+        this.chatMessages.push(confirmationMsg);
+        user.postEventState.chatHistory = this.chatMessages;
+        await DB.saveUser(user);
+
+        this.renderChatStream();
+        this.showToast('🍸 ¡Segunda cita agendada con éxito!');
+      }
     });
   }
 
@@ -998,11 +1031,12 @@ class ClientAppService {
     this.stopCountdown();
 
     const isRevealed = postState.isRevealed;
+    const isLetterBurned = postState.isLetterBurned;
 
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
         <h3 style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--papel); margin: 0;">El Día Después</h3>
-        <span class="chip ${isRevealed ? 'verde' : 'ambar'}">${isRevealed ? 'Correspondencia Abierta' : '10:00 AM'}</span>
+        <span class="chip ${isRevealed ? 'verde' : 'ambar'}">${isLetterBurned ? 'Chat Activo (48h)' : (isRevealed ? 'Correspondencia Abierta' : '10:00 AM')}</span>
       </div>
 
       <!-- SOBRE CERRADO CON SELLO DE LACRE ROJO -->
@@ -1034,45 +1068,51 @@ class ClientAppService {
         </button>
       </div>
 
-      <!-- CARTA ANTIGUA DESPLEGADA -->
-      <div id="letter-parchment" class="vintage-letter-parchment ${isRevealed ? 'revealed' : ''}">
-        <div style="text-align: center; border-bottom: 1px dashed rgba(26,18,11,0.25); padding-bottom: 12px; margin-bottom: 16px;">
-          <p style="font-family: var(--font-display); font-size: 20px; font-weight: 800; letter-spacing: 0.2em; color: #1a120b; margin: 0 0 3px;">R O N D A</p>
-          <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.1em;">Correspondencia Confidencial · 10:00 AM</span>
+      <!-- CARTA ANTIGUA DESPLEGADA O CHAT ACTIVO -->
+      <div id="letter-parchment" class="vintage-letter-parchment ${isRevealed ? 'revealed' : ''}" style="${isLetterBurned ? 'background: #180f20; border-color: rgba(240,168,48,0.4); color: var(--papel);' : ''}">
+        <div style="text-align: center; border-bottom: 1px dashed ${isLetterBurned ? 'var(--linea)' : 'rgba(26,18,11,0.25)'}; padding-bottom: 12px; margin-bottom: 16px;">
+          <p style="font-family: var(--font-display); font-size: 20px; font-weight: 800; letter-spacing: 0.2em; color: ${isLetterBurned ? 'var(--luz)' : '#1a120b'}; margin: 0 0 3px;">R O N D A</p>
+          <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: ${isLetterBurned ? 'var(--humo)' : '#73675a'}; letter-spacing: 0.1em;">Correspondencia Confidencial · 10:00 AM</span>
         </div>
 
-        <p style="font-family: var(--font-display); font-style: italic; font-size: 14.5px; color: #2b1c18; margin: 0 0 14px; line-height: 1.5;">
+        <p style="font-family: var(--font-display); font-style: italic; font-size: 14.5px; color: ${isLetterBurned ? 'var(--papel)' : '#2b1c18'}; margin: 0 0 14px; line-height: 1.5;">
           Apreciado/a <b>${user.name || 'Invitado/a'}</b>, tras el cruce de votaciones anoche en <b>${postState.venueName}</b>, nos complace presentarte tu correspondencia de afinidad mutua:
         </p>
 
         <!-- Match Card Destacado -->
         ${postState.matches.map((m: any) => `
-          <div style="background: rgba(240,168,48,0.12); border: 1.5px solid #d4af37; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
+          <div style="background: ${isLetterBurned ? 'rgba(243,237,226,.04)' : 'rgba(240,168,48,0.12)'}; border: 1.5px solid ${isLetterBurned ? 'var(--linea)' : '#d4af37'}; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
               <div>
-                <b style="font-family: var(--font-display); font-size: 18px; color: #1a120b;">${m.name} (${m.age})</b>
-                <span style="font-size: 11px; color: #73675a; display: block; font-family: var(--font-mono);">${m.profession} · ${m.zone}</span>
+                <b style="font-family: var(--font-display); font-size: 18px; color: ${isLetterBurned ? 'var(--papel)' : '#1a120b'};">${m.name} (${m.age})</b>
+                <span style="font-size: 11px; color: ${isLetterBurned ? 'var(--humo)' : '#73675a'}; display: block; font-family: var(--font-mono);">${m.profession} · ${m.zone}</span>
               </div>
               <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px; background: #2e6b54; color: #fff;">Match Mutuo ✓</span>
             </div>
 
-            <p style="font-size: 12px; color: #3d2b1f; margin: 6px 0 12px; line-height: 1.4; font-style: italic;">
+            <p style="font-size: 12px; color: ${isLetterBurned ? 'var(--papel)' : '#3d2b1f'}; margin: 6px 0 12px; line-height: 1.4; font-style: italic;">
               "${m.icebreakerSummary}"
             </p>
 
+            ${postState.secondDateBooking ? `
+              <div style="background: rgba(46,107,84,0.15); border: 1px solid var(--botella); border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; font-size: 11px; color: #79D3AC; text-align: center;">
+                🍸 <b>2ª Cita Agendada (-25%)</b>: ${postState.secondDateBooking.date} · ${postState.secondDateBooking.time} en ${postState.secondDateBooking.venueName}
+              </div>
+            ` : ''}
+
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              <button id="btn-open-confidential-chat" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(240,168,48,0.35);">
-                💌 Abrir Mensaje Confidencial y Coordinar 2ª Cita
+              <button id="${isLetterBurned ? 'btn-open-active-chat' : 'btn-open-confidential-chat'}" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(240,168,48,0.35);">
+                ${isLetterBurned ? '💬 Continuar Chat Temporal (48h)' : '💌 Abrir Mensaje Confidencial y Coordinar 2ª Cita'}
               </button>
             </div>
           </div>
         `).join('')}
 
-        <div style="border-top: 1px dashed rgba(26,18,11,0.25); padding-top: 12px; margin-top: 16px; text-align: right;">
-          <p style="font-family: var(--font-display); font-size: 13.5px; font-style: italic; margin: 0; color: #5a4a3a;">
+        <div style="border-top: 1px dashed ${isLetterBurned ? 'var(--linea)' : 'rgba(26,18,11,0.25)'}; padding-top: 12px; margin-top: 16px; text-align: right;">
+          <p style="font-family: var(--font-display); font-size: 13.5px; font-style: italic; margin: 0; color: ${isLetterBurned ? 'var(--humo)' : '#5a4a3a'};">
             Afectuosamente,<br>
             <b>El Anfitrión de Sala</b><br>
-            <small style="font-family: var(--font-mono); font-size: 10px; color: #8c7b6b;">RONDA System · Bogotá</small>
+            <small style="font-family: var(--font-mono); font-size: 10px; color: ${isLetterBurned ? 'var(--humo)' : '#8c7b6b'};">RONDA System · Bogotá</small>
           </p>
         </div>
 
@@ -1085,6 +1125,10 @@ class ClientAppService {
     // Abrir mensaje confidencial con protocolo Misión Imposible
     document.getElementById('btn-open-confidential-chat')?.addEventListener('click', () => {
       this.triggerMissionImpossibleAutodestruction(postState.matches[0]?.name || 'tu Match');
+    });
+
+    document.getElementById('btn-open-active-chat')?.addEventListener('click', () => {
+      this.openTemporalChat(postState.matches[0]?.name || 'tu Match');
     });
 
     if (!isRevealed) {
@@ -1160,8 +1204,14 @@ class ClientAppService {
     letter.classList.add('mission-burn-active');
     this.showToast('🔥 Este mensaje se autodestruirá en 5 segundos...');
 
-    setTimeout(() => {
+    setTimeout(async () => {
       letter.style.display = 'none';
+      const user = Auth.currentUser;
+      if (user && user.postEventState) {
+        user.postEventState.isLetterBurned = true;
+        user.postEventState.chatExpiresAtIso = new Date(Date.now() + 48 * 3600000).toISOString();
+        await DB.saveUser(user);
+      }
       this.openTemporalChat(partnerName);
     }, 4500);
   }
@@ -1174,14 +1224,23 @@ class ClientAppService {
     const elPartnerName = document.getElementById('chat-partner-name');
     if (elPartnerName) elPartnerName.textContent = partnerName;
 
-    // Inicializar mensajes rompehielos de demostración
-    this.chatMessages = [
-      {
-        sender: 'partner',
-        text: `¡Hola! Qué gran noche ayer en el bar. Me encantó nuestra charla en la mesa. ¿Nos vemos para una segunda ronda?`,
-        time: '10:02 AM'
+    const user = Auth.currentUser;
+    if (user?.postEventState?.chatHistory && user.postEventState.chatHistory.length > 0) {
+      this.chatMessages = user.postEventState.chatHistory;
+    } else {
+      // Inicializar mensajes rompehielos de demostración
+      this.chatMessages = [
+        {
+          sender: 'partner',
+          text: `¡Hola! Qué gran noche ayer en el bar. Me encantó nuestra charla en la mesa. ¿Nos vemos para una segunda ronda?`,
+          time: '10:02 AM'
+        }
+      ];
+      if (user?.postEventState) {
+        user.postEventState.chatHistory = this.chatMessages;
+        DB.saveUser(user);
       }
-    ];
+    }
 
     this.renderChatStream();
     modal.classList.add('active');
@@ -1231,23 +1290,36 @@ class ClientAppService {
     const now = new Date();
     const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-    this.chatMessages.push({
+    const newMsg: any = {
       sender: 'me',
       text,
       time: timeStr
-    });
+    };
 
+    this.chatMessages.push(newMsg);
     input.value = '';
     this.renderChatStream();
 
+    const user = Auth.currentUser;
+    if (user && user.postEventState) {
+      user.postEventState.chatHistory = this.chatMessages;
+      DB.saveUser(user);
+    }
+
     // Respuesta simulada de la pareja al poco tiempo
-    setTimeout(() => {
-      this.chatMessages.push({
+    setTimeout(async () => {
+      const replyMsg: any = {
         sender: 'partner',
         text: '¡Totalmente de acuerdo! Qué tal si reservamos la 2ª cita con el beneficio del 25%?',
         time: `${now.getHours()}:${(now.getMinutes() + 1).toString().padStart(2, '0')}`
-      });
+      };
+      this.chatMessages.push(replyMsg);
       this.renderChatStream();
+
+      if (user && user.postEventState) {
+        user.postEventState.chatHistory = this.chatMessages;
+        await DB.saveUser(user);
+      }
     }, 1800);
   }
 
