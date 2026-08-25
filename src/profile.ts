@@ -219,6 +219,57 @@ export class ProfileService {
         Auth.logout();
       }
     });
+
+    // Badge Bubble Click Listeners (opening modals)
+    document.getElementById('badge-cocktail')?.addEventListener('click', () => {
+      this.openCocktailModal();
+    });
+    document.getElementById('badge-zone')?.addEventListener('click', () => {
+      this.openZoneModal();
+    });
+    document.getElementById('badge-services')?.addEventListener('click', () => {
+      this.openServicesModal();
+    });
+    document.getElementById('badge-qr')?.addEventListener('click', () => {
+      this.openQRModal();
+    });
+    // Badge Modal Listeners
+    document.getElementById('btn-close-cocktail')?.addEventListener('click', () => {
+      document.getElementById('modal-select-cocktail')?.classList.remove('active');
+    });
+    document.getElementById('btn-close-zone')?.addEventListener('click', () => {
+      document.getElementById('modal-select-zone')?.classList.remove('active');
+    });
+    document.getElementById('btn-close-qr')?.addEventListener('click', () => {
+      document.getElementById('modal-full-qr')?.classList.remove('active');
+    });
+
+    document.getElementById('btn-save-badge-cocktail')?.addEventListener('click', async () => {
+      const selected = document.querySelector('input[name="badge-cocktail-choice"]:checked') as HTMLInputElement;
+      if (selected && this.currentUser) {
+        this.currentUser.favoriteCocktail = selected.value;
+        await DB.saveUser(this.currentUser);
+        this.render();
+        document.getElementById('modal-select-cocktail')?.classList.remove('active');
+        this.showToast('Cóctel actualizado');
+      }
+    });
+
+    document.getElementById('btn-save-badge-zone')?.addEventListener('click', async () => {
+      if (this.currentUser) {
+        const selectedZones: string[] = [];
+        document.querySelectorAll('.badge-zone-checkbox:checked').forEach((chk: any) => {
+          selectedZones.push(chk.value);
+        });
+        if (selectedZones.length > 0) {
+          this.currentUser.preferredZones = selectedZones;
+          await DB.saveUser(this.currentUser);
+          this.render();
+          document.getElementById('modal-select-zone')?.classList.remove('active');
+          this.showToast('Zonas actualizadas');
+        }
+      }
+    });
   }
 
   openEditModal() {
@@ -424,6 +475,54 @@ export class ProfileService {
   closeServicesModal() {
     const modal = document.getElementById('modal-ronda-services');
     if (modal) modal.classList.remove('active');
+  }
+
+  // BADGE SPECIFIC MODALS
+  openCocktailModal() {
+    if (!this.currentUser) return;
+    const modal = document.getElementById('modal-select-cocktail');
+    if (!modal) return;
+    
+    const current = this.currentUser.favoriteCocktail || 'Negroni Ahumado';
+    const radio = modal.querySelector(`input[value="${current}"]`) as HTMLInputElement;
+    if (radio) {
+      radio.checked = true;
+    }
+    modal.classList.add('active');
+  }
+
+  openZoneModal() {
+    if (!this.currentUser) return;
+    const modal = document.getElementById('modal-select-zone');
+    if (!modal) return;
+    
+    const zones = this.currentUser.preferredZones || ['Zona G', 'Quinta Camacho'];
+    document.querySelectorAll('.badge-zone-checkbox').forEach((chk: any) => {
+      chk.checked = zones.includes(chk.value);
+    });
+    modal.classList.add('active');
+  }
+
+  openQRModal() {
+    const modal = document.getElementById('modal-full-qr');
+    if (!modal) return;
+    
+    const qrGrid = document.getElementById('big-qr-grid');
+    if (qrGrid && qrGrid.children.length === 0) {
+      let s=99;
+      const rnd=()=>(s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff;
+      for(let i=0;i<144;i++){
+        const c=document.createElement('i');
+        const r=Math.floor(i/12),co=i%12;
+        const esquina=(r<3&&co<3)||(r<3&&co>8)||(r>8&&co<3);
+        c.style.background = (esquina||rnd()>.48) ? 'var(--papel)' : 'transparent';
+        c.style.width = '16.66px';
+        c.style.height = '16.66px';
+        qrGrid.appendChild(c);
+      }
+    }
+    
+    modal.classList.add('active');
   }
 
   private compressImage(file: File, maxWidth: number, maxHeight: number, quality: number): Promise<string> {

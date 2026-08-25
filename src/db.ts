@@ -116,6 +116,25 @@ export interface Event {
   activeMatches?: Match[];
 }
 
+export interface Venue {
+  id: string;
+  name: string;
+  address: string;
+  zone: string;
+  lat: number;
+  lng: number;
+  status: 'active' | 'inactive';
+}
+
+export interface Lead {
+  id: string;
+  name: string;
+  contactName: string;
+  status: 'lead' | 'negotiating' | 'signed';
+  sales_uid: string;
+  commission: number;
+}
+
 function cleanFirestoreData(obj: any): any {
   if (obj === null || obj === undefined) return null;
   if (Array.isArray(obj)) {
@@ -138,13 +157,23 @@ export class DatabaseInterface {
   memoryDb: {
     users: Record<string, User>;
     events: Record<string, Event>;
+    venues: Record<string, Venue>;
+    leads: Record<string, Lead>;
   };
 
   constructor() {
     this.isDemo = RondaConfig.isDemo;
     this.memoryDb = {
       users: {},
-      events: {}
+      events: {},
+      venues: {
+        'v1': { id: 'v1', name: 'CARONTE Cocktail Bar', address: 'Cra. 4A #66-22', zone: 'Zona G', lat: 4.6543, lng: -74.0567, status: 'active' },
+        'v2': { id: 'v2', name: 'La María Quinta Camacho', address: 'Calle 70A #9-44', zone: 'Quinta Camacho', lat: 4.6565, lng: -74.0592, status: 'active' }
+      },
+      leads: {
+        'l1': { id: 'l1', name: 'Patio Poca Prisa', contactName: 'Carlos M.', status: 'negotiating', sales_uid: 'sales1', commission: 500000 },
+        'l2': { id: 'l2', name: 'Bar Enigma', contactName: 'Luis F.', status: 'lead', sales_uid: 'sales1', commission: 500000 }
+      }
     };
   }
 
@@ -263,6 +292,36 @@ export class DatabaseInterface {
     });
     
     return unsubscribe;
+  }
+
+  // --- Venues (Red) ---
+  async getVenues(): Promise<Venue[]> {
+    if (this.isDemo) {
+      return Object.values(this.memoryDb.venues);
+    }
+    // In a real app we would use getDocs(collection(db, 'venues'))
+    return [];
+  }
+
+  // --- Leads (CRM) ---
+  async getLeads(salesUid?: string): Promise<Lead[]> {
+    if (this.isDemo) {
+      let leads = Object.values(this.memoryDb.leads);
+      if (salesUid) leads = leads.filter(l => l.sales_uid === salesUid);
+      return leads;
+    }
+    return [];
+  }
+
+  async updateLeadStatus(leadId: string, status: 'lead' | 'negotiating' | 'signed'): Promise<void> {
+    if (this.isDemo) {
+      if (this.memoryDb.leads[leadId]) {
+        this.memoryDb.leads[leadId].status = status;
+      }
+      return;
+    }
+    const docRef = doc(this._getFirestore(), 'leads', leadId);
+    // setDoc or updateDoc in prod
   }
 }
 

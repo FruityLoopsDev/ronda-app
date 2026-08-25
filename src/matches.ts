@@ -1,6 +1,7 @@
 // matches.js: Lógica Post-Evento (Matches mutuos y Chat 72h)
 
-class MatchService {
+class MatchServiceImpl {
+  likes: Map<string, Set<string>>;
   constructor() {
     this.likes = new Map(); // uid -> Set(likedUids)
   }
@@ -58,4 +59,4 @@ class MatchService {
   }
 }
 
-export const MatchService = new MatchService();
+export const Matches = new MatchServiceImpl();

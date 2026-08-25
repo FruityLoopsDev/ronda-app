@@ -7,8 +7,8 @@
   --vino:#9B2748;
   --papel:#F3EDE2;
   --tinta:#1B1520;
-  --humo:rgba(243,237,226,.62);
-  --linea:rgba(243,237,226,.14);
+  --humo:rgba(243,237,226,.82);
+  --linea:rgba(243,237,226,.18);
   --r:14px;
 }
 *{box-sizing:border-box}
@@ -129,7 +129,7 @@ body::before{
   font-family:"JetBrains Mono",monospace;font-weight:700;font-size:62px;letter-spacing:-.02em;
   text-align:center;margin:6px 0 2px;font-variant-numeric:tabular-nums;
 }
-.crono.fin{color:var(--vino)}
+.crono.fin{color:var(--vino); animation: pulseWarning 0.8s infinite alternate;}
 .progreso{height:3px;background:rgba(243,237,226,.12);border-radius:99px;overflow:hidden}
 .progreso i{display:block;height:100%;background:var(--luz);transition:width 1s linear}
 .frente{

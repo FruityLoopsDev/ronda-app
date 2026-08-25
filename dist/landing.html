@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16101B">
+  <meta name="description" content="RONDA — Citas rápidas de 6 minutos en los mejores bares de Bogotá. 90 minutos, 9 personas reales, un trago en mano y una campana que marca el ritmo.">
+  <title>RONDA — Citas reales en bares de Bogotá</title>
+  
+  <!-- Tipografías de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --noche: #16101B;
+      --noche-profunda: #0e0a12;
+      --barra: #221826;
+      --barra-alta: #2C2033;
+      --barra-borde: #3d2d46;
+      --luz: #F0A830;
+      --luz-brillo: #ffbe4d;
+      --luz-fondo: rgba(240, 168, 48, 0.14);
+      --luz-glow: rgba(240, 168, 48, 0.35);
+      --botella: #2E6B54;
+      --botella-brillo: #449978;
+      --botella-fondo: rgba(46, 107, 84, 0.2);
+      --vino: #9B2748;
+      --vino-brillo: #c23860;
+      --vino-fondo: rgba(155, 39, 72, 0.2);
+      --papel: #F3EDE2;
+      --papel-suave: #ebe3d5;
+      --tinta: #1B1520;
+      --humo: rgba(243, 237, 226, 0.65);
+      --humo-claro: rgba(243, 237, 226, 0.85);
+      --linea: rgba(243, 237, 226, 0.14);
+      --linea-fuerte: rgba(243, 237, 226, 0.24);
+      
+      --font-serif: "Bodoni Moda", Georgia, serif;
+      --font-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+
+      --r-sm: 8px;
+      --r-md: 14px;
+      --r-lg: 24px;
+      --r-full: 9999px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--noche);
+      color: var(--papel);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(70vw 45vw at 85% -5%, rgba(240, 168, 48, 0.14), transparent 60%),
+        radial-gradient(60vw 45vw at 5% 100%, rgba(155, 39, 72, 0.16), transparent 60%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header y Navegación */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(22, 16, 27, 0.85);
+      border-bottom: 1px solid var(--linea);
+      padding: 16px 0;
+    }
+
+    .nav-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      line-height: 1;
+      color: var(--papel);
+    }
+    .brand-logo em {
+      font-style: italic;
+      color: var(--luz);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--humo);
+    }
+    .nav-links a:hover {
+      color: var(--papel);
+    }
+
+    /* Botones de Acción */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--r-full);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+    }
+    .btn.luz {
+      background: var(--luz);
+      color: var(--tinta);
+      border-color: var(--luz-brillo);
+      box-shadow: 0 4px 18px rgba(240, 168, 48, 0.25);
+    }
+    .btn.luz:hover {
+      background: var(--luz-brillo);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(240, 168, 48, 0.4);
+    }
+    .btn.outline {
+      background: transparent;
+      border-color: var(--linea-fuerte);
+      color: var(--papel);
+    }
+    .btn.outline:hover {
+      background: rgba(243, 237, 226, 0.08);
+      border-color: var(--papel);
+      transform: translateY(-1px);
+    }
+    .btn.sm {
+      padding: 8px 18px;
+      font-size: 12px;
+    }
+
+    /* Badges y Chips */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--r-full);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .badge.luz {
+      background: var(--luz-fondo);
+      color: var(--luz);
+      border: 1px solid rgba(240, 168, 48, 0.35);
+    }
+    .badge.botella {
+      background: var(--botella-fondo);
+      color: #8ce4be;
+      border: 1px solid rgba(46, 107, 84, 0.5);
+    }
+    .badge.vino {
+      background: var(--vino-fondo);
+      color: #ff94b0;
+      border: 1px solid rgba(155, 39, 72, 0.5);
+    }
+
+    /* Sección Hero */
+    section.hero {
+      padding: 70px 0 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-pre {
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(38px, 6.5vw, 68px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      max-width: 850px;
+      margin: 0 auto 20px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--luz);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2.2vw, 20px);
+      color: var(--humo-claro);
+      max-width: 680px;
+      margin: 0 auto 34px;
+      font-weight: 400;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .hero-trust {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--humo);
+      flex-wrap: wrap;
+    }
+    .hero-trust span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sección: Cómo Funciona */
+    section.steps-section {
+      padding: 70px 0;
+      border-top: 1px solid var(--linea);
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 50px;
+    }
+    .section-rotulo {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--luz);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4.2vw, 42px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      color: var(--humo);
+      font-size: 15px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .step-card {
+      background: var(--barra);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-md);
+      padding: 28px 22px;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .step-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--linea-fuerte);
+    }
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--luz);
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .step-card h3 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--papel);
+    }
+    .step-card p {
+      font-size: 14px;
+      color: var(--humo);
+      line-height: 1.5;
+    }
+
+    /* Sección: Parrilla de Noches / Eventos */
+    section.events-section {
+      padding: 70px 0;
+      border-top: 1px solid var(--linea);
+      background: rgba(14, 10, 18, 0.4);
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .event-card {
+      background: var(--barra);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-lg);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease;
+    }
+    .event-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--luz);
+    }
+    .event-card:hover {
+      border-color: var(--luz);
+      transform: translateY(-3px);
+    }
+
+    .event-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .event-date {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--luz);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .event-venue {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .event-address {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--humo);
+      margin-bottom: 16px;
+    }
+    .event-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .event-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: var(--r-full);
+      background: rgba(243, 237, 226, 0.07);
+      color: var(--humo-claro);
+    }
+
+    .event-includes {
+      background: rgba(243, 237, 226, 0.03);
+      border: 1px dashed var(--linea);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--humo-claro);
+      margin-bottom: 22px;
+    }
+    .event-includes ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-includes li::before {
+      content: "✓ ";
+      color: var(--botella-brillo);
+      font-weight: 700;
+    }
+
+    .event-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      border-top: 1px solid var(--linea);
+      padding-top: 18px;
+    }
+    .price-box .val {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--papel);
+      line-height: 1;
+    }
+    .price-box .lab {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--humo);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    /* Tabla Comparativa: Apps vs RONDA */
+    section.comparison-section {
+      padding: 70px 0;
+      border-top: 1px solid var(--linea);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--barra);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-lg);
+      padding: 12px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+    .compare-table th, .compare-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--linea);
+    }
+    .compare-table th {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--papel);
+    }
+    .compare-table th.col-ronda {
+      color: var(--luz);
+      background: var(--luz-fondo);
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
+    }
+    .compare-table td.col-ronda {
+      background: var(--luz-fondo);
+      font-weight: 500;
+      color: var(--papel);
+    }
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Sección Seguridad & Safe-Word */
+    section.safety-section {
+      padding: 70px 0;
+      border-top: 1px solid var(--linea);
+      background: radial-gradient(circle at 50% 50%, rgba(46, 107, 84, 0.08) 0%, transparent 70%);
+    }
+
+    .safety-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .safety-card {
+      background: var(--barra);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-md);
+      padding: 24px;
+    }
+    .safety-card h3 {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      margin-bottom: 8px;
+      color: var(--papel);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .safety-card p {
+      font-size: 13.5px;
+      color: var(--humo);
+      line-height: 1.5;
+    }
+
+    /* FAQ Accordion */
+    section.faq-section {
+      padding: 70px 0;
+      border-top: 1px solid var(--linea);
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--barra);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-md);
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .faq-item:hover {
+      border-color: var(--linea-fuerte);
+    }
+    .faq-q {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--papel);
+    }
+    .faq-a {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--humo);
+      line-height: 1.6;
+    }
+
+    /* Sección B2B para Bares */
+    section.b2b-section {
+      padding: 70px 0;
+      border-top: 1px solid var(--linea);
+      background: linear-gradient(180deg, var(--barra) 0%, var(--noche-profunda) 100%);
+    }
+
+    .b2b-card {
+      background: var(--barra-alta);
+      border: 1px solid var(--linea-fuerte);
+      border-radius: var(--r-lg);
+      padding: 44px 36px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 36px;
+      align-items: center;
+    }
+    @media(max-width: 860px) {
+      .b2b-card { grid-template-columns: 1fr; padding: 28px 20px; }
+    }
+
+    .b2b-content h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(26px, 3.5vw, 36px);
+      margin-bottom: 14px;
+      line-height: 1.15;
+    }
+    .b2b-content p {
+      font-size: 14.5px;
+      color: var(--humo-claro);
+      margin-bottom: 20px;
+    }
+    .b2b-perks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--papel);
+    }
+    .b2b-perks li::before {
+      content: "✦ ";
+      color: var(--luz);
+    }
+
+    .b2b-form {
+      background: var(--noche);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .b2b-form input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(243, 237, 226, 0.05);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-sm);
+      color: var(--papel);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      outline: none;
+    }
+    .b2b-form input:focus {
+      border-color: var(--luz);
+    }
+
+    /* Footer */
+    footer.site-footer {
+      border-top: 1px solid var(--linea);
+      padding: 40px 0 60px;
+      font-size: 13px;
+      color: var(--humo);
+      background: var(--noche-profunda);
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    /* Modal de Compra / Checkout Rápido */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 10, 18, 0.85);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--barra);
+      border: 1px solid var(--linea-fuerte);
+      border-radius: var(--r-lg);
+      padding: 30px 24px;
+      max-width: 440px;
+      width: 100%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: var(--humo);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      section.hero { padding: 40px 0 50px; }
+      .hero-trust { flex-direction: column; gap: 10px; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header de Navegación -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="#" class="brand-logo">R<em>O</em>NDA</a>
+      <ul class="nav-links">
+        <li><a href="#como-funciona">Cómo funciona</a></li>
+        <li><a href="#proximas-noches">Próximas noches</a></li>
+        <li><a href="#seguridad">Seguridad</a></li>
+        <li><a href="#faq">Preguntas</a></li>
+        <li><a href="#para-bares">Para Bares</a></li>
+      </ul>
+      <a href="#proximas-noches" class="btn luz sm">Elegir mi noche ➔</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-pre">
+        <span class="badge luz">✦ Citas rápidas en días valle · Bogotá</span>
+      </div>
+      <h1 class="hero-title">Eliges la noche, <em>no la persona.</em></h1>
+      <p class="hero-sub">
+        9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, personas reales verificadas y una campana que marca el ritmo. Sin pantallas, sin chats eternos y sin <i>ghosting</i>.
+      </p>
+      <div class="hero-cta-group">
+        <a href="#proximas-noches" class="btn luz">Ver próximas fechas en Bogotá ➔</a>
+        <a href="#como-funciona" class="btn outline">¿Cómo funciona?</a>
+      </div>
+      <div class="hero-trust">
+        <span>📍 Zona G · Quinta Camacho · Chapinero Alto</span>
+        <span>🍸 2 consumiciones incluidas</span>
+        <span>🔒 Votación 100% secreta</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo Funciona -->
+  <section class="steps-section" id="como-funciona">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-rotulo">El Formato de los 90 Minutos</p>
+        <h2 class="section-title">De la pantalla al bar en 4 pasos simples</h2>
+        <p class="section-desc">Diseñado para que conectes de forma natural, cómoda y sin silencios incómodos.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h3>Elige tu noche</h3>
+          <p>Selecciona tu rango de edad (ej. 25 a 35 años), tu barrio favorito y asegura tu entrada por adelantado.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h3>Llega al bar</h3>
+          <p>Muestra tu comanda digital en la barra al llegar. Recibe tu trago de bienvenida y tu número de mesa inicial.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h3>9 Rondas × 6 Min</h3>
+          <p>Conversa cara a cara. Al sonar la campana, rotas de mesa y emites tu voto secreto (<i>Sí / No</i>) desde tu teléfono.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <h3>Matches al día siguiente</h3>
+          <p>A las 10:00 AM se revelan las coincidencias mutuas con contacto directo y un <b>bono de -25%</b> para volver al local.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parrilla de Eventos / Selector de Entradas -->
+  <section class="events-section" id="proximas-noches">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-rotulo">Calendario de Lanzamiento · Bogotá</p>
+        <h2 class="section-title">Próximas Noches Disponibles</h2>
+        <p class="section-desc">Cupos estrictamente limitados a 20 personas por sala para garantizar equilibrio 1:1.</p>
+      </div>
+
+      <div class="events-grid">
+        <!-- Evento 1: Piloto Jueves -->
+        <div class="event-card">
+          <div>
+            <div class="event-meta">
+              <span class="event-date">Jueves 27 de Agosto · 20:00</span>
+              <span class="badge vino">Últimos 4 cupos</span>
+            </div>
+            <h3 class="event-venue">Bar Trinquete</h3>
+            <p class="event-address">Cra. 4 #52-84 · Chapinero Alto</p>
+            <div class="event-tags">
+              <span class="event-tag">25 a 35 años</span>
+              <span class="event-tag">Hetero</span>
+              <span class="event-tag">Piloto Oficial</span>
+            </div>
+            <div class="event-includes">
+              <ul>
+                <li>2 Cervezas artesanales o cócteles incluidos</li>
+                <li>9 Citas rápidas garantizadas (6 min c/u)</li>
+                <li>Comanda digital de acceso + Bono -25% de retorno</li>
+              </ul>
+            </div>
+          </div>
+          <div class="event-bottom">
+            <div class="price-box">
+              <div class="val">$45.000 COP</div>
+              <div class="lab">Precio de Lanzamiento</div>
+            </div>
+            <button class="btn luz sm" onclick="openCheckout('Bar Trinquete', 'Jueves 27 Ago · 20:00', '45.000')">Reservar Puesto</button>
+          </div>
+        </div>
+
+        <!-- Evento 2: Quinta Camacho -->
+        <div class="event-card">
+          <div>
+            <div class="event-meta">
+              <span class="event-date">Martes 1 de Septiembre · 20:00</span>
+              <span class="badge botella">Cupos Abiertos</span>
+            </div>
+            <h3 class="event-venue">Gastrobar La Terraza</h3>
+            <p class="event-address">Calle 70 #10-34 · Quinta Camacho</p>
+            <div class="event-tags">
+              <span class="event-tag">28 a 42 años</span>
+              <span class="event-tag">Hetero</span>
+              <span class="event-tag">Afterwork</span>
+            </div>
+            <div class="event-includes">
+              <ul>
+                <li>2 Bebidas premium o cócteles de autor</li>
+                <li>9 Citas de 6 minutos con rotación perfecta</li>
+                <li>Ambiente curado y música lounge</li>
+              </ul>
+            </div>
+          </div>
+          <div class="event-bottom">
+            <div class="price-box">
+              <div class="val">$55.000 COP</div>
+              <div class="lab">Preventa Oficial</div>
+            </div>
+            <button class="btn luz sm" onclick="openCheckout('Gastrobar La Terraza', 'Martes 1 Sep · 20:00', '55.000')">Reservar Puesto</button>
+          </div>
+        </div>
+
+        <!-- Evento 3: Zona G -->
+        <div class="event-card">
+          <div>
+            <div class="event-meta">
+              <span class="event-date">Jueves 3 de Septiembre · 20:00</span>
+              <span class="badge luz">Nuevo Lanzamiento</span>
+            </div>
+            <h3 class="event-venue">Club Social Quinta</h3>
+            <p class="event-address">Cra. 5 #69-26 · Zona G</p>
+            <div class="event-tags">
+              <span class="event-tag">25 a 36 años</span>
+              <span class="event-tag">Inclusivo All-Genders</span>
+            </div>
+            <div class="event-includes">
+              <ul>
+                <li>2 Cócteles de la casa o cerveza</li>
+                <li>Rotación de mesas con algoritmo MEM-RR</li>
+                <li>Descuento exclusivo post-evento en barra</li>
+              </ul>
+            </div>
+          </div>
+          <div class="event-bottom">
+            <div class="price-box">
+              <div class="val">$55.000 COP</div>
+              <div class="lab">Preventa Oficial</div>
+            </div>
+            <button class="btn luz sm" onclick="openCheckout('Club Social Quinta', 'Jueves 3 Sep · 20:00', '55.000')">Reservar Puesto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabla Comparativa: Apps vs RONDA -->
+  <section class="comparison-section">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-rotulo">El Fin del Swipe Infinito</p>
+        <h2 class="section-title">¿Por qué RONDA frente a las apps de citas?</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th>Apps Tradicionales (Tinder / Bumble)</th>
+              <th class="col-ronda">La Noche RONDA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Tiempo invertido</b></td>
+              <td>Semanas de chat superficial que se enfrían.</td>
+              <td class="col-ronda"><b>9 citas cara a cara en 90 minutos.</b></td>
+            </tr>
+            <tr>
+              <td><b>Veracidad</b></td>
+              <td>Fotos con filtros de hace años y perfiles falsos.</td>
+              <td class="col-ronda"><b>Personas reales presentes en el bar.</b></td>
+            </tr>
+            <tr>
+              <td><b>Incomodidad</b></td>
+              <td>Primeras citas de 2 horas sin química.</td>
+              <td class="col-ronda"><b>6 minutos:</b> si hay química se nota; si no, suena la campana y rotas.</td>
+            </tr>
+            <tr>
+              <td><b>Destino del dinero</b></td>
+              <td>Suscripciones mensuales por algoritmos opacos.</td>
+              <td class="col-ronda"><b>Pagas tu noche:</b> incluye tus consumiciones en un buen local.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seguridad & Tranquilidad -->
+  <section class="safety-section" id="seguridad">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-rotulo">Entorno Seguro y Curado</p>
+        <h2 class="section-title">Tu tranquilidad es la prioridad absoluta</h2>
+        <p class="section-desc">Diseñamos cada detalle para que disfrutes de tu noche con total comodidad.</p>
+      </div>
+
+      <div class="safety-grid">
+        <div class="safety-card">
+          <h3>🔒 Votación 100% Secreta</h3>
+          <p>Nadie en la sala sabe si votaste Sí o No. Los resultados se calculan de forma privada y solo se revelan si la atracción fue mutua (*Double Opt-In*).</p>
+        </div>
+
+        <div class="safety-card">
+          <h3>🛡️ Botón de Asistencia Discreto</h3>
+          <p>Si en algún momento te sientes incómodo/a, puedes activar una alerta silenciosa desde tu pantalla para que el anfitrión del bar intervenga de manera natural.</p>
+        </div>
+
+        <div class="safety-card">
+          <h3>⚖️ Política Anti No-Show (1 Strike)</h3>
+          <p>Para proteger el equilibrio numérico de la sala, las inasistencias sin aviso de 24h pierden el ticket y acumulan una penalización de acceso.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preguntas Frecuentes -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-rotulo">Resolvemos tus dudas</p>
+        <h2 class="section-title">Preguntas Frecuentes</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">¿Puedo asistir solo o sola? <span>+</span></div>
+          <div class="faq-a">El 90% de los participantes asiste sin acompañantes. La dinámica de la comanda y la bienvenida en barra está pensada precisamente para que te sientas integrado desde el minuto cero.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">¿Qué incluye el valor de la entrada? <span>+</span></div>
+          <div class="faq-a">Tu entrada incluye 2 consumiciones pactadas en la barra (cervezas artesanales o cócteles seleccionados), tu acceso exclusivo a las 9 rondas de citas y el bono de -25% para tu siguiente cita en el local.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">¿Qué pasa si soy tímido/a o no sé qué decir? <span>+</span></div>
+          <div class="faq-a">La aplicación muestra en tu pantalla preguntas rompehielos sugeridas en cada ronda. Además, como solo dura 6 minutos por persona, la conversación fluye de forma muy ligera y espontánea.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">¿Cómo se procesa el pago? <span>+</span></div>
+          <div class="faq-a">Aceptamos pagos en pesos colombianos (COP) mediante PSE, tarjetas de crédito, débito, Nequi y Daviplata a través de la pasarela segura de WOMPI.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección B2B para Bares -->
+  <section class="b2b-section" id="para-bares">
+    <div class="container">
+      <div class="b2b-card">
+        <div class="b2b-content">
+          <span class="badge luz" style="margin-bottom: 12px;">Para Bares & Gastrobares</span>
+          <h2>Llena tus martes y jueves con consumo garantizado</h2>
+          <p>
+            Tus costos de arriendo y personal son los mismos toda la semana. RONDA llena tus mesas en noches valle con 20 a 24 comensales calificados sin que tengas que gastar en publicidad.
+          </p>
+          <ul class="b2b-perks">
+            <li>Facturación asegurada por consumo en barra desde las 19:30.</li>
+            <li>Adquisición de clientes recurrentes mediante el bono de retorno de -25%.</li>
+            <li>Coordinación completa del evento por parte de nuestro software y anfitriones.</li>
+          </ul>
+        </div>
+        <div class="b2b-form">
+          <h3 style="font-family: var(--font-serif); font-size: 20px;">Postula tu Establecimiento</h3>
+          <input type="text" id="b2b-venue-name" placeholder="Nombre del Bar o Gastrobar" required>
+          <input type="text" id="b2b-venue-zone" placeholder="Zona (ej. Chapinero, Zona G, Usaquén)" required>
+          <input type="text" id="b2b-contact-name" placeholder="Nombre de contacto / Administrador" required>
+          <input type="tel" id="b2b-contact-phone" placeholder="WhatsApp de contacto (+57)" required>
+          <button class="btn luz" onclick="submitB2BForm()">Solicitar Alianza Comercial ➔</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <div>
+        <span class="brand-logo" style="font-size: 24px;">R<em>O</em>NDA</span>
+        <p style="margin-top: 4px; font-family: var(--font-mono); font-size: 11px;">Citas rápidas en días valle · Bogotá, Colombia</p>
+      </div>
+      <div>
+        <p style="font-size: 11px; font-family: var(--font-mono);">Cumplimiento Ley 1581 de Protección de Datos Personales</p>
+        <p style="font-size: 11px; margin-top: 2px;">© 2026 RONDA System. Todos los derechos reservados.</p>
+      </div>
+      <div>
+        <a href="https://wa.me/573000000000?text=Hola%20RONDA,%20tengo%20una%20pregunta%20sobre%20los%20eventos" target="_blank" class="btn outline sm">Soporte WhatsApp 💬</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Checkout / Reserva Rápida -->
+  <div id="checkout-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeCheckout()">✕</button>
+      <span class="badge luz" style="margin-bottom: 8px;">Reserva de Entrada</span>
+      <h3 id="modal-event-title" style="font-family: var(--font-serif); font-size: 22px; margin-bottom: 4px;">Bar Trinquete</h3>
+      <p id="modal-event-date" style="font-family: var(--font-mono); font-size: 12px; color: var(--luz); margin-bottom: 16px;">Jueves 27 Ago · 20:00</p>
+      
+      <div style="background: rgba(243,237,226,0.05); padding: 14px; border-radius: var(--r-sm); border: 1px solid var(--linea); margin-bottom: 16px; font-size: 13px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>1x Entrada RONDA (2 Bebidas inc.)</span>
+          <b id="modal-event-price">$45.000 COP</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; color:var(--humo); font-size:11px;">
+          <span>Pasarela Wompi / PSE / Nequi</span>
+          <span>Sin costo adicional</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px;">
+        <input type="text" id="buyer-name" placeholder="Tu nombre completo" style="padding: 10px 12px; border-radius: var(--r-sm); border: 1px solid var(--linea); background: var(--noche); color: var(--papel); outline: none; font-family: var(--font-sans);">
+        <input type="email" id="buyer-email" placeholder="Tu correo electrónico" style="padding: 10px 12px; border-radius: var(--r-sm); border: 1px solid var(--linea); background: var(--noche); color: var(--papel); outline: none; font-family: var(--font-sans);">
+        <input type="tel" id="buyer-phone" placeholder="Número de WhatsApp (+57)" style="padding: 10px 12px; border-radius: var(--r-sm); border: 1px solid var(--linea); background: var(--noche); color: var(--papel); outline: none; font-family: var(--font-sans);">
+      </div>
+
+      <button class="btn luz w-100" style="width: 100%;" onclick="proceedToPayment()">Continuar al Pago Seguro (Wompi / PSE) ➔</button>
+      <p style="font-size: 10px; font-family: var(--font-mono); color: var(--humo); text-align: center; margin-top: 10px;">🔒 Transacción encriptada y protegida</p>
+    </div>
+  </div>
+
+  <script>
+    function openCheckout(venue, date, price) {
+      document.getElementById('modal-event-title').textContent = venue;
+      document.getElementById('modal-event-date').textContent = date;
+      document.getElementById('modal-event-price').textContent = `$${price} COP`;
+      document.getElementById('checkout-modal').classList.add('open');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkout-modal').classList.remove('open');
+    }
+
+    function proceedToPayment() {
+      const name = document.getElementById('buyer-name').value.trim();
+      const email = document.getElementById('buyer-email').value.trim();
+      const phone = document.getElementById('buyer-phone').value.trim();
+
+      if (!name || !email || !phone) {
+        alert('Por favor completa tus datos para emitir tu comanda digital.');
+        return;
+      }
+
+      alert(`¡Perfecto ${name}! Redirigiendo a la pasarela de pago Wompi en pesos colombianos...`);
+      // En producción: Wompi widget / checkout session URL
+      window.location.href = '/index.html';
+    }
+
+    function submitB2BForm() {
+      const venue = document.getElementById('b2b-venue-name').value.trim();
+      const zone = document.getElementById('b2b-venue-zone').value.trim();
+      const contact = document.getElementById('b2b-contact-name').value.trim();
+      const phone = document.getElementById('b2b-contact-phone').value.trim();
+
+      if (!venue || !zone || !contact || !phone) {
+        alert('Por favor completa todos los campos para recibir la propuesta comercial.');
+        return;
+      }
+
+      const msg = encodeURIComponent(`Hola RONDA, soy ${contact} del local ${venue} en ${zone}. Quiero recibir información para llenar mi bar en días valle.`);
+      window.open(`https://wa.me/573000000000?text=${msg}`, '_blank');
+    }
+  </script>
+</body>
+</html>

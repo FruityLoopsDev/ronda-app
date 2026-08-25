@@ -1,5 +1,7 @@
 import { Auth } from './auth.js';
 import { RondaServices } from './firebase-config.js';
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions';
+import { NFT_CONFIG } from './nft-config.js';
 
 // nft-utils.js: Funcionalidades de simulación Web3 para el entorno DEMO
 
@@ -25,46 +27,23 @@ class NFTUtilsService {
     };
   }
 
-  // Llamar a la Cloud Function para el minting
+  // Llamar a la Cloud Function para el minting (Desactivado para ahorrar costos de Cloud Functions)
   async mintNFT(userAddress, eventId, ipfsHash) {
-    console.log(`[NFT] Llamando a Firebase Function 'mintAttendanceNFT' para: ${userAddress}`);
+    console.log(`[NFT] Simulando minting (Cloud Functions deshabilitado) para: ${userAddress}`);
     
-    try {
-      if (!firebaseModules) throw new Error("Firebase no inicializado");
-      
-      // Asegurar que getFunctions y httpsCallable están disponibles (requiere importación en index.html)
-      
-      
-      const functions = getFunctions(RondaServices.app);
-      
-      // Conectar al emulador si estamos en localhost
-      if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        connectFunctionsEmulator(functions, "localhost", 5001);
-      }
-      
-      const mintAttendanceNFT = httpsCallable(functions, 'mintAttendanceNFT');
-      
-      const result = await mintAttendanceNFT({
-        eventId: eventId,
-        targetUid: userAddress, // Asumiendo que enviamos el UID como targetUid
-        walletAddress: Auth.currentUser.wallet_address || userAddress,
-        ipfsHash: ipfsHash
-      });
-      
-      console.log(`[NFT] ✓ NFT Minted exitosamente por la función:`, result.data);
-      
-      return {
-        success: true,
-        tokenId: result.data.tokenId,
-        transactionHash: result.data.transactionHash
-      };
-    } catch (err) {
-      console.error("[NFT] Error llamando a la función de minting:", err);
-      return {
-        success: false,
-        error: err.message
-      };
-    }
+    // Retraso simulado
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const mockTxHash = "0x" + Array.from({length: 64}, () => "abcdef0123456789".charAt(Math.floor(Math.random() * 16))).join('');
+    const mockTokenId = Math.floor(Math.random() * 10000).toString();
+
+    console.log(`[NFT] ✓ NFT Minted simulado exitosamente.`);
+    
+    return {
+      success: true,
+      tokenId: mockTokenId,
+      transactionHash: mockTxHash
+    };
   }
 }
 

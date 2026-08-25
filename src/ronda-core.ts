@@ -2,6 +2,7 @@
 // Patente pendiente: Algoritmo de rotación B2B2C con evasión de colisiones históricas.
 
 class RondaEngineService {
+  collisionMatrix: Map<string, number>;
   constructor() {
     // Matriz de colisiones históricas: trackea cuántas veces i y j se han cruzado.
     this.collisionMatrix = new Map();

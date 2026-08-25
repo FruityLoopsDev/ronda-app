@@ -4,6 +4,17 @@ import { RondaDialog } from './dialog.js';
 // bar.js: Motor de Rotación y Consola del Anfitrión (Producción)
 
 class HostConsoleService {
+  currentEvent: any = null;
+  unsubscribe: any = null;
+  participantProfiles: any = {};
+  m: number = 0;
+  A: any[] = [];
+  B: any[] = [];
+  offsets: any[] = [];
+  prior: any[] = [];
+  met: any[] = [];
+  barTable: number = -1;
+  hasBar: boolean = false;
   constructor() {
     this.currentEvent = null;
     this.unsubscribe = null;
@@ -218,122 +229,101 @@ class HostConsoleService {
   }
 
   renderDashboard() {
-    const container = document.getElementById('admin-content');
+    const container = document.getElementById('view-admin');
     if (!container || !this.currentEvent) return;
     
     const totalParticipants = this.currentEvent.participants ? this.currentEvent.participants.length : 0;
     
-    let html = `
-      <div class="panel-local">
-        <div class="pl-head">
-          <div>
-            <h3>Consola del Anfitrión</h3>
-            <p>Estado de la Sala: ${this.currentEvent.status.toUpperCase()}</p>
-          </div>
-          <span class="chip verde">${totalParticipants} Asistentes Confirmados</span>
-        </div>
-
-        <div class="pl-body">
-          <div class="pl-col" style="border-right: 1px solid var(--linea);">
-            <p class="pl-tit">Control de Evento</p>
-            <div class="prox">
-              <p class="meta">Próxima acción</p>
-              <h4>Ronda ${this.currentEvent.currentRound} de 9</h4>
-              <ul class="lista" style="margin-bottom: 20px;">
-                <li><span>Matches Activos</span><b>${this.currentEvent.activeMatches?.length || 0}</b></li>
-                <li><span>Asistentes Mínimos</span><b>10</b></li>
-              </ul>
-              
-              <div class="acciones-local flex-col gap-2">
-                <button id="btn-add-p" class="btn" style="width: 100%; margin-bottom:10px; border-color: var(--luz); color: var(--luz);">Mostrar Código de Registro</button>
-                <button id="btn-next-r" class="btn si" style="width: 100%; margin-bottom:10px;">${this.currentEvent.currentRound === 0 ? 'Arrancar Motor (Ronda 1)' : 'Campana (Siguiente Ronda)'}</button>
-                <button id="btn-end-e" class="btn" style="width: 100%; border-color: var(--vino); color: var(--vino); font-weight: 700;">Finalizar y Emitir NFTs</button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="pl-col">
-    `;
-
-    if (this.currentEvent.currentRound === 0) {
-      // Mostrar lista de participantes que se han unido en tiempo real
-      let participantsHtml = "";
-      if (this.currentEvent.participants && this.currentEvent.participants.length > 0) {
-        this.currentEvent.participants.forEach(uid => {
-          const profile = this.participantProfiles[uid] || { name: 'Cargando...', age: '', gender: '' };
-          participantsHtml += `
-            <li style="padding: 10px 0;">
-              <div>
-                <b>${profile.name || 'Usuario Nuevo'}</b>
-                <span style="font-size: 11px; color: var(--humo); display: block;">Género: ${profile.gender || '?'}, Orientación: ${profile.orientation || '?'}</span>
-              </div>
-              <span class="chip gris">${profile.age ? profile.age + ' años' : '---'}</span>
-            </li>
-          `;
-        });
-      } else {
-        participantsHtml = `<li style="text-align: center; color: var(--humo); padding: 20px 0;">Esperando a que los usuarios ingresen con el código...</li>`;
-      }
-
-      html += `
-            <p class="pl-tit">Clientes Registrados en Sala</p>
-            <ul class="lista" style="max-height: 350px; overflow-y: auto;">
-              ${participantsHtml}
-            </ul>
-      `;
-    } else {
-      // Mostrar planta de mesas en vivo
-      html += `
-            <p class="pl-tit">Planta de Mesas en Vivo</p>
-            <div class="mapa" id="admin-mapa" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
-      `;
-
-      if (this.currentEvent.activeMatches && this.currentEvent.activeMatches.length > 0) {
-        html += `<div class="planta">`;
-        this.currentEvent.activeMatches.forEach(m => {
-          const repeatBadge = m.isRepeat ? `<span class="repite">repite</span>` : '';
-          const activeClass = 'activa';
-          html += `
-            <div class="mesa ${activeClass}">
-              ${repeatBadge}
-              <span class="num">MESA ${m.tableId}</span>
-              <div class="ficha a">${m.p1.name.substring(0,2).toUpperCase()}</div>
-              <span class="union">▲ ▼</span>
-              <div class="ficha b">${m.p2.name.substring(0,2).toUpperCase()}</div>
-            </div>
-          `;
-        });
-        html += `</div>
-          <div class="leyenda-planta" style="margin-top: 15px; font-family: var(--font-mono); font-size: 10px; color: var(--humo);">
-            <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:rgba(46,107,84,.5);"></i>Lado A · fijo</span>
-            <span><i style="display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:rgba(240,168,48,.5);"></i>Lado B · rota</span>
-          </div>
-        `;
-      } else {
-        html += `<div class="aviso">No hay matches activos en esta ronda.</div>`;
-      }
-
-      html += `</div>`;
+    // Próxima Noche / Evento Actual
+    const elConfirmed = document.getElementById('nn-confirmed');
+    if (elConfirmed) {
+      elConfirmed.textContent = `${totalParticipants} (${Math.floor(totalParticipants/2)} + ${Math.ceil(totalParticipants/2)})`;
+    }
+    
+    const elTables = document.getElementById('nn-tables');
+    if (elTables) {
+      elTables.textContent = `${Math.ceil(totalParticipants / 2)} de 2 plazas`;
     }
 
-    html += `
-          </div>
-        </div>
-      </div>
-    `;
-    
-    container.innerHTML = html;
-    
-    // Bindear event listeners
-    const btnAdd = document.getElementById('btn-add-p');
-    if (btnAdd) btnAdd.addEventListener('click', () => this.showScannerInstruction());
-    
-    const btnNext = document.getElementById('btn-next-r');
-    if (btnNext) btnNext.addEventListener('click', () => this.generateNextRound());
+    const elDrinks = document.getElementById('nn-drinks');
+    if (elDrinks) {
+      elDrinks.textContent = `${totalParticipants * 2} mínimo`;
+    }
 
-    const btnEnd = document.getElementById('btn-end-e');
-    if (btnEnd) btnEnd.addEventListener('click', () => this.endEventAndMint());
+    const elRevenue = document.getElementById('nn-revenue');
+    if (elRevenue) {
+      // Assuming a base consumption of $22,000 COP per included drink * 2 = 44,000 per person
+      const totalRev = totalParticipants * 44000;
+      elRevenue.textContent = `$${totalRev.toLocaleString('es-CO')}`;
+    }
+
+    // Botones de acción del evento
+    const btnStart = document.getElementById('btn-admin-start-event');
+    const btnEnd = document.getElementById('btn-admin-end-event');
+    
+    if (btnStart) {
+      if (this.currentEvent.currentRound === 0) {
+        btnStart.textContent = 'Arrancar Noche (Motor)';
+        btnStart.className = 'btn ambar';
+      } else {
+        btnStart.textContent = `Campana (Ronda ${this.currentEvent.currentRound} de 9)`;
+        btnStart.className = 'btn si';
+      }
+      // Limpiar listeners anteriores (clonando)
+      const newBtnStart = btnStart.cloneNode(true);
+      btnStart.parentNode?.replaceChild(newBtnStart, btnStart);
+      newBtnStart.addEventListener('click', () => this.generateNextRound());
+    }
+
+    if (btnEnd) {
+      if (this.currentEvent.currentRound > 0) {
+        btnEnd.style.display = 'block';
+        const newBtnEnd = btnEnd.cloneNode(true);
+        btnEnd.parentNode?.replaceChild(newBtnEnd, btnEnd);
+        newBtnEnd.addEventListener('click', () => this.endEventAndMint());
+      } else {
+        btnEnd.style.display = 'none';
+      }
+    }
+
+    // Chart mock con datos aleatorios pero estables
+    this.renderChart(totalParticipants);
+  }
+
+  renderChart(totalParticipants) {
+    const chart = document.getElementById('admin-chart');
+    if (!chart) return;
+    
+    const days = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+    const pcts = [22, 82, 76, 88, 94, 97, 40]; // Base from design
+    
+    // Slight variation based on current participants to make it feel alive
+    const variation = totalParticipants % 5;
+    
+    chart.innerHTML = '';
+    days.forEach((day, index) => {
+      let pct = pcts[index] + (index === 1 ? variation : 0);
+      if (pct > 100) pct = 100;
+      
+      const isActive = index >= 1 && index <= 3; // Mar, Mié, Jue
+      
+      const col = document.createElement('div');
+      col.className = 'bar-col';
+      col.innerHTML = `
+        <div class="bar ${isActive ? 'active' : ''}" style="height: ${pct}%;">
+          ${isActive ? `<span class="bar-pct">${pct}%</span>` : ''}
+        </div>
+        <div class="bar-label">${day}</div>
+      `;
+      chart.appendChild(col);
+    });
+  }
+
+  init() {
+    const user = (window as any).Auth?.currentUser || { venueId: 'v1' };
+    this.initAdminDashboard(user);
   }
 }
 
 export const HostConsole = new HostConsoleService();
+export const Admin = HostConsole;

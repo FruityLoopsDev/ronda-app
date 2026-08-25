@@ -4,7 +4,14 @@ import { RondaConfig } from './firebase-config.js';
 // verification.js: Módulo de Seguridad y Geolocalización
 // Implementa Geolocalización, OCR (Tesseract.js) y Biometría facial (MediaPipe)
 
+declare var Camera: any;
+declare var FaceDetection: any;
+declare var Tesseract: any;
+
 class VerificationService {
+  location: any = null;
+  isVerified: boolean = false;
+  camera: any = null;
   constructor() {
     this.location = null;
     this.isVerified = false;
@@ -49,19 +56,47 @@ class VerificationService {
   // --- 2. Verificación de Identidad (Biometría + OCR) ---
   
   // Carga dinámica de Tesseract y MediaPipe desde CDN
-  async loadVerificationLibraries() {
-    console.log("Cargando librerías de seguridad...");
+  async loadVerificationLibraries(): Promise<void> {
+    console.log("Cargando librerías de seguridad (MediaPipe + Tesseract)...");
     
-    
-    
-    console.log("Librerías cargadas.");
+    const loadScript = (src: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+          resolve();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = src;
+        script.crossOrigin = 'anonymous';
+        script.onload = () => resolve();
+        script.onerror = (e) => reject(new Error(`Error cargando script: ${src}`));
+        document.head.appendChild(script);
+      });
+    };
+
+    try {
+      await Promise.all([
+        loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
+        loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js'),
+        loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js')
+      ]);
+      console.log("✓ Librerías de verificación biométrica y OCR cargadas correctamente.");
+    } catch (err) {
+      console.error("Error al cargar librerías de verificación:", err);
+      throw err;
+    }
   }
 
-  async startVerification(videoElementId, canvasElementId) {
+  async startVerification(videoElementId: string, canvasElementId: string) {
+    if (RondaConfig.isDemo) {
+      console.log("Modo Demo activo: Saltando verificación KYC real.");
+      return new Promise(resolve => setTimeout(() => resolve(true), 1500));
+    }
+    
     await this.loadVerificationLibraries();
     
-    const videoElement = document.getElementById(videoElementId);
-    const canvasElement = document.getElementById(canvasElementId);
+    const videoElement: any = document.getElementById(videoElementId);
+    const canvasElement: any = document.getElementById(canvasElementId);
     
     if (!videoElement || !canvasElement) throw new Error("Elementos de video/canvas no encontrados");
 

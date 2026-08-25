@@ -6,6 +6,10 @@ import { Verification } from './verification.js';
 import { Profile } from './profile.js';
 import { calculateAge, getZodiacSign } from './utils.js';
 import { RondaDialog } from './dialog.js';
+import { Admin } from './bar.js';
+import { Network } from './network.js';
+import { CRM } from './crm.js';
+import { SuperAdmin } from './superadmin.js';
 
 // app.js: Orquestador principal de la vista y eventos de RONDA
 
@@ -47,15 +51,93 @@ function initApp() {
   const viewAdmin = document.getElementById('view-admin');
   const userMenu = document.getElementById('user-menu');
 
+  // Mapeo de Rutas URL para Paneles Autónomos
+  function getPathViewMapping(path: string): string | null {
+    const cleanPath = path.toLowerCase().replace(/\/$/, '');
+    switch (cleanPath) {
+      case '/admin':
+        return 'view-admin';
+      case '/net':
+      case '/network':
+        return 'view-network';
+      case '/superadmin':
+        return 'view-superadmin';
+      case '/sales':
+      case '/crm':
+        return 'view-crm';
+      case '/client':
+      case '/ronda':
+        return 'view-client';
+      case '/lobby':
+        return 'view-lobby';
+      default:
+        return null;
+    }
+  }
+
+  function getViewPathMapping(viewId: string): string {
+    switch (viewId) {
+      case 'view-admin': return '/admin';
+      case 'view-network': return '/net';
+      case 'view-superadmin': return '/superadmin';
+      case 'view-crm': return '/sales';
+      case 'view-client': return '/client';
+      case 'view-lobby': return '/';
+      default: return '/';
+    }
+  }
+
+  function handleUrlRouting(): boolean {
+    const viewId = getPathViewMapping(window.location.pathname);
+    if (viewId) {
+      switchView(viewId, false);
+      return true;
+    }
+    return false;
+  }
+
   // Funciones de Vista
-  function switchView(viewId) {
+  function switchView(viewId: string, updateUrl: boolean = true) {
     document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
     
     const activeView = document.getElementById(viewId);
     if(activeView) {
       activeView.classList.add('on');
     }
+
+    if (updateUrl) {
+      const targetPath = getViewPathMapping(viewId);
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ viewId }, '', targetPath);
+      }
+    }
+
+    if (viewId === 'view-admin') {
+      Admin.init();
+    } else if (viewId === 'view-client') {
+      ClientApp.init();
+    } else if (viewId === 'view-network') {
+      Network.init();
+    } else if (viewId === 'view-crm') {
+      const user = Profile.getCurrentUser();
+      CRM.init(user?.uid || 'sales1');
+    } else if (viewId === 'view-superadmin') {
+      SuperAdmin.init();
+    } else if (viewId === 'view-lobby') {
+      ClientApp.renderDiscoveryFeed();
+    }
   }
+
+  // Evento para botones atrás/adelante del navegador
+  window.addEventListener('popstate', () => {
+    if (!handleUrlRouting()) {
+      if (Auth.currentUser) {
+        updateNavbar();
+      } else {
+        switchView('view-auth');
+      }
+    }
+  });
 
   function triggerLoginAnimation() {
     const flash = document.getElementById('login-flash');
@@ -117,7 +199,12 @@ function initApp() {
       // Sincronizar datos del perfil
       Profile.setCurrentUser(user);
 
-      // Mostrar vista según el rol
+      // Si hay una ruta específica autónoma solicitada por URL, se respeta
+      if (handleUrlRouting()) {
+        return;
+      }
+
+      // Mostrar vista según el rol por defecto en '/'
       if (user.role === 'client') {
         if (user.activeEventId) {
           switchView('view-client');
@@ -126,12 +213,21 @@ function initApp() {
         }
       } else if (user.role === 'admin') {
         switchView('view-admin');
+      } else if (user.role === 'sales') {
+        switchView('view-crm');
+      } else if (user.role === 'superadmin') {
+        switchView('view-superadmin');
       }
     } else {
       userMenu.innerHTML = ``;
-      switchView('view-auth');
+      if (!handleUrlRouting()) {
+        switchView('view-auth');
+      }
     }
   }
+
+  // Ejecutar ruteo directo inicial por si el usuario entra directo a /admin, /net, /superadmin, /sales
+  handleUrlRouting();
 
   // Control del modal de perfil
   const modalProfile = document.getElementById('modal-profile');
@@ -420,7 +516,7 @@ function initApp() {
   addEventListener('auth:logout', updateNavbar);
 
   // Navegación (para demostración de multi-rol, aunque idealmente están separados por permisos)
-  document.getElementById('nav-client').addEventListener('click', () => {
+  document.getElementById('nav-client')?.addEventListener('click', () => {
     const user = Auth.currentUser;
     if (user) {
       if (user.activeEventId) {
@@ -430,5 +526,5 @@ function initApp() {
       }
     }
   });
-  document.getElementById('nav-admin').addEventListener('click', () => switchView('view-admin'));
+  document.getElementById('nav-admin')?.addEventListener('click', () => switchView('view-admin'));
 }

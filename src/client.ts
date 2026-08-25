@@ -3,6 +3,7 @@ import { Auth } from './auth.js';
 import { OfflineSync } from './offline-sync.js';
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 import { RondaDialog } from './dialog.js';
+import { Wompi } from './wompi.js';
 
 // client.ts: Lógica del Cliente, Eventos, Carta de Tragos Bartender/Sommelier, Chat Temporal Seguro con Autodestrucción Misión Imposible
 
@@ -239,7 +240,12 @@ class ClientAppService {
   unsubscribe: any = null;
   timerInterval: any = null;
   countdownInterval: any = null;
-  chatMessages: { sender: 'me' | 'partner'; text: string; time: string }[] = [];
+  chatMessages: { id: string; sender: 'me' | 'partner'; text: string; time: string; timestamp: number }[] = [];
+
+  getMyCurrentMatch(user: any = Auth.currentUser) {
+    if (!this.currentEvent?.activeMatches || !user) return null;
+    return this.currentEvent.activeMatches.find((m: any) => m.p1.uid === user.uid || m.p2.uid === user.uid) || null;
+  }
 
   constructor() {
     addEventListener('auth:login', (e: any) => {
@@ -314,7 +320,7 @@ class ClientAppService {
         const now = new Date();
         const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-        const confirmationMsg: any = {
+        const confirmationMsg: { id: string; sender: 'me' | 'partner'; text: string; time: string; timestamp: number } = {
           id: 'msg_2nd_date_' + Date.now(),
           sender: 'partner',
           text: `🎉 ¡Segunda cita confirmada por RONDA! Tenemos reservada nuestra mesa para 2 en ${venueName} con -25% de descuento el Viernes a las 20:30. ¡Nos vemos allá! 🍸`,
@@ -328,6 +334,10 @@ class ClientAppService {
 
         this.renderChatStream();
         this.showToast('🍸 ¡Segunda cita agendada con éxito!');
+        
+        // Cierra el chat y refresca la vista principal para bloquear el chat (si esa es la lógica)
+        document.getElementById('modal-temporal-chat')?.classList.remove('active');
+        this.renderClientView();
       }
     });
   }
@@ -555,6 +565,15 @@ class ClientAppService {
     });
   }
 
+  async init() {
+    const user = Auth.currentUser;
+    if (user) {
+      this.initClientDashboard(user);
+    } else {
+      this.renderDiscoveryFeed();
+    }
+  }
+
   async initClientDashboard(user: any) {
     console.log("Iniciando Dashboard Cliente...", user);
     
@@ -577,6 +596,26 @@ class ClientAppService {
 
     let html = '';
     const user = Auth.currentUser;
+
+    if (user?.postEventState && !user.postEventState.isRevealed) {
+      feed.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; background: rgba(14,9,18,0.7); border: 1px solid var(--linea); border-radius: 16px; margin-top: 20px;">
+          <span style="font-size: 48px; display: block; margin-bottom: 16px;">⏳</span>
+          <h2 style="font-family: var(--font-display); font-size: 22px; color: var(--papel); margin: 0 0 8px;">Cartelera Bloqueada</h2>
+          <p style="font-size: 13px; color: var(--humo); line-height: 1.5; margin: 0 0 24px;">
+            La cartelera de próximos eventos se desbloqueará una vez abras tu sobre de afinidades.
+          </p>
+          <button id="btn-go-to-envelope" class="btn ambar" style="padding: 12px 24px; font-weight: 700; border-radius: 999px; width: 100%;">
+            💌 Ir a mi sobre (10:00 AM)
+          </button>
+        </div>
+      `;
+      document.getElementById('btn-go-to-envelope')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
+      });
+      return;
+    }
+
     const hasActiveBooking = Boolean(user?.activeReservation);
 
     if (hasActiveBooking) {
@@ -827,11 +866,29 @@ class ClientAppService {
     }
 
     if (btn) {
-      btn.textContent = 'Generando tu Pasaporte QR...';
+      btn.textContent = 'Procesando checkout...';
       btn.disabled = true;
     }
 
     try {
+      // Si el usuario no tiene ticket comprado, procesar el pago vía Wompi
+      if (!user.hasTicket) {
+        const paymentSuccess = await Wompi.openCheckout({
+          eventId: evt.id,
+          venueName: evt.venueName,
+          amountInCents: (evt.price || 65000) * 100,
+          user: user
+        });
+
+        if (!paymentSuccess) {
+          if (btn) {
+            btn.textContent = `🎟️ Reservar y Elegir Trago`;
+            btn.disabled = false;
+          }
+          return;
+        }
+      }
+
       user.activeEventId = evt.id;
       delete user.activeWaitlist;
       user.activeReservation = {
@@ -942,12 +999,6 @@ class ClientAppService {
     });
   }
 
-  getMyCurrentMatch() {
-    if (!this.currentEvent || !this.currentEvent.activeMatches) return null;
-    const myUid = Auth.currentUser?.uid;
-    return this.currentEvent.activeMatches.find((m: any) => m.p1.uid === myUid || m.p2.uid === myUid);
-  }
-
   triggerSafeWord() {
     console.warn("¡Safe-word activado! Notificando a seguridad y anfitrión...");
     RondaDialog.alert({
@@ -960,23 +1011,104 @@ class ClientAppService {
   startTimer(durationSeconds: number) {
     this.stopTimer();
     let timeLeft = durationSeconds;
+    const totalDuration = durationSeconds;
     const el = document.getElementById('match-timer');
+    const progress = document.getElementById('match-timer-progress');
+    const alertBox = document.getElementById('match-transition-alert');
+    const tableGrid = document.getElementById('match-table-grid');
+    const tableLegend = document.getElementById('match-table-legend');
     
+    // Simulate low time remaining (e.g. 15 seconds) to show the transition UI immediately for demo purposes
+    if (durationSeconds > 60) {
+      timeLeft = 15; 
+    }
+
     this.timerInterval = setInterval(() => {
       if (timeLeft <= 0) {
         this.stopTimer();
         if (el) {
-          el.innerText = "¡Ronda finalizada!";
+          el.innerText = "00:00";
+          el.style.color = "var(--vino)";
+        }
+        if (progress) {
+          progress.style.width = "0%";
+          progress.style.background = "var(--vino)";
+        }
+        
+        // Simular sonido de campana
+        this.showToast('🔔 ¡Campana! Tienes 2 minutos para rotar a la mesa 12.');
+        
+        // Pasar a estado de rotación (iniciar un contador de 2 min)
+        setTimeout(() => this.startRotationTimer(120), 2000);
+
+      } else {
+        if(el) {
+          const mins = Math.floor(timeLeft / 60);
+          const secs = timeLeft % 60;
+          el.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+          
+          if (progress) {
+            const pct = (timeLeft / totalDuration) * 100;
+            progress.style.width = `${pct}%`;
+          }
+
+          if (timeLeft <= 30) {
+            el.style.color = "var(--vino)";
+            if (progress) progress.style.background = "var(--vino)";
+            
+            // Mostrar los avisos de rotación
+            if (alertBox) alertBox.style.display = 'flex';
+            if (tableGrid) tableGrid.style.display = 'grid';
+            if (tableLegend) tableLegend.style.display = 'block';
+          } else {
+            el.style.color = "var(--papel)";
+            if (progress) progress.style.background = "var(--luz)";
+          }
+        }
+        timeLeft--;
+      }
+    }, 1000);
+  }
+
+  startRotationTimer(durationSeconds: number) {
+    this.stopTimer();
+    let timeLeft = durationSeconds;
+    const el = document.getElementById('match-timer');
+    const progress = document.getElementById('match-timer-progress');
+    const alertBox = document.getElementById('match-transition-alert');
+    
+    if (alertBox) {
+      alertBox.innerHTML = `
+        <span style="font-size: 14px;">⏳</span>
+        <p style="font-size: 12px; color: var(--luz); margin: 0; line-height: 1.4;">
+          Tiempo de rotación.<br>Dirígete a la <b>mesa 12</b>.
+        </p>
+      `;
+    }
+
+    this.timerInterval = setInterval(async () => {
+      if (timeLeft <= 0) {
+        this.stopTimer();
+        this.showToast('🔔 ¡Nueva ronda! Toma asiento.');
+        
+        // Simular siguiente match
+        if (this.currentEvent && this.currentEvent.activeMatches) {
+          this.currentEvent.currentRound = (this.currentEvent.currentRound || 1) + 1;
+          this.currentEvent.activeMatches[0].tableId = '12';
+          this.currentEvent.activeMatches[0].p2 = { uid: 'user_andres_demo', name: 'Andrés (31) · Diseñador' };
+          this.renderClientView();
         }
       } else {
         if(el) {
           const mins = Math.floor(timeLeft / 60);
           const secs = timeLeft % 60;
-          el.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
-          if (timeLeft < 60) {
-            el.style.color = "var(--vino)";
-          } else {
-            el.style.color = "var(--luz)";
+          el.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+          el.style.color = "var(--luz)";
+          
+          if (progress) {
+            const pct = (timeLeft / 120) * 100;
+            progress.style.width = `${pct}%`;
+            progress.style.background = "var(--luz)";
           }
         }
         timeLeft--;
@@ -1231,9 +1363,11 @@ class ClientAppService {
       // Inicializar mensajes rompehielos de demostración
       this.chatMessages = [
         {
+          id: 'init_msg',
           sender: 'partner',
           text: `¡Hola! Qué gran noche ayer en el bar. Me encantó nuestra charla en la mesa. ¿Nos vemos para una segunda ronda?`,
-          time: '10:02 AM'
+          time: '10:02 AM',
+          timestamp: Date.now()
         }
       ];
       if (user?.postEventState) {
@@ -1243,6 +1377,35 @@ class ClientAppService {
     }
 
     this.renderChatStream();
+    
+    // Sincronizar temporizador de 48h
+    if (this.countdownInterval) clearInterval(this.countdownInterval);
+    const expireTime = user?.postEventState?.revealTimeIso 
+      ? new Date(user.postEventState.revealTimeIso).getTime() + (48 * 3600000) 
+      : Date.now() + (48 * 3600000); // Demo fallback
+      
+    this.countdownInterval = setInterval(() => {
+      const remaining = expireTime - Date.now();
+      const badge = document.getElementById('chat-timer-badge');
+      if (remaining <= 0) {
+        clearInterval(this.countdownInterval);
+        if (badge) badge.textContent = '⏳ Expirado';
+      } else {
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        if (badge) badge.textContent = `⏳ Expira en: ${h}h ${m}m`;
+      }
+    }, 60000); // Actualiza cada minuto (o forzar 1era vez)
+    
+    // Forzar update inicial
+    const remaining = expireTime - Date.now();
+    const badge = document.getElementById('chat-timer-badge');
+    if (badge && remaining > 0) {
+       const h = Math.floor(remaining / 3600000);
+       const m = Math.floor((remaining % 3600000) / 60000);
+       badge.textContent = `⏳ Expira en: ${h}h ${m}m`;
+    }
+
     modal.classList.add('active');
   }
 
@@ -1288,13 +1451,9 @@ class ClientAppService {
     if (warning) warning.style.display = 'none';
 
     const now = new Date();
-    const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-    const newMsg: any = {
-      sender: 'me',
-      text,
-      time: timeStr
-    };
+    const newMsg = { id: `msg_${Date.now()}`, sender: 'me' as const, text, time, timestamp: Date.now() };
 
     this.chatMessages.push(newMsg);
     input.value = '';
@@ -1308,12 +1467,9 @@ class ClientAppService {
 
     // Respuesta simulada de la pareja al poco tiempo
     setTimeout(async () => {
-      const replyMsg: any = {
-        sender: 'partner',
-        text: '¡Totalmente de acuerdo! Qué tal si reservamos la 2ª cita con el beneficio del 25%?',
-        time: `${now.getHours()}:${(now.getMinutes() + 1).toString().padStart(2, '0')}`
-      };
-      this.chatMessages.push(replyMsg);
+      const simulatedReply = '¡Claro! 🥂 Qué buena charla tuvimos. ¿Te parece si vamos por ese café el fin de semana?';
+      const autoMsg = { id: `msg_${Date.now()}`, sender: 'partner' as const, text: simulatedReply, time, timestamp: Date.now() };
+      this.chatMessages.push(autoMsg);
       this.renderChatStream();
 
       if (user && user.postEventState) {
@@ -1329,6 +1485,15 @@ class ClientAppService {
 
     const user = Auth.currentUser;
     if (!user) return;
+
+    const backBtn = document.getElementById('btn-client-back-feed');
+    if (backBtn) {
+      if (user.postEventState && !user.postEventState.isRevealed) {
+        backBtn.style.display = 'none';
+      } else {
+        backBtn.style.display = 'inline-flex';
+      }
+    }
 
     if (user.postEventState) {
       this.renderDayAfterMatchesView(user.postEventState);
@@ -1350,42 +1515,73 @@ class ClientAppService {
       status: 'confirmed'
     };
 
-    const match = this.getMyCurrentMatch();
+    const match = this.getMyCurrentMatch(user);
 
     if (match) {
       const partner = match.p1.uid === user.uid ? match.p2 : match.p1;
+      const partnerTags = ['SALSA LOS MARTES', 'CORRE 10 KM', 'CAFÉ DE ESPECIALIDAD']; // Mock tags
+      
       container.innerHTML = `
-        <div class="noche-card ok">
-          <div class="ronda-head" style="margin-bottom: 15px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <svg class="icon-svg" style="color: var(--luz);"><use href="#icon-mesa"></use></svg>
-              <span class="ronda-n">Ronda ${this.currentEvent?.currentRound || 1} de 9</span>
-            </div>
-            <span class="chip ambar">Cita en Marcha</span>
-          </div>
-          
-          <div class="frente" style="margin: 10px 0;">
-            <h4 style="font-family: var(--font-display); font-size: 28px; margin: 0 0 4px;">${partner.name}</h4>
-            <p style="margin: 0; color: var(--humo); font-size: 13px;">Te espera en la <b>MESA ${match.tableId}</b></p>
-          </div>
-          
-          <div style="margin: 20px 0; text-align: center;">
-            <span style="font-size: 11px; text-transform: uppercase; color: var(--humo); letter-spacing: 0.1em;">Tiempo restante</span>
-            <h1 id="match-timer" style="font-family: var(--font-mono); font-size: 48px; color: var(--luz); margin: 0; font-variant-numeric: tabular-nums;">05:00</h1>
-          </div>
-          
-          <div class="acciones" style="flex-direction: column; gap: 10px;">
-            <div style="display: flex; gap: 10px; width: 100%;">
-              <button id="btn-vote-no" class="btn" style="flex: 1; border-color: var(--vino); color: var(--vino);" data-target="${partner.uid}">No</button>
-              <button id="btn-vote-yes" class="btn si" style="flex: 1;" data-target="${partner.uid}">Sí</button>
-            </div>
-            <button id="btn-safeword" class="btn" style="border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); width: 100%; font-weight: 700; font-size: 11px;">⚠️ Solicitar Asistencia Discreta</button>
-          </div>
-
-          <button id="btn-sim-finish-event" class="btn" style="margin-top: 14px; font-size: 11px; color: var(--luz); border-color: var(--linea); width: 100%;">
-            ✨ Simular Fin de Evento (Pasar a las 10:00 AM)
-          </button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span style="font-family: var(--font-mono); font-size: 11.5px; color: var(--luz); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700;">
+            RONDA ${this.currentEvent?.currentRound || 1} DE 9
+          </span>
+          <span style="font-family: var(--font-mono); font-size: 10px; color: var(--papel); background: rgba(240,168,48,0.15); border: 1px solid rgba(240,168,48,0.4); padding: 4px 10px; border-radius: 999px; font-weight: 700;">
+            EN MARCHA
+          </span>
         </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 id="match-timer" style="font-family: var(--font-mono); font-size: 56px; color: var(--papel); margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1;">05:00</h1>
+          <div style="width: 100%; height: 3px; background: rgba(243,237,226,0.1); border-radius: 2px; margin-top: 14px; overflow: hidden; position: relative;">
+             <div id="match-timer-progress" style="position: absolute; left: 0; top: 0; height: 100%; width: 50%; background: var(--luz); transition: width 1s linear;"></div>
+          </div>
+        </div>
+        
+        <div style="background: rgba(14,9,18,0.7); border: 1px solid rgba(243,237,226,0.1); border-radius: 16px; padding: 20px 16px; margin-bottom: 16px; text-align: center;">
+          <h4 style="font-family: var(--font-display); font-size: 32px; color: var(--papel); margin: 0 0 4px; font-weight: 700;">${partner.name.split(' ')[0]}</h4>
+          <p style="font-size: 13px; color: var(--humo); font-family: var(--font-body); margin: 0 0 16px;">${partner.age || '29'} años - mesa ${match.tableId}</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-bottom: 20px;">
+            ${partnerTags.map(tag => `<span style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); background: rgba(243,237,226,0.06); border: 1px solid rgba(243,237,226,0.12); padding: 6px 14px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase;">${tag}</span>`).join('')}
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+          <button id="btn-vote-no" class="btn" style="flex: 1; border-color: rgba(243,237,226,0.15); color: var(--papel); background: rgba(243,237,226,0.03); font-size: 14px; font-weight: 700; padding: 14px; border-radius: 12px;" data-target="${partner.uid}">No</button>
+          <button id="btn-vote-yes" class="btn" style="flex: 1; border: none; background: #2e6b54; color: #fff; font-size: 14px; font-weight: 700; padding: 14px; border-radius: 12px;" data-target="${partner.uid}">Sí</button>
+        </div>
+        
+        <p style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono); text-align: center; margin: 0 0 18px; line-height: 1.4;">
+          Tu respuesta es privada. Solo se<br>revela si es mutua.
+        </p>
+
+        <!-- Dynamic Transition Alert Box (Hidden by default, shown when time is low) -->
+        <div id="match-transition-alert" style="display: none; background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.3); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start;">
+          <span style="font-size: 14px;">🔔</span>
+          <p style="font-size: 12px; color: var(--luz); margin: 0; line-height: 1.4;">
+            Al sonar la campana pasas a la<br><b>mesa 12</b>. Tienes 2 minutos.
+          </p>
+        </div>
+
+        <!-- Table Grid (Hidden by default, shown during transition) -->
+        <div id="match-table-grid" style="display: none; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(num => {
+            const isCurrent = num === parseInt(match.tableId);
+            const isNext = num === 12;
+            const style = isCurrent ? 'background: var(--luz); color: #1a1020; border: 1px solid var(--luz); font-weight: 800;' : (isNext ? 'background: transparent; color: var(--luz); border: 1px dashed var(--luz);' : 'background: rgba(243,237,226,0.03); color: var(--humo); border: 1px solid rgba(243,237,226,0.1);');
+            return `<div style="aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 11px; border-radius: 10px; ${style}">${num.toString().padStart(2, '0')}</div>`;
+          }).join('')}
+        </div>
+        <p id="match-table-legend" style="display: none; font-size: 9px; color: var(--humo); font-family: var(--font-mono); text-align: center; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 16px;">
+          Tu mesa ahora · próxima mesa · barra libre
+        </p>
+
+        <button id="btn-safeword" class="btn" style="border: 1px dashed var(--vino); color: #f08ca8; background: transparent; width: 100%; font-weight: 700; font-size: 10.5px; padding: 12px; border-radius: 999px;">⚠️ Solicitar Asistencia Discreta</button>
+
+        <button id="btn-sim-finish-event" class="btn" style="margin-top: 14px; font-size: 11px; color: var(--humo); background: transparent; border: none; text-decoration: underline; width: 100%;">
+          Saltar al fin de evento (10:00 AM)
+        </button>
       `;
       setTimeout(() => this.startTimer(300), 100);
 
@@ -1433,53 +1629,70 @@ class ClientAppService {
 
         ${checkInBanner}
         
-        <div class="reserva-pass">
-          <div class="reserva-pass-notch-left"></div>
-          <div class="reserva-pass-notch-right"></div>
+        <div class="ticket-flip-container" id="ticket-flip-card">
+          <div class="ticket-flip-inner">
+            <!-- FRONT: Original Ticket -->
+            <div class="ticket-flip-front">
+              <div class="reserva-pass">
+                <div class="reserva-pass-notch-left"></div>
+                <div class="reserva-pass-notch-right"></div>
+      
+                <div style="text-align: center; margin-bottom: 14px;">
+                  <p style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: 0.22em; margin: 0 0 3px; color: #17101d;">R O N D A</p>
+                  <p style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #73675a; margin: 0;">${res.dayDate}</p>
+                </div>
+                
+                <div style="font-size: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+                  <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Local</span>
+                  <b style="color: #17101d; font-family: var(--font-display); font-size: 14.5px;">${res.venueName}</b>
+                </div>
+                <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+                  <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Dirección</span>
+                  <a href="${res.mapsUrl || '#'}" target="_blank" style="color: #1b4332; text-decoration: underline; font-family: var(--font-mono); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px;">
+                    📍 ${res.venueAddress}
+                  </a>
+                </div>
+                
+                <div class="reserva-pass-divider"></div>
+                
+                <div style="text-align: center; margin: 8px 0 14px;">
+                  <p style="font-family: var(--font-display); font-size: 48px; font-weight: 800; color: #17101d; margin: 0; line-height: 0.95;">${res.tableNumber}</p>
+                  <p style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.16em; margin: 4px 0 0;">Tu mesa de salida</p>
+                </div>
+                
+                <!-- Trago Elegido con Imagen Sin Fondo -->
+                <div style="background: rgba(46,107,84,0.1); border: 1px solid rgba(46,107,84,0.25); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+                  <img src="${res.cocktailImg || '/assets/coctel-negroni.svg'}" alt="${res.cocktailName}" style="width: 48px; height: 56px; object-fit: contain; flex-shrink: 0;">
+                  <div>
+                    <p style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0 0 2px;">🍸 Trago Elegido Incluido</p>
+                    <b style="font-size: 12px; color: #17101d; display: block;">${res.cocktailName}</b>
+                    <span style="font-size: 10px; color: #555; line-height: 1.3; display: block; margin-top: 2px;">${res.cocktailDesc || ''}</span>
+                  </div>
+                </div>
+      
+                ${!isCheckedIn ? `
+                  <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
+                  <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
+                ` : `
+                  <div style="background: rgba(46,107,84,0.12); border: 1.5px dashed var(--botella); border-radius: 12px; padding: 14px; text-align: center; margin: 8px 0 4px;">
+                    <span style="font-size: 24px; display: block; margin-bottom: 2px;">🍸</span>
+                    <b style="color: var(--botella); font-family: var(--font-display); font-size: 15px; display: block;">Trago Canjeado</b>
+                    <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">Acceso a sala validado · Asiento: Mesa ${res.tableNumber}</span>
+                  </div>
+                `}
+              </div>
+            </div>
 
-          <div style="text-align: center; margin-bottom: 14px;">
-            <p style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: 0.22em; margin: 0 0 3px; color: #17101d;">R O N D A</p>
-            <p style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #73675a; margin: 0;">${res.dayDate}</p>
-          </div>
-          
-          <div style="font-size: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
-            <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Local</span>
-            <b style="color: #17101d; font-family: var(--font-display); font-size: 14.5px;">${res.venueName}</b>
-          </div>
-          <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
-            <span style="color: #73675a; font-family: var(--font-mono); font-size: 11px;">Dirección</span>
-            <a href="${res.mapsUrl || '#'}" target="_blank" style="color: #1b4332; text-decoration: underline; font-family: var(--font-mono); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px;">
-              📍 ${res.venueAddress}
-            </a>
-          </div>
-          
-          <div class="reserva-pass-divider"></div>
-          
-          <div style="text-align: center; margin: 8px 0 14px;">
-            <p style="font-family: var(--font-display); font-size: 48px; font-weight: 800; color: #17101d; margin: 0; line-height: 0.95;">${res.tableNumber}</p>
-            <p style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.16em; margin: 4px 0 0;">Tu mesa de salida</p>
-          </div>
-          
-          <!-- Trago Elegido con Imagen Sin Fondo -->
-          <div style="background: rgba(46,107,84,0.1); border: 1px solid rgba(46,107,84,0.25); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
-            <img src="${res.cocktailImg || '/assets/coctel-negroni.svg'}" alt="${res.cocktailName}" style="width: 48px; height: 56px; object-fit: contain; flex-shrink: 0;">
-            <div>
-              <p style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0 0 2px;">🍸 Trago Elegido Incluido</p>
-              <b style="font-size: 12px; color: #17101d; display: block;">${res.cocktailName}</b>
-              <span style="font-size: 10px; color: #555; line-height: 1.3; display: block; margin-top: 2px;">${res.cocktailDesc || ''}</span>
+            <!-- BACK: NFT Card -->
+            <div class="ticket-flip-back">
+              <img src="/assets/nft-mock.webp" class="nft-image-layer" alt="Pasaporte" onerror="this.src='https://images.unsplash.com/photo-1563240619-44ce021fbecc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
+              <div class="nft-overlay">
+                <h4 style="font-family: var(--font-display); font-size: 20px; color: #ffd778; margin: 0 0 4px;">RONDA Passport</h4>
+                <span style="font-size: 11px; font-family: var(--font-mono); color: var(--papel); display: block; margin-bottom: 6px;">Edición Exclusiva · ${res.cocktailName}</span>
+                <span class="chip ambar" style="font-size: 9px; padding: 2px 6px;">${res.venueName}</span>
+              </div>
             </div>
           </div>
-
-          ${!isCheckedIn ? `
-            <div id="qr-client" aria-label="Código de acceso" style="margin: 0 auto 10px; width: 136px; height: 136px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 2.5px; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);"></div>
-            <p style="font-family: var(--font-mono); font-size: 10.5px; text-align: center; color: #73675a; margin: 6px 0 0; letter-spacing: 0.04em;">Enséñalo en barra al llegar para tu cóctel</p>
-          ` : `
-            <div style="background: rgba(46,107,84,0.12); border: 1.5px dashed var(--botella); border-radius: 12px; padding: 14px; text-align: center; margin: 8px 0 4px;">
-              <span style="font-size: 24px; display: block; margin-bottom: 2px;">🍸</span>
-              <b style="color: var(--botella); font-family: var(--font-display); font-size: 15px; display: block;">Trago Canjeado</b>
-              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">Acceso a sala validado · Asiento: Mesa ${res.tableNumber}</span>
-            </div>
-          `}
         </div>
 
         <!-- Acciones Post-Reserva -->
@@ -1519,6 +1732,10 @@ class ClientAppService {
       if (!isCheckedIn) {
         this.renderQRCode('qr-client');
       }
+
+      document.getElementById('ticket-flip-card')?.addEventListener('click', function() {
+        this.classList.toggle('flipped');
+      });
 
       document.getElementById('btn-open-manage-from-ticket')?.addEventListener('click', () => {
         this.openManageReservationsModal();

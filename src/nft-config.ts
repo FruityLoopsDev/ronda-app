@@ -1,6 +1,6 @@
 // nft-config.js: Configuración de la capa Web3 / NFT para RONDA
 
-NFT_CONFIG = {
+export const NFT_CONFIG = {
   POLYGON_RPC: 'https://polygon-rpc.com',
   POLYGON_MUMBAI_RPC: 'https://rpc-mumbai.maticvigil.com',
   RONDA_WALLET_ADDRESS: '0x7A23d5389658E29e843fB7A6C32b9CD7987B5760', // Treasury wallet

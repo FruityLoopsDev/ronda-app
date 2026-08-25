@@ -1,12 +1,13 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const { ethers } = require("ethers");
+const crypto = require("crypto");
 
 admin.initializeApp();
 const db = admin.firestore();
 
 // 1. Wompi Webhook Endpoint
-// Recibe eventos de Wompi (p.ej. transaction.updated)
+// Recibe eventos de Wompi (p.ej. transaction.updated) con validación de integridad SHA256
 exports.wompiWebhook = functions.https.onRequest(async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).send("Method Not Allowed");
@@ -20,22 +21,57 @@ exports.wompiWebhook = functions.https.onRequest(async (req, res) => {
     if (data && data.event === "transaction.updated" && data.data && data.data.transaction) {
       const tx = data.data.transaction;
       const status = tx.status;
-      const reference = tx.reference; // Suponiendo formato: TICKET-UID-EVENTID
+      const reference = tx.reference; // Formato: TICKET-UID-EVENTID o TICKET-UID-EVENTID-TIMESTAMP
+
+      // Opcional: Validación de Checksum de Integridad si se provee la clave secreta
+      const eventsSecret = process.env.WOMPI_EVENTS_SECRET;
+      if (eventsSecret && data.signature && data.signature.checksum) {
+        const properties = data.signature.properties || [];
+        // Concatenar propiedades indicadas por Wompi + secret
+        let concatenated = "";
+        for (const prop of properties) {
+          const parts = prop.split(".");
+          let val = data.data;
+          for (const p of parts) {
+            val = val ? val[p] : undefined;
+          }
+          concatenated += val !== undefined ? val : "";
+        }
+        concatenated += data.timestamp + eventsSecret;
+        const calculatedChecksum = crypto.createHash("sha256").update(concatenated).digest("hex");
+        if (calculatedChecksum !== data.signature.checksum) {
+          console.warn("Wompi signature mismatch. Calculated:", calculatedChecksum, "Expected:", data.signature.checksum);
+          return res.status(401).send("Invalid Signature");
+        }
+      }
 
       if (status === "APPROVED") {
-        // Parsear UID y EventID de la referencia (Ej. TICKET-u1-e1)
+        // Parsear UID y EventID de la referencia (Ej. TICKET-u1-e1 o TICKET-u1-e1-123456789)
         const parts = reference.split("-");
         if (parts.length >= 3) {
           const uid = parts[1];
           const eventId = parts[2];
 
-          // 1. Marcar al usuario con ticket
+          // 1. Guardar registro de transacción
+          await db.collection("transactions").doc(tx.id).set({
+            transactionId: tx.id,
+            uid,
+            eventId,
+            reference,
+            amountInCents: tx.amount_in_cents,
+            currency: tx.currency,
+            status: tx.status,
+            paymentMethodType: tx.payment_method_type,
+            processedAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+
+          // 2. Marcar al usuario con ticket
           await db.collection("users").doc(uid).update({
             hasTicket: true,
             activeEventId: eventId
           });
 
-          // 2. Añadirlo a los participantes del evento
+          // 3. Añadirlo a los participantes del evento
           const eventRef = db.collection("events").doc(eventId);
           await db.runTransaction(async (t) => {
             const doc = await t.get(eventRef);
@@ -48,7 +84,7 @@ exports.wompiWebhook = functions.https.onRequest(async (req, res) => {
             }
           });
 
-          console.log(`User ${uid} approved for event ${eventId}`);
+          console.log(`✓ User ${uid} approved and activated for event ${eventId}`);
         }
       }
     }

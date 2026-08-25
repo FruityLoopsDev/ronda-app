@@ -25,20 +25,25 @@ export class AuthService {
         
         if (!userProfile) {
           console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
-          const role = firebaseUser.email && firebaseUser.email.includes('admin') ? 'admin' : 'client';
-          userProfile = role === 'client' ? {
+          let role = 'client';
+          if (firebaseUser.email) {
+            const emailLower = firebaseUser.email.toLowerCase();
+            if (emailLower.includes('superadmin')) role = 'superadmin';
+            else if (emailLower.includes('sales') || emailLower.includes('ventas')) role = 'sales';
+            else if (emailLower.includes('network') || emailLower.includes('red')) role = 'network';
+            else if (emailLower.includes('admin')) role = 'admin';
+          }
+          
+          userProfile = {
             uid: firebaseUser.uid,
-            name: '',
-            role: 'client',
+            name: role !== 'client' ? `Usuario ${role}` : '',
+            role: role,
             gender: '',
             orientation: '',
             wallet_address: '',
             nfts: []
-          } : {
-            uid: firebaseUser.uid,
-            name: 'Anfitrión RONDA',
-            role: 'admin',
           } as User;
+          
           await DB.saveUser(userProfile);
         }
         
@@ -73,12 +78,17 @@ export class AuthService {
     try {
       const userCredential = await createUserWithEmailAndPassword(this._getAuth(), email, password);
       const uid = userCredential.user.uid;
-      const role = email.includes('admin') ? 'admin' : 'client';
+      let role = 'client';
+      const emailLower = email.toLowerCase();
+      if (emailLower.includes('superadmin')) role = 'superadmin';
+      else if (emailLower.includes('sales') || emailLower.includes('ventas')) role = 'sales';
+      else if (emailLower.includes('network') || emailLower.includes('red')) role = 'network';
+      else if (emailLower.includes('admin')) role = 'admin';
       
       const newProfile: User = {
         uid: uid,
         role: role,
-        name: profileData.name || 'Anónimo',
+        name: profileData.name || (role !== 'client' ? `Usuario ${role}` : 'Anónimo'),
         birthDate: profileData.birthDate || '',
         zodiacSign: profileData.zodiacSign || '',
         age: profileData.age || 0,
@@ -88,10 +98,6 @@ export class AuthService {
         wallet_address: '',
         nfts: []
       };
-      
-      if (role === 'admin') {
-        newProfile.name = 'Anfitrión RONDA';
-      }
       
       await DB.saveUser(newProfile);
       console.log("[Auth] Registro y perfil creados exitosamente.");
