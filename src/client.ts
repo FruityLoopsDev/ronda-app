@@ -4,7 +4,16 @@ import { OfflineSync } from './offline-sync.js';
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 import { RondaDialog } from './dialog.js';
 
-// client.ts: Lógica del Cliente, Eventos, Mapas, Cócteles, Anfitrión, Bloqueo de Salas y Revelación de Matches 10 AM
+// client.ts: Lógica del Cliente, Eventos, Carta de Tragos Bartender/Sommelier, Chat Temporal Seguro con Autodestrucción Misión Imposible
+
+export interface DrinkOption {
+  id: string;
+  name: string;
+  desc: string;
+  type: 'cocktail' | 'wine' | 'mocktail';
+  tag: string;
+  img: string;
+}
 
 export interface RondaEvent {
   id: string;
@@ -17,6 +26,8 @@ export interface RondaEvent {
   timeRange: string;
   roundsInfo: string;
   ageRange: string;
+  drinkMenuTitle: string;
+  drinkOptions: DrinkOption[];
   cocktailIncluded: string;
   cocktailDesc: string;
   cocktailImg: string;
@@ -48,6 +59,33 @@ export const RONDA_EVENTS: RondaEvent[] = [
     timeRange: '20:00 a 21:45',
     roundsInfo: '9 rondas de 6 min · 1 campanada',
     ageRange: '25–34 años',
+    drinkMenuTitle: '🍸 CARTA SUGERIDA POR EL BARTENDER',
+    drinkOptions: [
+      {
+        id: 'opt-negroni',
+        name: 'Negroni Ahumado de Autor',
+        desc: 'Campari en roble, Vermut Rosso artesanal y Gin botánico con piel de naranja al fuego.',
+        type: 'cocktail',
+        tag: 'Firma de la Casa',
+        img: '/assets/coctel-negroni.svg'
+      },
+      {
+        id: 'opt-old-fashioned',
+        name: 'Old Fashioned de Cacao & Especias',
+        desc: 'Bourbon añejo, bitter de cacao amazónico y panela orgánica caramelizada.',
+        type: 'cocktail',
+        tag: 'Intenso & Aromático',
+        img: '/assets/coctel-negroni.svg'
+      },
+      {
+        id: 'opt-mocktail',
+        name: 'Mocktail Silvestre (Sin Alcohol)',
+        desc: 'Infusión de flor de saúco, pepino macerado y agua tónica botánica premium.',
+        type: 'mocktail',
+        tag: 'Refrescante Mocktail',
+        img: '/assets/coctel-gintonic.svg'
+      }
+    ],
     cocktailIncluded: 'Negroni Ahumado de Autor',
     cocktailDesc: 'Campari infusionado en madera de roble ahumado, Vermut Rosso artesanal y Gin botánico con piel de naranja caramelizada al fuego. Opción mocktail disponible.',
     cocktailImg: '/assets/coctel-negroni.svg',
@@ -82,6 +120,33 @@ export const RONDA_EVENTS: RondaEvent[] = [
     timeRange: '20:00 a 21:45',
     roundsInfo: '9 rondas de 6 min · Noche de tapas y vino',
     ageRange: '35–49 años',
+    drinkMenuTitle: '🍷 CARTA SUGERIDA POR EL SOMMELIER',
+    drinkOptions: [
+      {
+        id: 'opt-tinto-verano',
+        name: 'Tinto de Verano Especiado de Autor',
+        desc: 'Reducción de vino tinto con frutos silvestres, canela en rama y rodaja de pomelo.',
+        type: 'cocktail',
+        tag: 'Favorito Sommelier',
+        img: '/assets/coctel-vino.svg'
+      },
+      {
+        id: 'opt-tinto-reserva',
+        name: 'Copa de Tinto Reserva (Ribera del Duero)',
+        desc: '14 meses en barrica de roble francés, taninos sedosos y notas a mora madura.',
+        type: 'wine',
+        tag: 'Vino Tinto Premium',
+        img: '/assets/coctel-vino.svg'
+      },
+      {
+        id: 'opt-blanco-albarino',
+        name: 'Copa de Blanco Albariño Fresco',
+        desc: 'D.O. Rías Baixas, acidez cítrica brillante y notas florales delicadas.',
+        type: 'wine',
+        tag: 'Vino Blanco Fresco',
+        img: '/assets/coctel-gintonic.svg'
+      }
+    ],
     cocktailIncluded: 'Tinto de Verano Especiado',
     cocktailDesc: 'Reducción de vino tinto reserva con frutos rojos silvestres, soda cítrica, canela en rama y rodaja de pomelo rosado.',
     cocktailImg: '/assets/coctel-vino.svg',
@@ -93,7 +158,7 @@ export const RONDA_EVENTS: RondaEvent[] = [
     ],
     price: 55000,
     priceFormatted: '$55.000',
-    priceSub: 'Incluye 1er Cóctel de Autor',
+    priceSub: 'Incluye Copa o Cóctel de Autor',
     status: 'ok',
     statusLabel: 'Confirmado',
     chipClass: 'verde',
@@ -116,6 +181,33 @@ export const RONDA_EVENTS: RondaEvent[] = [
     timeRange: '20:30 a 22:15',
     roundsInfo: '9 rondas de 6 min · Temática: Cine & Arte',
     ageRange: '28–38 años',
+    drinkMenuTitle: '🌿 CARTA BOTÁNICA DEL BARTENDER',
+    drinkOptions: [
+      {
+        id: 'opt-gintonic',
+        name: 'Gin Tonic Botánico Colombiano',
+        desc: 'Gin artesanal con enebro andino, pepino macerado y flor de saúco.',
+        type: 'cocktail',
+        tag: 'Ginebra de Autor',
+        img: '/assets/coctel-gintonic.svg'
+      },
+      {
+        id: 'opt-spritz',
+        name: 'Spritz de Guayaba Agria & Prosecco',
+        desc: 'Aperitivo burbujeante cítrico, refrescante y floral.',
+        type: 'cocktail',
+        tag: 'Aperitivo Italiano',
+        img: '/assets/coctel-vino.svg'
+      },
+      {
+        id: 'opt-infusion-mocktail',
+        name: 'Infusión Fría Herbal con Miel de Bosque',
+        desc: 'Menta fresca, limonaria, tónica premium y miel orgánica.',
+        type: 'mocktail',
+        tag: 'Mocktail Botánico',
+        img: '/assets/coctel-negroni.svg'
+      }
+    ],
     cocktailIncluded: 'Gin Tonic Botánico',
     cocktailDesc: 'Gin artesanal colombiano con bayas de enebro, listón de pepino macerado, agua tónica premium y flor de saúco.',
     cocktailImg: '/assets/coctel-gintonic.svg',
@@ -143,12 +235,13 @@ export const RONDA_EVENTS: RondaEvent[] = [
 class ClientAppService {
   currentEvent: any = null;
   selectedEvent: RondaEvent | null = null;
+  selectedDrink: DrinkOption | null = null;
   unsubscribe: any = null;
   timerInterval: any = null;
   countdownInterval: any = null;
+  chatMessages: { sender: 'me' | 'partner'; text: string; time: string }[] = [];
 
   constructor() {
-    // Escuchar el login para montar la vista
     addEventListener('auth:login', (e: any) => {
       if (e.detail.role === 'client') {
         this.initClientDashboard(e.detail);
@@ -166,24 +259,43 @@ class ClientAppService {
   }
 
   setupModalListeners() {
-    // Cerrar modal de detalle de evento
     document.getElementById('btn-event-detail-close')?.addEventListener('click', () => {
       this.closeEventModal();
     });
 
-    // Cerrar modal de gestión de reservas
     document.getElementById('btn-manage-reservations-close')?.addEventListener('click', () => {
       this.closeManageReservationsModal();
     });
 
-    // Confirmar reserva desde el modal
     document.getElementById('btn-confirm-event-booking')?.addEventListener('click', async () => {
       await this.confirmBooking();
     });
 
-    // Volver a la cartelera desde la reserva del cliente
     document.getElementById('btn-client-back-feed')?.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
+    });
+
+    document.getElementById('btn-temporal-chat-close')?.addEventListener('click', () => {
+      const modal = document.getElementById('modal-temporal-chat');
+      if (modal) modal.classList.remove('active');
+    });
+
+    document.getElementById('btn-chat-send')?.addEventListener('click', () => {
+      this.handleSendChatMessage();
+    });
+
+    document.getElementById('input-chat-msg')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.handleSendChatMessage();
+      }
+    });
+
+    document.getElementById('btn-chat-plan-2nd-date')?.addEventListener('click', async () => {
+      await RondaDialog.alert({
+        title: 'Segunda Cita RONDA (-25%)',
+        message: '¡Excelente decisión! Tienen reservado un cupón de cortesía con -25% de descuento en el local para coordinar su segunda cita presencial en un ambiente seguro y privado.',
+        icon: '🍸'
+      });
     });
   }
 
@@ -318,7 +430,6 @@ class ClientAppService {
 
     container.innerHTML = html;
 
-    // Vincular Eventos dentro del Modal de Gestión
     document.getElementById('btn-mgr-view-ticket')?.addEventListener('click', () => {
       this.closeManageReservationsModal();
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
@@ -414,19 +525,16 @@ class ClientAppService {
   async initClientDashboard(user: any) {
     console.log("Iniciando Dashboard Cliente...", user);
     
-    // Si el usuario tiene estado de post-evento (revelación de correspondencia) o reserva activa
     if (user.postEventState || user.activeReservation || user.activeEventId) {
       this.renderClientView();
       return;
     }
 
-    // Si el usuario está en lista de espera
     if (user.activeWaitlist) {
       this.renderWaitlistView(user.activeWaitlist);
       return;
     }
 
-    // Si no tiene reserva, renderizar la cartelera
     this.renderDiscoveryFeed();
   }
 
@@ -497,13 +605,11 @@ class ClientAppService {
 
     feed.innerHTML = html;
 
-    // Vincular botón de gestión en el feed
     document.getElementById('btn-feed-manage-res')?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.openManageReservationsModal();
     });
 
-    // Vincular click en cada tarjeta de evento
     feed.querySelectorAll('.noche-card').forEach((card) => {
       card.addEventListener('click', (e) => {
         const isLocked = (e.currentTarget as HTMLElement).getAttribute('data-locked') === 'true';
@@ -526,10 +632,11 @@ class ClientAppService {
     if (!event) return;
 
     this.selectedEvent = event;
+    this.selectedDrink = event.drinkOptions[0]; // Por defecto el primero sugerido
+
     const modal = document.getElementById('modal-event-detail');
     if (!modal) return;
 
-    // Poblar campos del modal
     const elDate = document.getElementById('modal-event-date');
     const elVenue = document.getElementById('modal-event-venue');
     const elAddress = document.getElementById('modal-event-address');
@@ -543,16 +650,9 @@ class ClientAppService {
     const elBarEmpty = document.getElementById('modal-event-bar-empty');
     const elReg = document.getElementById('modal-event-registered');
     const elNeed = document.getElementById('modal-event-needed');
-    
-    // Cocktail
-    const elCocktail = document.getElementById('modal-event-cocktail');
-    const elCocktailDesc = document.getElementById('modal-event-cocktail-desc');
-    const elCocktailImg = document.getElementById('modal-event-cocktail-img') as HTMLImageElement;
-    
-    // Host Tips
+    const elDrinkMenuTitle = document.getElementById('modal-event-drink-menu-title');
+    const elDrinkList = document.getElementById('modal-event-drink-list');
     const elHostTips = document.getElementById('modal-event-host-tips');
-
-    // Price & Action Button
     const elPrice = document.getElementById('modal-event-price');
     const elPriceSub = document.getElementById('modal-event-price-sub');
     const btnBook = document.getElementById('btn-confirm-event-booking') as HTMLButtonElement;
@@ -582,14 +682,42 @@ class ClientAppService {
     if (elReg) elReg.textContent = event.registeredText;
     if (elNeed) elNeed.textContent = event.neededText;
     
-    if (elCocktail) elCocktail.textContent = event.cocktailIncluded;
-    if (elCocktailDesc) elCocktailDesc.textContent = event.cocktailDesc;
-    if (elCocktailImg) {
-      elCocktailImg.src = event.cocktailImg;
-      elCocktailImg.alt = event.cocktailIncluded;
+    if (elDrinkMenuTitle) {
+      elDrinkMenuTitle.textContent = event.drinkMenuTitle;
     }
 
-    // Render Host Tips
+    // Renderizar las opciones sugeridas por el Bartender o Sommelier
+    if (elDrinkList) {
+      elDrinkList.innerHTML = event.drinkOptions.map((opt, idx) => `
+        <label style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid ${idx === 0 ? 'var(--luz)' : 'var(--linea)'}; border-radius: 12px; padding: 10px 12px; cursor: pointer;" class="drink-option-label" data-drink-id="${opt.id}">
+          <input type="radio" name="event-drink-choice" value="${opt.id}" ${idx === 0 ? 'checked' : ''} style="accent-color: var(--luz); width: 16px; height: 16px;">
+          <img src="${opt.img}" alt="${opt.name}" style="width: 38px; height: 46px; object-fit: contain; flex-shrink: 0;">
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <b style="font-size: 12px; color: var(--papel);">${opt.name}</b>
+              <span class="chip ${opt.type === 'mocktail' ? 'verde' : 'ambar'}" style="font-size: 8px; padding: 1px 6px;">${opt.tag}</span>
+            </div>
+            <p style="font-size: 10.5px; color: var(--humo); margin: 2px 0 0; line-height: 1.3;">${opt.desc}</p>
+          </div>
+        </label>
+      `).join('');
+
+      elDrinkList.querySelectorAll('input[name="event-drink-choice"]').forEach((radio) => {
+        radio.addEventListener('change', (e) => {
+          const chosenId = (e.target as HTMLInputElement).value;
+          this.selectedDrink = event.drinkOptions.find(d => d.id === chosenId) || event.drinkOptions[0];
+          
+          elDrinkList.querySelectorAll('.drink-option-label').forEach((lbl) => {
+            if (lbl.getAttribute('data-drink-id') === chosenId) {
+              (lbl as HTMLElement).style.borderColor = 'var(--luz)';
+            } else {
+              (lbl as HTMLElement).style.borderColor = 'var(--linea)';
+            }
+          });
+        });
+      });
+    }
+
     if (elHostTips) {
       elHostTips.innerHTML = event.hostTips.map(tip => `
         <li style="margin-bottom: 6px; color: var(--humo); font-size: 11.5px; line-height: 1.4;">${tip}</li>
@@ -606,7 +734,7 @@ class ClientAppService {
         btnBook.innerHTML = `⏳ Unirme a Lista de Espera (Prioridad)`;
         btnBook.className = 'btn ambar';
       } else {
-        btnBook.innerHTML = `🎟️ Reservar Cóctel de Autor (${event.priceFormatted} COP)`;
+        btnBook.innerHTML = `🎟️ Reservar y Elegir Trago (${event.priceFormatted} COP)`;
         btnBook.className = 'btn ambar';
       }
       btnBook.disabled = false;
@@ -634,8 +762,8 @@ class ClientAppService {
 
     const btn = document.getElementById('btn-confirm-event-booking') as HTMLButtonElement;
     const evt = this.selectedEvent;
+    const drink = this.selectedDrink || evt.drinkOptions[0];
 
-    // Si es lista de espera
     if (evt.status === 'lleno') {
       if (btn) { btn.textContent = 'Anotándote en lista...'; btn.disabled = true; }
       try {
@@ -665,7 +793,6 @@ class ClientAppService {
       return;
     }
 
-    // Reserva regular confirmada
     if (btn) {
       btn.textContent = 'Generando tu Pasaporte QR...';
       btn.disabled = true;
@@ -681,9 +808,9 @@ class ClientAppService {
         mapsUrl: evt.mapsUrl,
         dayDate: evt.dayDate,
         tableNumber: evt.tableNumber,
-        cocktailName: evt.cocktailIncluded,
-        cocktailDesc: evt.cocktailDesc,
-        cocktailImg: evt.cocktailImg,
+        cocktailName: drink.name,
+        cocktailDesc: drink.desc,
+        cocktailImg: drink.img,
         bookingCode: evt.bookingCode,
         priceFormatted: evt.priceFormatted,
         hostTips: evt.hostTips,
@@ -693,25 +820,27 @@ class ClientAppService {
       await DB.saveUser(user);
       this.closeEventModal();
       
-      // Feedback Toast
-      this.showToast(`¡Reserva confirmada en ${evt.venueName}!`);
+      this.showToast(`¡Reserva confirmada en ${evt.venueName} con ${drink.name}!`);
 
-      // Cambiar a la vista del cliente
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
       this.renderClientView();
       this.renderDiscoveryFeed();
     } catch (err: any) {
       console.error('Error al confirmar reserva:', err);
-      alert('Hubo un error al procesar tu reserva: ' + err.message);
+      await RondaDialog.alert({
+        title: 'Error en Reserva',
+        message: 'Hubo un error al procesar tu reserva: ' + err.message,
+        icon: '⚠️',
+        type: 'danger'
+      });
     } finally {
       if (btn) {
-        btn.textContent = `🎟️ Reservar Cóctel de Autor`;
+        btn.textContent = `🎟️ Reservar y Elegir Trago`;
         btn.disabled = false;
       }
     }
   }
 
-  // Vista cuando el usuario está en lista de espera
   renderWaitlistView(waitlist: any) {
     const container = document.getElementById('client-content');
     if (!container) return;
@@ -755,9 +884,9 @@ class ClientAppService {
         mapsUrl: evt.mapsUrl,
         dayDate: evt.dayDate,
         tableNumber: '02',
-        cocktailName: evt.cocktailIncluded,
-        cocktailDesc: evt.cocktailDesc,
-        cocktailImg: evt.cocktailImg,
+        cocktailName: evt.drinkOptions[0].name,
+        cocktailDesc: evt.drinkOptions[0].desc,
+        cocktailImg: evt.drinkOptions[0].img,
         bookingCode: '#RND-9104',
         priceFormatted: evt.priceFormatted,
         hostTips: evt.hostTips,
@@ -780,7 +909,6 @@ class ClientAppService {
     });
   }
 
-  // Verifica si el cliente actual está en alguna mesa activa
   getMyCurrentMatch() {
     if (!this.currentEvent || !this.currentEvent.activeMatches) return null;
     const myUid = Auth.currentUser?.uid;
@@ -851,7 +979,11 @@ class ClientAppService {
       if (btnNo) btnNo.disabled = true;
     } catch (e) {
       console.error("Error guardando voto:", e);
-      alert("Error guardando tu voto.");
+      await RondaDialog.alert({
+        title: 'Error de Voto',
+        message: 'No se pudo registrar tu preferencia.',
+        icon: '⚠️'
+      });
     }
   }
 
@@ -929,12 +1061,8 @@ class ClientAppService {
             </p>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              <a href="https://wa.me/${m.whatsappPhone}?text=${encodeURIComponent('¡Hola ' + m.name.split(' ')[0] + '! Tuvimos match en RONDA ' + postState.venueName + ' 🍸')}" target="_blank" class="btn" style="text-decoration: none; text-align: center; background: #25d366; color: #fff; font-weight: 700; font-size: 12px; padding: 11px; border: none; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(37,211,102,0.3);">
-                💬 Escribirle por WhatsApp (${m.name.split(' ')[0]})
-              </a>
-              
-              <button class="btn btn-voucher-2nd-date" style="background: rgba(26,18,11,0.06); color: #1a120b; border: 1px solid rgba(26,18,11,0.2); font-size: 11px; padding: 9px; font-weight: 600;" data-venue="${postState.venueName}">
-                🍸 Invitar a 2ª Cita (-25% en ${postState.venueName})
+              <button id="btn-open-confidential-chat" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(240,168,48,0.35);">
+                💌 Abrir Mensaje Confidencial y Coordinar 2ª Cita
               </button>
             </div>
           </div>
@@ -954,19 +1082,11 @@ class ClientAppService {
       </div>
     `;
 
-    // Vincular botón de voucher de segunda cita
-    container.querySelectorAll('.btn-voucher-2nd-date').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        const venue = (e.currentTarget as HTMLElement).getAttribute('data-venue') || 'el local';
-        RondaDialog.alert({
-          title: 'Cupón de 2ª Cita Activado',
-          message: `¡Disfruta un -25% de descuento en tu cuenta en ${venue} para tu próxima visita de a dos! Presenta tu pasaporte digital en el local.`,
-          icon: '🍸'
-        });
-      });
+    // Abrir mensaje confidencial con protocolo Misión Imposible
+    document.getElementById('btn-open-confidential-chat')?.addEventListener('click', () => {
+      this.triggerMissionImpossibleAutodestruction(postState.matches[0]?.name || 'tu Match');
     });
 
-    // Iniciar reloj hacia las 10:00 AM si aún no está revelado
     if (!isRevealed) {
       let secondsLeft = 4 * 3600 + 18 * 60 + 32;
       const elCount = document.getElementById('countdown-reveal');
@@ -1032,6 +1152,105 @@ class ClientAppService {
     }, 700);
   }
 
+  // Protocolo de Autodestrucción Misión Imposible
+  triggerMissionImpossibleAutodestruction(partnerName: string) {
+    const letter = document.getElementById('letter-parchment');
+    if (!letter) return;
+
+    letter.classList.add('mission-burn-active');
+    this.showToast('🔥 Este mensaje se autodestruirá en 5 segundos...');
+
+    setTimeout(() => {
+      letter.style.display = 'none';
+      this.openTemporalChat(partnerName);
+    }, 4500);
+  }
+
+  // Apertura y Gestión del Chat Temporal Seguro (48 Horas)
+  openTemporalChat(partnerName: string) {
+    const modal = document.getElementById('modal-temporal-chat');
+    if (!modal) return;
+
+    const elPartnerName = document.getElementById('chat-partner-name');
+    if (elPartnerName) elPartnerName.textContent = partnerName;
+
+    // Inicializar mensajes rompehielos de demostración
+    this.chatMessages = [
+      {
+        sender: 'partner',
+        text: `¡Hola! Qué gran noche ayer en el bar. Me encantó nuestra charla en la mesa. ¿Nos vemos para una segunda ronda?`,
+        time: '10:02 AM'
+      }
+    ];
+
+    this.renderChatStream();
+    modal.classList.add('active');
+  }
+
+  renderChatStream() {
+    const stream = document.getElementById('chat-stream');
+    if (!stream) return;
+
+    stream.innerHTML = this.chatMessages.map(msg => `
+      <div class="chat-msg ${msg.sender === 'me' ? 'me' : 'partner'}">
+        ${msg.text}
+        <span class="chat-msg-time">${msg.time}</span>
+      </div>
+    `).join('');
+
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  handleSendChatMessage() {
+    const input = document.getElementById('input-chat-msg') as HTMLInputElement;
+    const warning = document.getElementById('chat-security-warning');
+    if (!input) return;
+
+    const text = input.value.trim();
+    if (!text) return;
+
+    // Filtro estricto anti-contacto (Teléfonos, WhatsApp, @handle, direcciones)
+    const restrictedRegex = /(whatsapp|wa\.me|\b\d{7,13}\b|@[\w.]+|instagram|calle|carrera|cra\.|cll\.|casa|direcci[oó]n|telefono|teléfono|celular|cel\b)/i;
+
+    if (restrictedRegex.test(text)) {
+      if (warning) {
+        warning.style.display = 'block';
+        setTimeout(() => { warning.style.display = 'none'; }, 4000);
+      }
+      RondaDialog.alert({
+        title: 'Violación de Privacidad',
+        message: '⚠️ Está estrictamente prohibido compartir números de teléfono, WhatsApp, redes sociales o direcciones en este chat. El sistema protege tu privacidad y la de la otra persona. Coordinen su segunda cita únicamente en locales asociados.',
+        icon: '🛡️',
+        type: 'danger'
+      });
+      return;
+    }
+
+    if (warning) warning.style.display = 'none';
+
+    const now = new Date();
+    const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    this.chatMessages.push({
+      sender: 'me',
+      text,
+      time: timeStr
+    });
+
+    input.value = '';
+    this.renderChatStream();
+
+    // Respuesta simulada de la pareja al poco tiempo
+    setTimeout(() => {
+      this.chatMessages.push({
+        sender: 'partner',
+        text: '¡Totalmente de acuerdo! Qué tal si reservamos la 2ª cita con el beneficio del 25%?',
+        time: `${now.getHours()}:${(now.getMinutes() + 1).toString().padStart(2, '0')}`
+      });
+      this.renderChatStream();
+    }, 1800);
+  }
+
   renderClientView() {
     const container = document.getElementById('client-content');
     if (!container) return;
@@ -1039,7 +1258,6 @@ class ClientAppService {
     const user = Auth.currentUser;
     if (!user) return;
 
-    // Si tiene correspondencia del día después
     if (user.postEventState) {
       this.renderDayAfterMatchesView(user.postEventState);
       return;
@@ -1115,8 +1333,8 @@ class ClientAppService {
               age: 28,
               profession: 'Arquitecta de Interiores',
               zone: 'Zona G',
-              cocktail: 'Negroni Ahumado',
-              icebreakerSummary: 'Ambos coincidieron en pasión por los viajes, cócteles de autor y arquitectura.',
+              cocktail: res.cocktailName || 'Negroni Ahumado',
+              icebreakerSummary: 'Ambos coincidieron en pasión por los viajes, arquitectura urbana y cócteles de autor.',
               whatsappPhone: '573124567890'
             }
           ]
@@ -1126,17 +1344,15 @@ class ClientAppService {
         this.renderClientView();
       });
     } else {
-      // Estado de la Reserva (Confirmada / En Barra / En Ronda)
       const isCheckedIn = res.status === 'checked_in';
 
       const checkInBanner = isCheckedIn ? `
         <div style="background: rgba(46,107,84,0.18); border: 1px solid var(--botella); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; text-align: center;">
-          <b style="color: #79D3AC; font-size: 12.5px; display: block;">🍸 Cóctel Canjeado · ¡Estás en Barra!</b>
+          <b style="color: #79D3AC; font-size: 12.5px; display: block;">🍸 Trago Canjeado · ¡Estás en Barra!</b>
           <span style="font-size: 11px; color: var(--humo);">Prepárate para la 1ª campanada y toma asiento en la <b>Mesa ${res.tableNumber}</b></span>
         </div>
       ` : '';
 
-      // Mostrar ticket de Reserva / Pasaporte QR Oficial
       container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
           <h3 style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--papel); margin: 0; letter-spacing: -0.01em;">Tu reserva</h3>
@@ -1172,11 +1388,11 @@ class ClientAppService {
             <p style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: #73675a; letter-spacing: 0.16em; margin: 4px 0 0;">Tu mesa de salida</p>
           </div>
           
-          <!-- Cóctel Destacado con Imagen Sin Fondo -->
+          <!-- Trago Elegido con Imagen Sin Fondo -->
           <div style="background: rgba(46,107,84,0.1); border: 1px solid rgba(46,107,84,0.25); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
             <img src="${res.cocktailImg || '/assets/coctel-negroni.svg'}" alt="${res.cocktailName}" style="width: 48px; height: 56px; object-fit: contain; flex-shrink: 0;">
             <div>
-              <p style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0 0 2px;">🍸 Incluye: Cóctel de Autor</p>
+              <p style="font-size: 11.5px; color: var(--botella); font-weight: 700; margin: 0 0 2px;">🍸 Trago Elegido Incluido</p>
               <b style="font-size: 12px; color: #17101d; display: block;">${res.cocktailName}</b>
               <span style="font-size: 10px; color: #555; line-height: 1.3; display: block; margin-top: 2px;">${res.cocktailDesc || ''}</span>
             </div>
@@ -1188,7 +1404,7 @@ class ClientAppService {
           ` : `
             <div style="background: rgba(46,107,84,0.12); border: 1.5px dashed var(--botella); border-radius: 12px; padding: 14px; text-align: center; margin: 8px 0 4px;">
               <span style="font-size: 24px; display: block; margin-bottom: 2px;">🍸</span>
-              <b style="color: var(--botella); font-family: var(--font-display); font-size: 15px; display: block;">Cóctel Canjeado</b>
+              <b style="color: var(--botella); font-family: var(--font-display); font-size: 15px; display: block;">Trago Canjeado</b>
               <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">Acceso a sala validado · Asiento: Mesa ${res.tableNumber}</span>
             </div>
           `}
@@ -1213,7 +1429,7 @@ class ClientAppService {
           ` : ''}
 
           <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Tomar Asiento)' : '🍸 Simular Llegada al Bar (Canjear Cóctel)'}
+            ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Tomar Asiento)' : '🍸 Simular Llegada al Bar (Canjear Trago)'}
           </button>
 
           <button id="btn-sim-direct-10am" class="btn" style="font-size: 11px; color: var(--luz); border-color: rgba(240,168,48,.3); background: rgba(240,168,48,.06); padding: 9px; margin-top: 4px;">
@@ -1228,20 +1444,20 @@ class ClientAppService {
         ` : ''}
       `;
 
-      this.renderQRCode('qr-client');
+      if (!isCheckedIn) {
+        this.renderQRCode('qr-client');
+      }
 
-      // Gestión de Reserva desde Ticket
       document.getElementById('btn-open-manage-from-ticket')?.addEventListener('click', () => {
         this.openManageReservationsModal();
       });
 
-      // Acciones de Calendario y Check-in
       document.getElementById('btn-add-calendar')?.addEventListener('click', () => {
         const start = new Date(Date.now() + 86400000);
         const end = new Date(start.getTime() + 105 * 60000);
         downloadICSFile(
           `Cita RONDA en ${res.venueName}`,
-          `Tu reserva confirmada (${res.bookingCode}). Mesa de salida: ${res.tableNumber}. Incluye cóctel de autor: ${res.cocktailName}.`,
+          `Tu reserva confirmada (${res.bookingCode}). Mesa de salida: ${res.tableNumber}. Incluye: ${res.cocktailName}.`,
           res.venueAddress,
           start,
           end
@@ -1254,10 +1470,9 @@ class ClientAppService {
           res.status = 'checked_in';
           user.activeReservation = res;
           await DB.saveUser(user);
-          this.showToast('🍸 ¡Cóctel canjeado en barra! Disfruta la previa.');
+          this.showToast('🍸 ¡Trago canjeado en barra! Disfruta la previa.');
           this.renderClientView();
         } else {
-          // Simular el inicio del evento en sala
           this.currentEvent = {
             id: res.eventId,
             currentRound: 1,
@@ -1288,7 +1503,7 @@ class ClientAppService {
               age: 28,
               profession: 'Arquitecta de Interiores',
               zone: 'Zona G',
-              cocktail: 'Negroni Ahumado',
+              cocktail: res.cocktailName || 'Negroni Ahumado',
               icebreakerSummary: 'Ambos coincidieron en gusto por el Negroni Ahumado, diseño urbano y viajes por Colombia.',
               whatsappPhone: '573124567890'
             }

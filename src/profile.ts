@@ -376,11 +376,43 @@ export class ProfileService {
       this.showToast('Ajustes y privacidad guardados');
     } catch (err: any) {
       console.error('Error guardando ajustes:', err);
-      alert('Error: ' + err.message);
+      await RondaDialog.alert({
+        title: 'Error al Guardar',
+        message: 'No se pudieron guardar los ajustes: ' + err.message,
+        icon: '⚠️',
+        type: 'danger'
+      });
     } finally {
       if (btn) { btn.textContent = '✓ Guardar Opciones Avanzadas'; btn.disabled = false; }
       if (btnTop) { btnTop.textContent = '✓'; btnTop.style.opacity = '1'; btnTop.disabled = false; }
     }
+  }
+
+  openServicesModal() {
+    const modal = document.getElementById('modal-ronda-services');
+    if (!modal) return;
+    modal.classList.add('active');
+
+    document.getElementById('btn-services-close')?.addEventListener('click', () => {
+      this.closeServicesModal();
+    });
+
+    modal.querySelectorAll('.btn-book-service').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const serviceName = (e.currentTarget as HTMLElement).getAttribute('data-service') || 'Servicio RONDA';
+        this.closeServicesModal();
+        await RondaDialog.alert({
+          title: 'Solicitud Recibida',
+          message: `Hemos notificado a nuestro equipo de Concierge para agendar tu ${serviceName}. Te contactaremos por el canal seguro de la app con la fecha y hora disponible.`,
+          icon: '✨'
+        });
+      });
+    });
+  }
+
+  closeServicesModal() {
+    const modal = document.getElementById('modal-ronda-services');
+    if (modal) modal.classList.remove('active');
   }
 
   private compressImage(file: File, maxWidth: number, maxHeight: number, quality: number): Promise<string> {

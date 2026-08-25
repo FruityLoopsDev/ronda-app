@@ -707,8 +707,126 @@
         0% { transform: translateY(40px) scale(0.94); opacity: 0; }
         100% { transform: translateY(0) scale(1); opacity: 1; }
       }
+
+      /* Animación de Autodestrucción Estilo "Misión Imposible" */
+      .mission-burn-active {
+        animation: missionBurnShake 0.4s infinite, missionSmokeDisintegrate 4.5s forwards cubic-bezier(0.25, 1, 0.5, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .mission-burn-active::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: linear-gradient(0deg, rgba(255, 69, 0, 0.85) 0%, rgba(255, 165, 0, 0.6) 20%, rgba(30, 30, 30, 0.9) 60%, rgba(0, 0, 0, 0.98) 100%);
+        pointer-events: none;
+        animation: burnRise 4s forwards linear;
+        mix-blend-mode: multiply;
+        z-index: 10;
+      }
+      .mission-burn-active::after {
+        content: '🔥 AUTODESTRUYENDO CORRESPONDENCIA...';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 800;
+        color: #ffdd59;
+        text-shadow: 0 0 15px rgba(255, 69, 0, 0.9), 0 0 30px #ff3f34;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: 1.5px solid #ff5e57;
+        z-index: 12;
+        letter-spacing: 0.12em;
+        white-space: nowrap;
+        animation: pulseWarning 0.5s infinite alternate;
+      }
+      @keyframes missionBurnShake {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(-2px, 1.5px) rotate(-0.5deg); }
+        50% { transform: translate(2px, -1.5px) rotate(0.5deg); }
+        75% { transform: translate(-1.5px, -1px) rotate(-0.3deg); }
+        100% { transform: translate(1.5px, 1px) rotate(0.3deg); }
+      }
+      @keyframes burnRise {
+        0% { transform: translateY(100%); opacity: 0.2; }
+        30% { opacity: 0.8; }
+        100% { transform: translateY(0%); opacity: 1; }
+      }
+      @keyframes missionSmokeDisintegrate {
+        0% { filter: brightness(1) contrast(1); opacity: 1; }
+        50% { filter: brightness(1.4) contrast(1.3) sepia(0.8) hue-rotate(-20deg); opacity: 0.9; }
+        85% { filter: blur(4px) brightness(0.4); transform: scale(0.96) translateY(-10px); opacity: 0.4; }
+        100% { filter: blur(12px) brightness(0); transform: scale(0.88) translateY(-30px); opacity: 0; pointer-events: none; }
+      }
+      @keyframes pulseWarning {
+        from { transform: translate(-50%, -50%) scale(0.96); box-shadow: 0 0 10px rgba(255,69,0,0.6); }
+        to { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 0 25px rgba(255,69,0,0.95); }
+      }
+
+      /* Chat Temporal Estilo RONDA */
+      .chat-stream-box {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 380px;
+        overflow-y: auto;
+        padding: 14px 10px;
+        background: rgba(14, 9, 18, 0.6);
+        border: 1px solid var(--linea);
+        border-radius: 16px;
+        margin-bottom: 14px;
+        scrollbar-width: none;
+      }
+      .chat-msg {
+        max-width: 80%;
+        padding: 10px 14px;
+        border-radius: 16px;
+        font-size: 13px;
+        line-height: 1.4;
+        position: relative;
+        word-break: break-word;
+      }
+      .chat-msg.me {
+        align-self: flex-end;
+        background: linear-gradient(135deg, rgba(240,168,48,0.25), rgba(240,168,48,0.12));
+        border: 1px solid rgba(240,168,48,0.4);
+        color: var(--papel);
+        border-bottom-right-radius: 4px;
+      }
+      .chat-msg.partner {
+        align-self: flex-start;
+        background: rgba(243,237,226,0.07);
+        border: 1px solid var(--linea);
+        color: var(--papel);
+        border-bottom-left-radius: 4px;
+      }
+      .chat-msg-time {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: var(--humo);
+        display: block;
+        margin-top: 4px;
+        text-align: right;
+      }
+
+      /* Fix Global para Select Dropdowns en Navegadores */
+      select.ronda-input-premium {
+        background-color: #1a1020 !important;
+        color: #f3ede2 !important;
+      }
+      select.ronda-input-premium option {
+        background-color: #1a1020 !important;
+        color: #f3ede2 !important;
+      }
     </style>
-      <script type="module" crossorigin src="/assets/index-Cyo7jIdr.js"></script>
+      <script type="module" crossorigin src="/assets/index-BcSgbdrr.js"></script>
     </head>
 <body>
   <!-- Sprite de Iconos Vectoriales RONDA -->
@@ -947,9 +1065,9 @@
         <div class="bubble-circle">📍</div>
         <span class="bubble-label" id="hl-zone-val">Zona G</span>
       </div>
-      <div class="highlight-bubble" onclick="Profile.openSettingsModal();">
-        <div class="bubble-circle">⚙️</div>
-        <span class="bubble-label">Ajustes</span>
+      <div class="highlight-bubble" onclick="Profile.openServicesModal();">
+        <div class="bubble-circle">✨</div>
+        <span class="bubble-label">Servicios</span>
       </div>
       <div class="highlight-bubble" onclick="document.querySelector('[data-tab=passport]').click();">
         <div class="bubble-circle">🎫</div>
@@ -1226,21 +1344,24 @@
 
   <!-- Modal: Detalle y Reserva de Evento (Modal de Reserva Rápida) -->
   <div id="modal-event-detail" class="modal-overlay">
-    <div class="tel" style="width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
+    <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
       <div class="tel-in" style="padding: 20px 18px 24px;">
         
-        <!-- Header del Modal -->
+        <!-- Header del Modal (Sin solapamiento) -->
         <div class="edit-modal-top">
           <button id="btn-event-detail-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar">✕</button>
-          <h3 class="modal-nav-title">Detalle de Reserva</h3>
-          <span id="modal-event-status-badge" class="chip ambar" style="justify-self: end; font-size: 9.5px; padding: 4px 8px;">Escaso</span>
+          <h3 class="modal-nav-title" style="font-size: 18px;">Detalle de Reserva</h3>
+          <span style="width: 36px; height: 36px;"></span>
         </div>
 
         <div class="pant" style="margin-top: 4px;">
           
           <!-- Card Principal del Local -->
           <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: var(--r); padding: 16px; margin-bottom: 14px;">
-            <div id="modal-event-date" class="dia" style="color: var(--luz); margin-bottom: 4px;">Martes 25 · 20:00</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <div id="modal-event-date" class="dia" style="color: var(--luz); margin-bottom: 0;">Martes 25 · 20:00</div>
+              <span id="modal-event-status-badge" class="chip ambar" style="font-size: 9.5px; padding: 3px 8px;">Por confirmar</span>
+            </div>
             <h3 id="modal-event-venue" class="local" style="font-size: 22px; margin: 0 0 6px; color: var(--papel);">CARONTE Cocktail Bar</h3>
             <p id="modal-event-address" style="font-size: 11.5px; color: var(--humo); margin: 0 0 8px; display: flex; align-items: center; gap: 4px;">
               📍 Cra. 4A #66-22 · Zona G, Bogotá
@@ -1258,7 +1379,7 @@
           <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: var(--r); padding: 14px; margin-bottom: 14px;">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: var(--font-mono); margin-bottom: 6px;">
               <span style="color: var(--papel); font-weight: 700;">⚖️ Balance de Sala</span>
-              <span id="modal-event-balance-tag" style="color: var(--luz);">Tu lado va escaso</span>
+              <span id="modal-event-balance-tag" style="color: var(--luz);">Tu lado por confirmar</span>
             </div>
             <div class="barra-balance" style="margin-top: 4px;">
               <i id="modal-event-bar-fill" style="width:62%;background:var(--luz)"></i>
@@ -1270,13 +1391,17 @@
             </div>
           </div>
 
-          <!-- Incluye Cóctel de Autor con Foto Sin Fondo -->
-          <div style="background: rgba(46,107,84,.14); border: 1px solid rgba(46,107,84,.4); border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px;">
-            <img id="modal-event-cocktail-img" src="/assets/coctel-negroni.svg" alt="Cóctel" style="width: 52px; height: 62px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
-            <div>
-              <b style="font-size: 11.5px; color: #79D3AC; text-transform: uppercase; letter-spacing: 0.05em; display: block;">🍸 Cóctel de Autor Incluido</b>
-              <h4 id="modal-event-cocktail" style="font-size: 14px; font-family: var(--font-display); margin: 2px 0 3px; color: var(--papel);">Negroni Ahumado</h4>
-              <p id="modal-event-cocktail-desc" style="font-size: 11px; color: var(--humo); margin: 0; line-height: 1.35;">Campari infusionado en madera de roble, Vermut Rosso y Gin botánico con piel de naranja caramelizada.</p>
+          <!-- Carta Elegante Sugerida por el Bartender / Sommelier -->
+          <div style="background: rgba(46,107,84,.1); border: 1px solid rgba(46,107,84,.35); border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span id="modal-event-drink-menu-title" style="font-size: 11px; font-family: var(--font-mono); color: #79D3AC; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
+                🍸 CARTA SUGERIDA POR EL BARTENDER
+              </span>
+              <span class="chip verde" style="font-size: 8.5px; padding: 2px 6px;">1 Incluido</span>
+            </div>
+            
+            <div id="modal-event-drink-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Se puebla dinámicamente -->
             </div>
           </div>
 
@@ -1304,13 +1429,131 @@
 
           <!-- Botón de Confirmación -->
           <button id="btn-confirm-event-booking" class="btn ambar" style="width: 100%; font-size: 13px; padding: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            🎟️ Reservar Cóctel de Autor
+            🎟️ Reservar y Elegir Trago
           </button>
 
           <!-- Regla de Asistencia -->
           <p style="font-size: 10.5px; color: var(--humo); text-align: center; margin: 12px 0 0; line-height: 1.35;">
             ⚠️ <b>Compromiso RONDA:</b> No aparecer sin avisar implica la pérdida de la entrada y <b>1 strike</b>.
           </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Chat Temporal Confidencial (48 Horas con Filtro Anti-Contactos) -->
+  <div id="modal-temporal-chat" class="modal-overlay" style="z-index: 10001;">
+    <div class="tel" style="width: 100%; max-width: 410px; max-height: 92vh; display: flex; flex-direction: column; background: #150e1c; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.85);">
+      <div class="tel-in" style="padding: 18px 16px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+        
+        <!-- Header del Chat -->
+        <div class="edit-modal-top" style="margin-bottom: 12px;">
+          <button id="btn-temporal-chat-close" class="modal-icon-btn" title="Cerrar">✕</button>
+          <div style="text-align: center;">
+            <h3 id="chat-partner-name" class="modal-nav-title" style="font-size: 17px; margin: 0;">Camila Ospina</h3>
+            <span id="chat-timer-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px; margin-top: 2px;">⏳ Expira en: 47h 58m</span>
+          </div>
+          <button id="btn-chat-plan-2nd-date" class="modal-icon-btn confirm-btn" title="Invitar a 2da Cita" style="font-size: 14px;">🍸</button>
+        </div>
+
+        <!-- Banner de Advertencia y Reglas Estrictas de Seguridad -->
+        <div style="background: rgba(155,39,72,0.18); border: 1px dashed var(--vino); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px;">
+          <p style="font-size: 10.5px; color: #ffb8c6; margin: 0; line-height: 1.35;">
+            ⚠️ <b>PROTOCOLO DE PRIVACIDAD:</b> Prohibido compartir números de WhatsApp, teléfonos, redes sociales o direcciones. Cualquier intento causará la <b>expulsión inmediata</b>. Coordinen su segunda cita únicamente en locales verificados.
+          </p>
+        </div>
+
+        <!-- Stream de Mensajes -->
+        <div id="chat-stream" class="chat-stream-box" style="flex: 1; min-height: 240px;">
+          <!-- Dinámico -->
+        </div>
+
+        <!-- Alerta de Bloqueo por Filtrado -->
+        <div id="chat-security-warning" style="display: none; background: #9b2748; color: #fff; font-size: 11px; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; text-align: center; font-weight: 600;">
+          ⛔ Mensaje bloqueado: Prohibido compartir información de contacto directo.
+        </div>
+
+        <!-- Input del Chat -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="input-chat-msg" class="ronda-input-premium" placeholder="Escribe un mensaje seguro..." style="margin-bottom: 0; font-size: 13px; padding: 11px 14px;">
+          <button id="btn-chat-send" class="btn ambar" style="padding: 11px 16px; border-radius: 12px; font-weight: 700; white-space: nowrap;">
+            Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Servicios Exclusivos (Fotografía, Asesoría de Imagen, Coaching) -->
+  <div id="modal-ronda-services" class="modal-overlay" style="z-index: 10000;">
+    <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none; background: #180f20; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
+      <div class="tel-in" style="padding: 22px 18px 24px;">
+        
+        <!-- Header -->
+        <div class="edit-modal-top">
+          <button id="btn-services-close" class="modal-icon-btn" title="Cerrar">✕</button>
+          <h3 class="modal-nav-title" style="font-size: 18px;">Servicios Exclusivos</h3>
+          <span style="width: 36px; height: 36px;"></span>
+        </div>
+
+        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px; line-height: 1.4;">
+          Mejora tu presencia, habilidades y perfil con nuestros expertos aliados de RONDA en Bogotá.
+        </p>
+
+        <!-- Tarjetas de Servicios -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <!-- 1. Sesión de Fotos Profesional -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">📸 Sesión con Fotógrafo Pro</b>
+                <span style="font-size: 10.5px; color: var(--luz); font-family: var(--font-mono); display: block;">Retrato Urbano & Editorial · 45 min</span>
+              </div>
+              <span class="chip ambar" style="font-size: 9px; padding: 2px 8px;">$120.000 COP</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
+              5 fotos profesionales retocadas en locaciones exclusivas de Zona G o Parque Virrey para multiplicar tu atractivo presencial.
+            </p>
+            <button class="btn btn-book-service" data-service="Sesión de Fotos con Fotógrafo Profesional" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(240,168,48,0.1); border-color: rgba(240,168,48,0.3); color: var(--luz); font-weight: 700;">
+              Solicitar Fotógrafo Aliado
+            </button>
+          </div>
+
+          <!-- 2. Asesoría de Imagen y Maquillaje -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">💄 Asesoría de Imagen & Maquillaje</b>
+                <span style="font-size: 10.5px; color: var(--botella); font-family: var(--font-mono); display: block;">Estilismo Personalizado & Grooming</span>
+              </div>
+              <span class="chip verde" style="font-size: 9px; padding: 2px 8px;">$95.000 COP</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
+              Consultoría de estilo, paleta de colores y preparación previa al evento para proyectar máxima sofisticación y confianza.
+            </p>
+            <button class="btn btn-book-service" data-service="Asesoría de Imagen y Maquillaje Profesional" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(46,107,84,0.12); border-color: rgba(46,107,84,0.4); color: #79D3AC; font-weight: 700;">
+              Agendar Asesoría de Imagen
+            </button>
+          </div>
+
+          <!-- 3. Coaching en Habilidades Blandas -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">🧠 Coaching en Habilidades Blandas</b>
+                <span style="font-size: 10.5px; color: #f08ca8; font-family: var(--font-mono); display: block;">Comunicación & Conexión Auténtica</span>
+              </div>
+              <span class="chip ambar" style="font-size: 9px; padding: 2px 8px;">$110.000 COP</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
+              Sesión 1 a 1 para dominar el arte de las citas cortas: lenguaje no verbal, escucha activa y cómo generar intriga en 6 minutos.
+            </p>
+            <button class="btn btn-book-service" data-service="Coaching en Habilidades Blandas y Dinámica Social" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(155,39,72,0.12); border-color: var(--vino); color: #f08ca8; font-weight: 700;">
+              Reservar Sesión de Coaching
+            </button>
+          </div>
 
         </div>
       </div>
