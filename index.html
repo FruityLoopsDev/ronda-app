@@ -1047,7 +1047,8 @@
 
   <!-- Modal: Completar Perfil -->
   <div id="modal-profile" class="modal-overlay">
-    <div class="tel">
+    <div class="tel" style="position: relative;">
+      <button id="btn-close-modal-profile" title="Cerrar" style="position: absolute; top: 12px; right: 16px; background: transparent; border: none; color: var(--humo); font-size: 22px; cursor: pointer; z-index: 10;">✕</button>
       <div class="tel-in" style="min-height: auto; padding: 20px;">
         <div class="status"><span>RONDA</span><span>Perfil</span></div>
         <div class="pant text-center" style="text-align: center; padding: 0;">
@@ -1079,7 +1080,8 @@
               <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Muestra tu rostro y tu documento a la cámara</p>
             </div>
 
-            <button id="btn-save-profile" class="btn ambar" style="margin-top: 10px;" disabled>Guardar Perfil</button>
+            <button id="btn-save-profile" class="btn ambar" style="margin-top: 10px;">Guardar Perfil</button>
+            <button id="btn-skip-profile" class="btn" style="background: transparent; border: none; color: var(--humo); font-size: 12px; margin-top: 4px;">Continuar a la app por ahora</button>
           </div>
         </div>
       </div>

@@ -231,57 +231,72 @@ function initApp() {
 
   // Control del modal de perfil
   const modalProfile = document.getElementById('modal-profile');
-  addEventListener('auth:needsProfile', (e) => {
-    modalProfile.classList.add('active');
+  
+  // Botones para cerrar u omitir el modal de perfil
+  document.getElementById('btn-close-modal-profile')?.addEventListener('click', () => {
+    if (modalProfile) modalProfile.classList.remove('active');
+  });
+
+  document.getElementById('btn-skip-profile')?.addEventListener('click', () => {
+    if (modalProfile) modalProfile.classList.remove('active');
+    if (Auth.currentUser) {
+      switchView('view-lobby');
+    }
+  });
+
+  addEventListener('auth:needsProfile', (e: any) => {
+    // Si el usuario está accediendo a un panel autónomo directo (/admin, /net, /superadmin, /sales), no mostrar el modal
+    if (getPathViewMapping(window.location.pathname)) {
+      return;
+    }
+    if (modalProfile) modalProfile.classList.add('active');
     const user = e.detail;
-    document.getElementById('profile-name').value = user.name || '';
-    document.getElementById('profile-age').value = user.age || '';
-    document.getElementById('profile-gender').value = user.gender || '';
-    document.getElementById('profile-orientation').value = user.orientation || '';
+    if (user) {
+      const nameInput = document.getElementById('profile-name') as HTMLInputElement;
+      const ageInput = document.getElementById('profile-age') as HTMLInputElement;
+      const genderInput = document.getElementById('profile-gender') as HTMLSelectElement;
+      const orientationInput = document.getElementById('profile-orientation') as HTMLSelectElement;
+
+      if (nameInput) nameInput.value = user.name || '';
+      if (ageInput) ageInput.value = user.age || '';
+      if (genderInput) genderInput.value = user.gender || '';
+      if (orientationInput) orientationInput.value = user.orientation || '';
+    }
   });
 
   const btnSaveProfile = document.getElementById('btn-save-profile');
   if (btnSaveProfile) {
     btnSaveProfile.addEventListener('click', async () => {
-      const name = document.getElementById('profile-name').value.trim();
-      const age = parseInt(document.getElementById('profile-age').value, 10);
-      const gender = document.getElementById('profile-gender').value;
-      const orientation = document.getElementById('profile-orientation').value;
+      const nameInput = document.getElementById('profile-name') as HTMLInputElement;
+      const ageInput = document.getElementById('profile-age') as HTMLInputElement;
+      const genderInput = document.getElementById('profile-gender') as HTMLSelectElement;
+      const orientationInput = document.getElementById('profile-orientation') as HTMLSelectElement;
 
-      if (!name || !age || !gender || !orientation) {
-        await RondaDialog.alert({
-          title: 'Datos Incompletos',
-          message: 'Por favor completa todos los campos requeridos de tu perfil.',
-          icon: '📝'
-        });
-        return;
-      }
+      const name = nameInput ? nameInput.value.trim() : 'Usuario RONDA';
+      const age = ageInput ? (parseInt(ageInput.value, 10) || 25) : 25;
+      const gender = genderInput ? genderInput.value || 'X' : 'X';
+      const orientation = orientationInput ? orientationInput.value || 'A' : 'A';
 
       btnSaveProfile.textContent = "Guardando...";
-      btnSaveProfile.disabled = true;
 
       try {
-        const user = Auth.currentUser;
-        user.name = name;
+        const user = Auth.currentUser || { uid: 'guest', role: 'client' } as any;
+        user.name = name || 'Usuario RONDA';
         user.age = age;
         user.gender = gender;
         user.orientation = orientation;
 
-        await DB.saveUser(user);
-        modalProfile.classList.remove('active');
+        if (Auth.currentUser) {
+          await DB.saveUser(user);
+        }
+        if (modalProfile) modalProfile.classList.remove('active');
         
         dispatchEvent(new CustomEvent('auth:login', { detail: user }));
       } catch (err: any) {
         console.error("Error al guardar perfil:", err);
-        await RondaDialog.alert({
-          title: 'Error al Guardar',
-          message: 'No se pudieron guardar los cambios: ' + err.message,
-          icon: '⚠️',
-          type: 'danger'
-        });
+        if (modalProfile) modalProfile.classList.remove('active');
       } finally {
         btnSaveProfile.textContent = "Guardar Perfil";
-        btnSaveProfile.disabled = false;
       }
     });
   }
