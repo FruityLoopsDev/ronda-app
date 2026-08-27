@@ -1,17 +1,19 @@
 import { DB } from './db.js';
 import { RondaConfig } from './firebase-config.js';
+import { getDescriptor, evaluateIdentity } from './face-verify.js';
 
-// verification.js: Módulo de Seguridad y Geolocalización
-// Implementa Geolocalización, OCR (Tesseract.js) y Biometría facial (MediaPipe)
+// verification.js: Módulo de Seguridad, Geolocalización y Verificación de Identidad (KYC)
+// Verificación robusta (a pruebas de fallo): cada paso devuelve resultado tipado y la UI
+// recibe un mensaje claro; NUNCA se lanza un error no controlado hacia el flujo principal.
 
-declare var Camera: any;
-declare var FaceDetection: any;
 declare var Tesseract: any;
 
 class VerificationService {
   location: any = null;
   isVerified: boolean = false;
-  camera: any = null;
+  stream: MediaStream | null = null;
+  objectUrl: string | null = null;
+
   constructor() {
     this.location = null;
     this.isVerified = false;
@@ -21,155 +23,250 @@ class VerificationService {
   async requestLocation() {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error("Geolocalización no soportada por el navegador."));
+        reject(new Error('Geolocalización no soportada por el navegador.'));
         return;
       }
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          this.location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          console.log("Ubicación obtenida:", this.location);
+          this.location = { lat: position.coords.latitude, lng: position.coords.longitude };
+          console.log('Ubicación obtenida:', this.location);
           resolve(this.location);
         },
         (error) => {
-          console.error("Error obteniendo ubicación:", error);
+          console.error('Error obteniendo ubicación:', error);
           reject(error);
         }
       );
     });
   }
 
-  // Busca eventos cercanos basados en la ubicación (Simulado para MVP)
   async getNearbyEvents() {
     if (!this.location) await this.requestLocation();
-    
-    // Aquí se conectaría a Firebase GeoQueries (GeoFirestore o simular distancia)
-    // Para el MVP, devolvemos el evento demo 'e1' del 'v1'
-    if (RondaConfig.isDemo) {
-       return [DB.memoryDb.events['e1']];
-    }
+    if (RondaConfig.isDemo) return [DB.memoryDb.events['e1']];
     return [];
   }
 
-  // --- 2. Verificación de Identidad (Biometría + OCR) ---
-  
-  // Carga dinámica de Tesseract y MediaPipe desde CDN
+  // --- 2. Verificación de Identidad (Biometría + OCR), robusta ---
+
+  // Carga diferida de Tesseract (OCR del documento). MediaPipe ya no se usa: el
+  // reconocimiento facial / descriptores los aporta @vladmandic/face-api.
   async loadVerificationLibraries(): Promise<void> {
-    console.log("Cargando librerías de seguridad (MediaPipe + Tesseract)...");
-    
-    const loadScript = (src: string): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-          resolve();
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = src;
-        script.crossOrigin = 'anonymous';
-        script.onload = () => resolve();
-        script.onerror = (e) => reject(new Error(`Error cargando script: ${src}`));
-        document.head.appendChild(script);
-      });
-    };
+    const src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    if (document.querySelector(`script[src="${src}"]`)) return;
+    await new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.crossOrigin = 'anonymous';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('No se pudo cargar el motor OCR (Tesseract).'));
+      document.head.appendChild(script);
+    });
+  }
+
+  // OCR robusto: nunca lanza, devuelve { success, rawText, hits, error }.
+  async scanDocumentOCR(imageBlobOrUrl): Promise<{ success: boolean; rawText: string; hits: string[]; error?: string }> {
+    let worker: any = null;
+    try {
+      await this.loadVerificationLibraries();
+      worker = await Tesseract.createWorker('spa');
+      const ret = await worker.recognize(imageBlobOrUrl);
+      const rawText = (ret && ret.data && ret.data.text) || '';
+      const upper = rawText.toUpperCase();
+      const hits: string[] = [];
+      if (upper.includes('REPUBLICA DE COLOMBIA')) hits.push('REPUBLICA DE COLOMBIA');
+      if (upper.includes('CEDULA DE CIUDADANIA')) hits.push('CEDULA DE CIUDADANIA');
+      return { success: hits.length > 0, rawText, hits };
+    } catch (err: any) {
+      console.error('[OCR] Error:', err);
+      return { success: false, rawText: '', hits: [], error: (err && err.message) || 'Error de OCR' };
+    } finally {
+      if (worker) try { await worker.terminate(); } catch (_) { /* ignorar */ }
+    }
+  }
+
+  /** Mapea el veredicto a un mensaje de usuario claro. */
+  private statusMessage(reason?: string): string {
+    switch (reason) {
+      case 'no_face': return 'No se detectó un rostro. Ajusta la cámara e inténtalo de nuevo.';
+      case 'multiple_faces': return 'Se detectaron varios rostros en la imagen. Usa una foto con una sola persona.';
+      case 'model_error': return 'No se cargaron los modelos de reconocimiento. Comprueba /models o la conexión.';
+      case 'network_error': return 'Fallo de red al cargar los modelos/detección. Inténtalo con conexión estable.';
+      case 'documento_no_reconocido': return 'El documento no parece una cédula de Colombia (OCR). Revisa el texto y la luz.';
+      case 'rostro_no_coincide': return 'El rostro no coincide con el de la cédula. Vuelve a tomar el selfie.';
+      case 'sin_rostro_documento': return 'No se detectó el rostro en el documento. Usa una foto nítida del frente.';
+      case 'camera_denied': return 'Permiso de cámara denegado. Habilita la cámara para continuar.';
+      case 'no_camera': return 'No hay cámara disponible en este dispositivo.';
+      case 'no_document': return 'No se seleccionó ninguna imagen de documento.';
+      default: return 'No se pudo completar la verificación. Inténtalo de nuevo.';
+    }
+  }
+
+  private cleanup() {
+    if (this.stream) {
+      this.stream.getTracks().forEach((t) => t.stop());
+      this.stream = null;
+    }
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl);
+      this.objectUrl = null;
+    }
+    this.isVerified = false;
+  }
+
+  private setStatus(msg: string): void {
+    const el = document.getElementById('kyc-status') as HTMLElement | null;
+    if (el) {
+      el.textContent = msg;
+      el.style.color = /✓|Verificado|OK/.test(msg) ? 'var(--botella)' : 'var(--vino)';
+    }
+  }
+
+  /** Inicia la cámara frontal y devuelve el stream. Lanza solo si no hay cámara/persmiso. */
+  private async startCamera(videoEl: HTMLVideoElement): Promise<MediaStream> {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error('no_camera');
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      this.stream = stream;
+      videoEl.srcObject = stream;
+      await videoEl.play();
+      return stream;
+    } catch (e: any) {
+      if (e && (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError')) throw new Error('camera_denied');
+      throw new Error('no_camera');
+    }
+  }
+
+  /** Toma un frame del canvas como imagen y extrae el descriptor facial del selfie. */
+  private async selfieDescriptor(canvasId: string): Promise<{ descriptor: Float32Array | null; error?: string }> {
+    const canvas: any = document.getElementById(canvasId);
+    if (!canvas) return { descriptor: null, error: 'no_camera' };
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+    const img = await this.loadImage(dataUrl);
+    const res = await getDescriptor(img);
+    if (res.error) return { descriptor: null, error: res.error };
+    return { descriptor: res.descriptor! };
+  }
+
+  private loadImage(src: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('No se pudo cargar la imagen.'));
+      img.src = src;
+    });
+  }
+
+  /** Pide al usuario una imagen del documento (subir o foto) y devuelve la <img>. */
+  private captureDocumentImage(): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      // capture = 'environment' abre la cámara trasera en móviles; en desktop abre el selector.
+      (input as any).capture = 'environment';
+      input.style.display = 'none';
+      document.body.appendChild(input);
+
+      const onDone = (file?: File) => {
+        document.body.removeChild(input);
+        if (!file) { const e = new Error('no_document'); reject(e); return; }
+        if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
+        this.objectUrl = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Imagen de documento no válida.'));
+        img.src = this.objectUrl!;
+      };
+
+      input.onchange = () => onDone(input.files?.[0]);
+      input.click();
+      // Timeout: si el usuario cancela y el navegador no dispara onchange, resolvemos como cancelado.
+      setTimeout(() => { if (document.body.contains(input)) onDone(undefined); }, 2 * 60 * 1000);
+    });
+  }
+
+  /**
+   * Flujo KYC robusto: selfie (cámara) + documento (foto/subida) + OCR -> veredicto.
+   * Devuelve true si la identidad quedó verificada; false + mensaje en `kyc-status` en caso contrario.
+   * Nunca lanza; errores de infraestructura se reportan como false con mensaje claro.
+   */
+  async startVerification(videoId: string, canvasId: string): Promise<boolean> {
+    if (RondaConfig.isDemo) {
+      this.setStatus('✓ Modo Demo: verificación KYC simulada.');
+      return new Promise((resolve) => setTimeout(() => resolve(true), 1200));
+    }
+
+    const videoEl = document.getElementById(videoId) as HTMLVideoElement | null;
+    const canvasEl = document.getElementById(canvasId) as HTMLCanvasElement | null;
+    if (!videoEl || !canvasEl) {
+      this.setStatus(this.statusMessage('no_camera'));
+      return false;
+    }
+
+    this.cleanup();
+    this.setStatus('Solicitando permiso de cámara...');
+
+    let stream: MediaStream | null = null;
+    try {
+      stream = await this.startCamera(videoEl);
+    } catch (e: any) {
+      this.setStatus(this.statusMessage((e && e.message) || 'no_camera'));
+      return false;
+    }
 
     try {
-      await Promise.all([
-        loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
-        loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js'),
-        loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js')
-      ]);
-      console.log("✓ Librerías de verificación biométrica y OCR cargadas correctamente.");
-    } catch (err) {
-      console.error("Error al cargar librerías de verificación:", err);
-      throw err;
+      // 1) Selfie: capturar frame y extraer descriptor.
+      this.setStatus('Espera un momento... detectando tu rostro.');
+      const ctx = canvasEl.getContext('2d');
+      if (!ctx) { this.setStatus(this.statusMessage('no_camera')); return false; }
+      // Usar el frame del video una vez que esté listo.
+      await new Promise((r) => setTimeout(r, 600));
+      canvasEl.width = videoEl.videoWidth || 640;
+      canvasEl.height = videoEl.videoHeight || 480;
+      ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+      const selfie = await this.selfieDescriptor(canvasId);
+      if (!selfie.descriptor) {
+        this.setStatus(this.statusMessage(selfie.error));
+        return false;
+      }
+      this.setStatus('Rostro detectado. Ahora captura una foto de tu cédula (frente).');
+      if (stream) stream.getTracks().forEach((t) => t.stop());
+      this.stream = null;
+      videoEl.srcObject = null;
+
+      // 2) Documento: foto/subida + OCR + descriptor facial.
+      let docImg: HTMLImageElement;
+      try {
+        docImg = await this.captureDocumentImage();
+      } catch (e: any) {
+        this.setStatus(this.statusMessage((e && e.message) || 'no_document'));
+        return false;
+      }
+      this.setStatus('Analizando documento (OCR + rostro)...');
+      const ocr = await this.scanDocumentOCR(docImg);
+      const docDesc = await getDescriptor(docImg);
+      if (docDesc.error) {
+        this.setStatus(this.statusMessage(docDesc.error === 'no_face' ? 'sin_rostro_documento' : docDesc.error));
+        return false;
+      }
+      // 3) Veredicto combinado.
+      const verdict = evaluateIdentity(selfie.descriptor, docDesc.descriptor!, ocr.rawText || '', 0.6);
+      this.isVerified = verdict.ok;
+      if (verdict.ok) {
+        this.setStatus('✓ Identidad verificada (selfie coincide con la cédula).');
+        return true;
+      }
+      this.setStatus(this.statusMessage(verdict.reason));
+      return false;
+    } catch (e: any) {
+      console.error('[KYC] Error inesperado:', e);
+      this.setStatus(this.statusMessage('unknown'));
+      return false;
+    } finally {
+      if (this.stream) { this.stream.getTracks().forEach((t) => t.stop()); this.stream = null; }
     }
-  }
-
-  async startVerification(videoElementId: string, canvasElementId: string) {
-    if (RondaConfig.isDemo) {
-      console.log("Modo Demo activo: Saltando verificación KYC real.");
-      return new Promise(resolve => setTimeout(() => resolve(true), 1500));
-    }
-    
-    await this.loadVerificationLibraries();
-    
-    const videoElement: any = document.getElementById(videoElementId);
-    const canvasElement: any = document.getElementById(canvasElementId);
-    
-    if (!videoElement || !canvasElement) throw new Error("Elementos de video/canvas no encontrados");
-
-    // Inicializar MediaPipe Face Detection
-    const faceDetection = new FaceDetection({locateFile: (file) => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
-    }});
-    
-    faceDetection.setOptions({
-      model: 'short',
-      minDetectionConfidence: 0.5
-    });
-    
-    return new Promise((resolve, reject) => {
-      let isOcrRunning = false;
-
-      faceDetection.onResults(async (results) => {
-        // Dibujar resultados en canvas
-        const canvasCtx = canvasElement.getContext('2d');
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-        
-        if (results.detections.length > 0) {
-          // Se detectó un rostro
-          const statusEl = document.getElementById('kyc-status');
-          if (statusEl && !isOcrRunning) {
-            statusEl.textContent = "Rostro detectado. Escaneando ID...";
-          }
-
-          if (!isOcrRunning) {
-            isOcrRunning = true;
-            try {
-              const imageDataUrl = canvasElement.toDataURL('image/jpeg');
-              const ocrResult = await this.scanDocumentOCR(imageDataUrl);
-              
-              if (ocrResult.success) {
-                if (this.camera) this.camera.stop();
-                resolve(true);
-              } else {
-                isOcrRunning = false;
-              }
-            } catch (err) {
-              console.error("OCR Falló:", err);
-              isOcrRunning = false;
-            }
-          }
-        }
-      });
-
-      // Iniciar Cámara
-      this.camera = new Camera(videoElement, {
-        onFrame: async () => {
-          await faceDetection.send({image: videoElement});
-        },
-        width: 640,
-        height: 480
-      });
-      this.camera.start();
-      console.log("Cámara iniciada para verificación real.");
-    });
-  }
-
-  async scanDocumentOCR(imageBlobOrUrl) {
-    console.log("Iniciando escaneo OCR con Tesseract...");
-    const worker = await Tesseract.createWorker('spa');
-    const ret = await worker.recognize(imageBlobOrUrl);
-    console.log("Texto detectado:", ret.data.text);
-    await worker.terminate();
-    
-    // Parseo de texto para validar cédula (CC de Colombia)
-    const upperText = ret.data.text.toUpperCase();
-    const isValid = upperText.includes("REPUBLICA DE COLOMBIA") || upperText.includes("CEDULA DE CIUDADANIA");
-    return { success: isValid, rawText: ret.data.text };
   }
 }
 

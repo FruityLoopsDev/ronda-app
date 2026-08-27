@@ -1,21 +1,17 @@
 // face-verify.ts — Verificación de identidad facial (selfie vs documento)
 //
-// Diseño:
-//  - Parte PURA (testeable en Node): distancia euclídea entre descriptores, umbral de
-//    coincidencia y validación del texto de la cédula ("REPUBLICA DE COLOMBIA" / "CEDULA DE
-//    CIUDADANIA"). No depende de DOM ni de la red → se puede ejecutar con `node`.
-//  - Parte de CÁMARA/MODELOS (carga diferida): utiliza @vladmandic/face-api (TensorFlow.js)
-//    para extraer el descriptor facial (128-d) de un selfie y de la foto del documento,
-//    y luego los compara. Se importa dinámicamente para no romper el build si el paquete
-//    aún no está instalado (solo se resuelve al invocar verifyIdentity).
+// DISEÑO ROBUSTO (a pruebas de fallo):
+//  - Parte PURA (testeable en Node, sin DOM/red): distancia euclídea, umbral,
+//    validación de cédula de Colombia y decisión combinada.
+//  - Parte de CÁMARA/MODELOS (carga diferida con @vladmandic/face-api): extrae
+//    descriptor facial (128-d). Cada operación devuelve un RESULTADO TIPADO
+//    { descriptor | error } en lugar de lanzar, para que la UI maneje el fallo
+//    sin romperse. Cubre: sin rostro, más de un rostro, modelo no cargado,
+//    error de red (CDN), error de modelo y error desconocido.
 // --------------------------------------------------------------------------------
 
-// ---------- Parte PURA (sin dependencias de DOM/red) ----------
+// ---------- PARTE PURA (sin dependencias de DOM/red) ----------
 
-/**
- * Distancia euclídea entre dos vectores (descriptores) de igual longitud.
- * Es la métrica estándar de face-api para comparar descriptores de rostro.
- */
 export function euclideanDistance(a: number[] | Float32Array, b: number[] | Float32Array): number {
   const n = Math.min(a.length, b.length);
   let sum = 0;
@@ -26,10 +22,7 @@ export function euclideanDistance(a: number[] | Float32Array, b: number[] | Floa
   return Math.sqrt(sum);
 }
 
-/**
- * Decide si dos descriptores corresponden a la misma persona.
- * face-api usa un umbral típico ~0.6 (cuanto menor, más estricto).
- */
+/** Coincidencia facial. Umbral típico de face-api ~0.6 (menor = más estricto). */
 export function matchDescriptors(
   d1: number[] | Float32Array,
   d2: number[] | Float32Array,
@@ -39,10 +32,7 @@ export function matchDescriptors(
   return { distance, matched: distance < threshold };
 }
 
-/**
- * Valida que el texto OCR pertenezca a una cédula de ciudadanía de Colombia.
- * Devuelve la lista de frases reconocidas (insumo para debug) y si es válido.
- */
+/** Valida que el texto OCR sea de una cédula de ciudadanía de Colombia. */
 export function validateCedulaText(ocrText: string): { valid: boolean; hits: string[] } {
   const upper = (ocrText || '').toUpperCase();
   const hits: string[] = [];
@@ -51,7 +41,6 @@ export function validateCedulaText(ocrText: string): { valid: boolean; hits: str
   return { valid: hits.length > 0, hits };
 }
 
-/** Resultado de la verificación de identidad. */
 export interface IdentityResult {
   ok: boolean;
   reason?: string;
@@ -61,10 +50,7 @@ export interface IdentityResult {
   hits?: string[];
 }
 
-/**
- * Compara el descriptor del selfie con el del documento y valida el texto OCR.
- * Combina la parte facial y la documental en un único veredicto.
- */
+/** Combina descriptor facial + texto OCR -> veredicto (falla cerrada ante documentos inválidos). */
 export function evaluateIdentity(
   selfie: number[] | Float32Array,
   doc: number[] | Float32Array,
@@ -82,53 +68,102 @@ export function evaluateIdentity(
   return { ok: true, distance, threshold, documentValid: true, hits: docv.hits };
 }
 
-// ---------- Parte de CÁMARA / MODELOS (carga diferida) ----------
+// ---------- PARTE DE CÁMARA / MODELOS (carga diferida) ----------
 
-// Nota: en el navegador se instala el paquete y se importa dinámicamente:
-//   npm i @vladmandic/face-api
-// y se despliegan los modelos (o se cargan desde CDN) con loadFromUri.
+export type FaceError = 'no_face' | 'multiple_faces' | 'model_error' | 'network_error' | 'unknown';
 
-async function loadFaceApi(): Promise<any> {
+export interface DescriptorResult {
+  descriptor?: Float32Array;
+  error?: FaceError;
+  message?: string;
+}
+
+function classifyFaceError(e: any): FaceError {
+  const msg = String((e && e.message) || e);
+  if (/loadFromUri|weights|manifest|404|not found|model/i.test(msg)) return 'model_error';
+  if (/fetch|network|CORS|ERR_/i.test(msg)) return 'network_error';
+  return 'unknown';
+}
+
+async function ensureModels(uri: string): Promise<any> {
   const faceapi = await import('@vladmandic/face-api');
   await Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
-    faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-    faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
+    faceapi.nets.ssdMobilenetv1.loadFromUri(uri),
+    faceapi.nets.faceLandmark68Net.loadFromUri(uri),
+    faceapi.nets.faceRecognitionNet.loadFromUri(uri),
   ]);
   return faceapi;
 }
 
+// Caché de la URI con la que ya se cargaron los modelos (evita recargar en cada detección).
+let loadedUri: string | null = null;
+
 /**
- * Extrae el descriptor facial (128-d) de una imagen/HTMLImageElement/HTMLVideoElement.
- * Devuelve null si no se detecta un único rostro (o ninguno).
+ * URIs de modelos en orden de preferencia (robustez): configuración runtime, carpeta
+ * local '/models' y, por último, CDN de jsDelivr (última versión) para arrancar sin
+ * desplegar modelos manualmente.
  */
-export async function descriptorFromImage(image: any, modelUri = '/models'): Promise<Float32Array | null> {
-  const faceapi = await import('@vladmandic/face-api');
-  await Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri(modelUri),
-    faceapi.nets.faceLandmark68Net.loadFromUri(modelUri),
-    faceapi.nets.faceRecognitionNet.loadFromUri(modelUri),
-  ]);
-  const detection = await faceapi
-    .detectSingleFace(image)
-    .withFaceLandmarks()
-    .withFaceDescriptor();
-  return detection ? detection.descriptor : null;
+export function getModelUris(): string[] {
+  const g: any = (typeof window !== 'undefined' ? (window as any) : null);
+  const uris: string[] = [];
+  if (g && g.RONDA_FACE_MODEL_URI) uris.push(g.RONDA_FACE_MODEL_URI);
+  uris.push('/models');
+  uris.push('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model/');
+  return uris;
+}
+
+// Compatibilidad: getModelUri devuelve la primera URI preferida.
+export function getModelUri(): string {
+  return getModelUris()[0] ?? '/models';
 }
 
 /**
- * Flujo completo: selfie + documento + texto OCR → veredicto.
- * @param selfieImage imagen del rostro (por ej. un canvas foto o <img> del selfie).
- * @param docImage   imagen del documento (por ej. el <img>/canvas de la cédula).
- * @param ocrText    texto extraído por Tesseract del documento.
+ * Extrae el descriptor de un único rostro de una imagen/video/canvas.
+ * Nunca lanza: devuelve { descriptor } o { error, message }.
+ * Intenta cada URI de modelos hasta que una cargue; si la detección da "sin rostro" o
+ * "varios rostros", devuelve ese resultado directamente (no cambia de URI).
  */
-export async function verifyIdentity(selfieImage: any, docImage: any, ocrText: string, threshold = 0.6): Promise<IdentityResult> {
-  await loadFaceApi();
-  const [selfie, doc] = await Promise.all([
-    descriptorFromImage(selfieImage, '/models'),
-    descriptorFromImage(docImage, '/models'),
-  ]);
-  if (!selfie) return { ok: false, reason: 'sin_rostro_selfie' };
-  if (!doc) return { ok: false, reason: 'sin_rostro_documento' };
-  return evaluateIdentity(selfie, doc, ocrText, threshold);
+export async function getDescriptor(image: any): Promise<DescriptorResult> {
+  let lastErr: any = null;
+  const uris = getModelUris();
+  for (const uri of uris) {
+    try {
+      let faceapi: any;
+      if (loadedUri === uri) {
+        faceapi = await import('@vladmandic/face-api');
+      } else {
+        faceapi = await ensureModels(uri);
+        loadedUri = uri;
+      }
+      const detections = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceDescriptors();
+      if (!detections || detections.length === 0) {
+        return { error: 'no_face', message: 'No se detectó ningún rostro.' };
+      }
+      if (detections.length > 1) {
+        return { error: 'multiple_faces', message: 'Se detectaron más de un rostro. Usa una foto con una sola persona.' };
+      }
+      return { descriptor: detections[0].descriptor };
+    } catch (e: any) {
+      lastErr = e;
+      loadedUri = null; // dejar que el siguiente intento vuelva a cargar
+    }
+  }
+  return { error: classifyFaceError(lastErr), message: (lastErr && lastErr.message) || 'Error cargando modelos.' };
+}
+
+/**
+ * Flujo completo (robusto): selfie + documento -> veredicto tipado.
+ * Devuelve razones descriptivas para que la UI presente un mensaje claro.
+ */
+export async function verifyIdentity(
+  selfieImage: any,
+  docImage: any,
+  ocrText: string,
+  threshold = 0.6
+): Promise<IdentityResult> {
+  const selfie = await getDescriptor(selfieImage);
+  if (selfie.error) return { ok: false, reason: selfie.error, threshold };
+  const doc = await getDescriptor(docImage);
+  if (doc.error) return { ok: false, reason: doc.error, threshold };
+  return evaluateIdentity(selfie.descriptor!, doc.descriptor!, ocrText, threshold);
 }

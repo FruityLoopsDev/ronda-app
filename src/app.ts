@@ -304,25 +304,33 @@ function initApp() {
   const btnStartKyc = document.getElementById('btn-start-kyc');
   if (btnStartKyc) {
     btnStartKyc.addEventListener('click', async () => {
-      btnStartKyc.textContent = "Cargando...";
+      const kycVideo = document.getElementById('kyc-video');
+      const kycCanvas = document.getElementById('kyc-canvas');
+      if (kycVideo) kycVideo.style.display = 'block';
+      if (kycCanvas) kycCanvas.style.display = 'block';
+      const kycStatus = document.getElementById('kyc-status');
+      (btnStartKyc as HTMLButtonElement).disabled = true;
+      btnStartKyc.textContent = "Verificando...";
       try {
-        const kycVideo = document.getElementById('kyc-video');
-        const kycCanvas = document.getElementById('kyc-canvas');
-        kycVideo.style.display = 'block';
-        kycCanvas.style.display = 'block';
-        document.getElementById('kyc-status').textContent = "Cámara activa. Analizando rostro e ID...";
-        
-        // Esperar a que la promesa de startVerification se resuelva con éxito real
+        // startVerification es robusto: maneja el flujo, muestra el estado en kyc-status
+        // y devuelve boolean sin lanzar (salvo fallo imprevisto).
         const isVerified = await Verification.startVerification('kyc-video', 'kyc-canvas');
-        
         if (isVerified) {
-           document.getElementById('kyc-status').textContent = "✓ Biometría y OCR verificados (Cédula de Colombia válida)";
-           document.getElementById('kyc-status').style.color = "var(--botella)";
-           btnSaveProfile.disabled = false;
+          if (kycStatus) {
+            kycStatus.textContent = "✓ Identidad verificada. Ya puedes guardar tu perfil.";
+            kycStatus.style.color = "var(--botella)";
+          }
+          btnSaveProfile.disabled = false;
         }
       } catch (err) {
-        console.error("KYC Error:", err);
-        alert("Error activando cámara.");
+        console.error("KYC Error inesperado:", err);
+        if (kycStatus) {
+          kycStatus.textContent = "Ocurrió un error inesperado. Inténtalo de nuevo.";
+          kycStatus.style.color = "var(--vino)";
+        }
+      } finally {
+        (btnStartKyc as HTMLButtonElement).disabled = false;
+        btnStartKyc.textContent = "Iniciar Verificación KYC";
       }
     });
   }
