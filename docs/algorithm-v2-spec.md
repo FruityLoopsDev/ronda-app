@@ -174,6 +174,8 @@ Suite reproducible (script `src/mem-rr-v2/bench.ts`):
    repeticiones del v2 re-optimizado vs v1 sin re-planificación.
 4. **Rendimiento** — tiempo medio por ronda para `n = 10..20` mesas (target < 500 ms).
 
+> **Resultados ejecutados (evidencia técnica):** `docs/bench-results/bench-2026-08-27.md` — ✅ BENCH OK, commit `98b5b68`.
+
 ---
 
 ## 7. Roadmap de implementación

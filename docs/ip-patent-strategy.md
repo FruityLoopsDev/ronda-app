@@ -105,17 +105,17 @@ descanso por propensión de consumo.
 ## 4. Plan por fases
 
 ### Fase 0 — Inmediata (semana 1)
-- [ ] Verificar y **privatizar** el repo GitHub.
-- [ ] Inventario de divulgaciones con fechas (spreadsheet interno).
-- [ ] **Invention disclosure** del motor v2 con fechas y firmas (cuaderno digital con timestamps:
-      `docs/algorithm-v2-spec.md` ya registra la versión).
-- [ ] Retirar "patente pendiente" de web/docs hasta tener filing.
+- [x] Verificar y **privatizar** el repo GitHub — verificado **privado** (`gh repo view` → PRIVATE).
+- [x] Inventario de divulgaciones con fechas — `docs/divulgaciones-inventario.md`.
+- [x] **Invention disclosure** del motor v2 con fechas (cuaderno digital con timestamps:
+      `docs/algorithm-v2-spec.md` ya registra la versión). *Firmas pendientes (requiere inventor).*
+- [x] Retirar "patente pendiente" de web/docs hasta tener filing — verificado: **no hay afirmaciones** en el contenido.
 - [ ] NDA con equipo, anfitriones y locales piloto.
 
 ### Fase 1 — Meses 1–2
-- [ ] Completar implementación del motor v2 (`src/mem-rr-v2/`).
-- [ ] Ejecutar suite de benchmarks (§6 del spec) y **guardar los resultados con fecha** — son la
-      evidencia del efecto técnico (comparación cuantitativa v1 vs v2).
+- [x] Completar implementación del motor v2 (`src/mem-rr-v2/`). M1–M5 hechos e **integrados** en `bar.ts`/`client.ts`.
+- [x] Ejecutar suite de benchmarks (§6 del spec) y **guardar los resultados con fecha** — evidencia
+      del efecto técnico (v1 vs v2): `docs/bench-results/bench-2026-08-27.md` (✅ BENCH OK).
 - [ ] **Provisional US** (tasa oficial ~USD 60–300; redacción con agente USD 2–6k): fija prioridad
       12 meses; cubre sistema + método + fairness + memoria + fantasma + room-aware.
 - [ ] Registro de **marca RONDA** (SIC Colombia) y solicitud US en paralelo si hay presupuesto.
@@ -164,10 +164,10 @@ de la memoria real — exactamente el foso que describe `ronda-logica-negocio-CO
 
 - [x] Repo GitHub privado (sin divulgación pública)
 - [ ] NDA (equipo + local piloto)
-- [ ] Inventario de divulgaciones
-- [ ] Invention disclosure con fechas (v2)
-- [ ] Benchmarks v1 vs v2 guardados (evidencia técnica)
+- [x] Inventario de divulgaciones — `docs/divulgaciones-inventario.md`
+- [x] Invention disclosure con fechas (v2) — 2026-08-25
+- [x] Benchmarks v1 vs v2 guardados (evidencia técnica) — `docs/bench-results/bench-2026-08-27.md`
 - [ ] Provisional US — **borrador listo** (`docs/provisional-us-mem-rr-v2.md`); falta presentarlo (agente) y obtener número
 - [ ] Marca RONDA (SIC) presentada
 - [ ] Decisión PCT vs CO+US (mes 9–11)
-- [ ] Retirado "patente pendiente" hasta tener número real
+- [x] Retirado "patente pendiente" hasta tener número real — verificado: sin afirmaciones en el contenido
