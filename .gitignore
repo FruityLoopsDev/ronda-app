@@ -28,3 +28,9 @@ yarn-error.log*
 # Gemini / Antigravity IDE paths
 .gemini/
 .agents/
+
+# Build output
+dist/
+
+# Firebase deploy cache
+.firebase/
