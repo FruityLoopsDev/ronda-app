@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RONDA · Test local de verificación facial</title>
+  <style>
+    :root{--bk:#16101B;--card:#221826;--borde:rgba(243,237,226,.14);--papel:#F3EDE2;--humo:#8b7f93;--luz:#F0A830;--botella:#2E6B54;--vino:#9B2748;}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bk);color:var(--papel);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;line-height:1.5}
+    h1{font-size:18px;font-family:ui-monospace,monospace;letter-spacing:.04em;margin:0 0 4px}
+    .sub{font-size:12.5px;color:var(--humo);margin-bottom:16px}
+    .card{background:var(--card);border:1px solid var(--borde);border-radius:14px;padding:16px;margin-bottom:16px;max-width:860px}
+    .card h2{font-size:12px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--luz);margin:0 0 10px}
+    .row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+    video,canvas{width:320px;max-width:100%;height:auto;border-radius:10px;border:1px solid var(--borde);background:#000;display:block}
+    img#doc-preview{width:320px;max-width:100%;border-radius:10px;border:1px solid var(--borde);display:block}
+    .btn{background:var(--luz);border:none;color:#1B1520;font-weight:700;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:13px}
+    .btn.sec{background:transparent;color:var(--papel);border:1px solid var(--borde)}
+    .btn:disabled{opacity:.45;cursor:default}
+    .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    #status{margin-top:12px;padding:12px;border-radius:10px;border:1px solid var(--borde);background:rgba(243,237,226,.05);font-size:13.5px;min-height:46px}
+    #status.ok{color:var(--botella);border-color:rgba(46,107,84,.5)}
+    #status.err{color:var(--vino);border-color:rgba(155,39,72,.5)}
+    #result{margin-top:12px;font-family:ui-monospace,monospace;font-size:14px}
+    #log{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--humo);white-space:pre-wrap;margin-top:10px;max-height:220px;overflow:auto;border-top:1px dashed var(--borde);padding-top:8px}
+    label.inline{font-size:12.5px;color:var(--humo);display:block;margin-bottom:6px}
+  </style>
+</head>
+<body>
+  <h1>RONDA · Verificación facial (selfie vs documento)</h1>
+  <div class="sub">Harness local para pruebas de fallo · <code>http://localhost:5000/test/face-verify.html</code></div>
+
+  <div class="card">
+    <h2>1 · Selfie</h2>
+    <div class="row">
+      <div>
+        <video id="selfie-video" autoplay playsinline muted></video>
+        <canvas id="selfie-canvas" style="display:none"></canvas>
+      </div>
+    </div>
+    <div class="btnrow">
+      <button id="btn-cam" class="btn sec">📷 Iniciar cámara</button>
+      <button id="btn-selfie" class="btn" disabled>📸 Capturar selfie</button>
+      <button id="btn-stop" class="btn sec">⏹️ Detener</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Documento (foto del frente de la cédula)</h2>
+    <label class="inline">Selecciona una imagen del documento (o usa la cámara trasera en móvil).</label>
+    <input type="file" id="doc-input" accept="image/*" capture="environment" style="margin-bottom:10px">
+    <div><img id="doc-preview" alt=""></div>
+  </div>
+
+  <div class="card">
+    <h2>3 · Verificar identidad</h2>
+    <div class="btnrow">
+      <button id="btn-verify" class="btn" disabled>🔎 Verificar (selfie vs documento)</button>
+    </div>
+    <div id="status">—</div>
+    <div id="result"></div>
+    <div id="log"></div>
+  </div>
+
+  <script type="module">
+    import { getDescriptor, matchDescriptors } from '../src/face-verify.ts';
+
+    const $ = (id) => document.getElementById(id);
+    const statusEl = $('status'), resultEl = $('result'), logEl = $('log');
+    const video = $('selfie-video'), canvas = $('selfie-canvas');
+    const btnCam = $('btn-cam'), btnSelfie = $('btn-selfie'), btnStop = $('btn-stop');
+    const docInput = $('doc-input'), docPreview = $('doc-preview');
+    const btnVerify = $('btn-verify');
+
+    let stream = null, selfieDesc = null, docDesc = null;
+
+    function setStatus(msg, kind) {
+      statusEl.textContent = msg;
+      statusEl.className = 'ok' === kind ? 'ok' : ('err' === kind ? 'err' : '');
+    }
+    function log(msg) { logEl.textContent += msg + '\n'; }
+
+    btnCam.addEventListener('click', async () => {
+      log('▶ Solicitando cámara...');
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('Sin getUserMedia (¿contexto seguro? Usa localhost o HTTPS).');
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        video.srcObject = stream;
+        await video.play();
+        btnCam.disabled = true; btnSelfie.disabled = false; btnStop.disabled = false;
+        setStatus('Cámara activa. Pulsa "Capturar selfie".', 'ok');
+      } catch (e) {
+        setStatus('Error de cámara: ' + (e.message || e), 'err'); log('CAM_ERR ' + (e.message || e));
+      }
+    });
+
+    btnStop.addEventListener('click', () => {
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      video.srcObject = null;
+      btnCam.disabled = false; btnSelfie.disabled = true; btnStop.disabled = true;
+      log('⏹ Cámara detenida.');
+    });
+
+    async function toImage(src) {
+      return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Imagen inválida')); i.src = src; });
+    }
+
+    btnSelfie.addEventListener('click', async () => {
+      if (!video.videoWidth) { setStatus('Cámara sin vídeo aún.', 'err'); return; }
+      canvas.width = video.videoWidth || 640; canvas.height = video.videoHeight || 480;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      const img = await toImage(canvas.toDataURL('image/jpeg', 0.95));
+      log('▶ Analizando selfie (modelos + detección)...');
+      const r = await getDescriptor(img);
+      if (r.error) { selfieDesc = null; setStatus('Selfie: ' + (r.message || 'error'), 'err'); log('SELFIE_ERR ' + r.error); btnVerify.disabled = true; return; }
+      selfieDesc = r.descriptor; log('SELFIE_DESC len=' + selfieDesc.length);
+      setStatus('✓ Selfie OK (se detectó 1 rostro). Ahora sube el documento.', 'ok');
+      maybeEnableVerify();
+    });
+
+    docInput.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (docPreview) { docPreview.src = URL.createObjectURL(file); }
+      const img = await toImage(docPreview.src);
+      log('▶ Analizando documento (OCR no incluido aquí; solo rostro)...');
+      const r = await getDescriptor(img);
+      if (r.error) { docDesc = null; setStatus('Documento: ' + (r.message || 'error'), 'err'); log('DOC_ERR ' + r.error); btnVerify.disabled = true; return; }
+      docDesc = r.descriptor; log('DOC_DESC len=' + docDesc.length);
+      setStatus('✓ Documento OK (se detectó 1 rostro). Pulsa "Verificar".', 'ok');
+      maybeEnableVerify();
+    });
+
+    function maybeEnableVerify() { btnVerify.disabled = !(selfieDesc && docDesc); }
+
+    btnVerify.addEventListener('click', () => {
+      if (!selfieDesc || !docDesc) { setStatus('Faltan selfie o documento.', 'err'); return; }
+      const { distance, matched } = matchDescriptors(selfieDesc, docDesc, 0.6);
+      log('MATCH distance=' + distance.toFixed(4) + ' threshold=0.6 matched=' + matched);
+      if (matched) {
+        setStatus('✅ COINCIDE — parece la misma persona (dist ' + distance.toFixed(4) + ' < 0.6).', 'ok');
+        resultEl.textContent = '✅ MATCH · distancia ' + distance.toFixed(4);
+        resultEl.style.color = 'var(--botella)';
+      } else {
+        setStatus('❌ NO COINCIDE — posible distinta persona (dist ' + distance.toFixed(4) + ' ≥ 0.6).', 'err');
+        resultEl.textContent = '❌ NO MATCH · distancia ' + distance.toFixed(4);
+        resultEl.style.color = 'var(--vino)';
+      }
+    });
+  </script>
+</body>
+</html>
