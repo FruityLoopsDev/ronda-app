@@ -44,6 +44,7 @@ Vanilla TS + Vite (SPA multi-vista) · Firebase (Auth/Firestore/Hosting/Function
 - `docs/index.md` (este archivo) · `docs/algorithm-v2-spec.md` (motor v2) · `docs/ip-patent-strategy.md` · `docs/invention-disclosure-mem-rr-v2.md` · `docs/provisional-us-mem-rr-v2.md` · `docs/architecture.md`
 - **Evidencia técnica:** `docs/bench-results/bench-*.md` (resultados del motor con fecha).
 - **Inventario de divulgaciones:** `docs/divulgaciones-inventario.md`.
+- **Resumen ejecutivo (agente de patentes):** `docs/resumen-ejecutivo-agente-patentes.md`.
 
 ## Reglas para no quemar tokens
 1. **Nunca** glob/grep en `node_modules`, `dist/`, `.firebase/`.
