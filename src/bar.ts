@@ -1,5 +1,9 @@
 import { DB } from './db.js';
 import { RondaDialog } from './dialog.js';
+import { buildNightPlan } from './mem-rr-v2/engine.ts';
+import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
+import { pairKey } from './mem-rr-v2/weights.ts';
+import { RRHistory } from './mem-rr-history.js';
 
 // bar.js: Motor de Rotación y Consola del Anfitrión (Producción)
 
@@ -15,6 +19,15 @@ class HostConsoleService {
   met: any[] = [];
   barTable: number = -1;
   hasBar: boolean = false;
+  // --- Motor v2 (MEM-RR WMM) ---
+  motorVersion: string = 'v2';
+  nightPlan: any = null;
+  nightPlanFor: string = '';
+  nightPlanStartRound: number = 0;
+  playedPairs: string[] = [];
+  currentMetrics: any = null;
+  qrScanner: any = null;
+  qrScanning: boolean = false;
   constructor() {
     this.currentEvent = null;
     this.unsubscribe = null;
@@ -38,6 +51,7 @@ class HostConsoleService {
     
     addEventListener('auth:logout', () => {
       if (this.unsubscribe) this.unsubscribe();
+      RRHistory.reset();
     });
   }
 
@@ -73,6 +87,15 @@ class HostConsoleService {
         }
       }
       
+      // Motor v2: invalidar el plan si cambió la composición de la sala
+      const snapshot = (eventData.participants || []).slice().sort().join(',');
+      if (this.nightPlanFor !== snapshot) {
+        this.nightPlan = null;
+      }
+      if (Array.isArray(eventData.playedPairs)) {
+        this.playedPairs = [...eventData.playedPairs];
+      }
+
       if(this.currentEvent.currentRound === 0 && this.A.length === 0) {
         // Inicializar estado del motor la primera vez que carga si no hay ronda iniciada
         this.syncMotorState();
@@ -138,6 +161,14 @@ class HostConsoleService {
     if (!this.currentEvent || !this.currentEvent.participants || this.currentEvent.participants.length < 2) {
       alert("No hay suficientes participantes registrados aún. Por favor espera a que se unan.");
       return;
+    }
+
+    // Motor v2 (MEM-RR WMM): memoria real + restricciones duras + fairness.
+    // Si falla (perfiles sin cargar, error), cae al motor v1 como respaldo.
+    if (this.motorVersion === 'v2') {
+      const ok = await this.generateNextRoundV2();
+      if (ok) return;
+      console.warn("[Motor] Plan v2 no disponible; usando motor v1 de respaldo.");
     }
 
     if (this.currentEvent.currentRound === 0) {
@@ -228,6 +259,126 @@ class HostConsoleService {
     }
   }
 
+  /* =====================================================================
+   * Motor v2 (MEM-RR WMM) — see docs/algorithm-v2-spec.md
+   * ===================================================================== */
+
+  private toRRProfile(p: any): RRParticipant {
+    const orientations = ['M', 'F', 'NB', 'A'] as const;
+    return {
+      uid: p.uid,
+      name: p.name || p.uid,
+      gender: p.gender === 'M' || p.gender === 'F' || p.gender === 'NB' ? p.gender : 'NB',
+      orientation: orientations.includes(p.orientation) ? p.orientation : 'A',
+      age: typeof p.age === 'number' ? p.age : 30,
+      interests: Array.isArray(p.interests) ? p.interests : [],
+      verified: !!p.isVerified,
+      blocked: Array.isArray(p.blockedUids) ? p.blockedUids : []
+    };
+  }
+
+  /**
+   * Construye (o reutiliza) el plan de noche v2 para la sala actual.
+   * Se invalida solo si cambia la composición de participantes (re-planificación
+   * intra-noche con alreadyMet = pares ya jugados).
+   */
+  async buildV2Plan(force = false): Promise<any> {
+    if (!this.currentEvent?.participants || this.currentEvent.participants.length < 2) return null;
+
+    const uids = this.currentEvent.participants.slice().sort().join(',');
+    if (!force && this.nightPlan && this.nightPlanFor === uids) return this.nightPlan;
+
+    const profiles = this.currentEvent.participants
+      .map((uid: string) => this.participantProfiles[uid])
+      .filter((p: any) => p && p.uid);
+
+    if (profiles.length < 2) {
+      console.warn("[Motor v2] Perfiles insuficientes cargados todavía.");
+      return null;
+    }
+
+    await RRHistory.loadFor(profiles);
+
+    const n = Math.floor(profiles.length / 2);
+    const sideA = profiles.slice(0, n).map((p: any) => this.toRRProfile(p));
+    const sideB = profiles.slice(n).map((p: any) => this.toRRProfile(p));
+
+    // Re-planificación intra-noche: plan para las rondas restantes
+    const startRound = this.currentEvent.currentRound || 0;
+    const remaining = Math.max(1, 9 - startRound);
+    const alreadyMet = new Set(this.playedPairs);
+
+    this.nightPlan = buildNightPlan({
+      sideA,
+      sideB,
+      rounds: remaining,
+      history: RRHistory,
+      alreadyMet,
+      config: { delta: 0 }
+    });
+    this.nightPlanFor = uids;
+    this.nightPlanStartRound = startRound;
+    this.currentMetrics = this.nightPlan.metrics;
+    console.log(`[Motor v2] Plan construido: modo=${this.nightPlan.mode} · ${this.nightPlan.rounds.length} rondas · memoria=${RRHistory.size} encuentros · ya conocidos esta noche=${alreadyMet.size} pares.`);
+    return this.nightPlan;
+  }
+
+  /** Genera la siguiente ronda con el plan v2. Devuelve false si no fue posible. */
+  private async generateNextRoundV2(): Promise<boolean> {
+    try {
+      const plan = await this.buildV2Plan();
+      if (!plan || plan.rounds.length === 0) return false;
+
+      this.currentEvent.currentRound = (this.currentEvent.currentRound || 0) + 1;
+      const r = this.currentEvent.currentRound;
+      const idx = r - 1 - this.nightPlanStartRound;
+      const roundResult = plan.rounds[idx];
+
+      if (!roundResult) {
+        // El plan no alcanzó esta ronda (noche no factible por restricciones duras)
+        this.currentEvent.currentRound = r - 1;
+        await RondaDialog.alert({
+          title: 'Noche Completada',
+          message: `El motor alcanzó el máximo de rondas factibles (${idx} de 9) respetando las restricciones de la sala (bloqueos, compatibilidad).`,
+          icon: '🔔'
+        });
+        return true;
+      }
+
+      const activeMatches: any[] = [];
+      const recordedPairs: { a: RRParticipant; b: RRParticipant }[] = [];
+      const resting: { uid: string; name: string }[] = [];
+
+      for (const t of roundResult.tables) {
+        if (t.a && t.b) {
+          const isRepeat = RRHistory.get(t.a.uid, t.b.uid) !== null;
+          activeMatches.push({
+            tableId: t.tableId.toString().padStart(2, '0'),
+            p1: { uid: t.a.uid, name: t.a.name || t.a.uid },
+            p2: { uid: t.b.uid, name: t.b.name || t.b.uid },
+            isRepeat
+          });
+          recordedPairs.push({ a: t.a, b: t.b });
+          this.playedPairs.push(pairKey(t.a.uid, t.b.uid));
+        } else {
+          const restingPerson = t.a || t.b;
+          if (restingPerson) resting.push({ uid: restingPerson.uid, name: restingPerson.name || restingPerson.uid });
+        }
+      }
+
+      this.currentEvent.activeMatches = activeMatches;
+      this.currentEvent.resting = resting;
+      this.currentEvent.playedPairs = this.playedPairs;
+      await DB.saveEvent(this.currentEvent);
+      await RRHistory.recordPairs(recordedPairs);
+      console.log(`[Motor v2] Ronda ${r} generada · ${activeMatches.length} mesas · ${resting.length} en barra · ${recordedPairs.length} encuentros registrados.`);
+      return true;
+    } catch (err) {
+      console.error("[Motor v2] Error generando ronda:", err);
+      return false;
+    }
+  }
+
   renderDashboard() {
     const container = document.getElementById('view-admin');
     if (!container || !this.currentEvent) return;
@@ -288,6 +439,135 @@ class HostConsoleService {
 
     // Chart mock con datos aleatorios pero estables
     this.renderChart(totalParticipants);
+
+    // Panel de métricas del motor v2 (M5-lite)
+    this.renderMetricsPanel();
+
+    // Herramientas de check-in por QR (M3)
+    this.renderQrTools();
+  }
+
+  /* =====================================================================
+   * Check-in por QR (M3) — escáner del anfitrión mediante html5-qrcode
+   * ===================================================================== */
+
+  /** Crea (una sola vez) los controles de escaneo en el dashboard del anfitrión. */
+  renderQrTools() {
+    const container = document.getElementById('view-admin');
+    if (!container || document.getElementById('admin-qr-tools')) return;
+    const sec = document.createElement('section');
+    sec.id = 'admin-qr-tools';
+    sec.style.cssText = 'background: rgba(34,24,38,.8); border: 1px solid rgba(243,237,226,.14); border-radius: 14px; padding: 14px 16px; margin-top: 16px;';
+    sec.innerHTML = `
+      <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--luz); margin-bottom:10px;">Check-in por QR · registrar asistencia</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button id="btn-admin-scan-qr" class="btn ambar" style="font-size:12px; font-weight:700; padding:10px 16px; border-radius:10px;">📷 Escanear QR</button>
+        <input id="admin-qr-manual" placeholder="o ingresa el uid/código" style="flex:1; min-width:160px; padding:9px 12px; border-radius:8px; border:1px solid rgba(243,237,226,.14); background:rgba(243,237,226,.06); color:var(--papel); font-size:12px;">
+        <button id="btn-admin-checkin-manual" class="btn" style="font-size:12px; padding:10px 14px; border-radius:10px;">Registrar</button>
+      </div>
+      <div id="qr-scanner-region" style="display:none; margin-top:12px; max-width:280px;"></div>
+    `;
+    container.appendChild(sec);
+    document.getElementById('btn-admin-scan-qr')?.addEventListener('click', () => this.startQrScan());
+    document.getElementById('btn-admin-checkin-manual')?.addEventListener('click', () => {
+      const inp = (document.getElementById('admin-qr-manual') as HTMLInputElement)?.value.trim() ?? '';
+      if (!inp) { this.showToastQR('⚠️ Ingresa un uid/código'); return; }
+      this.handleQrDecode(inp);
+    });
+  }
+
+  async startQrScan() {
+    if (this.qrScanning) { await this.stopQrScan(); return; }
+    try {
+      // Import dinámico: html5-qrcode se descarga solo al escanear (code-split).
+      const { Html5Qrcode } = await import('html5-qrcode');
+      const region = document.getElementById('qr-scanner-region');
+      if (!region) return;
+      this.qrScanning = true;
+      this.qrScanner = new Html5Qrcode('qr-scanner-region');
+      await this.qrScanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: 220 },
+        (decoded: string) => this.handleQrDecode(decoded),
+        () => {}
+      );
+      region.style.display = 'block';
+      this.showToastQR('📷 Escáner activo. Apunta al QR del asistente.');
+    } catch (err) {
+      this.qrScanning = false;
+      console.error('[QR] error iniciando escáner:', err);
+      this.showToastQR('⚠️ No se pudo activar la cámara. Usa la entrada manual.');
+    }
+  }
+
+  async stopQrScan() {
+    try { if (this.qrScanner) await this.qrScanner.stop(); } catch (err) { /* ignorar */ }
+    this.qrScanner = null;
+    this.qrScanning = false;
+    const region = document.getElementById('qr-scanner-region');
+    if (region) region.style.display = 'none';
+  }
+
+  /** Registra la asistencia del uid escaneado → dispara la re-planificación del motor v2. */
+  async handleQrDecode(text: string) {
+    const m = /^CHECKIN:(.+)$/.exec(text.trim());
+    if (!m) { this.showToastQR('QR no reconocido'); return; }
+    const uid = m[1];
+    await this.stopQrScan();
+    if (!this.currentEvent) { this.showToastQR('Sin evento activo'); return; }
+
+    const parts = this.currentEvent.participants || [];
+    if (!parts.includes(uid)) {
+      parts.push(uid);
+      this.currentEvent.participants = parts;
+      await DB.saveEvent(this.currentEvent); // la suscripción invalida nightPlan → re-planifica
+    }
+    const user = await DB.getUser(uid);
+    if (user) {
+      user.checkedIn = true;
+      await DB.saveUser(user);
+    }
+    this.showToastQR(`✅ ${user?.name || uid} registrado`);
+    this.renderDashboard();
+  }
+
+  showToastQR(msg: string) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--barra-alta); color:var(--luz); font-family:var(--font-mono); font-size:12px; padding:10px 18px; border-radius:999px; border:1px solid var(--luz); box-shadow:0 10px 30px rgba(0,0,0,.8); z-index:20000;';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2600);
+  }
+
+  /** Renderiza las métricas auditables del plan v2 en el dashboard del anfitrión. */
+  renderMetricsPanel() {
+    const container = document.getElementById('view-admin');
+    const m = this.currentMetrics;
+    if (!container || !m) return;
+
+    let el = document.getElementById('admin-metrics-v2');
+    if (!el) {
+      el = document.createElement('section');
+      el.id = 'admin-metrics-v2';
+      el.style.cssText = 'background: rgba(34,24,38,.8); border: 1px solid rgba(243,237,226,.14); border-radius: 14px; padding: 14px 16px; margin-top: 16px;';
+      container.appendChild(el);
+    }
+    const card = (label: string, value: string, color = 'var(--luz)') =>
+      `<div style="border:1px solid rgba(243,237,226,.12); border-radius:11px; padding:10px;">
+         <div style="font-family:var(--font-mono); font-size:20px; font-weight:700; color:${color};">${value}</div>
+         <div style="font-size:10px; color:var(--humo); margin-top:2px;">${label}</div>
+       </div>`;
+
+    el.innerHTML = `
+      <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--luz); margin-bottom:8px;">Motor v2 · métricas del plan</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+        ${card('Cobertura', m.coveragePct + '%', 'var(--botella)')}
+        ${card('Caras nuevas', m.freshFaces)}
+        ${card('Repeticiones', m.historyRepeats, 'var(--vino)')}
+        ${card('Gini descansos', m.restGini.toFixed(2))}
+      </div>
+      <div style="font-size:10px; color:var(--humo); margin-top:8px; font-family:var(--font-mono);">repet. máx/persona: ${m.historyRepeatsMax} · distancia: ${m.totalDistance.toFixed(2)}</div>
+    `;
   }
 
   renderChart(totalParticipants) {

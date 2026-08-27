@@ -238,6 +238,7 @@ class ClientAppService {
   selectedEvent: RondaEvent | null = null;
   selectedDrink: DrinkOption | null = null;
   unsubscribe: any = null;
+  unsubscribeLive: any = null;
   timerInterval: any = null;
   countdownInterval: any = null;
   chatMessages: { id: string; sender: 'me' | 'partner'; text: string; time: string; timestamp: number }[] = [];
@@ -256,6 +257,7 @@ class ClientAppService {
     
     addEventListener('auth:logout', () => {
       if (this.unsubscribe) this.unsubscribe();
+      if (this.unsubscribeLive) this.unsubscribeLive();
       this.stopTimer();
       this.stopCountdown();
       this.selectedEvent = null;
@@ -574,11 +576,22 @@ class ClientAppService {
     }
   }
 
+  subscribeToActiveEvent(user: any) {
+    const eventId = user?.activeEventId || user?.activeReservation?.eventId;
+    if (!eventId || this.unsubscribeLive) return;
+    console.log("[Client] Suscribiéndose en vivo al evento:", eventId);
+    this.unsubscribeLive = DB.subscribeToEvent(eventId, (data) => {
+      this.currentEvent = data;
+      this.renderClientView();
+    });
+  }
+
   async initClientDashboard(user: any) {
     console.log("Iniciando Dashboard Cliente...", user);
     
     if (user.postEventState || user.activeReservation || user.activeEventId) {
       this.renderClientView();
+      this.subscribeToActiveEvent(user);
       return;
     }
 
