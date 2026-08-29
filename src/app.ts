@@ -10,13 +10,14 @@ import { Admin } from './bar.js';
 import { Network } from './network.js';
 import { CRM } from './crm.js';
 import { SuperAdmin } from './superadmin.js';
-
+import { Icebreakers } from './icebreakers.js';
+import { Satisfaction } from './satisfaction.js';
 // app.js: Orquestador principal de la vista y eventos de RONDA
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Esperar a que config.js cargue los scripts
-  setTimeout(initApp, 500); 
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
 
 function initApp() {
   console.log("Inicializando App RONDA...");
@@ -119,7 +120,7 @@ function initApp() {
     } else if (viewId === 'view-network') {
       Network.init();
     } else if (viewId === 'view-crm') {
-      const user = Profile.getCurrentUser();
+      const user = Auth.currentUser;
       CRM.init(user?.uid || 'sales1');
     } else if (viewId === 'view-superadmin') {
       SuperAdmin.init();
@@ -166,6 +167,8 @@ function initApp() {
 
   // Inicializar servicio de perfil
   Profile.init();
+  Icebreakers.init();
+  Satisfaction.init();
 
   // Event listener para volver a eventos desde el perfil
   document.getElementById('btn-back-to-events')?.addEventListener('click', () => {
@@ -226,7 +229,8 @@ function initApp() {
     }
   }
 
-  // Ejecutar ruteo directo inicial por si el usuario entra directo a /admin, /net, /superadmin, /sales
+  // Inicializar estado visual de navbar y vistas
+  updateNavbar();
   handleUrlRouting();
 
   // Control del modal de perfil
@@ -249,6 +253,11 @@ function initApp() {
     if (getPathViewMapping(window.location.pathname)) {
       return;
     }
+    // No mostrar el modal automáticamente si view-auth está activo (sesión de Firebase previa con perfil incompleto).
+    // El usuario debe pasar por login/registro primero.
+    if (viewAuth && viewAuth.classList.contains('on')) {
+      return;
+    }
     if (modalProfile) modalProfile.classList.add('active');
     const user = e.detail;
     if (user) {
@@ -256,26 +265,81 @@ function initApp() {
       const ageInput = document.getElementById('profile-age') as HTMLInputElement;
       const genderInput = document.getElementById('profile-gender') as HTMLSelectElement;
       const orientationInput = document.getElementById('profile-orientation') as HTMLSelectElement;
+      const linkedinInput = document.getElementById('profile-linkedin') as HTMLInputElement;
 
       if (nameInput) nameInput.value = user.name || '';
       if (ageInput) ageInput.value = user.age || '';
       if (genderInput) genderInput.value = user.gender || '';
       if (orientationInput) orientationInput.value = user.orientation || '';
+      if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
+
+      // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
+      const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
+      if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
     }
   });
 
-  const btnSaveProfile = document.getElementById('btn-save-profile');
+  // Verificación de LinkedIn en modal de perfil
+  const btnVerifyProfileLinkedin = document.getElementById('btn-verify-profile-linkedin') as HTMLButtonElement | null;
+  const linkedinStatus = document.getElementById('linkedin-verify-status');
+  btnVerifyProfileLinkedin?.addEventListener('click', async () => {
+    const linkedinInput = document.getElementById('profile-linkedin') as HTMLInputElement;
+    const url = (linkedinInput?.value || '').trim();
+    if (!url) {
+      if (linkedinStatus) {
+        linkedinStatus.textContent = '⚠️ Ingresa tu URL de LinkedIn para validar tu perfil.';
+        linkedinStatus.style.color = 'var(--vino)';
+      }
+      return;
+    }
+
+    if (linkedinStatus) {
+      linkedinStatus.textContent = '⏳ Verificando perfil profesional con LinkedIn...';
+      linkedinStatus.style.color = 'var(--luz)';
+    }
+    btnVerifyProfileLinkedin.disabled = true;
+
+    const user = Auth.currentUser;
+    const result = await Verification.verifyLinkedInProfile(url, { name: user?.name, email: user?.email });
+    btnVerifyProfileLinkedin.disabled = false;
+
+    if (result.success && result.data) {
+      linkedinInput.value = result.data.url;
+      if (linkedinStatus) {
+        linkedinStatus.textContent = `✓ ${result.data.badge} · ${result.data.headline}`;
+        linkedinStatus.style.color = 'var(--botella)';
+      }
+      const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
+      if (saveBtn) saveBtn.disabled = false;
+      if (user) {
+        user.linkedinUrl = result.data.url;
+        user.linkedinVerified = true;
+        user.linkedinSlug = result.data.slug;
+        user.linkedinHeadline = result.data.headline;
+        user.isVerified = true;
+      }
+    } else {
+      if (linkedinStatus) {
+        linkedinStatus.textContent = `✕ ${result.error || 'No se pudo verificar el perfil.'}`;
+        linkedinStatus.style.color = 'var(--vino)';
+      }
+    }
+  });
+
+  const btnSaveProfile = document.getElementById('btn-save-profile') as HTMLButtonElement;
   if (btnSaveProfile) {
     btnSaveProfile.addEventListener('click', async () => {
       const nameInput = document.getElementById('profile-name') as HTMLInputElement;
       const ageInput = document.getElementById('profile-age') as HTMLInputElement;
       const genderInput = document.getElementById('profile-gender') as HTMLSelectElement;
       const orientationInput = document.getElementById('profile-orientation') as HTMLSelectElement;
+      const linkedinInput = document.getElementById('profile-linkedin') as HTMLInputElement;
 
       const name = nameInput ? nameInput.value.trim() : 'Usuario RONDA';
       const age = ageInput ? (parseInt(ageInput.value, 10) || 25) : 25;
       const gender = genderInput ? genderInput.value || 'X' : 'X';
       const orientation = orientationInput ? orientationInput.value || 'A' : 'A';
+      const linkedinUrl = linkedinInput ? linkedinInput.value.trim() : '';
 
       btnSaveProfile.textContent = "Guardando...";
 
@@ -285,6 +349,18 @@ function initApp() {
         user.age = age;
         user.gender = gender;
         user.orientation = orientation;
+        if (linkedinUrl) {
+          const val = Verification.validateLinkedInUrl(linkedinUrl);
+          user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+          if (val.valid) {
+            user.linkedinVerified = true;
+            user.linkedinSlug = val.slug;
+            user.isVerified = true;
+          }
+        }
+
+        // Persistir el estado de verificación de identidad en el perfil.
+        if (Verification.isVerified || user.linkedinVerified) user.isVerified = true;
 
         if (Auth.currentUser) {
           await DB.saveUser(user);
@@ -336,10 +412,11 @@ function initApp() {
   }
 
   // Control del check-in (unirse a un evento)
-  const btnJoinEvent = document.getElementById('btn-join-event');
+  const btnJoinEvent = document.getElementById('btn-join-event') as HTMLButtonElement;
   if (btnJoinEvent) {
     btnJoinEvent.addEventListener('click', async () => {
-      const code = document.getElementById('event-code').value.trim().toLowerCase();
+      const codeInput = document.getElementById('event-code') as HTMLInputElement;
+      const code = codeInput ? codeInput.value.trim().toLowerCase() : '';
       if (!code) {
         alert("Por favor ingresa un código de evento.");
         return;
@@ -358,9 +435,11 @@ function initApp() {
 
         if (!user.hasTicket && !RondaConfig.isDemo) {
           // Mostrar widget de pago Wompi si no tiene ticket
-          document.getElementById('wompi-container').style.display = 'block';
+          const wompiContainer = document.getElementById('wompi-container');
+          if (wompiContainer) wompiContainer.style.display = 'block';
           btnJoinEvent.style.display = 'none';
-          document.getElementById('event-code').disabled = true;
+          const codeInput = document.getElementById('event-code') as HTMLInputElement;
+          if (codeInput) codeInput.disabled = true;
           alert("Debes adquirir tu pase para ingresar a esta sala. Procesa el pago con Wompi abajo.");
           return;
         }
@@ -402,6 +481,9 @@ function initApp() {
         (btnRealLogin as HTMLButtonElement).disabled = true;
         Auth.loginWithEmail(email, password).then(() => {
           triggerLoginAnimation();
+          updateNavbar();
+          switchView('view-lobby');
+          ClientApp.renderDiscoveryFeed();
         }).catch(err => {
           alert("Error: " + err.message);
         }).finally(() => {
@@ -415,19 +497,34 @@ function initApp() {
   }
 
   // Registration UI Toggles
-  document.getElementById('btn-show-register')?.addEventListener('click', () => {
+  const showRegisterView = () => {
     if (loginForm && registerForm) {
       loginForm.style.display = 'none';
       registerForm.style.display = 'flex';
       if (regStep1) regStep1.style.display = 'block';
       if (regStep2) regStep2.style.display = 'none';
     }
-  });
+  };
 
-  document.getElementById('btn-show-login')?.addEventListener('click', () => {
+  const showLoginView = () => {
     if (loginForm && registerForm) {
       registerForm.style.display = 'none';
       loginForm.style.display = 'flex';
+    }
+  };
+
+  document.getElementById('btn-show-register')?.addEventListener('click', showRegisterView);
+  document.getElementById('btn-show-login')?.addEventListener('click', showLoginView);
+
+  // Auto-open register form if arriving from landing with #register or #registro
+  if (window.location.hash === '#register' || window.location.hash === '#registro' || window.location.search.includes('register')) {
+    showRegisterView();
+  }
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#register' || window.location.hash === '#registro') {
+      showRegisterView();
+    } else if (window.location.hash === '#login') {
+      showLoginView();
     }
   });
 
@@ -484,12 +581,13 @@ function initApp() {
     const birthDate = (document.getElementById('reg-birthdate') as HTMLInputElement).value;
     const gender = (document.getElementById('reg-gender') as HTMLSelectElement).value;
     const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
+    const linkedinUrl = ((document.getElementById('reg-linkedin') as HTMLInputElement)?.value || '').trim();
 
-    if (!name || !birthDate || !gender || !orientation) {
+    if (!name || !birthDate || !gender || !orientation || !linkedinUrl) {
       await RondaDialog.alert({
-        title: 'Datos Requeridos',
-        message: 'Por favor completa todos los datos para crear tu perfil de citas.',
-        icon: '📝'
+        title: 'Verificación Profesional Requerida',
+        message: 'RONDA es una comunidad para solteros profesionales de alto valor. Ingresa todos tus datos y tu perfil de LinkedIn actualizado para validar tu membresía.',
+        icon: '💼'
       });
       return;
     }
@@ -505,11 +603,24 @@ function initApp() {
       return;
     }
 
+    const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
+    if (!linkedinValidation.valid) {
+      await RondaDialog.alert({
+        title: 'Perfil de LinkedIn No Válido',
+        message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
+        icon: '💼',
+        type: 'alert'
+      });
+      return;
+    }
+
     const zodiac = getZodiacSign(birthDate);
 
     const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-    btn.textContent = 'Creando cuenta...';
+    btn.textContent = 'Verificando LinkedIn y creando cuenta...';
     btn.disabled = true;
+
+    const linkedinResult = await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
 
     Auth.registerWithEmail(email, password, { 
       name, 
@@ -517,10 +628,18 @@ function initApp() {
       zodiacSign: zodiac.emoji,
       age, 
       gender, 
-      orientation 
+      orientation,
+      linkedinUrl: linkedinValidation.normalizedUrl,
+      linkedinVerified: true,
+      linkedinSlug: linkedinValidation.slug,
+      linkedinHeadline: linkedinResult.data?.headline,
+      isVerified: true
     }).then((user) => {
       // Successfully registered.
       triggerLoginAnimation();
+      updateNavbar();
+      switchView('view-lobby');
+      ClientApp.renderDiscoveryFeed();
     }).catch(async (err) => {
       await RondaDialog.alert({
         title: 'Error de Registro',
@@ -537,6 +656,65 @@ function initApp() {
   // Event Listeners Auth State
   addEventListener('auth:login', updateNavbar);
   addEventListener('auth:logout', updateNavbar);
+
+  // Toggle entre Lista de Espera y Login Interno
+  const waitlistContainer = document.getElementById('waitlist-container');
+  const btnToggleAdminLogin = document.getElementById('btn-toggle-admin-login');
+  const btnBackToWaitlist = document.getElementById('btn-back-to-waitlist');
+
+  btnToggleAdminLogin?.addEventListener('click', () => {
+    if (waitlistContainer) waitlistContainer.style.display = 'none';
+    if (loginForm) loginForm.style.display = 'flex';
+  });
+
+  btnBackToWaitlist?.addEventListener('click', () => {
+    if (loginForm) loginForm.style.display = 'none';
+    if (waitlistContainer) waitlistContainer.style.display = 'block';
+  });
+
+  // Envío de Lista de Espera desde app
+  const btnSubmitAuthWl = document.getElementById('btn-submit-auth-waitlist');
+  btnSubmitAuthWl?.addEventListener('click', async () => {
+    const name = (document.getElementById('auth-wl-name') as HTMLInputElement)?.value.trim();
+    const phone = (document.getElementById('auth-wl-phone') as HTMLInputElement)?.value.trim();
+    const email = (document.getElementById('auth-wl-email') as HTMLInputElement)?.value.trim();
+
+    if (!name || !phone || !email) {
+      await RondaDialog.alert({
+        title: 'Datos Requeridos',
+        message: 'Por favor ingresa tu nombre, número de WhatsApp y correo para ingresar a la lista de espera.',
+        icon: '📝'
+      });
+      return;
+    }
+
+    const btn = btnSubmitAuthWl as HTMLButtonElement;
+    btn.textContent = 'Registrando...';
+    btn.disabled = true;
+
+    try {
+      await DB.saveWaitlistEntry({
+        name,
+        whatsapp: phone,
+        email,
+        source: 'app_view_auth'
+      });
+
+      const formEl = document.getElementById('auth-waitlist-form');
+      const successEl = document.getElementById('auth-waitlist-success');
+      if (formEl) formEl.style.display = 'none';
+      if (successEl) successEl.style.display = 'block';
+    } catch (err: any) {
+      await RondaDialog.alert({
+        title: 'Error al Guardar',
+        message: 'No pudimos registrar tus datos. Por favor inténtalo de nuevo: ' + err.message,
+        icon: '⚠️',
+        type: 'danger'
+      });
+      btn.textContent = '✨ Unirme a la Lista de Espera';
+      btn.disabled = false;
+    }
+  });
 
   // Navegación (para demostración de multi-rol, aunque idealmente están separados por permisos)
   document.getElementById('nav-client')?.addEventListener('click', () => {

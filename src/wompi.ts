@@ -15,7 +15,8 @@ export interface WompiCheckoutOptions {
 
 class WompiService {
   private scriptLoaded: boolean = false;
-  private publicKey: string = 'pub_test_Q5yDA9xoKdePzhSGeVe9HAvtNuewqqZ0'; // Clave pública de prueba Wompi Sandbox
+  // Clave pública de Wompi. Sandbox por defecto; en producción definir VITE_WOMPI_PUBLIC_KEY.
+  private publicKey: string = (import.meta as any).env?.VITE_WOMPI_PUBLIC_KEY || 'pub_test_Q5yDA9xoKdePzhSGeVe9HAvtNuewqqZ0';
 
   async loadScript(): Promise<void> {
     if (this.scriptLoaded || (window as any).WidgetCheckout) {
@@ -96,9 +97,11 @@ class WompiService {
           console.log('[Wompi] Resultado de transacción:', transaction);
 
           if (transaction?.status === 'APPROVED') {
+            // SEGURIDAD: el ticket NO se persiste desde el cliente. Lo confirma el
+            // webhook de Wompi (functions/index.js) vía Admin SDK, que es la fuente
+            // de verdad. Aquí solo se refleja en memoria para la UX inmediata.
             user.hasTicket = true;
             user.activeEventId = eventId;
-            await DB.saveUser(user);
 
             if (onSuccess) onSuccess(transaction);
             resolve(true);

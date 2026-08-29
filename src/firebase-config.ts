@@ -3,7 +3,12 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 export const RondaConfig = {
-  isDemo: true,
+  // Modo demo SOLO en local. En producción (CI/lanzamiento) se define VITE_IS_DEMO=false:
+  // la app usa Firestore real y el checkout real de Wompi en lugar de la BD en memoria.
+  isDemo: (import.meta as any).env?.VITE_IS_DEMO !== 'false',
+  // false = la verificación KYC corre el flujo REAL (cámara + rostro + OCR).
+  // El modo demo sigue activo para la base de datos en memoria (DB.memoryDb).
+  kycSimulated: false,
   firebaseConfig: {
     apiKey: "AIzaSyA55U4CwLAv5tlNPGvO-OkRBB0qJHbTNKQ",
     authDomain: "ronda-uno.firebaseapp.com",

@@ -5,12 +5,145 @@
   },
   "hosting": {
     "public": "dist",
+    "cleanUrls": true,
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/",
+        "destination": "/landing.html"
+      },
+      {
+        "source": "/landing",
+        "destination": "/landing.html"
+      },
+      {
+        "source": "/landing/**",
+        "destination": "/landing.html"
+      },
+      {
+        "source": "/invest",
+        "destination": "/invest.html"
+      },
+      {
+        "source": "/invest/**",
+        "destination": "/invest.html"
+      },
+      {
+        "source": "/inversionistas",
+        "destination": "/invest.html"
+      },
+      {
+        "source": "/inversionistas/**",
+        "destination": "/invest.html"
+      },
+      {
+        "source": "/app",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/app/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/admin",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/admin/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/client",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/client/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/net",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/net/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/network",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/network/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/superadmin",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/superadmin/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/sales",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/sales/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/crm",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/crm/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/ronda",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/ronda/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/lobby",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/lobby/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/registro",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/registro/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/login/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/index",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/index/**",
+        "destination": "/index.html"
+      },
       {
         "source": "**",
         "destination": "/index.html"

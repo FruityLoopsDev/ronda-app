@@ -39,4 +39,4 @@ check('rostro no coincide → rostro_no_coincide',
 
 console.log('============================================');
 console.log(`\nRESULTADO: ${passed} pasados, ${failed} fallados`);
-process.exit(failed === 0 ? 0 : 1);
+(globalThis as any).process.exit(failed === 0 ? 0 : 1);

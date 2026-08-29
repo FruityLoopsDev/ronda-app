@@ -15,7 +15,8 @@ exports.wompiWebhook = functions.https.onRequest(async (req, res) => {
 
   try {
     const data = req.body;
-    console.log("Wompi Webhook received:", JSON.stringify(data));
+    // No registrar el payload completo: puede contener datos sensibles del titular.
+    console.log("Wompi Webhook received (evento):", data && data.event);
 
     // Validar evento
     if (data && data.event === "transaction.updated" && data.data && data.data.transaction) {
@@ -23,26 +24,33 @@ exports.wompiWebhook = functions.https.onRequest(async (req, res) => {
       const status = tx.status;
       const reference = tx.reference; // Formato: TICKET-UID-EVENTID o TICKET-UID-EVENTID-TIMESTAMP
 
-      // Opcional: Validación de Checksum de Integridad si se provee la clave secreta
+      // SEGURIDAD (fail-closed): sin firma válida NO se procesa el pago.
       const eventsSecret = process.env.WOMPI_EVENTS_SECRET;
-      if (eventsSecret && data.signature && data.signature.checksum) {
-        const properties = data.signature.properties || [];
-        // Concatenar propiedades indicadas por Wompi + secret
-        let concatenated = "";
-        for (const prop of properties) {
-          const parts = prop.split(".");
-          let val = data.data;
-          for (const p of parts) {
-            val = val ? val[p] : undefined;
-          }
-          concatenated += val !== undefined ? val : "";
+      if (!eventsSecret) {
+        console.error("WOMPI_EVENTS_SECRET no configurado; rechazando webhook.");
+        return res.status(500).send("Webhook misconfigured");
+      }
+      if (!data.signature || !data.signature.checksum) {
+        console.warn("Firma de webhook ausente; rechazando.");
+        return res.status(401).send("Invalid Signature");
+      }
+
+      const properties = data.signature.properties || [];
+      // Concatenar propiedades indicadas por Wompi + secret
+      let concatenated = "";
+      for (const prop of properties) {
+        const parts = prop.split(".");
+        let val = data.data;
+        for (const p of parts) {
+          val = val ? val[p] : undefined;
         }
-        concatenated += data.timestamp + eventsSecret;
-        const calculatedChecksum = crypto.createHash("sha256").update(concatenated).digest("hex");
-        if (calculatedChecksum !== data.signature.checksum) {
-          console.warn("Wompi signature mismatch. Calculated:", calculatedChecksum, "Expected:", data.signature.checksum);
-          return res.status(401).send("Invalid Signature");
-        }
+        concatenated += val !== undefined ? val : "";
+      }
+      concatenated += data.timestamp + eventsSecret;
+      const calculatedChecksum = crypto.createHash("sha256").update(concatenated).digest("hex");
+      if (calculatedChecksum !== data.signature.checksum) {
+        console.warn("Wompi signature mismatch.");
+        return res.status(401).send("Invalid Signature");
       }
 
       if (status === "APPROVED") {
@@ -119,11 +127,13 @@ exports.mintAttendanceNFT = functions.https.onCall(async (data, context) => {
   console.log(`Minting NFT for ${targetUid} at ${walletAddress}`);
 
   try {
-    // Inicializar proveedor y wallet de Ethers
-    // En producción se deben usar variables de entorno seguras (Firebase Secrets)
-    const RPC_URL = process.env.POLYGON_RPC || "https://rpc-mumbai.maticvigil.com";
-    const PRIVATE_KEY = process.env.RELAYER_PRIVATE_KEY || "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"; // Clave mock para entorno local
-    const CONTRACT_ADDRESS = "0x9C28c20579e00000000000000000000000000000";
+    // SEGURIDAD (fail-closed): credenciales blockchain solo desde Firebase Secrets.
+    const RPC_URL = process.env.POLYGON_RPC;
+    const PRIVATE_KEY = process.env.RELAYER_PRIVATE_KEY;
+    const CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS;
+    if (!RPC_URL || !PRIVATE_KEY || !CONTRACT_ADDRESS) {
+      throw new functions.https.HttpsError("failed-precondition", "Configuración blockchain incompleta (secrets).");
+    }
 
     const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
     const wallet = new ethers.Wallet(PRIVATE_KEY, provider);

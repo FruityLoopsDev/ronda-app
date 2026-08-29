@@ -43,8 +43,8 @@ class HostConsoleService {
     this.barTable = -1;
     this.hasBar = false;
     
-    addEventListener('auth:login', (e) => {
-      if (e.detail.role === 'admin') {
+    addEventListener('auth:login', (e: any) => {
+      if (e.detail && e.detail.role === 'admin') {
         this.initAdminDashboard(e.detail);
       }
     });
@@ -235,7 +235,7 @@ class HostConsoleService {
     });
 
     if (confirmEnd) {
-      const btnEnd = document.getElementById('btn-end-e');
+      const btnEnd = document.getElementById('btn-end-e') as HTMLButtonElement;
       if (btnEnd) {
         btnEnd.textContent = "Emitiendo NFTs...";
         btnEnd.disabled = true;

@@ -4,6 +4,7 @@ import { DB, User } from "./db.js";
 
 export class AuthService {
   currentUser: User | null;
+  private isRegistering: boolean = false;
 
   constructor() {
     this.currentUser = null;
@@ -18,6 +19,11 @@ export class AuthService {
 
   initAuthStateListener() {
     onAuthStateChanged(this._getAuth(), async (firebaseUser) => {
+      if (this.isRegistering) {
+        // El registro manual creará y guardará el perfil completo
+        return;
+      }
+
       if (firebaseUser) {
         console.log("[Auth] Usuario de Firebase detectado:", firebaseUser.uid);
         
@@ -25,18 +31,11 @@ export class AuthService {
         
         if (!userProfile) {
           console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
-          let role = 'client';
-          if (firebaseUser.email) {
-            const emailLower = firebaseUser.email.toLowerCase();
-            if (emailLower.includes('superadmin')) role = 'superadmin';
-            else if (emailLower.includes('sales') || emailLower.includes('ventas')) role = 'sales';
-            else if (emailLower.includes('network') || emailLower.includes('red')) role = 'network';
-            else if (emailLower.includes('admin')) role = 'admin';
-          }
-          
+          const role = 'client';
+
           userProfile = {
             uid: firebaseUser.uid,
-            name: role !== 'client' ? `Usuario ${role}` : '',
+            name: '',
             role: role,
             gender: '',
             orientation: '',
@@ -75,20 +74,16 @@ export class AuthService {
 
   async registerWithEmail(email: string, password: string, profileData: Partial<User>) {
     console.log(`[Auth] Register intent: ${email}`);
+    this.isRegistering = true;
     try {
       const userCredential = await createUserWithEmailAndPassword(this._getAuth(), email, password);
       const uid = userCredential.user.uid;
-      let role = 'client';
-      const emailLower = email.toLowerCase();
-      if (emailLower.includes('superadmin')) role = 'superadmin';
-      else if (emailLower.includes('sales') || emailLower.includes('ventas')) role = 'sales';
-      else if (emailLower.includes('network') || emailLower.includes('red')) role = 'network';
-      else if (emailLower.includes('admin')) role = 'admin';
-      
+      const role = 'client';
+
       const newProfile: User = {
         uid: uid,
         role: role,
-        name: profileData.name || (role !== 'client' ? `Usuario ${role}` : 'Anónimo'),
+        name: profileData.name || 'Anónimo',
         birthDate: profileData.birthDate || '',
         zodiacSign: profileData.zodiacSign || '',
         age: profileData.age || 0,
@@ -96,15 +91,20 @@ export class AuthService {
         orientation: profileData.orientation || '',
         email: email,
         wallet_address: '',
-        nfts: []
+        nfts: [],
+        ...profileData
       };
       
       await DB.saveUser(newProfile);
+      this.currentUser = newProfile;
       console.log("[Auth] Registro y perfil creados exitosamente.");
+      window.dispatchEvent(new CustomEvent('auth:login', { detail: newProfile }));
       return newProfile;
     } catch (error: any) {
       console.error("Error durante el registro:", error);
       throw error;
+    } finally {
+      this.isRegistering = false;
     }
   }
 

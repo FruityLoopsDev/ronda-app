@@ -32,5 +32,13 @@ yarn-error.log*
 # Build output
 dist/
 
+# HTTPS certs (local, no subir al repo)
+certs/
+*.pem
+
 # Firebase deploy cache
 .firebase/
+
+# Logs (pueden contener datos sensibles del emulador)
+*.log
+firestore-debug.log
