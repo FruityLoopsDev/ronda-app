@@ -1009,6 +1009,135 @@
         outline: none;
         cursor: pointer;
       }
+      /* Icebreakers Modal (Posavasos) */
+      #modal-icebreakers .tel-in {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #0d0913;
+        overflow: hidden;
+      }
+      .icebreaker-deck-container {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1000px;
+        padding: 20px;
+      }
+      .coaster-card {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        background: var(--papel);
+        border-radius: 50%; /* Circle coaster shape */
+        box-shadow: 0 12px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(212, 175, 55, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+        border: 2px dashed rgba(23, 16, 29, 0.2);
+        padding: 20px;
+        box-sizing: border-box;
+        transform-origin: center center;
+      }
+      .coaster-card.swipe-out {
+        transform: translateX(120%) rotate(25deg) scale(0.9) !important;
+        opacity: 0;
+      }
+      .coaster-inner {
+        width: 100%;
+      }
+      .coaster-count {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: rgba(23, 16, 29, 0.4);
+        margin-bottom: 8px;
+      }
+      .coaster-title {
+        font-family: var(--font-display);
+        font-size: 22px;
+        color: #17101d;
+        margin: 0 0 20px;
+        line-height: 1.1;
+      }
+      .coaster-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+      .coaster-btn {
+        background: rgba(23, 16, 29, 0.05);
+        border: 1px solid rgba(23, 16, 29, 0.1);
+        border-radius: 12px;
+        padding: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 80px;
+      }
+      .coaster-btn:hover, .coaster-btn:active {
+        background: rgba(23, 16, 29, 0.1);
+        transform: scale(1.05);
+      }
+      .coaster-btn .c-icon {
+        font-size: 28px;
+        margin-bottom: 4px;
+      }
+      .coaster-btn .c-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #17101d;
+      }
+      .layout-2 .coaster-btn { width: 45%; }
+      .layout-3 .coaster-btn { width: 28%; padding: 8px; }
+      .layout-4 .coaster-btn { width: 40%; }
+      .coaster-success {
+        text-align: center;
+        color: var(--papel);
+        animation: fadeIn 0.5s ease;
+      }
+      .coaster-success h3 {
+        font-family: var(--font-display);
+        font-size: 28px;
+        margin-bottom: 8px;
+        color: var(--luz);
+      }
+      .coaster-success p {
+        font-size: 14px;
+        color: var(--humo);
+        margin-bottom: 24px;
+        max-width: 260px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      /* Satisfaction Modal (El Brindis Final) */
+      .satisfaction-vibes .vibe-btn.active {
+        background: rgba(240, 168, 48, 0.18) !important;
+        border-color: var(--luz) !important;
+        box-shadow: 0 0 16px rgba(240, 168, 48, 0.35);
+        transform: translateY(-2px) scale(1.04);
+      }
+      .satisfaction-vibes .vibe-btn:hover {
+        background: rgba(243, 237, 226, 0.08);
+        border-color: rgba(240, 168, 48, 0.3);
+      }
+      .satisfaction-tags .sat-tag.selected {
+        background: rgba(46, 107, 84, 0.3) !important;
+        border-color: var(--botella) !important;
+        color: #79D3AC !important;
+        font-weight: 700;
+        box-shadow: 0 0 10px rgba(46, 107, 84, 0.3);
+      }
+      .satisfaction-tags .sat-tag:hover {
+        border-color: var(--luz);
+      }
     </style>
     </head>
 <body>
@@ -1045,6 +1174,81 @@
     </svg>
   </div>
 
+  <!-- Modal: Rompehielos (Posavasos) -->
+  <div id="modal-icebreakers" class="modal-overlay">
+    <div class="tel" style="position: relative;">
+      <button id="btn-close-icebreakers" title="Cerrar" style="position: absolute; top: 12px; right: 16px; background: transparent; border: none; color: var(--humo); font-size: 22px; cursor: pointer; z-index: 10;">×</button>
+      <div class="tel-in">
+        <div class="status"><span>RONDA</span><span>Rompehielos</span></div>
+        <div class="pant" style="display:flex; flex-direction:column; height:100%; padding: 0;">
+          
+          <div class="icebreaker-deck-container" id="icebreaker-deck">
+            <!-- Coasters will be injected here by Icebreakers.ts -->
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Satisfacción de la Experiencia (El Brindis Final) -->
+  <div id="modal-satisfaction" class="modal-overlay" style="z-index: 10100;">
+    <div class="tel" style="width: 100%; max-width: 400px; background: #160e1d; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px; box-shadow: 0 25px 70px rgba(0,0,0,0.85); position: relative;">
+      <div class="tel-in" style="padding: 22px 20px 24px; text-align: center;">
+        <button id="btn-close-satisfaction" title="Cerrar" style="position: absolute; top: 14px; right: 16px; background: transparent; border: none; color: var(--humo); font-size: 20px; cursor: pointer; z-index: 10;">✕</button>
+        
+        <div style="font-size: 38px; margin-bottom: 6px; filter: drop-shadow(0 4px 12px rgba(240,168,48,0.3));">🥂</div>
+        <p style="font-family: var(--font-mono); font-size: 10px; color: var(--luz); letter-spacing: 0.16em; text-transform: uppercase; margin: 0 0 4px;">El Brindis Final</p>
+        <h3 style="font-family: var(--font-display); font-size: 23px; color: var(--papel); margin: 0 0 8px; font-weight: 700;">¿Cómo vibró tu noche?</h3>
+        <p style="font-size: 12px; color: var(--humo); margin: 0 auto 18px; line-height: 1.4; max-width: 310px;">
+          Una copa, nueve historias, una noche. Tu impresión nos ayuda a afinar la atmósfera de cada barra.
+        </p>
+
+        <!-- Selector de Nivel de Entusiasmo / Satisfacción -->
+        <div class="satisfaction-vibes" style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 18px;">
+          <button class="vibe-btn" data-vibe="magical" style="flex: 1; padding: 10px 4px; border-radius: 14px; background: rgba(243,237,226,0.04); border: 1px solid rgba(243,237,226,0.1); color: var(--papel); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <span style="font-size: 22px;">✨</span>
+            <span style="font-size: 10px; font-weight: 700;">Mágica</span>
+          </button>
+          <button class="vibe-btn" data-vibe="great" style="flex: 1; padding: 10px 4px; border-radius: 14px; background: rgba(243,237,226,0.04); border: 1px solid rgba(243,237,226,0.1); color: var(--papel); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <span style="font-size: 22px;">🍸</span>
+            <span style="font-size: 10px; font-weight: 700;">Gran Noche</span>
+          </button>
+          <button class="vibe-btn" data-vibe="good" style="flex: 1; padding: 10px 4px; border-radius: 14px; background: rgba(243,237,226,0.04); border: 1px solid rgba(243,237,226,0.1); color: var(--papel); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <span style="font-size: 22px;">🕯️</span>
+            <span style="font-size: 10px; font-weight: 700;">Agradable</span>
+          </button>
+          <button class="vibe-btn" data-vibe="calm" style="flex: 1; padding: 10px 4px; border-radius: 14px; background: rgba(243,237,226,0.04); border: 1px solid rgba(243,237,226,0.1); color: var(--papel); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <span style="font-size: 22px;">🌿</span>
+            <span style="font-size: 10px; font-weight: 700;">Tranquila</span>
+          </button>
+        </div>
+
+        <!-- Tags / Highlights de la experiencia -->
+        <div style="text-align: left; margin-bottom: 14px;">
+          <label style="font-family: var(--font-mono); font-size: 9.5px; color: var(--humo); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 8px;">¿Qué fue lo más memorable?</label>
+          <div class="satisfaction-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="sat-tag" data-tag="cocteles" style="font-size: 10.5px; padding: 5px 10px; border-radius: 999px; background: rgba(243,237,226,0.05); border: 1px solid rgba(243,237,226,0.12); color: var(--papel); cursor: pointer; transition: all 0.2s;">🍸 La coctelería</span>
+            <span class="sat-tag" data-tag="ritmo" style="font-size: 10.5px; padding: 5px 10px; border-radius: 999px; background: rgba(243,237,226,0.05); border: 1px solid rgba(243,237,226,0.12); color: var(--papel); cursor: pointer; transition: all 0.2s;">🔔 El ritmo de 6 min</span>
+            <span class="sat-tag" data-tag="gente" style="font-size: 10.5px; padding: 5px 10px; border-radius: 999px; background: rgba(243,237,226,0.05); border: 1px solid rgba(243,237,226,0.12); color: var(--papel); cursor: pointer; transition: all 0.2s;">✨ La química y personas</span>
+            <span class="sat-tag" data-tag="ambiente" style="font-size: 10.5px; padding: 5px 10px; border-radius: 999px; background: rgba(243,237,226,0.05); border: 1px solid rgba(243,237,226,0.12); color: var(--papel); cursor: pointer; transition: all 0.2s;">🕯️ La atmósfera del bar</span>
+            <span class="sat-tag" data-tag="sin_pantallas" style="font-size: 10.5px; padding: 5px 10px; border-radius: 999px; background: rgba(243,237,226,0.05); border: 1px solid rgba(243,237,226,0.12); color: var(--papel); cursor: pointer; transition: all 0.2s;">📵 Desconexión digital</span>
+          </div>
+        </div>
+
+        <!-- Comentario sutil -->
+        <div style="margin-bottom: 18px; text-align: left;">
+          <label style="font-family: var(--font-mono); font-size: 9.5px; color: var(--humo); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px;">Un detalle que te haya marcado (Opcional):</label>
+          <textarea id="satisfaction-comment" rows="2" placeholder="Algo que te haya sorprendido o una historia de la barra..." style="width: 100%; box-sizing: border-box; background: rgba(243,237,226,0.04); border: 1px solid rgba(243,237,226,0.12); border-radius: 12px; color: var(--papel); padding: 10px 12px; font-size: 12px; font-family: var(--font-body); resize: none;"></textarea>
+        </div>
+
+        <button id="btn-submit-satisfaction" class="btn luz" style="width: 100%; padding: 13px; font-weight: 700; border-radius: 14px; font-size: 12.5px; letter-spacing: 0.03em;">
+          🥂 Sellar mi Experiencia
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Completar Perfil -->
   <div id="modal-profile" class="modal-overlay">
     <div class="tel" style="position: relative;">
@@ -1065,22 +1269,21 @@
               <option value="X">No binario</option>
             </select>
             
-            <select id="profile-orientation" style="padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif;">
-              <option value="" disabled selected>Busco conocer</option>
-              <option value="F">Mujeres</option>
-              <option value="M">Hombres</option>
-              <option value="A">Todos / Cualquiera</option>
-            </select>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="url" id="profile-linkedin" placeholder="https://linkedin.com/in/tu-perfil" style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif; font-size: 13px;">
+              <button type="button" id="btn-verify-profile-linkedin" class="btn luz" style="padding: 12px 14px; font-size: 12px; border-radius: 8px; white-space: nowrap; font-weight: 700;">Validar 🔗</button>
+            </div>
+            <p id="linkedin-verify-status" style="font-size: 10.5px; color: var(--humo); margin: -4px 0 4px; text-align: left;"></p>
 
-            <div id="kyc-container" style="margin-top: 10px; border: 1px dashed var(--linea); padding: 10px; border-radius: 8px; position: relative;">
-              <p style="font-size: 11px; color: var(--luz); margin-bottom: 5px;">Verificación Biométrica Obligatoria</p>
+            <div id="kyc-container" style="margin-top: 6px; border: 1px dashed var(--linea); padding: 10px; border-radius: 8px; position: relative;">
+              <p style="font-size: 11px; color: var(--luz); margin-bottom: 5px; font-weight: 700;">💼 Verificación Profesional (LinkedIn) & Biométrica</p>
               <video id="kyc-video" style="width: 100%; border-radius: 8px; display: none;" autoplay playsinline></video>
               <canvas id="kyc-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;"></canvas>
-              <button id="btn-start-kyc" class="btn" style="width: 100%; font-size: 12px; margin-bottom: 5px;">📸 Iniciar Verificación</button>
-              <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Muestra tu rostro y tu documento a la cámara</p>
+              <button id="btn-start-kyc" class="btn" style="width: 100%; font-size: 12px; margin-bottom: 5px;">📸 Iniciar Verificación Facial</button>
+              <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Filtro estricto: Solteros profesionales verificados con LinkedIn + Rostro</p>
             </div>
 
-            <button id="btn-save-profile" class="btn ambar" style="margin-top: 10px;">Guardar Perfil</button>
+            <button id="btn-save-profile" class="btn ambar" style="margin-top: 10px;" disabled>Guardar Perfil</button>
             <button id="btn-skip-profile" class="btn" style="background: transparent; border: none; color: var(--humo); font-size: 12px; margin-top: 4px;">Continuar a la app por ahora</button>
           </div>
         </div>
@@ -1101,22 +1304,56 @@
   </header>
 
   
-  <!-- Vista: Login / Auth -->
+  <!-- Vista: Login / Auth / Lista de Espera -->
   <section id="view-auth" class="panel on">
     <div class="auth-card" style="margin-top: 20px;">
-      <h3 style="font-family: var(--font-display); font-size: 26px; margin: 0 0 4px; color: var(--papel);">Bienvenido</h3>
-      <p class="detalle" style="margin-bottom: 22px;">Inicia sesión o crea una cuenta.</p>
       
-      <!-- FORM LOGIN -->
-      <div id="login-form" class="acciones" style="flex-direction: column;">
-        <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
-        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
-        <button id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
-        <button id="btn-show-register" class="btn" style="background: transparent; margin-top: 10px; font-size: 12px; border: none; color: var(--humo);">¿No tienes cuenta? <b style="color: var(--luz);">Regístrate</b></button>
+      <!-- FORM LISTA DE ESPERA (Flujo Principal) -->
+      <div id="waitlist-container">
+        <span class="live-city-tag" style="display: inline-flex; margin-bottom: 12px;"><i class="pulse-amber-dot"></i> BOGOTÁ · LISTA DE ESPERA</span>
+        <h3 style="font-family: var(--font-display); font-size: 26px; margin: 0 0 6px; color: var(--papel);">Únete a la Lista de Espera</h3>
+        <p class="detalle" style="margin-bottom: 20px; font-size: 13px; line-height: 1.4;">
+          Estamos calibrando las salas de la próxima temporada en Chapinero Alto y Zona G. Déjanos tus datos para recibir tu invitación prioritaria.
+        </p>
+
+        <div id="auth-waitlist-form" class="acciones" style="flex-direction: column; gap: 12px;">
+          <input type="text" id="auth-wl-name" placeholder="Nombre completo" class="ronda-input" required>
+          <input type="tel" id="auth-wl-phone" placeholder="Número de WhatsApp (+57...)" class="ronda-input" required>
+          <input type="email" id="auth-wl-email" placeholder="Correo electrónico" class="ronda-input" required>
+          <button id="btn-submit-auth-waitlist" class="btn ambar" style="margin-top: 6px; width: 100%;">
+            ✨ Unirme a la Lista de Espera
+          </button>
+        </div>
+
+        <div id="auth-waitlist-success" style="display: none; background: rgba(46,107,84,0.15); border: 1px solid rgba(46,107,84,0.4); border-radius: 12px; padding: 18px 14px; text-align: center; margin-top: 14px;">
+          <div style="font-size: 32px; margin-bottom: 6px;">🥂</div>
+          <h4 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0 0 6px;">¡Estás en la Lista de Espera!</h4>
+          <p style="font-size: 12px; color: var(--humo); margin: 0; line-height: 1.4;">
+            Guardamos tu registro. Te avisaremos vía WhatsApp con acceso exclusivo y prioritario para tu primera noche.
+          </p>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--linea); font-size: 11.5px; color: var(--humo);">
+          <span>¿Equipo o anfitrión? </span>
+          <button id="btn-toggle-admin-login" style="background: none; border: none; color: var(--luz); cursor: pointer; text-decoration: underline; font-family: inherit; font-size: 11.5px; padding: 0;">
+            Acceso a pruebas
+          </button>
+        </div>
       </div>
 
+      <!-- FORM LOGIN INTERNO (Para pruebas / administradores) -->
+      <form id="login-form" class="acciones" style="flex-direction: column; display: none;" onsubmit="event.preventDefault();">
+        <h4 style="font-family: var(--font-display); font-size: 20px; color: var(--papel); margin-bottom: 4px;">Acceso del Equipo</h4>
+        <p class="detalle" style="margin-bottom: 16px; font-size: 11.5px;">Acceso para pruebas y administración.</p>
+        <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
+        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
+        <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
+        <button type="button" id="btn-back-to-waitlist" class="btn" style="background: transparent; margin-top: 8px; font-size: 12px; border: none; color: var(--humo);">← Volver a Lista de Espera</button>
+        <button type="button" id="btn-show-register" class="btn" style="background: transparent; margin-top: 6px; font-size: 11px; border: none; color: rgba(243,237,226,0.4);">Registro interno</button>
+      </form>
+
       <!-- FORM REGISTRO SUTIL (2 PASOS) -->
-      <div id="register-form" class="acciones" style="flex-direction: column; display: none;">
+      <form id="register-form" class="acciones" style="flex-direction: column; display: none;" onsubmit="event.preventDefault();">
         
         <!-- Paso 1 -->
         <div id="reg-step-1">
@@ -1139,7 +1376,7 @@
             </div>
           </div>
 
-          <div style="display: flex; gap: 10px;">
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <select id="reg-gender" class="ronda-input" style="flex: 1;">
               <option value="" disabled selected>Género</option>
               <option value="Hombre">Hombre</option>
@@ -1154,11 +1391,17 @@
             </select>
           </div>
 
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Requisito Obligatorio)</label>
+            <input type="url" id="reg-linkedin" placeholder="https://linkedin.com/in/tu-perfil" class="ronda-input" style="margin-bottom: 2px;">
+            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de solteros profesionales de alto valor. Verificamos tu identidad con LinkedIn.</span>
+          </div>
+
           <button id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
         </div>
 
-        <button id="btn-show-login" class="btn" style="background: transparent; margin-top: 10px; font-size: 18px; line-height: 1; padding: 6px; color: var(--humo); border: none;" title="Atrás">←</button>
-      </div>
+        <button type="button" id="btn-show-login" class="btn" style="background: transparent; margin-top: 10px; font-size: 18px; line-height: 1; padding: 6px; color: var(--humo); border: none;" title="Atrás">←</button>
+      </form>
 
     </div>
   </section>
@@ -1224,6 +1467,7 @@
       <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
         <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
         <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px;">🛡️ KYC Verificado</span>
+        <span id="profile-linkedin-badge" class="chip verde" style="font-size: 9px; padding: 2px 8px; display: none;">💼 LinkedIn Verificado</span>
       </div>
       <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;">@julio.ronda</p>
       <p id="profile-display-bio" style="font-size: 13px; color: var(--papel); margin: 0 0 6px; line-height: 1.4;"></p>
@@ -1274,6 +1518,10 @@
         <div class="kv"><span>Signo Zodíaco</span><b id="about-zodiac">♏ Escorpio</b></div>
         <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
         <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
+        <div class="kv" id="profile-row-linkedin" style="display: none;">
+          <span>Perfil LinkedIn</span>
+          <b><a id="profile-linkedin-link" href="#" target="_blank" style="color: var(--luz); text-decoration: underline;">Ver Perfil ↗</a></b>
+        </div>
         <div class="rule" style="margin: 12px 0 10px;"></div>
         <p style="font-size: 11.5px; color: var(--humo); margin: 4px 0 0; line-height: 1.45;">
           ✨ <i>En las rondas de 6 minutos, estos datos ayudan a romper el hielo naturalmente sin preguntas aburridas.</i>
@@ -1435,7 +1683,9 @@
             ✓ Guardar Opciones Avanzadas
           </button>
 
-          <div class="rule" style="margin: 12px 0 16px;"></div>
+          <button id="btn-settings-open-satisfaction" class="btn" style="width: 100%; font-size: 12px; padding: 12px; border: 1px dashed rgba(240,168,48,0.4); color: var(--luz); background: rgba(240,168,48,0.06); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+            🥂 ¿Cómo fue tu última noche? Dejar Veredicto
+          </button>
 
           <button id="btn-profile-logout" class="btn" style="width: 100%; font-size: 12px; padding: 12px; border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
             🚪 Cerrar Sesión
@@ -1511,6 +1761,15 @@
             <div class="edit-field">
               <label>Cóctel de Autor Favorito</label>
               <input type="text" id="edit-cocktail" class="ronda-input-premium" placeholder="Ej. Negroni Ahumado, Gin Tonic...">
+            </div>
+
+            <div class="edit-field">
+              <label>Perfil de LinkedIn</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="url" id="edit-linkedin" class="ronda-input-premium" placeholder="https://linkedin.com/in/tu-perfil" style="flex: 1;">
+                <button type="button" id="btn-verify-edit-linkedin" class="btn luz" style="padding: 8px 12px; font-size: 11px; white-space: nowrap; border-radius: 8px; font-weight: 700;">Validar</button>
+              </div>
+              <span id="edit-linkedin-status" style="font-size: 10px; color: var(--humo); margin-top: 4px; display: block;"></span>
             </div>
 
             <div class="edit-field">
@@ -2200,7 +2459,7 @@
             <div class="receipt">
               <div class="rec-title">CARONTE COCKTAIL BAR</div>
               <div class="rec-sub" id="rec-date">MARTES 18 MARZO · RONDA #212</div>
-              <div class="rec-row"><span>24 consumiciones incluidas</span><span id="rec-val1">528.000</span></div>
+              <div class="rec-row"><span>24 bebidas incluidas</span><span id="rec-val1">528.000</span></div>
               <div class="rec-row"><span>15 segundas rondas</span><span id="rec-val2">412.000</span></div>
               <div class="rec-row"><span>Tapeo y picoteo</span><span id="rec-val3">250.000</span></div>
               <div class="rec-divider"></div>
@@ -2317,9 +2576,61 @@
         Hecho por amor ❤️ a Colombia <img src="https://flagcdn.com/16x12/co.png" alt="Colombia" style="height: 11px; width: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle;">
       </span>
       <span style="opacity: 0.6; letter-spacing: 0.05em;">v2.1.0-prod</span>
+      <span id="visit-counter-container" style="display: flex; align-items: center; gap: 4px; color: var(--ambar); font-weight: 600;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span id="visit-count">0</span>
+      </span>
     </div>
   </footer>
 </div>
+
+<script>
+  // Contador de visitas dinámico (Simulado / LocalStorage)
+  document.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById('visit-count');
+    if (!el) return;
+    
+    // Base number for realism
+    const baseVisits = 145032; 
+    let localVisits = parseInt(localStorage.getItem('ronda_visit_count') || '0', 10);
+    
+    // Si es la primera visita, incrementar
+    if (!sessionStorage.getItem('ronda_session_counted')) {
+      localVisits++;
+      localStorage.setItem('ronda_visit_count', localVisits);
+      sessionStorage.setItem('ronda_session_counted', 'true');
+    }
+
+    let total = baseVisits + localVisits;
+    
+    // Animación del número
+    let current = baseVisits;
+    const duration = 1500;
+    const steps = 30;
+    const stepTime = duration / steps;
+    const increment = Math.max(1, Math.floor((total - current) / steps));
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= total) {
+        current = total;
+        clearInterval(timer);
+      }
+      el.textContent = current.toLocaleString('es-CO');
+    }, stepTime);
+
+    // Simular picos de visitas en vivo cada 10-30 segs
+    setInterval(() => {
+      if (Math.random() > 0.5) {
+        total += Math.floor(Math.random() * 3) + 1;
+        el.textContent = total.toLocaleString('es-CO');
+        // Efecto visual
+        el.style.color = '#fff';
+        setTimeout(() => el.style.color = '', 300);
+      }
+    }, 15000);
+  });
+</script>
 
 <script type="module" src="/src/app.ts"></script>
 
