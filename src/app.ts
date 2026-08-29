@@ -484,14 +484,23 @@ function initApp() {
           updateNavbar();
           switchView('view-lobby');
           ClientApp.renderDiscoveryFeed();
-        }).catch(err => {
-          alert("Error: " + err.message);
+        }).catch(async (err) => {
+          await RondaDialog.alert({
+            title: 'Error de Acceso',
+            message: err.message || 'No se pudo iniciar sesión. Verifica tus credenciales.',
+            icon: '🔒',
+            type: 'danger'
+          });
         }).finally(() => {
           btnRealLogin.textContent = 'Ingresar';
           (btnRealLogin as HTMLButtonElement).disabled = false;
         });
       } else {
-        alert("Por favor, ingresa correo y contraseña.");
+        RondaDialog.alert({
+          title: 'Campos Requeridos',
+          message: 'Por favor, ingresa correo y contraseña.',
+          icon: '📝'
+        });
       }
     });
   }
