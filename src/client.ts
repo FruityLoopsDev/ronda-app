@@ -4,6 +4,7 @@ import { OfflineSync } from './offline-sync.js';
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 import { RondaDialog } from './dialog.js';
 import { Wompi } from './wompi.js';
+import { PrivacyPolicy } from './privacy-policy.js';
 
 // client.ts: Lógica del Cliente, Eventos, Carta de Tragos Bartender/Sommelier, Chat Temporal Seguro con Autodestrucción Misión Imposible
 
@@ -1231,6 +1232,10 @@ class ClientAppService {
               <div>
                 <b style="font-family: var(--font-display); font-size: 18px; color: ${isLetterBurned ? 'var(--papel)' : '#1a120b'};">${m.name} (${m.age})</b>
                 <span style="font-size: 11px; color: ${isLetterBurned ? 'var(--humo)' : '#73675a'}; display: block; font-family: var(--font-mono);">${m.profession} · ${m.zone}</span>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                  <span class="chip verde" style="font-size: 9px; padding: 2px 6px; display: inline-block;">💼 LinkedIn Verificado</span>
+                  <span class="chip gris" style="font-size: 9px; padding: 2px 6px; display: inline-block;">🔒 Contacto Privado</span>
+                </div>
               </div>
               <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px; background: #2e6b54; color: #fff;">Match Mutuo ✓</span>
             </div>
@@ -1261,11 +1266,19 @@ class ClientAppService {
           </p>
         </div>
 
-        <button id="btn-done-matches" class="btn ambar" style="width: 100%; margin-top: 18px; font-size: 12px; font-weight: 700; padding: 12px;">
+        <button id="btn-open-satisfaction" class="btn" style="width: 100%; margin-top: 14px; font-size: 11.5px; font-weight: 700; padding: 11px; border: 1px dashed rgba(240,168,48,0.4); background: rgba(240,168,48,0.06); color: var(--luz); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          🥂 ¿Cómo vibró tu noche? Sellar veredicto
+        </button>
+
+        <button id="btn-done-matches" class="btn ambar" style="width: 100%; margin-top: 10px; font-size: 12px; font-weight: 700; padding: 12px;">
           Explorar Próxima Cartelera de Eventos
         </button>
       </div>
     `;
+
+    document.getElementById('btn-open-satisfaction')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('satisfaction:open'));
+    });
 
     // Abrir mensaje confidencial con protocolo Misión Imposible
     document.getElementById('btn-open-confidential-chat')?.addEventListener('click', () => {
@@ -1444,17 +1457,17 @@ class ClientAppService {
     const text = input.value.trim();
     if (!text) return;
 
-    // Filtro estricto anti-contacto (Teléfonos, WhatsApp, @handle, direcciones)
-    const restrictedRegex = /(whatsapp|wa\.me|\b\d{7,13}\b|@[\w.]+|instagram|calle|carrera|cra\.|cll\.|casa|direcci[oó]n|telefono|teléfono|celular|cel\b)/i;
+    // Filtro estricto anti-contacto mediante PrivacyPolicy (Teléfonos, WhatsApp, @handle, redes, direcciones)
+    const check = PrivacyPolicy.detectProhibitedContact(text);
 
-    if (restrictedRegex.test(text)) {
+    if (check.prohibited) {
       if (warning) {
         warning.style.display = 'block';
         setTimeout(() => { warning.style.display = 'none'; }, 4000);
       }
       RondaDialog.alert({
         title: 'Violación de Privacidad',
-        message: '⚠️ Está estrictamente prohibido compartir números de teléfono, WhatsApp, redes sociales o direcciones en este chat. El sistema protege tu privacidad y la de la otra persona. Coordinen su segunda cita únicamente en locales asociados.',
+        message: '⚠️ ' + (check.reason || 'Está estrictamente prohibido compartir números de teléfono, WhatsApp, redes sociales o direcciones en este chat.') + ' El sistema protege tu privacidad y la de la otra persona. Coordinen su segunda cita únicamente en locales asociados.',
         icon: '🛡️',
         type: 'danger'
       });
@@ -1553,6 +1566,7 @@ class ClientAppService {
         
         <div style="background: rgba(14,9,18,0.7); border: 1px solid rgba(243,237,226,0.1); border-radius: 16px; padding: 20px 16px; margin-bottom: 16px; text-align: center;">
           <h4 style="font-family: var(--font-display); font-size: 32px; color: var(--papel); margin: 0 0 4px; font-weight: 700;">${partner.name.split(' ')[0]}</h4>
+          <span class="chip verde" style="font-size: 9.5px; padding: 2px 8px; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 4px;">💼 LinkedIn Verificado</span>
           <p style="font-size: 13px; color: var(--humo); font-family: var(--font-body); margin: 0 0 16px;">${partner.age || '29'} años - mesa ${match.tableId}</p>
           
           <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-bottom: 20px;">
@@ -1615,8 +1629,7 @@ class ClientAppService {
               profession: 'Arquitecta de Interiores',
               zone: 'Zona G',
               cocktail: res.cocktailName || 'Negroni Ahumado',
-              icebreakerSummary: 'Ambos coincidieron en pasión por los viajes, arquitectura urbana y cócteles de autor.',
-              whatsappPhone: '573124567890'
+              icebreakerSummary: 'Ambos coincidieron en pasión por los viajes, arquitectura urbana y cócteles de autor.'
             }
           ]
         };
@@ -1641,6 +1654,12 @@ class ClientAppService {
         </div>
 
         ${checkInBanner}
+        
+        <div style="margin-bottom: 20px;">
+          <button id="btn-start-icebreakers" class="btn luz" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:700;">
+            <span style="font-size:20px">🍸</span> Preparar tu trago (Rompehielos)
+          </button>
+        </div>
         
         <div class="ticket-flip-container" id="ticket-flip-card">
           <div class="ticket-flip-inner">
@@ -1806,8 +1825,7 @@ class ClientAppService {
               profession: 'Arquitecta de Interiores',
               zone: 'Zona G',
               cocktail: res.cocktailName || 'Negroni Ahumado',
-              icebreakerSummary: 'Ambos coincidieron en gusto por el Negroni Ahumado, diseño urbano y viajes por Colombia.',
-              whatsappPhone: '573124567890'
+              icebreakerSummary: 'Ambos coincidieron en gusto por el Negroni Ahumado, diseño urbano y viajes por Colombia.'
             }
           ]
         };

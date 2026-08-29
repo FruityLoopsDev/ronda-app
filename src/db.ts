@@ -37,8 +37,17 @@ export interface User {
   preferredZones?: string[];
   ageRangePreference?: { min: number; max: number };
   isVerified?: boolean;
+  linkedinUrl?: string;
+  linkedinVerified?: boolean;
+  linkedinVerifiedAt?: string;
+  linkedinHeadline?: string;
+  linkedinSlug?: string;
+  profession?: string;
   safeword?: string;
   emergencyContact?: string;
+  hasTicket?: boolean;
+  checkedIn?: boolean;
+  phoneNumber?: string;
   stats?: {
     roundsPlayed?: number;
     venuesVisited?: number;
@@ -89,7 +98,6 @@ export interface User {
       zone: string;
       cocktail: string;
       icebreakerSummary: string;
-      whatsappPhone?: string;
     }[];
   };
   serviceRequests?: {
@@ -108,12 +116,13 @@ export interface Match {
   isRepeat?: boolean;
 }
 
-export interface Event {
+export interface RondaEvent {
   id: string;
   status: string;
   participants: string[];
   currentRound: number;
   activeMatches?: Match[];
+  playedPairs?: string[];
 }
 
 export interface Venue {
@@ -156,7 +165,7 @@ export class DatabaseInterface {
   isDemo: boolean;
   memoryDb: {
     users: Record<string, User>;
-    events: Record<string, Event>;
+    events: Record<string, RondaEvent>;
     venues: Record<string, Venue>;
     leads: Record<string, Lead>;
   };
@@ -203,16 +212,16 @@ export class DatabaseInterface {
   }
 
   // --- Eventos / Salas ---
-  async getEvent(eventId: string): Promise<Event | null> {
+  async getEvent(eventId: string): Promise<RondaEvent | null> {
     if (this.isDemo) {
       return this.memoryDb.events[eventId] || null;
     }
     const docRef = doc(this._getFirestore(), 'events', eventId);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? (docSnap.data() as Event) : null;
+    return docSnap.exists() ? (docSnap.data() as RondaEvent) : null;
   }
   
-  async saveEvent(event: Event): Promise<Event> {
+  async saveEvent(event: RondaEvent): Promise<RondaEvent> {
     if (this.isDemo) {
       this.memoryDb.events[event.id] = event;
       return event;
@@ -222,7 +231,7 @@ export class DatabaseInterface {
     return event;
   }
 
-  async joinEvent(eventId: string, userId: string): Promise<Event> {
+  async joinEvent(eventId: string, userId: string): Promise<RondaEvent> {
     if (this.isDemo) {
       const event = this.memoryDb.events[eventId] || { id: eventId, status: 'waiting', currentRound: 0, participants: [] };
       if (!event.participants.includes(userId)) {
@@ -257,7 +266,7 @@ export class DatabaseInterface {
     return event;
   }
 
-  async confirmarSala(eventId: string, usersConfirmed: string[]): Promise<Event | null> {
+  async confirmarSala(eventId: string, usersConfirmed: string[]): Promise<RondaEvent | null> {
     console.log(`[DB] Confirmando sala para el evento: ${eventId}...`);
     
     let event = await this.getEvent(eventId);
@@ -273,7 +282,7 @@ export class DatabaseInterface {
     return event;
   }
 
-  subscribeToEvent(eventId: string, callback: (data: Event) => void): Unsubscribe | Function {
+  subscribeToEvent(eventId: string, callback: (data: RondaEvent) => void): Unsubscribe | Function {
     if (this.isDemo) {
       setTimeout(() => {
         const event = this.memoryDb.events[eventId];
@@ -285,7 +294,7 @@ export class DatabaseInterface {
     const docRef = doc(this._getFirestore(), 'events', eventId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        callback(docSnap.data() as Event);
+        callback(docSnap.data() as RondaEvent);
       }
     }, (error) => {
       console.error("Error en suscripción de Firestore:", error);
@@ -322,6 +331,27 @@ export class DatabaseInterface {
     }
     const docRef = doc(this._getFirestore(), 'leads', leadId);
     // setDoc or updateDoc in prod
+  }
+
+  // --- Waitlist (Lista de Espera) ---
+  async saveWaitlistEntry(entry: { name: string; whatsapp: string; email: string; interestZone?: string; source?: string }): Promise<void> {
+    const data = {
+      ...entry,
+      createdAt: new Date().toISOString()
+    };
+    if (this.isDemo) {
+      console.log("[DB] Waitlist entry (Demo):", data);
+      return;
+    }
+    try {
+      const id = 'wl_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      const docRef = doc(this._getFirestore(), 'waitlist', id);
+      await setDoc(docRef, data);
+      console.log("[DB] Waitlist guardada exitosamente:", id);
+    } catch (err) {
+      console.error("[DB] Error al guardar en waitlist:", err);
+      throw err;
+    }
   }
 }
 

@@ -2,6 +2,8 @@ import { DB, User } from './db.js';
 import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
 import { RondaDialog } from './dialog.js';
+import { Verification } from './verification.js';
+import { PrivacyPolicy } from './privacy-policy.js';
 
 export class ProfileService {
   private currentUser: User | null = null;
@@ -49,12 +51,34 @@ export class ProfileService {
     const ageStr = user.age ? ` (${user.age})` : '';
     if (profileName) profileName.textContent = `${user.name || 'Sin Nombre'}${ageStr}`;
 
-    // KYC Badge
+    // KYC Badge & LinkedIn Badge
     if (kycBadge) {
       if (user.isVerified) {
         kycBadge.style.display = 'inline-flex';
       } else {
-        kycBadge.style.display = 'inline-flex'; // Default verified for MVP demo
+        kycBadge.style.display = 'none'; // solo mostrar si está verificado
+      }
+    }
+
+    const linkedinBadge = document.getElementById('profile-linkedin-badge');
+    if (linkedinBadge) {
+      if (user.linkedinVerified || user.linkedinUrl) {
+        linkedinBadge.style.display = 'inline-flex';
+      } else {
+        linkedinBadge.style.display = 'none';
+      }
+    }
+
+    const rowLinkedin = document.getElementById('profile-row-linkedin');
+    const linkLinkedin = document.getElementById('profile-linkedin-link') as HTMLAnchorElement | null;
+    if (rowLinkedin && linkLinkedin) {
+      if (user.linkedinUrl) {
+        rowLinkedin.style.display = 'flex';
+        const val = Verification.validateLinkedInUrl(user.linkedinUrl);
+        linkLinkedin.href = val.valid ? val.normalizedUrl : user.linkedinUrl;
+        linkLinkedin.textContent = val.valid ? `in/${val.slug} ↗` : 'Ver Perfil ↗';
+      } else {
+        rowLinkedin.style.display = 'none';
       }
     }
 
@@ -205,6 +229,12 @@ export class ProfileService {
       await this.saveAdvancedSettings();
     });
 
+    // Abrir Modal de Satisfacción / Veredicto de la Noche
+    document.getElementById('btn-settings-open-satisfaction')?.addEventListener('click', () => {
+      this.closeSettingsModal();
+      window.dispatchEvent(new CustomEvent('satisfaction:open'));
+    });
+
     // Botón de Cerrar Sesión dentro de Mi Perfil / Ajustes
     document.getElementById('btn-profile-logout')?.addEventListener('click', async () => {
       const confirmed = await RondaDialog.confirm({
@@ -270,6 +300,44 @@ export class ProfileService {
         }
       }
     });
+
+    // Verificación de LinkedIn en modal de edición
+    const btnVerifyEditLinkedin = document.getElementById('btn-verify-edit-linkedin');
+    btnVerifyEditLinkedin?.addEventListener('click', async () => {
+      const input = document.getElementById('edit-linkedin') as HTMLInputElement | null;
+      const status = document.getElementById('edit-linkedin-status');
+      if (!input || !status) return;
+
+      const url = input.value.trim();
+      if (!url) {
+        status.textContent = '⚠️ Ingresa tu URL de LinkedIn antes de validar.';
+        status.style.color = 'var(--vino)';
+        return;
+      }
+
+      status.textContent = '⏳ Verificando credenciales de LinkedIn...';
+      status.style.color = 'var(--luz)';
+      btnVerifyEditLinkedin.textContent = '...';
+
+      const result = await Verification.verifyLinkedInProfile(url, { name: this.currentUser?.name });
+      btnVerifyEditLinkedin.textContent = 'Validar';
+
+      if (result.success && result.data) {
+        input.value = result.data.url;
+        status.textContent = `✓ ${result.data.badge} (${result.data.headline})`;
+        status.style.color = 'var(--botella)';
+        if (this.currentUser) {
+          this.currentUser.linkedinUrl = result.data.url;
+          this.currentUser.linkedinVerified = true;
+          this.currentUser.linkedinSlug = result.data.slug;
+          this.currentUser.linkedinHeadline = result.data.headline;
+          this.currentUser.isVerified = true;
+        }
+      } else {
+        status.textContent = `✕ ${result.error || 'No se pudo verificar el perfil.'}`;
+        status.style.color = 'var(--vino)';
+      }
+    });
   }
 
   openEditModal() {
@@ -286,6 +354,17 @@ export class ProfileService {
     (document.getElementById('edit-cocktail') as HTMLInputElement).value = user.favoriteCocktail || 'Negroni Ahumado';
     (document.getElementById('edit-gender') as HTMLSelectElement).value = user.gender || 'Hombre';
     (document.getElementById('edit-orientation') as HTMLSelectElement).value = user.orientation || 'Mujeres';
+    const editLinkedin = document.getElementById('edit-linkedin') as HTMLInputElement | null;
+    const editLinkedinStatus = document.getElementById('edit-linkedin-status');
+    if (editLinkedin) editLinkedin.value = user.linkedinUrl || '';
+    if (editLinkedinStatus) {
+      if (user.linkedinVerified || user.linkedinUrl) {
+        editLinkedinStatus.textContent = `✓ Perfil Profesional Verificado ${user.linkedinHeadline ? '(' + user.linkedinHeadline + ')' : ''}`;
+        editLinkedinStatus.style.color = 'var(--botella)';
+      } else {
+        editLinkedinStatus.textContent = '';
+      }
+    }
 
     // Sync Avatar Preview in Modal
     const editImg = document.getElementById('edit-avatar-img') as HTMLImageElement;
@@ -337,8 +416,29 @@ export class ProfileService {
       const age = parseInt((document.getElementById('edit-age') as HTMLInputElement).value, 10);
       const bio = (document.getElementById('edit-bio') as HTMLTextAreaElement).value.trim();
       const favoriteCocktail = (document.getElementById('edit-cocktail') as HTMLInputElement).value.trim();
+
+      // Validación estricta anti-contacto en el perfil
+      const bioCheck = PrivacyPolicy.detectProhibitedContact(bio);
+      const nameCheck = PrivacyPolicy.detectProhibitedContact(name);
+      const cocktailCheck = PrivacyPolicy.detectProhibitedContact(favoriteCocktail);
+
+      if (bioCheck.prohibited || nameCheck.prohibited || cocktailCheck.prohibited) {
+        if (btn) {
+          btn.style.opacity = '1';
+          btn.disabled = false;
+        }
+        await RondaDialog.alert({
+          title: 'Violación de Privacidad',
+          message: '⚠️ Está estrictamente prohibido incluir números de teléfono, WhatsApp, redes sociales o datos de contacto directo en tu perfil de RONDA.',
+          icon: '🛡️',
+          type: 'danger'
+        });
+        return;
+      }
       const gender = (document.getElementById('edit-gender') as HTMLSelectElement).value;
       const orientation = (document.getElementById('edit-orientation') as HTMLSelectElement).value;
+      const linkedinInput = document.getElementById('edit-linkedin') as HTMLInputElement | null;
+      const linkedinUrl = linkedinInput ? linkedinInput.value.trim() : '';
 
       this.currentUser.name = name || this.currentUser.name;
       this.currentUser.username = username || this.currentUser.username;
@@ -347,6 +447,15 @@ export class ProfileService {
       this.currentUser.favoriteCocktail = favoriteCocktail;
       this.currentUser.gender = gender;
       this.currentUser.orientation = orientation;
+      if (linkedinUrl) {
+        const val = Verification.validateLinkedInUrl(linkedinUrl);
+        this.currentUser.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+        if (val.valid) {
+          this.currentUser.linkedinVerified = true;
+          this.currentUser.linkedinSlug = val.slug;
+          this.currentUser.isVerified = true;
+        }
+      }
 
       await DB.saveUser(this.currentUser);
       this.render();
