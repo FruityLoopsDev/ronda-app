@@ -54,11 +54,17 @@ body{
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
 }
+@keyframes breathe {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
     radial-gradient(60vw 40vw at 78% -6%, rgba(240,168,48,.16), transparent 62%),
     radial-gradient(50vw 40vw at 6% 104%, rgba(155,39,72,.20), transparent 60%);
+  animation: breathe 12s infinite ease-in-out;
 }
 .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 80px}
 
@@ -391,6 +397,59 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
+/* Animaciones de Reveal */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Micro-interacciones Hover */
+.caja, .kpi, .nodo { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.caja:hover, .nodo:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(240,168,48,0.05); }
+
+/* Dorado Sutil CTA */
+.cta-gold {
+  background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(240,168,48,0.12) 100%);
+  border: 1px solid rgba(212,175,55,0.4);
+  border-radius: var(--r); padding: 40px 20px; text-align: center;
+  box-shadow: 0 0 40px rgba(212,175,55,0.1); margin-top: 40px; margin-bottom: 20px;
+}
+.cta-gold h3 { font-family: "Bodoni Moda", serif; font-size: clamp(26px, 4vw, 32px); color: #F9E596; margin: 0 0 12px; font-weight: 700; }
+.cta-gold p { color: var(--humo); max-width: 60ch; margin: 0 auto 24px; font-size: 15px; }
+.btn-gold {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: linear-gradient(135deg, #D4AF37 0%, #F0A830 100%);
+  color: var(--tinta); font-family: "Space Grotesk", sans-serif; font-size: 15px; font-weight: 700;
+  padding: 14px 28px; border-radius: 99px; text-decoration: none;
+  box-shadow: 0 10px 20px rgba(212,175,55,0.25); transition: all 0.3s ease;
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(212,175,55,0.35); filter: brightness(1.1); }
+
+/* Sticky Footer CTA */
+.sticky-cta {
+  position: fixed; bottom: -100px; left: 0; right: 0; background: rgba(22, 16, 27, 0.9);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(212,175,55,0.25); padding: 12px 20px;
+  display: flex; justify-content: center; align-items: center; gap: 20px;
+  z-index: 999; transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+}
+.sticky-cta.visible { bottom: 0; }
+.sticky-cta p { margin: 0; font-family: "Bodoni Moda", serif; font-size: 16px; color: #F9E596; font-weight: 600; display: none; }
+@media (min-width: 600px) { .sticky-cta p { display: block; } }
+.sticky-btn {
+  background: linear-gradient(135deg, #D4AF37 0%, #F0A830 100%);
+  color: var(--tinta); padding: 10px 24px; border-radius: 99px; text-decoration: none;
+  font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 13px;
+  box-shadow: 0 4px 15px rgba(212,175,55,0.2); transition: all 0.2s;
+}
+.sticky-btn:hover { transform: scale(1.03); }
+
+/* Progress bar inside table */
+.td-bar { position: relative; z-index: 1; padding: 2px 6px; display: inline-block; border-radius: 4px; overflow: hidden; font-weight: 600; }
+.td-bar::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  background: rgba(240,168,48,0.2); z-index: -1;
+  width: var(--w, 0%);
+}
 }
 </style>
 </head>
@@ -788,12 +847,12 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
         <p class="quien">Economía de un evento</p>
         <table>
           <tr><th>Concepto</th><th>COP</th></tr>
-          <tr><td>24 entradas × $55.000</td><td>1.320.000</td></tr>
-          <tr><td>Bebidas incluidas al local (24 × $22.000)</td><td>−528.000</td></tr>
-          <tr><td>Pasarela de pago</td><td>−43.000</td></tr>
-          <tr><td>Anfitrión de sala (3 h)</td><td>−250.000</td></tr>
-          <tr><td>Material y logística</td><td>−19.000</td></tr>
-          <tr class="tot"><td>Margen de contribución</td><td>480.000</td></tr>
+          <tr><td>24 entradas × $55.000</td><td><span class="td-bar" style="--w:100%; color: var(--papel);">1.320.000</span></td></tr>
+          <tr><td>Bebidas al local</td><td><span class="td-bar" style="--w:40%; background:rgba(155,39,72,0.15); color: var(--humo);">−528.000</span></td></tr>
+          <tr><td>Pasarela de pago</td><td><span class="td-bar" style="--w:5%; background:rgba(155,39,72,0.15); color: var(--humo);">−43.000</span></td></tr>
+          <tr><td>Anfitrión (3 h)</td><td><span class="td-bar" style="--w:20%; background:rgba(155,39,72,0.15); color: var(--humo);">−250.000</span></td></tr>
+          <tr><td>Logística</td><td><span class="td-bar" style="--w:2%; background:rgba(155,39,72,0.15); color: var(--humo);">−19.000</span></td></tr>
+          <tr class="tot"><td>Margen (36%)</td><td><span class="td-bar" style="--w:36%; color: var(--luz);">480.000</span></td></tr>
         </table>
         <p style="font-size:12px;color:var(--humo);margin-top:12px">Punto muerto del evento: <b style="color:var(--papel)">16 asistentes</b>. Por debajo, se cancela.</p>
       </div>
@@ -805,9 +864,9 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
           <tr><td>Locales activos</td><td>12</td></tr>
           <tr><td>Noches por semana</td><td>3</td></tr>
           <tr><td>Eventos/semana</td><td>36</td></tr>
-          <tr><td>Contribución semanal</td><td>17.280.000</td></tr>
-          <tr><td>Estructura ciudad (mes)</td><td>−34.500.000</td></tr>
-          <tr class="tot"><td>Margen ciudad / mes</td><td>≈ 34.600.000</td></tr>
+          <tr><td>Contrib. semanal</td><td><span class="td-bar" style="--w:50%; color: var(--papel);">17.280.000</span></td></tr>
+          <tr><td>Estructura (mes)</td><td><span class="td-bar" style="--w:100%; background:rgba(155,39,72,0.15); color: var(--humo);">−34.500.000</span></td></tr>
+          <tr class="tot"><td>Margen ciudad/mes</td><td><span class="td-bar" style="--w:100%; color: var(--luz);">≈ 34.600.000</span></td></tr>
         </table>
         <p style="font-size:12px;color:var(--humo);margin-top:12px">Un anfitrión cubre 3 eventos/semana. Un city manager, 12 locales. La unidad de expansión es <b style="color:var(--papel)">el barrio, no la ciudad</b>.</p>
       </div>
@@ -854,7 +913,23 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
         </ul>
       </div>
     </div>
+
+    <!-- Llamado a la Acción -->
+    <div class="cta-gold reveal">
+      <h3>Únete a la Ronda FFF / Seed</h3>
+      <p>Buscamos $150K USD para dominar el mercado de Bogotá en 12 meses antes de expandir a Medellín y CDMX. Inversión mínima ticket de $15K USD. Cierre rápido mediante SAFE.</p>
+      <a href="https://wa.me/573000000000?text=Hola,%20quiero%20conocer%20m%C3%A1s%20sobre%20la%20ronda%20de%20inversi%C3%B3n%20de%20RONDA" target="_blank" class="btn-gold">
+        💬 Hablar con los Founders
+      </a>
+    </div>
+
   </section>
+
+  <!-- Sticky Bar -->
+  <div class="sticky-cta" id="sticky-cta">
+    <p>¿Listo para transformar la noche en Bogotá?</p>
+    <a href="https://wa.me/573000000000?text=Hola,%20quiero%20conocer%20m%C3%A1s%20sobre%20la%20ronda%20de%20inversi%C3%B3n%20de%20RONDA" target="_blank" class="sticky-btn">Contactar Founders</a>
+  </div>
 
   <footer>
     <span>RONDA · maqueta de producto y modelo · Bogotá</span>
@@ -863,6 +938,25 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 </div>
 
 <script>
+/* ---- animaciones reveal & sticky ---- */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.caja, .kpi, .nodo, .cta-gold').forEach(el => {
+  el.classList.add('reveal');
+  observer.observe(el);
+});
+
+window.addEventListener('scroll', () => {
+  const sticky = document.getElementById('sticky-cta');
+  if(window.scrollY > 500) sticky.classList.add('visible');
+  else sticky.classList.remove('visible');
+});
+
 /* ---- pestañas ---- */
 const tabs=[...document.querySelectorAll('.tab')];
 tabs.forEach(t=>t.addEventListener('click',()=>{
