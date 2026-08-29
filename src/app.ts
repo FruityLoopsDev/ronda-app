@@ -528,6 +528,63 @@ function initApp() {
     }
   });
 
+  // Generador de contraseñas seguras y toggle de visibilidad
+  const regPasswordInput = document.getElementById('reg-password') as HTMLInputElement;
+  const btnToggleRegPwd = document.getElementById('btn-toggle-reg-password');
+  const btnGenSecurePwd = document.getElementById('btn-generate-secure-password');
+  const pwdCopiedBadge = document.getElementById('reg-pwd-copied');
+
+  btnToggleRegPwd?.addEventListener('click', () => {
+    if (!regPasswordInput) return;
+    const isPassword = regPasswordInput.type === 'password';
+    regPasswordInput.type = isPassword ? 'text' : 'password';
+    btnToggleRegPwd.textContent = isPassword ? '🙈' : '👁️';
+  });
+
+  btnGenSecurePwd?.addEventListener('click', async () => {
+    if (!regPasswordInput) return;
+    
+    // Generar contraseña de alta entropía (14 caracteres)
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const numbers = '23456789';
+    const symbols = '!@#$%&*';
+    const all = upper + lower + numbers + symbols;
+
+    const getRandomChar = (charset: string) => charset[Math.floor(Math.random() * charset.length)];
+
+    let generated = [
+      getRandomChar(upper),
+      getRandomChar(lower),
+      getRandomChar(numbers),
+      getRandomChar(symbols)
+    ];
+
+    for (let i = 4; i < 14; i++) {
+      generated.push(getRandomChar(all));
+    }
+
+    // Mezclar caracteres aleatoriamente
+    const securePassword = generated.sort(() => 0.5 - Math.random()).join('');
+
+    regPasswordInput.value = securePassword;
+    regPasswordInput.type = 'text'; // Mostrar para que el usuario la vea claramente
+    if (btnToggleRegPwd) btnToggleRegPwd.textContent = '🙈';
+
+    // Copiar al portapapeles
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(securePassword);
+      }
+      if (pwdCopiedBadge) {
+        pwdCopiedBadge.style.display = 'inline';
+        setTimeout(() => { pwdCopiedBadge.style.display = 'none'; }, 3500);
+      }
+    } catch {
+      // Fallback si el portapapeles no tiene permisos
+    }
+  });
+
   document.getElementById('btn-next-step')?.addEventListener('click', () => {
     const email = (document.getElementById('reg-email') as HTMLInputElement).value;
     const password = (document.getElementById('reg-password') as HTMLInputElement).value;

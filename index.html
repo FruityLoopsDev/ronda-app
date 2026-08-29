@@ -1361,8 +1361,17 @@
         <!-- Paso 1 -->
         <div id="reg-step-1">
           <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
-          <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input">
-          <button id="btn-next-step" class="btn ambar" style="margin-top: 6px;">Continuar</button>
+          <div style="position: relative; width: 100%;">
+            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" style="padding-right: 40px; margin-bottom: 4px;">
+            <button type="button" id="btn-toggle-reg-password" style="position: absolute; right: 12px; top: 21px; transform: translateY(-50%); background: none; border: none; color: var(--humo); cursor: pointer; padding: 4px; font-size: 14px;" title="Mostrar / Ocultar contraseña">👁️</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0 10px; font-size: 11px;">
+            <button type="button" id="btn-generate-secure-password" style="background: none; border: none; color: var(--luz); cursor: pointer; padding: 0; font-family: var(--font-mono); font-size: 11px; display: inline-flex; align-items: center; gap: 4px; text-decoration: underline;">
+              ✨ Generar contraseña segura
+            </button>
+            <span id="reg-pwd-copied" style="color: #79D3AC; font-size: 10px; font-family: var(--font-mono); display: none;">✓ Copiada</span>
+          </div>
+          <button type="button" id="btn-next-step" class="btn ambar" style="margin-top: 4px; width: 100%;">Continuar</button>
         </div>
 
         <!-- Paso 2 -->
