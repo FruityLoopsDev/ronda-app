@@ -109,7 +109,11 @@ function initApp() {
     if (updateUrl) {
       const targetPath = getViewPathMapping(viewId);
       if (window.location.pathname !== targetPath) {
-        window.history.pushState({ viewId }, '', targetPath);
+        try {
+          window.history.pushState({ viewId }, '', targetPath);
+        } catch(e) {
+          console.warn('history.pushState falló (entorno local probable)', e);
+        }
       }
     }
 
