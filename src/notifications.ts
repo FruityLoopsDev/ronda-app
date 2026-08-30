@@ -58,7 +58,6 @@ class NotificationSystem {
       if (permission === 'granted') {
         const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
         const currentToken = await getToken(messaging, { 
-          vapidKey: 'BKh_3sM4v5a7i8Uu9v0_K-yK6X1P2H3F-Q4k2Z1jP5Q9M7z6-L3H4k9Z1X2_qZ3', // Optional in some cases, but best practice
           serviceWorkerRegistration: swReg
         });
         
@@ -95,6 +94,8 @@ class NotificationSystem {
 
       this.notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
       this.updateUI();
+    }, (error) => {
+      console.warn('No se pudo suscribir a notificaciones:', error.message);
     });
   }
 

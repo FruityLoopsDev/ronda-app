@@ -1227,7 +1227,7 @@ class ClientAppService {
         </p>
 
         <!-- Match Card Destacado -->
-        ${postState.matches.map((m: any) => `
+        ${(postState.matches || []).map((m: any) => `
           <div style="background: ${isLetterBurned ? 'rgba(243,237,226,.04)' : 'rgba(240,168,48,0.12)'}; border: 1.5px solid ${isLetterBurned ? 'var(--linea)' : '#d4af37'}; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
               <div>
@@ -1273,7 +1273,7 @@ class ClientAppService {
         </button>
         `}
 
-        ${postState.matches.length === 0 ? `
+        ${(!postState.matches || postState.matches.length === 0) ? `
         <button id="btn-done-matches" class="btn ambar" style="width: 100%; margin-top: 10px; font-size: 12px; font-weight: 700; padding: 12px;">
           Explorar Próxima Cartelera de Eventos
         </button>
@@ -1287,11 +1287,11 @@ class ClientAppService {
 
     // Abrir mensaje confidencial con protocolo Misión Imposible
     document.getElementById('btn-open-confidential-chat')?.addEventListener('click', () => {
-      this.triggerMissionImpossibleAutodestruction(postState.matches[0]?.name || 'tu Match');
+      this.triggerMissionImpossibleAutodestruction(postState.matches?.[0]?.name || 'tu Match');
     });
 
     document.getElementById('btn-open-active-chat')?.addEventListener('click', () => {
-      this.openTemporalChat(postState.matches[0]?.name || 'tu Match');
+      this.openTemporalChat(postState.matches?.[0]?.name || 'tu Match');
     });
 
     if (!isRevealed) {
