@@ -78,7 +78,8 @@ Llevar RONDA a **100% producción** y dejar la base de datos **purga total** (re
 ### Fase 4 — Cierre técnico de producción (parcial — Blaze bloquea functions)
 - [x] R3: `.firebaserc` con `default: ronda-uno` ✅
 - [x] R1: `scripts/build-prod.cjs` + `npm run build:prod` con `VITE_IS_DEMO=false` ✅
-- [x] R4 (parcial): rules en workflow CI (functions comentado hasta Blaze)
+- [x] R4 (parcial): CI hosting-only ✅ · **rules desplegadas manualmente** (2026-08-30, ya estaban al día) · deploy ADC desde GH runners inestable (firebase-tools#10716) → comando manual documentado en el workflow
+- [x] Fix CI: certs locales condicionales en `vite.config.ts` (build sin certs en CI) ✅
 - [x] R5 (código): `engines` de functions → Node 20 (deploy pendiente de Blaze)
 - [ ] R2: llave pública Wompi de producción + `VITE_WOMPI_PUBLIC_KEY` en CI — **bloqueado** (sin llave prod)
 - [ ] R6: `firebase functions:secrets:set` — **bloqueado** (sin Blaze)
@@ -111,4 +112,5 @@ Llevar RONDA a **100% producción** y dejar la base de datos **purga total** (re
 | 2026-08-30 | 2 | Purga total ejecutada y verificada | ✅ Firestore 6→0 docs · Auth 10→0 users · Storage sin bucket |
 | 2026-08-30 | 4 | Blindajes sin Blaze | ✅ `.firebaserc` (R3) · `build:prod` (R1) · rules en CI (R4) · engines node 20 (R5) |
 | 2026-08-30 | 3 | Bootstrap staff | ✅ superadmin cesar@ronda.uno creado (Auth + Firestore) |
-| 2026-08-30 | git | Merge feat/kyc-face-verify → main + push | ✅ `94100b3..f35a309` · CI deploy en curso (run 33283460130) |
+| 2026-08-30 | git | Merge feat/kyc-face-verify → main + push | ✅ `94100b3..f35a309` · CI deploy OK (run 33283729514) |
+| 2026-08-30 | 4 | Fixes CI | ✅ vite.config certs condicionales (a74a627) · revert rules step ADC (ca95737) · rules desplegadas manualmente |
