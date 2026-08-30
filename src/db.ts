@@ -336,15 +336,11 @@ export class DatabaseInterface {
   }
 
   // --- Waitlist (Lista de Espera) ---
-  async saveWaitlistEntry(entry: { name: string; whatsapp: string; email: string; interestZone?: string; source?: string }): Promise<void> {
+  async saveWaitlistEntry(entry: { name: string; linkedin?: string; whatsapp: string; email: string; interestZone?: string; source?: string }): Promise<void> {
     const data = {
       ...entry,
       createdAt: new Date().toISOString()
     };
-    if (this.isDemo) {
-      console.log("[DB] Waitlist entry (Demo):", data);
-      return;
-    }
     try {
       const id = 'wl_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
       const docRef = doc(this._getFirestore(), 'waitlist', id);

@@ -751,13 +751,14 @@ function initApp() {
   const btnSubmitAuthWl = document.getElementById('btn-submit-auth-waitlist');
   btnSubmitAuthWl?.addEventListener('click', async () => {
     const name = (document.getElementById('auth-wl-name') as HTMLInputElement)?.value.trim();
+    const linkedin = (document.getElementById('auth-wl-linkedin') as HTMLInputElement)?.value.trim();
     const phone = (document.getElementById('auth-wl-phone') as HTMLInputElement)?.value.trim();
     const email = (document.getElementById('auth-wl-email') as HTMLInputElement)?.value.trim();
 
-    if (!name || !phone || !email) {
+    if (!name || !linkedin || !phone || !email) {
       await RondaDialog.alert({
         title: 'Datos Requeridos',
-        message: 'Por favor ingresa tu nombre, número de WhatsApp y correo para ingresar a la lista de espera.',
+        message: 'Por favor completa todos los campos para ingresar a la lista de espera.',
         icon: '📝'
       });
       return;
@@ -770,6 +771,7 @@ function initApp() {
     try {
       await DB.saveWaitlistEntry({
         name,
+        linkedin,
         whatsapp: phone,
         email,
         source: 'app_view_auth'

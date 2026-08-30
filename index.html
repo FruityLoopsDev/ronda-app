@@ -1436,30 +1436,40 @@
     <div class="auth-card" style="margin-top: 20px;">
       
       <!-- FORM LISTA DE ESPERA (Flujo Principal) -->
-      <div id="waitlist-container">
-        <span class="live-city-tag" style="display: inline-flex; margin-bottom: 12px;"><i class="pulse-amber-dot"></i> BOGOTÁ · LISTA DE ESPERA</span>
-        <h3 style="font-family: var(--font-display); font-size: 26px; margin: 0 0 6px; color: var(--papel);">Únete a la Lista de Espera</h3>
-        <p class="detalle" style="margin-bottom: 20px; font-size: 13px; line-height: 1.4;">
-          Estamos calibrando las salas de la próxima temporada en Chapinero Alto y Zona G. Déjanos tus datos para recibir tu invitación prioritaria.
+      <div id="waitlist-container" style="text-align: left;">
+        <span class="badge luz" style="margin-bottom: 8px; text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">✦ PRÓXIMO LANZAMIENTO BOGOTÁ</span>
+        <h3 style="font-family: var(--font-serif); font-size: 24px; margin-bottom: 6px; color: var(--papel);">Lista de Espera Exclusiva</h3>
+        <p class="detalle" style="margin-bottom: 18px; font-size: 13px; color: var(--humo); line-height: 1.4;">
+          RONDA está diseñada exclusivamente para solteros profesionales de alto valor. Para garantizar la seguridad de nuestros eventos, el requisito indispensable para verificar tu identidad es contar con un perfil de LinkedIn actualizado. Déjanos tus datos para recibir tu invitación prioritaria.
         </p>
 
-        <div id="auth-waitlist-form" class="acciones" style="flex-direction: column; gap: 12px;">
-          <input type="text" id="auth-wl-name" placeholder="Nombre completo" class="ronda-input" required>
-          <input type="tel" id="auth-wl-phone" placeholder="Número de WhatsApp (+57...)" class="ronda-input" required>
-          <input type="email" id="auth-wl-email" placeholder="Correo electrónico" class="ronda-input" required>
-          <button id="btn-submit-auth-waitlist" class="btn ambar" style="margin-top: 6px; width: 100%;">
+        <div id="auth-waitlist-form" class="acciones" style="flex-direction: column; gap: 14px; text-align: left;">
+          <div>
+            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">Nombre completo</label>
+            <input type="text" id="auth-wl-name" required placeholder="Tu nombre" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">URL de tu perfil de LinkedIn</label>
+            <input type="url" id="auth-wl-linkedin" required placeholder="https://linkedin.com/in/tu-perfil" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">WhatsApp (+57...)</label>
+            <input type="tel" id="auth-wl-phone" required placeholder="Ej. 3001234567" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">Correo electrónico</label>
+            <input type="email" id="auth-wl-email" required placeholder="tu@correo.com" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
+          </div>
+          <button id="btn-submit-auth-waitlist" class="btn luz" style="width: 100%; margin-top: 6px; font-weight: 700;">
             ✨ Unirme a la Lista de Espera
           </button>
-          <span style="font-size: 10px; color: var(--humo); display: block; margin-top: 8px; text-align: center; line-height: 1.3;">
-            🔒 <b>Privacidad garantizada:</b> Tu número solo se usará para enviarte tu pase de acceso oficial. Queda estrictamente prohibido compartir números entre asistentes.
-          </span>
         </div>
 
-        <div id="auth-waitlist-success" style="display: none; background: rgba(46,107,84,0.15); border: 1px solid rgba(46,107,84,0.4); border-radius: 12px; padding: 18px 14px; text-align: center; margin-top: 14px;">
-          <div style="font-size: 32px; margin-bottom: 6px;">🥂</div>
-          <h4 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0 0 6px;">¡Estás en la Lista de Espera!</h4>
-          <p style="font-size: 12px; color: var(--humo); margin: 0; line-height: 1.4;">
-            Guardamos tu registro. Te avisaremos vía WhatsApp con acceso exclusivo y prioritario para tu primera noche.
+        <div id="auth-waitlist-success" style="display: none; background: rgba(46,107,84,0.18); border: 1px solid rgba(46,107,84,0.5); border-radius: 12px; padding: 22px 16px; text-align: center; margin-top: 14px;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🥂</div>
+          <h4 style="font-family: var(--font-serif); font-size: 20px; color: var(--papel); margin: 0 0 6px;">¡Estás en la Lista de Espera!</h4>
+          <p style="font-size: 13px; color: var(--humo); margin: 0; line-height: 1.45;">
+            Hemos registrado tus datos. Te contactaremos vía WhatsApp con la invitación anticipada y exclusiva antes de abrir la sala al público general.
           </p>
         </div>
 

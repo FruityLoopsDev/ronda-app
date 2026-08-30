@@ -328,6 +328,26 @@
       font-style: italic;
       color: var(--luz);
     }
+    .typewriter-wrap {
+      display: inline-block;
+      white-space: nowrap;
+      position: relative;
+    }
+    .typewriter-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.8em;
+      vertical-align: -0.02em;
+      background-color: var(--luz);
+      margin-left: 5px;
+      box-shadow: 0 0 12px var(--luz-glow), 0 0 20px var(--luz);
+      border-radius: 2px;
+      animation: blinkCursor 0.85s infinite ease-in-out;
+    }
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0; transform: scaleY(0.8); }
+    }
 
     .hero-sub {
       font-size: clamp(16px, 2.3vw, 21px);
@@ -985,7 +1005,7 @@
       <div class="hero-pre">
         <span class="badge luz">✦ Solteros Profesionales de Alto Valor · Bogotá</span>
       </div>
-      <h1 class="hero-title">Una copa, nueve historias, <em>una noche.</em></h1>
+      <h1 class="hero-title" aria-label="Una copa, nueve historias, una noche.">Una copa, nueve historias, <span class="typewriter-wrap"><em id="typewriter-target">una noche.</em><span class="typewriter-cursor" aria-hidden="true"></span></span></h1>
       <p class="hero-sub">
         9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, <b>solteros profesionales verificados con LinkedIn</b> y una campana que marca el ritmo. Sin pantallas, sin chats eternos y sin <i>ghosting</i>.
       </p>
@@ -1345,7 +1365,7 @@
   <div id="waitlist-modal" class="modal-backdrop">
     <div class="modal-card">
       <button class="modal-close" onclick="closeWaitlist()">✕</button>
-      <span class="badge luz" style="margin-bottom: 8px;">✦ Próximo Lanzamiento Bogotá</span>
+      <span class="badge luz" style="margin-bottom: 8px; text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">✦ PRÓXIMO LANZAMIENTO BOGOTÁ</span>
       <h3 style="font-family: var(--font-serif); font-size: 24px; margin-bottom: 6px;">Lista de Espera Exclusiva</h3>
       <p id="wl-modal-desc" style="font-size: 13px; color: var(--humo); margin-bottom: 18px; line-height: 1.4;">
         RONDA está diseñada exclusivamente para solteros profesionales de alto valor. Para garantizar la seguridad de nuestros eventos, el requisito indispensable para verificar tu identidad es contar con un perfil de LinkedIn actualizado. Déjanos tus datos para recibir tu invitación prioritaria.
@@ -1496,6 +1516,52 @@
           }
         });
       });
+
+      // Typewriter Effect para el Hero
+      const typewriterEl = document.getElementById('typewriter-target');
+      if (typewriterEl) {
+        const phrases = [
+          "una noche.",
+          "cero pantallas.",
+          "cero ghosting.",
+          "pura química.",
+          "conexiones reales."
+        ];
+        let phraseIndex = 0;
+        let charIndex = phrases[0].length;
+        let isDeleting = false;
+        let typingSpeed = 95;
+
+        function typeLoop() {
+          const currentPhrase = phrases[phraseIndex];
+
+          if (isDeleting) {
+            charIndex--;
+            typewriterEl.textContent = currentPhrase.substring(0, charIndex);
+            typingSpeed = 50;
+          } else {
+            charIndex++;
+            typewriterEl.textContent = currentPhrase.substring(0, charIndex);
+            typingSpeed = 90 + Math.random() * 30;
+          }
+
+          if (!isDeleting && charIndex === currentPhrase.length) {
+            // Pausa al terminar de escribir la frase
+            typingSpeed = 2300;
+            isDeleting = true;
+          } else if (isDeleting && charIndex === 0) {
+            // Cambiar a la siguiente frase
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            typingSpeed = 400;
+          }
+
+          setTimeout(typeLoop, typingSpeed);
+        }
+
+        // Iniciar ciclo tras una pequeña pausa inicial
+        setTimeout(typeLoop, 2000);
+      }
     });
 
     function toggleMenu() {
