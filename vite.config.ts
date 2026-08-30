@@ -1,6 +1,12 @@
 import { resolve } from 'path'
-import { readFileSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { defineConfig } from 'vite'
+
+// Certs locales (gitignored): solo existen en la máquina de desarrollo.
+// En CI no hay certs, así que el HTTPS del preview se activa solo si existen.
+const certKey = resolve(__dirname, 'certs/key.pem');
+const certPem = resolve(__dirname, 'certs/cert.pem');
+const hasCerts = existsSync(certKey) && existsSync(certPem);
 
 export default defineConfig({
   server: {
@@ -18,10 +24,12 @@ export default defineConfig({
     port: 5000,
     // HTTPS local con certificado autofirmado: necesario para que getUserMedia
     // (cámara) funcione en el móvil fuera de localhost.
-    https: {
-      key: readFileSync(resolve(__dirname, 'certs/key.pem')),
-      cert: readFileSync(resolve(__dirname, 'certs/cert.pem')),
-    },
+    ...(hasCerts ? {
+      https: {
+        key: readFileSync(certKey),
+        cert: readFileSync(certPem),
+      },
+    } : {}),
   },
   build: {
     rollupOptions: {

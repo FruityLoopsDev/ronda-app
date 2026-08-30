@@ -70,9 +70,10 @@ Llevar RONDA a **100% producción** y dejar la base de datos **purga total** (re
   - [x] Re-auditar: **0 docs, 0 users** (verificado con `backup-db.cjs` + `firebase auth:export`)
 - [x] Storage: bucket NO existe (404) → sin datos
 
-### Fase 3 — Reforestación mínima (bootstrap) ⏳ EN CURSO (requiere email del dueño)
-- [ ] Crear cuentas reales del staff (`superadmin`, `admin`) — pendiente email/contraseña
-- [ ] Smoke test de login del staff en producción
+### Fase 3 — Reforestación mínima (bootstrap) ✅ COMPLETADA (2026-08-30)
+- [x] Cuenta staff creada: **cesar@ronda.uno** (superadmin) — Auth UID `hVX2RL2xJhRFurJJsAgdyVIaDT53` + perfil en `users/{uid}` con `role: superadmin`
+- [x] Credenciales guardadas en `backups/staff-cesar-credentials.txt` (gitignored) — cambiar contraseña tras primer login
+- [ ] Smoke test de login del staff en producción (pendiente: requiere abrir la app; sugerido en Fase 5)
 
 ### Fase 4 — Cierre técnico de producción (parcial — Blaze bloquea functions)
 - [x] R3: `.firebaserc` con `default: ronda-uno` ✅
@@ -109,3 +110,5 @@ Llevar RONDA a **100% producción** y dejar la base de datos **purga total** (re
 | 2026-08-30 | 0/1 | Creación del plan + auditoría + backup | ✅ `docs/plan-produccion.md` · `scripts/backup-db.cjs` · `backups/2026-08-30T00-09-04-453Z/` · `backups/auth-users.json` |
 | 2026-08-30 | 2 | Purga total ejecutada y verificada | ✅ Firestore 6→0 docs · Auth 10→0 users · Storage sin bucket |
 | 2026-08-30 | 4 | Blindajes sin Blaze | ✅ `.firebaserc` (R3) · `build:prod` (R1) · rules en CI (R4) · engines node 20 (R5) |
+| 2026-08-30 | 3 | Bootstrap staff | ✅ superadmin cesar@ronda.uno creado (Auth + Firestore) |
+| 2026-08-30 | git | Merge feat/kyc-face-verify → main + push | ✅ `94100b3..f35a309` · CI deploy en curso (run 33283460130) |
