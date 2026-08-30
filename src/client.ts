@@ -3,7 +3,7 @@ import { Auth } from './auth.js';
 import { OfflineSync } from './offline-sync.js';
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 import { RondaDialog } from './dialog.js';
-import { Wompi } from './wompi.js';
+import { Payment } from './payment.js';
 import { PrivacyPolicy } from './privacy-policy.js';
 import notifications from './notifications.js';
 
@@ -886,9 +886,9 @@ class ClientAppService {
     }
 
     try {
-      // Si el usuario no tiene ticket comprado, procesar el pago vía Wompi
-      if (!user.hasTicket) {
-        const paymentSuccess = await Wompi.openCheckout({
+      // Si el usuario no tiene ticket, procesar el pago vía enlace de Nequi
+      if (!user.hasTicket && !user.paymentPending) {
+        const paymentSuccess = await Payment.openCheckout({
           eventId: evt.id,
           venueName: evt.venueName,
           amountInCents: (evt.price || 65000) * 100,

@@ -62,10 +62,10 @@ export class SuperAdminController {
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px; background: rgba(243,237,226,0.03); padding: 12px; border-radius: 10px; border: 1px solid var(--linea);">
-              <span style="font-size: 20px;">💳</span>
+              <span style="font-size: 20px;">💚</span>
               <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Pasarela Wompi</b>
-                <span style="font-size: 10px; color: var(--botella); font-family: var(--font-mono);">● Webhooks Activos</span>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Pagos Nequi</b>
+                <span style="font-size: 10px; color: var(--botella); font-family: var(--font-mono);">● Enlace de cobro · verificación manual</span>
               </div>
             </div>
 

@@ -446,14 +446,12 @@ function initApp() {
           return;
         }
 
-        if (!user.hasTicket && !RondaConfig.isDemo) {
-          // Mostrar widget de pago Wompi si no tiene ticket
-          const wompiContainer = document.getElementById('wompi-container');
-          if (wompiContainer) wompiContainer.style.display = 'block';
+        if (!user.hasTicket && !user.paymentPending && !RondaConfig.isDemo) {
+          // Sin pase: bloquear el ingreso hasta pagar con Nequi (verificación manual)
           btnJoinEvent.style.display = 'none';
           const codeInput = document.getElementById('event-code') as HTMLInputElement;
           if (codeInput) codeInput.disabled = true;
-          alert("Debes adquirir tu pase para ingresar a esta sala. Procesa el pago con Wompi abajo.");
+          alert("Debes adquirir tu pase para ingresar a esta sala. Realiza el pago con Nequi desde la cartelera de eventos.");
           return;
         }
 
@@ -469,10 +467,8 @@ function initApp() {
         console.error("Error uniéndose al evento:", err);
         alert("Error al unirse: " + err.message);
       } finally {
-        if (!document.getElementById('wompi-container') || document.getElementById('wompi-container').style.display !== 'block') {
-          btnJoinEvent.textContent = "Unirse a la Ronda";
-          btnJoinEvent.disabled = false;
-        }
+        btnJoinEvent.textContent = "Unirse a la Ronda";
+        btnJoinEvent.disabled = false;
       }
     });
   }

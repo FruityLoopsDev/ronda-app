@@ -46,6 +46,8 @@ export interface User {
   safeword?: string;
   emergencyContact?: string;
   hasTicket?: boolean;
+  paymentPending?: boolean;  // Pago Nequi realizado, pendiente de verificación manual del anfitrión
+  paymentMethod?: string;    // 'nequi'
   checkedIn?: boolean;
   phoneNumber?: string;
   stats?: {

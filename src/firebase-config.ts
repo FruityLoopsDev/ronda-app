@@ -5,7 +5,7 @@ import { getMessaging } from "firebase/messaging";
 
 export const RondaConfig = {
   // Modo demo SOLO en local. En producción (CI/lanzamiento) se define VITE_IS_DEMO=false:
-  // la app usa Firestore real y el checkout real de Wompi en lugar de la BD en memoria.
+  // la app usa Firestore real y el pago real vía enlace Nequi en lugar de la BD en memoria.
   isDemo: (import.meta as any).env?.VITE_IS_DEMO !== 'false',
   // false = la verificación KYC corre el flujo REAL (cámara + rostro + OCR).
   // El modo demo sigue activo para la base de datos en memoria (DB.memoryDb).
