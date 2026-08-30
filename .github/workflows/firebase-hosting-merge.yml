@@ -26,3 +26,10 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RONDA_UNO }}
           channelId: live
           projectId: ronda-uno
+      # Reglas de Firestore: se despliegan junto con el hosting (R4).
+      # NOTA: funciones (functions/) requieren plan Blaze (billing) y se
+      # despliegan manualmente hasta activarlo: firebase deploy --only functions --project ronda-uno
+      - name: Deploy Firestore rules
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RONDA_UNO }}" > /tmp/sa-ronda-uno.json
+          GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa-ronda-uno.json npx firebase-tools deploy --only firestore:rules --project ronda-uno --non-interactive

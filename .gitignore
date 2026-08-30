@@ -42,3 +42,6 @@ certs/
 # Logs (pueden contener datos sensibles del emulador)
 *.log
 firestore-debug.log
+
+# Backups y auditorías locales (contienen PII; nunca subir a git)
+backups/

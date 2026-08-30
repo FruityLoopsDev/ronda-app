@@ -1,1 +1,1 @@
-{"name":"ronda-functions","description":"Firebase Functions for RONDA","engines":{"node":"16"},"main":"index.js","dependencies":{"firebase-admin":"^11.11.0","firebase-functions":"^4.3.1","ethers":"^5.7.2"},"devDependencies":{"firebase-functions-test":"^3.1.0"}}
+{"name":"ronda-functions","description":"Firebase Functions for RONDA","engines":{"node":"20"},"main":"index.js","dependencies":{"firebase-admin":"^11.11.0","firebase-functions":"^4.3.1","ethers":"^5.7.2"},"devDependencies":{"firebase-functions-test":"^3.1.0"}}
