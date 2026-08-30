@@ -133,6 +133,9 @@ export class Satisfaction {
 
       this.close();
 
+      const openBtn = document.getElementById('btn-open-satisfaction');
+      if (openBtn) openBtn.style.display = 'none';
+
       await RondaDialog.alert({
         title: '¡Brindis Registrado!',
         message: '✨ Gracias por transmitirnos tu entusiasmo. Tu testimonio ayuda a que cada noche RONDA en Bogotá sea memorable.',

@@ -12,6 +12,7 @@ import { CRM } from './crm.js';
 import { SuperAdmin } from './superadmin.js';
 import { Icebreakers } from './icebreakers.js';
 import { Satisfaction } from './satisfaction.js';
+import notifications from './notifications.js';
 // app.js: Orquestador principal de la vista y eventos de RONDA
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
@@ -21,6 +22,7 @@ if (document.readyState === 'loading') {
 
 function initApp() {
   console.log("Inicializando App RONDA...");
+  notifications.init();
   
   // Connection Indicator Logic
   const offlineInd = document.getElementById('offline-indicator');
@@ -190,12 +192,19 @@ function initApp() {
         : `<span>${initials}</span>`;
 
       userMenu.innerHTML = `
+        <div class="notification-bell" id="btn-notifications" title="Notificaciones">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span class="notification-badge" id="notification-badge" style="display:none;">0</span>
+        </div>
         <div class="user-badge" id="btn-open-profile" title="Mi perfil" aria-label="Abrir perfil">
           <div class="user-badge-avatar">
             ${avatarContent}
           </div>
         </div>
       `;
+      document.getElementById('btn-notifications')?.addEventListener('click', () => {
+        if((window as any).Notifications) (window as any).Notifications.togglePanel();
+      });
       document.getElementById('btn-open-profile')?.addEventListener('click', () => {
         if (Auth.currentUser) {
           Profile.setCurrentUser(Auth.currentUser);

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400;1,600&amp;family=Space+Grotesk:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="./doc-page.js"></script>
+  <style id="__om-edit-overrides">
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    a { color: #F0A830; }
+    a:hover { color: #d99522; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; vertical-align: top; }
+  </style>
+</helmet>
+
+<doc-page margin="0">
+
+<section style="background:#16101B; padding:2.6in 1in 2in; text-align:center;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:rgba(243,237,226,.62); margin-bottom:28px;">Bogotá 2026 · Documento maestro de marca</div>
+  <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:96px; letter-spacing:.13em; color:#F3EDE2; line-height:1;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#F0A830; margin-top:22px;">Sistema de marca v2.0</div>
+  <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:22px; color:#F3EDE2; max-width:5.6in; margin:64px auto 0; line-height:1.5;">"RONDA le compra a un bar su peor noche a precio cerrado y se la devuelve llena, asumiendo el riesgo de llenarla."</div>
+</section>
+
+<div style="background:#F3EDE2; color:#1B1520;">
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">ÍNDICE</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 24px;">Qué contiene este documento</h1>
+  <div style="display:grid; grid-template-columns:1fr; gap:0; font-family:'Space Grotesk',sans-serif; font-size:14.5px;">
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">00</span><span style="flex:1;">El núcleo del negocio</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Hueco, riesgo, activo y las reglas que se deducen</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">01</span><span style="flex:1;">Marca</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Logotipo y usos prohibidos</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">02</span><span style="flex:1;">Color</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Nueve tonos y el mando del ámbar</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">03</span><span style="flex:1;">Tipografía</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Tres voces, tres materiales</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">04</span><span style="flex:1;">Componentes</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Inventario base y radios</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">05</span><span style="flex:1;">Voz y tono</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Cuatro pilares con ejemplos</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">06</span><span style="flex:1;">Tokens</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">CSS y fuentes</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">07</span><span style="flex:1;">Landing page</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Estructura y reglas de conversión</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">08</span><span style="flex:1;">Los cuatro paneles</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Cliente, local, red y dirección</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">09</span><span style="flex:1;">Posicionamiento</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Cuatro fases y checklist</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">10</span><span style="flex:1;">Redes sociales</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Instagram, LinkedIn y el perfil</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">11</span><span style="flex:1;">Imágenes fotorealistas</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Prompting avanzado y formato vertical</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">12</span><span style="flex:1;">Sonido y movimiento</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">La firma sensorial de la ronda</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">13</span><span style="flex:1;">Guion del anfitrión</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Lo que se dice en voz alta en la sala</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">14</span><span style="flex:1;">La marca en fricción</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Cancelaciones, no-shows y reportes</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">15</span><span style="flex:1;">Accesibilidad</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Contraste y tamaño mínimo real</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">16</span><span style="flex:1;">Variante papel</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Facturas, contratos y email transaccional</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">17</span><span style="flex:1;">Arquitectura de marca</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Naming de las líneas de negocio</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">18</span><span style="flex:1;">Gobierno del sistema</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Dueño, versión y plantillas</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">19</span><span style="flex:1;">Marca legible por máquina</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Datos estructurados para asistentes IA</span></div>
+    <div style="display:flex; gap:16px; padding:11px 0; border-bottom:1px solid rgba(27,21,32,.12);"><span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#F0A830; width:28px;">20</span><span style="flex:1;">Handoff a desarrollo</span><span style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.6);">Estados, espaciado y assets exportables</span></div>
+  </div>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; color:rgba(27,21,32,.7); margin-top:24px;">Este documento es el contrato visual y verbal de RONDA. Toda pieza —de la comanda impresa al post de LinkedIn— se aprueba contra el checklist de la sección 09.</p>
+</section>
+
+
+<section style="padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">00</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">El núcleo del negocio</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:15px; line-height:1.7; margin:0 0 16px;">Es tentador decir que el core es "citas rápidas" o "conocer gente real". No lo es: eso es el producto que compra el usuario, no el negocio. Tres pruebas lo confirman:</p>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; padding-left:20px;">
+    <li><b>¿Quién tiene el problema caro?</b> El bar factura el 70% en tres días y paga costos fijos los siete.</li>
+    <li><b>¿Qué es difícil de copiar?</b> Una red de demanda verificada por barrio capaz de garantizar 24 personas equilibradas un martes.</li>
+    <li><b>¿Qué pasa si el formato cambia?</b> El hueco es el core; el formato es reemplazable.</li>
+  </ul>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px; break-inside:avoid;">
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; padding:18px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#9B2748; margin-bottom:8px;">1 · El hueco</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.6;">Martes a jueves un bar opera al 20–30% con el 100% de sus costos fijos. Inventario perecedero que nadie compraba.</div>
+    </div>
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; padding:18px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#9B2748; margin-bottom:8px;">2 · El riesgo</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.6;">El bar cobra por consumición servida. RONDA asume el riesgo de llenar — de "publicidad" incierta a "sala llena garantizada".</div>
+    </div>
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; padding:18px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#9B2748; margin-bottom:8px;">3 · El activo</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.6;">Audiencia de solteros verificados por barrio, edad y consumo real. Se monetiza cuatro veces sin gastarse.</div>
+    </div>
+  </div>
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:19px; margin:0 0 12px;">Para quién</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 12px;">Ejecutivo de alto valor: 28–49 años, ingreso alto, agenda apretada — Zona G, Quinta Camacho, Chapinero Alto, Parque 93, Usaquén. No buscan lo más barato: buscan que su martes valga la pena.</p>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; padding-left:20px;">
+    <li>El precio no es la palanca de venta — el dinámico equilibra la sala, no compite por barato.</li>
+    <li>La curaduría es el producto: cédula, tramo de edad, bar y anfitrión.</li>
+    <li>El acabado importa tanto como la función, en todo punto de contacto.</li>
+  </ul>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px;">El formato cierra en el <b>-25% para volver</b> ese mismo local de martes a jueves. Métrica dedicada: <i>citas de vuelta por evento</i> ≥ 18%.</p>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:13px; margin-top:8px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 12px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;">Regla</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;">De dónde sale</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:10px 12px 10px 0;">Solo martes a jueves</td><td style="padding:10px 0;">Es el hueco. Un viernes lleno no necesita a RONDA.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:10px 12px 10px 0;">Ratio máx. 1,2:1, mín. 9+9</td><td style="padding:10px 0;">Sin equilibrio la sala se rompe.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:10px 12px 10px 0;">Cancelar bajo 16 asistentes</td><td style="padding:10px 0;">Perder margen es más barato que quemar credibilidad.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:10px 12px 10px 0;">Precio asimétrico por escasez</td><td style="padding:10px 0;">El precio equilibra la sala, no la publicidad.</td></tr>
+      <tr><td style="padding:10px 12px 10px 0;">Densidad antes que cobertura</td><td style="padding:10px 0;">El equilibrio de lados solo se sostiene con masa local.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">01</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">Marca</h1>
+  <div style="background:#16101B; border-radius:8px; padding:56px 0; text-align:center; margin-bottom:24px;">
+    <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:64px; letter-spacing:.13em; color:#F3EDE2;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+  </div>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 16px;">El logotipo se escribe siempre en versalitas espaciadas, con la <b>O central en cursiva ámbar</b>: el gesto que representa la rotación — la única letra que gira. No existe versión sin esa O destacada.</p>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; padding-left:20px;">
+    <li>Espacio de resguardo mínimo: la altura de la R a cada lado.</li>
+    <li>Versión oficial: ámbar <code style="font-family:'JetBrains Mono',monospace;">#F0A830</code> sobre fondo noche o barra.</li>
+    <li>Sobre papel (comandas, impresos): tinta sólida, sin color; la O sigue en cursiva.</li>
+  </ul>
+  <div style="background:#fff; border-left:3px solid #9B2748; padding:16px 20px; font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; break-inside:avoid;">
+    <b>No</b> se traduce · <b>no</b> se abrevia ("RND") · <b>no</b> se le agregan corazones ni chispas · <b>no</b> se estira ni se le aplican sombras o degradados.
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">02</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Color</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; margin:0 0 24px; color:rgba(27,21,32,.7);">Nueve tonos, no cincuenta. Cada uno describe un objeto físico del evento.</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:28px;">
+    <div style="break-inside:avoid;"><div style="background:#16101B; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--noche · #16101B</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Fondo principal</div></div>
+    <div style="break-inside:avoid;"><div style="background:#221826; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--barra · #221826</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Tarjetas, paneles</div></div>
+    <div style="break-inside:avoid;"><div style="background:#2C2033; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--barra-alta · #2C2033</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Superficie elevada, hover</div></div>
+    <div style="break-inside:avoid;"><div style="background:#F0A830; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--luz · #F0A830</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Acento único, CTA</div></div>
+    <div style="break-inside:avoid;"><div style="background:#2E6B54; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--botella · #2E6B54</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Confirmado, equilibrado</div></div>
+    <div style="break-inside:avoid;"><div style="background:#9B2748; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--vino · #9B2748</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Alerta, riesgo</div></div>
+    <div style="break-inside:avoid;"><div style="background:#16101B; height:64px; border-radius:6px; padding:10px; box-sizing:border-box;"><div style="background:#F3EDE2; height:100%; border-radius:3px;"></div></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--papel · #F3EDE2</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Texto sobre oscuro / papel</div></div>
+    <div style="break-inside:avoid;"><div style="background:#1B1520; height:64px; border-radius:6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--tinta · #1B1520</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Texto sobre papel</div></div>
+    <div style="break-inside:avoid;"><div style="background:#16101B; height:64px; border-radius:6px; padding:10px; box-sizing:border-box;"><div style="background:rgba(243,237,226,.62); height:100%; border-radius:3px;"></div></div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;">--humo · rgba(243,237,226,.62)</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(27,21,32,.65);">Texto secundario</div></div>
+  </div>
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 10px;">Color de estado (chips)</h2>
+  <div style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
+    <span style="background:#2E6B54; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:11px; padding:6px 14px; border-radius:20px;">equilibrado</span>
+    <span style="background:#F0A830; color:#16101B; font-family:'JetBrains Mono',monospace; font-size:11px; padding:6px 14px; border-radius:20px;">en riesgo, con salida</span>
+    <span style="background:#9B2748; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:11px; padding:6px 14px; border-radius:20px;">bloqueo / penalización</span>
+    <span style="background:rgba(27,21,32,.12); color:#1B1520; font-family:'JetBrains Mono',monospace; font-size:11px; padding:6px 14px; border-radius:20px;">neutro / inactivo</span>
+  </div>
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 10px;">Cómo se usa el ámbar</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 12px;">Es la luz de la barra: se usa a discreción, según el efecto visual que se quiera enfocar. Lo que no se negocia es la <b>jerarquía</b> — si todo brilla, nada brilla.</p>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0; padding-left:20px;">
+    <li>El CTA primario siempre es ámbar sólido.</li>
+    <li>En estado de sistema, el ámbar es dato ("en riesgo con salida"), no decisión estética.</li>
+  </ul>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">03</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">Tipografía</h1>
+  <div style="margin-bottom:24px; break-inside:avoid;">
+    <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:44px;">Bodoni Moda</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:rgba(27,21,32,.65); margin-top:6px;">Voz del local — logotipo, títulos, número de mesa · pesos 400 / 600 / 800 + cursiva</div>
+  </div>
+  <div style="margin-bottom:24px; break-inside:avoid;">
+    <div style="font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:30px;">Space Grotesk</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:rgba(27,21,32,.65); margin-top:6px;">Voz de la app — cuerpo, botones, descripciones · pesos 400 / 500 / 700</div>
+  </div>
+  <div style="margin-bottom:28px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:26px;">JetBrains Mono</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:rgba(27,21,32,.65); margin-top:6px;">Voz de la comanda — precios, horarios, eyebrows · pesos 400 / 700</div>
+  </div>
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 10px;">Escala</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.9; margin:0 0 20px;">Logotipo 44–108px (.13em) · título de sección 24–34px · nombre de local 17–52px · cuerpo 14–15.5px · botón 13–14px · eyebrow 9.5–11px (.14–.22em) · precio 17–27px.</p>
+  <div style="background:#fff; border-radius:8px; padding:18px 22px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-variant-numeric:tabular-nums;">$45.000</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-variant-numeric:tabular-nums; margin-top:4px;">$1.190.000</div>
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.65); margin-top:10px;">Siempre en JetBrains Mono, COP, punto como separador de miles. Nunca decimales. Columnas con <code style="font-family:'JetBrains Mono',monospace;">tabular-nums</code>.</div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">04</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 16px;">Componentes</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px;">Cada componente imita algo tangible de una noche RONDA. Radio estándar: <b>14px</b> en tarjetas, <b>8px</b> en objetos de papel.</p>
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+    <span style="background:#fff; border:1px solid rgba(27,21,32,.15); border-radius:14px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">Pestañas de navegación</span>
+    <span style="background:#fff; border:1px solid rgba(27,21,32,.15); border-radius:14px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">Tarjeta de noche (franja de estado)</span>
+    <span style="background:#fff; border:1px dashed rgba(27,21,32,.3); border-radius:8px; padding:8px 16px; font-family:'JetBrains Mono',monospace; font-size:13px;">Comanda de papel</span>
+    <span style="background:#fff; border:1px solid rgba(27,21,32,.15); border-radius:14px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">KPI de panel local</span>
+    <span style="background:#fff; border:1px solid rgba(27,21,32,.15); border-radius:14px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">Cronómetro de ronda</span>
+    <span style="background:#fff; border:1px solid rgba(27,21,32,.15); border-radius:14px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">Mapa de mesas</span>
+    <span style="background:#2E6B54; color:#F3EDE2; border-radius:14px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">Botón de voto — Sí</span>
+    <span style="background:#fff; border:1px dashed rgba(27,21,32,.3); border-radius:8px; padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:13px;">Aviso de borde punteado</span>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">05</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">Voz y tono</h1>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px;">
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">Directa</b><div style="font-family:'Space Grotesk',sans-serif; font-size:13px; color:rgba(27,21,32,.7); margin-top:4px;">El precio, la hora y la regla, sin rodeos.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">Irónica, no sarcástica</b><div style="font-family:'Space Grotesk',sans-serif; font-size:13px; color:rgba(27,21,32,.7); margin-top:4px;">Se ríe de las apps, nunca del usuario.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">Confiable</b><div style="font-family:'Space Grotesk',sans-serif; font-size:13px; color:rgba(27,21,32,.7); margin-top:4px;">Regla y consecuencia en la misma frase.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">Sin guion corporativo</b></div>
+  </div>
+  <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; font-family:'Space Grotesk',sans-serif; font-size:14px;"><span style="color:#2E6B54; font-weight:700;">✓</span><span>"Cansado de las apps? Ven a un bar con gente real."</span></div>
+  <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; font-family:'Space Grotesk',sans-serif; font-size:14px;"><span style="color:#2E6B54; font-weight:700;">✓</span><span>"No aparecer sin avisar: pierdes la entrada y 1 strike."</span></div>
+  <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; font-family:'Space Grotesk',sans-serif; font-size:14px;"><span style="color:#9B2748; font-weight:700;">✕</span><span>"¡Descubre el amor de tu vida en nuestra innovadora plataforma!"</span></div>
+  <div style="display:flex; gap:10px; align-items:flex-start; font-family:'Space Grotesk',sans-serif; font-size:14px;"><span style="color:#9B2748; font-weight:700;">✕</span><span>"Lamentamos informarte que tu inasistencia ha generado una penalización."</span></div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">06</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">Tokens</h1>
+  <pre style="background:#16101B; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8; padding:24px; border-radius:8px; overflow-x:auto; break-inside:avoid;">--noche:#16101B; --barra:#221826; --barra-alta:#2C2033;
+--luz:#F0A830; --botella:#2E6B54; --vino:#9B2748;
+--papel:#F3EDE2; --tinta:#1B1520;
+--humo:rgba(243,237,226,.62); --linea:rgba(243,237,226,.14);
+--r:14px; --r-lg:20px;</pre>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; color:rgba(27,21,32,.7); margin-top:16px;">Google Fonts: Bodoni+Moda · Space+Grotesk:wght@400;500;700 · JetBrains+Mono:wght@400;700</p>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">07</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Landing page</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; color:rgba(27,21,32,.7);">Una página, dos públicos, una sola promesa. El hero habla al usuario (quien paga y comparte el enlace); el bloque B2B aparece a mitad de página, cuando ya se entendió qué es una noche RONDA.</p>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; background:#fff; border-radius:8px; padding:16px 20px; margin-bottom:24px; line-height:2;">
+    nav → hero (claim + precio) → tira de datos → tres pasos → split usuario/bar → prueba social → CTA de cierre
+  </div>
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 10px;">Reglas de conversión</h2>
+  <ol style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.8; margin:0 0 8px; padding-left:20px;">
+    <li>Escasez real, nunca inventada. Si decimos "faltan 3" es porque faltan 3.</li>
+    <li>Precio siempre visible junto al CTA. El pricing dinámico se explica en la misma línea.</li>
+    <li>Seguridad por encima del pliegue móvil: la primera objeción no es el precio, es "¿con quién me voy a sentar?".</li>
+    <li>Un solo CTA primario por pantalla — ámbar sólido; el bloque B2B usa outline.</li>
+    <li>Prueba social con números de bar, no testimonios genéricos.</li>
+    <li>Móvil primero de verdad: el hero completo cabe sin scroll en un iPhone SE.</li>
+  </ol>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:21px; margin:0 0 6px;">7.1 · Ejemplo visual completo</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 24px; color:rgba(27,21,32,.7);">La página construida a escala móvil — el tamaño en que la mayoría de este público la abre camino a una reunión. De arriba a abajo: nav, hero, tira de datos, tres pasos, split usuario/bar, prueba social y cierre.</p>
+
+  <div style="max-width:340px; margin:0 auto; break-inside:avoid;">
+    <div style="background:#16101B; border-radius:34px; padding:10px; box-shadow:0 24px 48px rgba(0,0,0,.25);">
+      <div style="background:#16101B; border-radius:26px; overflow:hidden;">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 18px 10px;">
+          <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:16px; letter-spacing:.13em; color:#F3EDE2;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+          <div style="display:flex; gap:4px;"><span style="width:4px; height:4px; background:rgba(243,237,226,.5); border-radius:50%;"></span><span style="width:4px; height:4px; background:rgba(243,237,226,.5); border-radius:50%;"></span><span style="width:4px; height:4px; background:rgba(243,237,226,.5); border-radius:50%;"></span></div>
+        </div>
+
+        <div style="padding:16px 18px 22px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.14em; color:rgba(243,237,226,.55); margin-bottom:10px;">CITAS RÁPIDAS · MARTES A JUEVES · BOGOTÁ</div>
+          <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:27px; line-height:1.15; color:#F3EDE2; margin-bottom:10px;">Nueve rondas.<br>Un martes que sí vale la pena.</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:11px; line-height:1.55; color:rgba(243,237,226,.72); margin-bottom:16px;">90 minutos, 24 personas verificadas por cédula, 50/50 real. El local pone la sala; nosotros ponemos a quién sentar.</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; background:#221826; border-radius:10px; padding:10px 14px;">
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:15px; color:#F3EDE2; font-weight:700;">$45.000</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:#F0A830; letter-spacing:.06em;">QUEDAN 3 CUPOS</div>
+            </div>
+            <div style="background:#F0A830; color:#16101B; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10.5px; padding:9px 16px; border-radius:20px;">Reservar</div>
+          </div>
+        </div>
+
+        <div style="display:flex; padding:14px 10px; border-top:1px solid rgba(243,237,226,.1); border-bottom:1px solid rgba(243,237,226,.1);">
+          <div style="flex:1; text-align:center; padding:0 6px; border-right:1px solid rgba(243,237,226,.1);"><div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#F0A830; font-weight:700;">90 min</div><div style="font-family:'Space Grotesk',sans-serif; font-size:7px; color:rgba(243,237,226,.55); margin-top:2px;">duración</div></div>
+          <div style="flex:1; text-align:center; padding:0 6px; border-right:1px solid rgba(243,237,226,.1);"><div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#F0A830; font-weight:700;">9</div><div style="font-family:'Space Grotesk',sans-serif; font-size:7px; color:rgba(243,237,226,.55); margin-top:2px;">encuentros</div></div>
+          <div style="flex:1; text-align:center; padding:0 6px; border-right:1px solid rgba(243,237,226,.1);"><div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#F0A830; font-weight:700;">100%</div><div style="font-family:'Space Grotesk',sans-serif; font-size:7px; color:rgba(243,237,226,.55); margin-top:2px;">verificados</div></div>
+          <div style="flex:1; text-align:center; padding:0 6px;"><div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#F0A830; font-weight:700;">50/50</div><div style="font-family:'Space Grotesk',sans-serif; font-size:7px; color:rgba(243,237,226,.55); margin-top:2px;">real</div></div>
+        </div>
+
+        <div style="padding:20px 18px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.14em; color:#F0A830; margin-bottom:12px;">CÓMO FUNCIONA</div>
+          <div style="display:flex; gap:10px; margin-bottom:12px;"><div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:16px; color:#F0A830; width:18px;">1</div><div style="font-family:'Space Grotesk',sans-serif; font-size:10.5px; color:#F3EDE2; line-height:1.5;">Elige tu noche: día, franja de edad y barrio.</div></div>
+          <div style="display:flex; gap:10px; margin-bottom:12px;"><div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:16px; color:#F0A830; width:18px;">2</div><div style="font-family:'Space Grotesk',sans-serif; font-size:10.5px; color:#F3EDE2; line-height:1.5;">Llega y verifica cédula en la puerta.</div></div>
+          <div style="display:flex; gap:10px;"><div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:16px; color:#F0A830; width:18px;">3</div><div style="font-family:'Space Grotesk',sans-serif; font-size:10.5px; color:#F3EDE2; line-height:1.5;">Nueve rondas de 6 minutos. Votas Sí o No.</div></div>
+        </div>
+
+        <div style="padding:20px 18px; display:flex; flex-direction:column; gap:10px;">
+          <div style="background:#F0A830; border-radius:12px; padding:16px;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.12em; color:#16101B; margin-bottom:6px;">PARA TI</div>
+            <div style="font-family:'Bodoni Moda',serif; font-weight:700; font-size:15px; color:#16101B; margin-bottom:8px;">Reserva tu martes</div>
+            <div style="background:#16101B; color:#F3EDE2; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10px; padding:9px; border-radius:8px; text-align:center;">Ver noches disponibles</div>
+          </div>
+          <div style="border:1px solid rgba(243,237,226,.3); border-radius:12px; padding:16px;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.12em; color:#F0A830; margin-bottom:6px;">PARA TU BAR</div>
+            <div style="font-family:'Bodoni Moda',serif; font-weight:700; font-size:15px; color:#F3EDE2; margin-bottom:8px;">Llena tus martes a jueves</div>
+            <div style="border:1px solid rgba(243,237,226,.4); color:#F3EDE2; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10px; padding:8px; border-radius:8px; text-align:center;">Hablar con nosotros</div>
+          </div>
+        </div>
+
+        <div style="padding:18px; background:#221826;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.12em; color:rgba(243,237,226,.5); margin-bottom:8px;">PRUEBA SOCIAL</div>
+          <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:12.5px; color:#F3EDE2; line-height:1.5; margin-bottom:8px;">"Tres martes seguidos, sala llena."</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:9.5px; color:rgba(243,237,226,.6);">CARONTE Cocktail Bar · 24/24 asistentes</div>
+        </div>
+
+        <div style="padding:22px 18px; text-align:center;">
+          <div style="font-family:'Bodoni Moda',serif; font-weight:700; font-size:15px; color:#F3EDE2; margin-bottom:4px;">Quedan 3 cupos para el martes 25.</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:10px; color:rgba(243,237,226,.6); margin-bottom:14px;">Zona G · 20:00 · $45.000</div>
+          <div style="background:#F0A830; color:#16101B; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:11px; padding:12px; border-radius:10px;">Reservar ahora</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <p style="font-family:'JetBrains Mono',monospace; font-size:10px; color:rgba(27,21,32,.6); text-align:center; margin-top:16px;">Mockup a escala — proporción real de un iPhone SE (375×667)</p>
+
+  <h3 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:16px; margin:32px 0 12px;">Qué hace cada bloque</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Nav</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:5px; color:rgba(27,21,32,.75);">Solo el logotipo. Sin menú que compita con el CTA del hero.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Hero</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:5px; color:rgba(27,21,32,.75);">Claim + precio + CTA en el mismo bloque, sin scroll, en un iPhone SE.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Tira de datos</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:5px; color:rgba(27,21,32,.75);">Resuelve la objeción de formato antes de que se formule.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Tres pasos</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:5px; color:rgba(27,21,32,.75);">La verificación por cédula aparece aquí — responde "¿con quién me voy a sentar?".</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Split usuario/bar</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:5px; color:rgba(27,21,32,.75);">Un solo CTA ámbar sólido (usuario); el de bar siempre en outline.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Prueba social</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:5px; color:rgba(27,21,32,.75);">Nombre real del bar y cifra real de ocupación — nunca un testimonio genérico.</div></div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">08</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">Los cuatro paneles de la app</h1>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:28px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;">
+      <th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Panel</th>
+      <th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Quién</th>
+      <th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Horizonte</th>
+      <th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Densidad</th>
+    </tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Cliente</b></td><td style="padding:8px 10px;">Asistente</td><td style="padding:8px 10px;">Semana → 6 min</td><td style="padding:8px 0;">Baja</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Administrador</b></td><td style="padding:8px 10px;">Dueño del local</td><td style="padding:8px 10px;">Semana → mes</td><td style="padding:8px 0;">Media</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Red</b></td><td style="padding:8px 10px;">City manager</td><td style="padding:8px 10px;">Mes → trimestre</td><td style="padding:8px 0;">Alta</td></tr>
+      <tr><td style="padding:8px 10px 8px 0;"><b>Super Admin</b></td><td style="padding:8px 10px;">Dirección</td><td style="padding:8px 10px;">Trimestre → 12 meses</td><td style="padding:8px 0;">Máxima</td></tr>
+    </tbody>
+  </table>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">8.1 Cliente</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:6px;">Una decisión por pantalla. Cronómetro vira a vino bajo 30s. Cero push en la ronda. Nunca muestra márgenes ni facturación.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">8.2 Administrador</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:6px;">4 KPI, gráfico de semana con días valle en ámbar. Nunca muestra otros locales ni margen de RONDA.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">8.3 Red</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:6px;">El local que se cae, en menos de 3 segundos. Nunca muestra P&amp;L consolidado ni otras ciudades.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><b style="font-family:'Bodoni Moda',serif; font-size:15px;">8.4 Super Admin</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; margin-top:6px;">Contribución neta, CAC con techo. Toda acción irreversible en vino, con confirmación y bitácora.</div></div>
+  </div>
+  <p style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:15px; margin-top:22px;">Cada rol ve exactamente el dato que puede accionar, y ni uno más.</p>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">09</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 20px;">Posicionamiento</h1>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:28px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Fase</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Cuándo</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Qué hace la marca</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Vitrina física</b></td><td style="padding:8px 10px;">Sem. 1–4</td><td style="padding:8px 0;">4–6 locales en Zona G. Sin pauta: cada noche es la campaña.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Landing + pauta</b></td><td style="padding:8px 10px;">Meses 2–4</td><td style="padding:8px 0;">Pauta Meta a 5 km de cada local activo.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>App + prueba B2B</b></td><td style="padding:8px 10px;">Meses 5–9</td><td style="padding:8px 0;">El panel Administrador se vuelve argumento de venta.</td></tr>
+      <tr><td style="padding:8px 10px 8px 0;"><b>Operador → plataforma</b></td><td style="padding:8px 10px;">Meses 10–12</td><td style="padding:8px 0;">SaaS, informe de afluencia valle y Signals.</td></tr>
+    </tbody>
+  </table>
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">Checklist antes de publicar</h2>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.8; margin:0 0 24px; padding-left:20px;">
+    <li>¿Usa solo los nueve colores del sistema?</li>
+    <li>¿El ámbar dirige la mirada donde queremos, con un punto focal claro?</li>
+    <li>¿Los precios están en JetBrains Mono, en COP con punto de miles?</li>
+    <li>¿El texto suena directo y un poco irónico, sin signos de exclamación?</li>
+    <li>¿La pieza menciona los días valle (martes a jueves)?</li>
+    <li>¿Hay una cifra real en la pieza?</li>
+    <li>¿El acabado está a la altura de un ejecutivo de alto valor?</li>
+    <li>Si es una pieza social, ¿sale de una noche que ya ocurrió?</li>
+  </ul>
+  <div style="background:#16101B; border-radius:8px; padding:24px; break-inside:avoid;">
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:17px; color:#F3EDE2; line-height:1.6;">"Si una pieza no podría estar impresa sobre una comanda en la barra de un bar bogotano un martes a las ocho, no es RONDA."</div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">10</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Redes sociales</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; color:rgba(27,21,32,.7);">Dos redes, dos trabajos distintos. <b style="color:#1B1520;">Instagram vende la noche</b> a quien va a comprarla; <b style="color:#1B1520;">LinkedIn vende el modelo</b> a quien pone el local, el capital o el equipo. Ningún otro canal orgánico hasta que estos dos estén llenos de noches reales.</p>
+  <div style="background:#16101B; border-radius:8px; padding:20px 24px; margin-bottom:24px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#F0A830; margin-bottom:10px;">Principio único</div>
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:19px; color:#F3EDE2; line-height:1.5;">Solo publicamos lo que pasó. Cada pieza sale de una noche operada: una foto real, una cifra real, una comanda real. Sin banco de imágenes, sin frases motivacionales, sin promesas que la sala no haya cumplido.</div>
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:21px; margin:0 0 6px;">10.1 · Instagram</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 18px;">La vitrina de la noche anterior. Habla al ejecutivo de 28–49 que decide su martes el mismo lunes. Perfil geolocalizado en Chapinero y Zona G; el enlace de la bio va siempre a la noche que hay que llenar, no al home.</p>
+  <div style="display:flex; gap:14px; margin-bottom:18px; break-inside:avoid;">
+    <div style="width:196px; height:245px; background:#16101B; border-radius:10px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:.18em; color:rgba(243,237,226,.62);">MARTES 25 · ZONA G</div>
+        <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:26px; color:#F3EDE2; line-height:1.1; margin-top:10px;">La noche de ayer</div>
+      </div>
+      <div style="height:70px; background:repeating-linear-gradient(45deg,#221826,#221826 6px,#2C2033 6px,#2C2033 12px); border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:8px; color:rgba(243,237,226,.62); letter-spacing:.1em;">FOTO REAL DE LA SALA</div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:22px; color:#F0A830; font-variant-numeric:tabular-nums;">24/24</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:9.5px; color:rgba(243,237,226,.62); margin-top:2px;">CARONTE Cocktail Bar · 9 rondas</div>
+      </div>
+    </div>
+    <div style="width:138px; height:245px; background:#16101B; border-radius:10px; padding:16px; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-start;">
+      <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:15px; letter-spacing:.13em; color:#F3EDE2;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+      <div>
+        <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:30px; color:#F3EDE2; line-height:1.05;">Faltan<br>3</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:10px; color:rgba(243,237,226,.62); margin-top:8px; line-height:1.4;">para cerrar el martes en Quinta Camacho</div>
+      </div>
+      <div style="background:#F0A830; color:#16101B; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10px; padding:8px 14px; border-radius:20px;">Reservar · $45.000</div>
+    </div>
+    <div style="width:196px; height:245px; background:#F3EDE2; border:1px solid rgba(27,21,32,.18); border-radius:8px; padding:18px; display:flex; flex-direction:column; gap:10px;">
+      <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:14px; letter-spacing:.13em; text-align:center;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+      <div style="border-top:1px dashed rgba(27,21,32,.35);"></div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; line-height:2;">
+        <div>RONDAS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 × 6 MIN</div>
+        <div>RATIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1,2 : 1</div>
+        <div>MÍNIMO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 + 9</div>
+        <div>VUELVES CON &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; −25%</div>
+      </div>
+      <div style="border-top:1px dashed rgba(27,21,32,.35);"></div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:10.5px; line-height:1.5; color:rgba(27,21,32,.75);">Las reglas de la sala, impresas. Si no cuadra, se cancela.</div>
+    </div>
+  </div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:rgba(27,21,32,.6); margin-bottom:22px;">Feed 1080×1350 (4:5) · Story y reel 1080×1920 · Reel ≤ 30 s, sin música con letra</div>
+
+  <h3 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:16px; margin:0 0 10px;">Ejemplos visuales</h3>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; margin:0 0 20px; color:rgba(27,21,32,.7);">Cuatro arquetipos de publicación que se repiten en el grid. Los mocks abajo muestran el layout, tipografía y paleta; reemplaza el área sombreada con fotos reales de noches operadas.</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px;">
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; overflow:hidden; break-inside:avoid;">
+      <div style="background:#16101B; color:#F3EDE2; padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em;">LA NOCHE DE AYER</div>
+      <div style="aspect-ratio:1/1.25; background:linear-gradient(135deg, #16101B 0%, #221826 50%, #2C2033 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; color:rgba(243,237,226,.4); font-size:10px; text-align:center; padding:20px; position:relative; overflow:hidden;">
+        <div>Foto real 8 personas<br>Conversación natural<br>Zona G, martes 8 PM</div>
+        <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(22,16,27,.95), transparent); padding:16px; text-align:left;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:rgba(243,237,226,.6); letter-spacing:.08em; margin-bottom:4px;">OCUPACIÓN</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:24px; color:#F0A830; font-weight:700;">24/24</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:10px; color:rgba(243,237,226,.7); margin-top:4px;">CARONTE · 9 rondas</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; overflow:hidden; break-inside:avoid;">
+      <div style="background:#16101B; color:#F3EDE2; padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em;">LA COMANDA IMPRESA</div>
+      <div style="aspect-ratio:1/1.25; background:#F3EDE2; padding:14px; display:flex; flex-direction:column; gap:6px; border-left:3px dashed #16101B;">
+        <div style="text-align:center; border-bottom:1px dashed #16101B; padding-bottom:8px;">
+          <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:16px; letter-spacing:.13em; color:#16101B;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:#1B1520; letter-spacing:.1em; margin-top:3px;">MARTES 25 · 20:00</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:8.5px; color:#1B1520;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin:2px 0;">
+              <span>Local</span><span style="font-weight:700;">CARONTE</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin:2px 0;">
+              <span>Entrada</span><span style="font-weight:700;">$45.000</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin:2px 0;">
+              <span>Rondas</span><span style="font-weight:700;">9 × 6 min</span>
+            </div>
+            <div style="border-top:1px dashed #16101B; margin:4px 0;"></div>
+            <div style="display:flex; justify-content:space-between; margin:2px 0; font-weight:700;">
+              <span>TOTAL</span><span>$45.000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; overflow:hidden; break-inside:avoid;">
+      <div style="background:#16101B; color:#F3EDE2; padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em;">STORY DE RONDA</div>
+      <div style="aspect-ratio:9/16; background:#16101B; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; width:80px; height:80px; background:radial-gradient(circle, rgba(240,168,48,.25) 0%, transparent 70%); border-radius:50%; top:20%; left:-30px;"></div>
+        <div style="text-align:center; position:relative; z-index:1;">
+          <div style="font-family:'Bodoni Moda',serif; font-size:64px; font-weight:800; color:#F3EDE2; line-height:1; margin:0;">Faltan<br>3</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:14px; color:rgba(243,237,226,.8); margin-top:12px; max-width:240px; line-height:1.4;">para cerrar el martes en Quinta Camacho</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff; border:1px solid rgba(27,21,32,.12); border-radius:8px; overflow:hidden; break-inside:avoid;">
+      <div style="background:#16101B; color:#F3EDE2; padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em;">KPI DEL BAR</div>
+      <div style="aspect-ratio:1/1.25; background:linear-gradient(135deg, #16101B 0%, #221826 50%, #2C2033 100%); display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:rgba(243,237,226,.6); letter-spacing:.08em; margin-bottom:8px;">OCUPACIÓN</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:48px; color:#F0A830; font-weight:700; line-height:1; margin-bottom:6px;">24/24</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:11px; color:rgba(243,237,226,.8);">CARONTE · 9 rondas</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:9px; color:rgba(243,237,226,.5); margin-top:8px;">sin publicidad, con riesgo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:16px; margin:0 0 10px;">Ritmo del grid</h3>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 16px;">El grid se lee en filas de tres y alterna material: <b>noche</b> (foto real sobre fondo noche) → <b>dato</b> (cifra ámbar sobre noche) → <b>papel</b> (comanda o regla en tinta sobre papel). Nunca dos piezas de papel seguidas; nunca dos cifras seguidas. Vista de lejos, el perfil debe verse oscuro con puntos ámbar — igual que la sala.</p>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:20px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Arquetipo</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Material</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Qué prueba</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>La noche de ayer</b></td><td style="padding:9px 10px;">Foto real + cifra ámbar</td><td style="padding:9px 0;">Que la sala se llena de verdad</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>La regla</b></td><td style="padding:9px 10px;">Papel, JetBrains Mono</td><td style="padding:9px 0;">Que hay curaduría, no barra libre</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>La escasez</b></td><td style="padding:9px 10px;">Story con cupos y hora</td><td style="padding:9px 0;">Urgencia real — solo si faltan de verdad</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>El local</b></td><td style="padding:9px 10px;">Retrato del bar, nombre en Bodoni</td><td style="padding:9px 0;">Que el martes vale la pena</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>El dato de barrio</b></td><td style="padding:9px 10px;">Cifra sobre noche</td><td style="padding:9px 0;">Que conocemos Chapinero mejor que nadie</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:16px; margin:0 0 10px;">Copy y reglas de publicación</h3>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; margin:0 0 18px; padding-left:20px;">
+    <li>Máximo dos líneas antes del "ver más". La primera línea lleva el dato o la regla, no el saludo.</li>
+    <li>Precio visible siempre que haya llamado a la acción: <span style="font-family:'JetBrains Mono',monospace;">$45.000</span>, en COP, con punto de miles.</li>
+    <li>Hasta tres hashtags y siempre de lugar: <span style="font-family:'JetBrains Mono',monospace;">#ZonaG #Chapinero #Bogotá</span>. Ninguno de categoría (#dating, #amor).</li>
+    <li>Stories solo la tarde de un evento y la mañana siguiente. Cero publicaciones durante los 90 minutos: la regla de no interrumpir la noche también aplica a la marca.</li>
+    <li>Rostros de asistentes solo con consentimiento escrito; por defecto, la sala se fotografía de espaldas o desenfocada.</li>
+  </ul>
+  <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; font-family:'Space Grotesk',sans-serif; font-size:13.5px;"><span style="color:#2E6B54; font-weight:700;">✓</span><span>"Martes, 20:00, Zona G. 24 sillas, 9 rondas de 6 minutos. Quedan 3."</span></div>
+  <div style="display:flex; gap:10px; align-items:flex-start; font-family:'Space Grotesk',sans-serif; font-size:13.5px;"><span style="color:#9B2748; font-weight:700;">✕</span><span>"✨ ¡El amor te espera este martes! Etiqueta a esa persona 💘"</span></div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:21px; margin:0 0 6px;">10.2 · LinkedIn</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 18px;">Aquí no se vende una cita: se vende <b>ocupación con riesgo asumido</b>. Tres lectores en el mismo feed — el dueño de local que tiene martes vacíos, el inversionista que evalúa el modelo, y el mismo ejecutivo de alto valor que después comprará una noche. La voz sube un grado de formalidad y baja cero grados de ironía. Nunca el registro "emprendedor motivacional".</p>
+  <div style="display:flex; gap:16px; margin-bottom:18px; break-inside:avoid;">
+    <div style="width:270px; background:#fff; border:1px solid rgba(27,21,32,.14); border-radius:8px; padding:16px;">
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+        <div style="width:26px; height:26px; background:#16101B; border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:'Bodoni Moda',serif; font-weight:800; font-size:11px; color:#F0A830;">R</div>
+        <div><div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10.5px;">RONDA</div><div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:rgba(27,21,32,.55);">Bogotá · 1.240 seguidores</div></div>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:11.5px; line-height:1.6; margin-bottom:12px;">Un bar de Zona G facturó el 70% de su semana en tres días. Le compramos el martes a precio cerrado y lo llenamos con 24 personas verificadas.<br><br>Resultado de la noche: <b>$1.190.000</b> de barra y 18% de los asistentes volvió antes del jueves.</div>
+      <div style="background:#16101B; border-radius:6px; padding:14px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.16em; color:rgba(243,237,226,.62);">MARTES · OCUPACIÓN</div>
+        <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:30px; color:#F0A830; line-height:1.2;">24 / 24</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:9px; color:rgba(243,237,226,.62);">sin publicidad, con riesgo asumido</div>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:rgba(27,21,32,.6); margin-bottom:10px;">Tres formatos, nada más</div>
+      <div style="background:#fff; border-radius:8px; padding:14px 16px; margin-bottom:10px;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Cifra operativa</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:rgba(27,21,32,.75); margin-top:4px;">Un número real de una noche real + la lectura de negocio en dos frases. Imagen 1200×627.</div></div>
+      <div style="background:#fff; border-radius:8px; padding:14px 16px; margin-bottom:10px;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Documento (carrusel)</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:rgba(27,21,32,.75); margin-top:4px;">6–8 páginas, 1200×1500. Portada en noche, interiores en papel, una idea por página. Uno al mes.</div></div>
+      <div style="background:#fff; border-radius:8px; padding:14px 16px;"><b style="font-family:'Bodoni Moda',serif; font-size:14px;">Caso de local</b><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:rgba(27,21,32,.75); margin-top:4px;">"Un martes sin RONDA / un martes con RONDA", con la comparativa del panel Administrador y el nombre del bar con permiso.</div></div>
+    </div>
+  </div>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; margin:0 0 18px; padding-left:20px;">
+    <li>Cada post abre con el dato, no con el contexto. La primera línea es la que se ve sin desplegar.</li>
+    <li>Nada de "estoy muy emocionado de anunciar", ni selfies de equipo, ni capturas de agradecimientos.</li>
+    <li>Cifras del bar, siempre con su permiso; márgenes de RONDA, nunca.</li>
+    <li>El perfil del fundador publica el aprendizaje operativo; la página publica el resultado. No se duplica el mismo texto.</li>
+  </ul>
+  <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; font-family:'Space Grotesk',sans-serif; font-size:13.5px;"><span style="color:#2E6B54; font-weight:700;">✓</span><span>"El 70% de la facturación de un bar de barrio pasa en tres días. Compramos los otros cuatro."</span></div>
+  <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:24px; font-family:'Space Grotesk',sans-serif; font-size:13.5px;"><span style="color:#9B2748; font-weight:700;">✕</span><span>"Estamos revolucionando la forma en que las personas se conectan. Stay tuned!"</span></div>
+
+  <h3 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:16px; margin:0 0 10px;">Cadencia y medición</h3>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:20px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Red</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Cadencia</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Trabajo</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Métrica que importa</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Instagram</b></td><td style="padding:9px 10px;">3 feed / semana + stories cada noche operada</td><td style="padding:9px 10px;">Llenar la próxima noche</td><td style="padding:9px 0;">Reservas atribuidas y guardados — nunca likes</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>LinkedIn</b></td><td style="padding:9px 10px;">1 post / semana + 1 documento / mes</td><td style="padding:9px 10px;">Abrir locales y conversaciones de capital</td><td style="padding:9px 0;">Locales que escriben pidiendo una noche</td></tr>
+    </tbody>
+  </table>
+  <div style="background:#16101B; border-radius:8px; padding:22px 24px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#F0A830; margin-bottom:10px;">Prueba de publicación</div>
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:17px; color:#F3EDE2; line-height:1.55;">Si el post no nombra un día valle, una cifra real o una regla de la sala, no es contenido de RONDA: es ruido con nuestro logo.</div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:21px; margin:0 0 6px;">10.3 · El perfil de LinkedIn</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 22px;">La página de empresa es el primer argumento de venta B2B: un dueño de bar la abre antes de contestar el mensaje. Se lee en diez segundos y tiene que decir <b>qué compramos, qué garantizamos y con quién ya lo hicimos</b>.</p>
+
+  <div style="border:1px solid rgba(27,21,32,.15); border-radius:10px; overflow:hidden; margin-bottom:20px; break-inside:avoid;">
+    <div style="background:#16101B; position:relative; display:flex; align-items:center; padding:22px 24px 28px;">
+      <div>
+        <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:22px; letter-spacing:.13em; color:#F3EDE2;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div><div style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:.16em; color:#F0A830; margin-top:5px;">COMPRAMOS MARTES VACÍOS</div>
+        
+      </div>
+    </div>
+    <div style="background:#fff; padding:0 24px 20px; position:relative; display:flow-root;">
+      
+      <div style="width:62px; height:62px; background:#16101B; border:3px solid #fff; border-radius:8px; margin-top:-26px; display:flex; align-items:center; justify-content:center; font-family:'Bodoni Moda',serif; font-weight:800; font-size:26px; color:#F0A830;">R</div><div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:12px; gap:20px;">
+        <div style="flex:1;">
+          
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; color:#1B1520;">RONDA</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:rgba(27,21,32,.8); margin-top:3px; line-height:1.5;">Llenamos bares los días valle. El local pone la sala; nosotros asumimos el riesgo de llenarla.</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; color:rgba(27,21,32,.55); margin-top:7px;">Ocio y restauración · Bogotá, Colombia · 1.240 seguidores</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#16101B; color:#F3EDE2; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10.5px; padding:8px 18px; border-radius:20px; text-align:center;">+ Seguir</div>
+          <div style="border:1px solid rgba(27,21,32,.4); color:#1B1520; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10.5px; padding:7px 18px; border-radius:20px; text-align:center;">Sitio web</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:20px; margin-top:16px; border-bottom:1px solid rgba(27,21,32,.12); padding-bottom:8px;">
+        <span style="font-family:'Space Grotesk',sans-serif; font-size:11.5px; font-weight:700; color:#1B1520; border-bottom:2px solid #F0A830; padding-bottom:6px;">Inicio</span>
+        <span style="font-family:'Space Grotesk',sans-serif; font-size:11.5px; color:rgba(27,21,32,.6);">Información</span>
+        <span style="font-family:'Space Grotesk',sans-serif; font-size:11.5px; color:rgba(27,21,32,.6);">Publicaciones</span>
+        <span style="font-family:'Space Grotesk',sans-serif; font-size:11.5px; color:rgba(27,21,32,.6);">Personas</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1.35fr 1fr; gap:16px; margin-top:16px;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.14em; color:rgba(27,21,32,.55); margin-bottom:6px;">INFORMACIÓN</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:11.5px; line-height:1.65; color:rgba(27,21,32,.85);">Un bar de barrio factura el 70% de su semana en tres días y paga costos fijos los siete. RONDA le compra esos días valle a precio cerrado y los llena con 24 personas verificadas por cédula, en eventos de citas rápidas de 90 minutos.<br><br>El bar no paga publicidad: cobra por consumición servida. El riesgo de llenar es nuestro.</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.14em; color:rgba(27,21,32,.55); margin-bottom:6px;">DESTACADO</div>
+          <div style="background:#16101B; border-radius:8px; padding:14px; text-align:center; margin-bottom:8px;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:7.5px; letter-spacing:.14em; color:rgba(243,237,226,.6);">OCUPACIÓN MEDIA MAR–JUE</div>
+            <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:26px; color:#F0A830; line-height:1.3;">92%</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-size:8.5px; color:rgba(243,237,226,.6);">6 locales activos · Zona G y Chapinero</div>
+          </div>
+          <div style="border:1px solid rgba(27,21,32,.15); border-radius:8px; padding:11px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:10.5px; color:#1B1520;">Cómo funciona para tu bar</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:8.5px; color:rgba(27,21,32,.55); margin-top:3px;">Documento · 8 páginas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:18px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Elemento</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Medida</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Regla</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Portada</b></td><td style="padding:9px 10px;">1128×191</td><td style="padding:9px 0;">Fondo noche, logotipo a la izquierda, una sola línea en mono ámbar. Nunca una foto de sala aquí — se lee peor en móvil.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Logo</b></td><td style="padding:9px 10px;">300×300</td><td style="padding:9px 0;">La R sola en ámbar sobre noche, radio 8px. Es el único caso donde el logotipo se recorta.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Eslogan</b></td><td style="padding:9px 10px;">≤ 120 car.</td><td style="padding:9px 0;">Dice qué compramos y qué garantizamos. Nunca "conectamos personas".</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Información</b></td><td style="padding:9px 10px;">2 párrafos</td><td style="padding:9px 0;">Primer párrafo: el hueco con su cifra. Segundo: el traslado de riesgo.</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>Destacado</b></td><td style="padding:9px 10px;">2 piezas</td><td style="padding:9px 0;">Una cifra de red y el documento de venta B2B. Se actualiza cada mes con datos reales.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; margin:0; color:rgba(27,21,32,.75);">El perfil del fundador usa la misma portada y el mismo eslogan, con foto propia sobre fondo noche. Coherencia de sistema, no de ego: quien llega por el fundador debe reconocer la página de empresa en un segundo.</p>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">11</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Imágenes fotorealistas</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; color:rgba(27,21,32,.7);">Cuando no hay foto de una noche operada —un local nuevo, una campaña anticipada, un formato que todavía no existe— se genera imagen. La imagen generada <b style="color:#1B1520;">imita la luz de la sala, no la inventa</b>: mismo ámbar, misma penumbra, mismos materiales.</p>
+  <div style="background:#fff; border-left:3px solid #9B2748; padding:16px 20px; font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; margin-bottom:24px; break-inside:avoid;">
+    <b>Dos límites que no se cruzan.</b> Una imagen generada nunca se publica como prueba social ni acompaña una cifra real — eso exige foto de la noche. Y nunca lleva texto generado por el modelo: la tipografía se compone después en la plantilla, en Bodoni, Space Grotesk y JetBrains Mono.
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:19px; margin:0 0 10px;">11.1 · Formato vertical primero</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 18px;">Este público consume en vertical y a una mano: historias de Instagram y estados de WhatsApp. Se genera <b>siempre en 9:16 a 1080×1920</b> y de ahí se recorta a los demás formatos — nunca al revés, porque el recorte de horizontal a vertical mata el aire de la composición.</p>
+  <div style="display:flex; gap:24px; align-items:flex-start; margin-bottom:22px; break-inside:avoid;">
+    <div style="width:150px; flex:none;">
+      <div style="position:relative; height:267px; background:linear-gradient(160deg,#2C2033,#16101B 60%); border-radius:8px; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; right:0; height:36px; background:rgba(155,39,72,.35); border-bottom:1px dashed rgba(243,237,226,.5); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:7px; color:#F3EDE2; letter-spacing:.1em;">250 px · UI</div>
+        <div style="position:absolute; bottom:0; left:0; right:0; height:44px; background:rgba(155,39,72,.35); border-top:1px dashed rgba(243,237,226,.5); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:7px; color:#F3EDE2; letter-spacing:.1em;">310 px · UI + CTA</div>
+        <div style="position:absolute; top:36px; bottom:44px; left:0; right:0; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:8px; color:rgba(243,237,226,.75); text-align:center; letter-spacing:.08em; line-height:1.8;">ZONA SEGURA<br>sujeto y titular<br>aquí</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:rgba(27,21,32,.6); margin-top:8px; text-align:center;">1080×1920 · 9:16</div>
+    </div>
+    <div style="flex:1;">
+      <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px;">
+        <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:7px 10px 7px 0; font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase;">Destino</th><th style="padding:7px 10px; font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase;">Píxeles</th><th style="padding:7px 0; font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase;">Se obtiene</th></tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Estado WhatsApp</b></td><td style="padding:8px 10px; font-family:'JetBrains Mono',monospace;">1080×1920</td><td style="padding:8px 0;">Original. Prioridad 1</td></tr>
+          <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Story / reel IG</b></td><td style="padding:8px 10px; font-family:'JetBrains Mono',monospace;">1080×1920</td><td style="padding:8px 0;">Original. Prioridad 1</td></tr>
+          <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Feed IG</b></td><td style="padding:8px 10px; font-family:'JetBrains Mono',monospace;">1080×1350</td><td style="padding:8px 0;">Recorte centrado 4:5</td></tr>
+          <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:8px 10px 8px 0;"><b>Feed LinkedIn</b></td><td style="padding:8px 10px; font-family:'JetBrains Mono',monospace;">1200×627</td><td style="padding:8px 0;">Recorte alto del tercio central</td></tr>
+          <tr><td style="padding:8px 10px 8px 0;"><b>Documento LinkedIn</b></td><td style="padding:8px 10px; font-family:'JetBrains Mono',monospace;">1200×1500</td><td style="padding:8px 0;">Recorte 4:5 + margen de papel</td></tr>
+        </tbody>
+      </table>
+      <p style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.65; color:rgba(27,21,32,.7); margin:12px 0 0;">Composición: sujeto en el tercio central, <b>aire arriba y abajo</b> para el titular y el CTA. Nada importante en los 250 px superiores ni en los 310 px inferiores — los tapa la interfaz.</p>
+    </div>
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:19px; margin:26px 0 10px;">11.2 · Anatomía del prompt</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 14px;">Siete bloques, siempre en el mismo orden. Los cuatro primeros cambian por pieza; los tres últimos son el <b>candado de marca</b> y se pegan idénticos en cada generación.</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">1 · SUJETO</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6;">Quién o qué, con edad y vestuario concretos. "Dos profesionales de unos 35 años, saco sin corbata."</div></div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">2 · ESCENA</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6;">Bar de coctelería bogotano, madera oscura, latón, mármol, botellas al fondo. Martes 20:00.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">3 · ÓPTICA</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6;">35 mm o 50 mm, f/1.8, foco en el sujeto, fondo desenfocado. Altura de ojo, no picado.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">4 · ENCUADRE</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6;">Vertical 9:16, sujeto en el tercio central, aire arriba y abajo para tipografía.</div></div>
+    <div style="background:#221826; border-radius:8px; padding:14px 16px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">5 · LUZ (CANDADO)</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:#F3EDE2;">Luz práctica ámbar cálida desde la barra, penumbra ciruela, un solo reflejo especular. Sin flash.</div></div>
+    <div style="background:#221826; border-radius:8px; padding:14px 16px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">6 · COLOR (CANDADO)</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:#F3EDE2;">Paleta acotada a ámbar #F0A830, ciruela #16101B, verde botella #2E6B54, crema #F3EDE2.</div></div>
+  </div>
+  <div style="background:#221826; border-radius:8px; padding:14px 16px; margin-bottom:22px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#F0A830; letter-spacing:.12em; margin-bottom:4px;">7 · TÉCNICA (CANDADO)</div><div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:#F3EDE2;">Fotografía editorial, grano fino de película, sin HDR, sin viñeta pesada, sin texto ni logotipos en la imagen.</div></div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:19px; margin:0 0 10px;">11.3 · Prompts base</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; margin:0 0 14px; color:rgba(27,21,32,.7);">Cuatro escenas cubren todo el calendario. Se escriben en inglés (los modelos rinden mejor) y terminan con el candado de marca abreviado como <span style="font-family:'JetBrains Mono',monospace;">[RONDA LOCK]</span>.</p>
+  <pre style="background:#16101B; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:10.5px; line-height:1.75; padding:20px; border-radius:8px; white-space:pre-wrap; margin:0 0 14px; break-inside:avoid;">[RONDA LOCK] = warm amber practical light from the bar, deep plum-black
+shadows (#16101B), single specular highlight, restrained palette of amber
+#F0A830 / cream #F3EDE2 / bottle green #2E6B54, editorial photography,
+fine film grain, no HDR, no text, no logos, vertical 9:16 1080x1920,
+subject in central third, generous head and foot room</pre>
+  <div style="display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:20px;">
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#9B2748; letter-spacing:.12em; margin-bottom:6px;">A · SALA LLENA (STORY / ESTADO)</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; line-height:1.7; color:#1B1520;">Six well-dressed professionals aged 30–45, blazers without ties, mid-conversation at small marble tables in a dark-wood Bogotá cocktail bar, seen from behind and three-quarters so no face is identifiable, 35 mm f/1.8 at eye level, [RONDA LOCK]</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#9B2748; letter-spacing:.12em; margin-bottom:6px;">B · DETALLE DE BARRA + COMANDA</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; line-height:1.7; color:#1B1520;">Close-up of two negronis on a brass-edged marble bar top beside a folded cream paper slip, condensation on the glass, blurred bottles behind, 50 mm f/1.8 macro, [RONDA LOCK]</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#9B2748; letter-spacing:.12em; margin-bottom:6px;">C · DOS PERSONAS EN RONDA</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; line-height:1.7; color:#1B1520;">Two people in their late thirties facing each other across a small round table, relaxed body language, hands and drinks in focus, faces cropped out of frame, 35 mm f/2, [RONDA LOCK]</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:#9B2748; letter-spacing:.12em; margin-bottom:6px;">D · FACHADA A LAS 20:00</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; line-height:1.7; color:#1B1520;">Street-level facade of a small Bogotá cocktail bar at dusk, warm amber glow spilling through the window onto wet pavement, single figure entering, no signage text, 35 mm f/2.8, [RONDA LOCK]</div>
+    </div>
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:19px; margin:0 0 10px;">11.4 · Prompt negativo y control de calidad</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+    <div style="background:#fff; border-left:3px solid #9B2748; border-radius:8px; padding:14px 16px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em; color:#9B2748; margin-bottom:6px;">NEGATIVO FIJO</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; line-height:1.7; color:#1B1520;">text, letters, logos, watermark, confetti, hearts, neon signs, purple club lighting, group selfie, everyone smiling at camera, raised toast, oversaturated, plastic skin, extra fingers, stock-photo posing</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:14px 16px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em; color:rgba(27,21,32,.55); margin-bottom:6px;">AJUSTES DE GENERACIÓN</div>
+      <ul style="font-family:'Space Grotesk',sans-serif; font-size:12px; line-height:1.65; margin:0; padding-left:16px; color:rgba(27,21,32,.85);">
+        <li>Semilla fija por campaña: la serie se ve del mismo lugar.</li>
+        <li>Referencia multi-imagen con dos fotos reales del local.</li>
+        <li>Cuatro variantes por prompt, se elige una.</li>
+        <li>Upscale ×2, export WebP calidad 80, &lt; 300 KB.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:15px; margin:0 0 8px;">Prueba de las tres miradas — antes de exportar</h3>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; margin:0 0 22px; padding-left:20px;">
+    <li><b>Entrecerrando los ojos:</b> ¿aparece un solo punto ámbar dominante? Si hay tres, la imagen compite con el titular.</li>
+    <li><b>A tamaño de miniatura:</b> ¿se entiende que es un bar un martes por la noche, sin leer nada?</li>
+    <li><b>Con la interfaz encima:</b> ¿el sujeto sobrevive a los 250 px de arriba y los 310 de abajo?</li>
+  </ul>
+  <div style="background:#16101B; border-radius:8px; padding:22px 24px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#F0A830; margin-bottom:10px;">Regla de cierre</div>
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:17px; color:#F3EDE2; line-height:1.55;">La imagen generada puede vender una noche que todavía no ha pasado. Nunca puede fingir una que ya pasó.</div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">12</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Sonido y movimiento</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 20px; color:rgba(27,21,32,.7);">RONDA es un formato cronometrado: el sonido que marca el cambio de ronda es tan parte de la marca como el ámbar de la O. No queda al criterio del anfitrión — se diseña una sola vez y se repite siempre igual.</p>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">La firma sonora</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:24px;">
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#F0A830; letter-spacing:.12em; margin-bottom:6px;">AVISO DE CAMBIO</div><div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6;">Una sola campanilla de vaso, no timbre digital. Marca el fin de los 6 minutos.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#F0A830; letter-spacing:.12em; margin-bottom:6px;">CUENTA FINAL</div><div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6;">Vibración del teléfono a los 30 s, sin sonido — el aviso audible es solo del anfitrión.</div></div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;"><div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#F0A830; letter-spacing:.12em; margin-bottom:6px;">CIERRE DE NOCHE</div><div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6;">Silencio. No hay jingle de salida — la noche termina, no se anuncia.</div></div>
+  </div>
+  <div style="background:#fff; border-left:3px solid #9B2748; padding:16px 20px; font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; margin-bottom:28px; break-inside:avoid;">
+    <b>Nunca:</b> música con letra, efectos de "match" tipo app de citas, aplausos grabados, cualquier sonido que interrumpa la conversación de la mesa vecina.
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">Movimiento en pantalla</h2>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.7; margin:0 0 14px;">El cronómetro es el único elemento con animación continua durante el evento. Todo lo demás es estático — la app no compite por atención con la mesa.</p>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:8px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Elemento</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Movimiento</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Duración</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Cronómetro</b></td><td style="padding:9px 10px;">Barra que se vacía, sin números que salten</td><td style="padding:9px 0;">Continuo, 6 min</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Viraje a vino</b></td><td style="padding:9px 10px;">Transición de color, sin parpadeo</td><td style="padding:9px 10px;">400 ms ease</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Cambio de pantalla</b></td><td style="padding:9px 10px;">Deslizar horizontal, una dirección</td><td style="padding:9px 0;">250 ms ease-out</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>Confirmación de voto</b></td><td style="padding:9px 10px;">Escala sutil del botón, sin rebote</td><td style="padding:9px 0;">150 ms</td></tr>
+    </tbody>
+  </table>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.7; color:rgba(27,21,32,.7); margin:12px 0 0;">Regla general: nada rebota, nada parpadea, nada gira. El movimiento describe tiempo pasando, no celebra.</p>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">13</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Guion del anfitrión</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">El punto de contacto de mayor peso no es una pantalla: es una persona hablando frente a 24 personas. El anfitrión no improvisa el tono — lee estas líneas o las dice con sus palabras, pero nunca sale del registro directo e irónico de la sección 05.</p>
+
+  <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; color:#F0A830; margin-bottom:6px;">APERTURA</div>
+      <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:14.5px; line-height:1.6; color:#1B1520;">"Buenas noches. Son 9 rondas de 6 minutos. Cuando suene la campana, cambian de mesa — no antes, no después. Al final votan Sí o No, en la app, en privado. Empezamos."</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; color:#F0A830; margin-bottom:6px;">CAMBIO DE RONDA</div>
+      <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:14.5px; line-height:1.6; color:#1B1520;">"Cambio." — una palabra, se repite igual las nueve veces. Nada de "¡se acabó el tiempo, chicos!".</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; color:#F0A830; margin-bottom:6px;">CIERRE</div>
+      <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:14.5px; line-height:1.6; color:#1B1520;">"Esa fue la última. Los resultados llegan a su teléfono en la próxima hora. Gracias por venir un martes."</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:16px 18px; break-inside:avoid;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; color:#9B2748; margin-bottom:6px;">ALGUIEN INCOMODA</div>
+      <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:14.5px; line-height:1.6; color:#1B1520;">Se retira a la persona de la mesa sin explicación pública. En privado: "Esta noche termina aquí para ti. El equipo te contacta mañana." Nunca se nombra el motivo frente a otros asistentes.</div>
+    </div>
+  </div>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; margin:0; padding-left:20px;">
+    <li>El anfitrión nunca dice "les va a encantar" ni promete resultados de la noche.</li>
+    <li>Nunca usa el nombre de la app como verbo ("ronditear") ni chistes sobre citas.</li>
+    <li>Una sola voz por noche — el anfitrión no cede el micrófono a un asistente ni al dueño del bar.</li>
+  </ul>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">14</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">La marca en fricción</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">La confianza no se construye en la noche perfecta — se construye en la que se cancela, en el que no llega y en el reporte que alguien hace. Estos son los momentos donde "confiable" (sección 05) se pone a prueba de verdad, y donde hoy no hay lenguaje ni pieza definida.</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:8px;">
+    <div style="background:#fff; border-radius:8px; padding:18px 20px; break-inside:avoid;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="background:#9B2748; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px; border-radius:10px;">CANCELACIÓN</span></div>
+      <div style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:15px; margin-bottom:8px;">Bajo 16 asistentes</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6; color:rgba(27,21,32,.8); margin-bottom:10px;">Push 24 horas antes, sin disculpa excesiva. Reembolso automático + código del 100% para la próxima noche.</div>
+      <div style="background:#F3EDE2; border-left:3px solid #9B2748; padding:10px 12px; font-family:'Bodoni Moda',serif; font-style:italic; font-size:12.5px; line-height:1.5;">"El martes no cuadró y lo cancelamos. Tu entrada quedó reembolsada, más una para la próxima — sin preguntas."</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:18px 20px; break-inside:avoid;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="background:#F0A830; color:#16101B; font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px; border-radius:10px;">NO-SHOW</span></div>
+      <div style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:15px; margin-bottom:8px;">No aparecer sin avisar</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6; color:rgba(27,21,32,.8); margin-bottom:10px;">Notificación in-app, sin correo con asunto en mayúsculas. Un strike visible, consecuencia clara.</div>
+      <div style="background:#F3EDE2; border-left:3px solid #F0A830; padding:10px 12px; font-family:'Bodoni Moda',serif; font-style:italic; font-size:12.5px; line-height:1.5;">"No llegaste el martes. Perdiste la entrada y sumaste 1 strike. Al tercero, no puedes reservar por 90 días."</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:18px 20px; break-inside:avoid;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="background:#9B2748; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px; border-radius:10px;">REPORTE</span></div>
+      <div style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:15px; margin-bottom:8px;">Alguien reporta a otro asistente</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6; color:rgba(27,21,32,.8); margin-bottom:10px;">Confirmación de recibido en menos de 1 hora. Sin pedir que la persona repita el relato dos veces.</div>
+      <div style="background:#F3EDE2; border-left:3px solid #9B2748; padding:10px 12px; font-family:'Bodoni Moda',serif; font-style:italic; font-size:12.5px; line-height:1.5;">"Recibimos tu reporte. Alguien del equipo te escribe hoy mismo — no mañana."</div>
+    </div>
+    <div style="background:#fff; border-radius:8px; padding:18px 20px; break-inside:avoid;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="background:rgba(27,21,32,.12); color:#1B1520; font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px; border-radius:10px;">EXPULSIÓN</span></div>
+      <div style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:15px; margin-bottom:8px;">Cuenta suspendida</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.6; color:rgba(27,21,32,.8); margin-bottom:10px;">Se comunica la decisión, no el debate. No se negocia por chat ni se explica el proceso interno.</div>
+      <div style="background:#F3EDE2; border-left:3px solid #1B1520; padding:10px 12px; font-family:'Bodoni Moda',serif; font-style:italic; font-size:12.5px; line-height:1.5;">"Tu cuenta queda suspendida de forma permanente. La decisión ya se tomó y no tiene vuelta atrás."</div>
+    </div>
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:24px 0 10px;">Lo que no cambia en fricción</h2>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.75; margin:0 0 22px; padding-left:20px;">
+    <li>El vino se usa para el estado, nunca para regañar — el color marca el hecho, el texto no acusa.</li>
+    <li>Ninguna comunicación de fricción lleva signos de exclamación ni la palabra "lamentamos".</li>
+    <li>La regla y su consecuencia van en la misma frase — nunca "esto podría resultar en...".</li>
+    <li>Toda acción irreversible se confirma por escrito y queda en bitácora (regla ya fijada en 8.4).</li>
+  </ul>
+  <div style="background:#16101B; border-radius:8px; padding:22px 24px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#F0A830; margin-bottom:10px;">Regla de cierre</div>
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:17px; color:#F3EDE2; line-height:1.55;">La marca que solo suena bien en la noche perfecta no es confiable — es publicidad. RONDA se prueba en el mensaje que nadie quiere escribir.</div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">15</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Accesibilidad</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">Se lee en un bar oscuro, caminando a una reunión, en un teléfono con la pantalla a media luz. Aquí la accesibilidad no es cumplimiento — es que el producto funcione en las condiciones reales de uso.</p>
+
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:24px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Par de tokens</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Ratio</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Cumple AA</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Uso permitido</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">--papel sobre --noche</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">14,8:1</td><td style="padding:9px 10px; color:#2E6B54; font-weight:700;">Sí</td><td style="padding:9px 0;">Cuerpo de texto, cualquier tamaño</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">--luz sobre --noche</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">8,9:1</td><td style="padding:9px 10px; color:#2E6B54; font-weight:700;">Sí</td><td style="padding:9px 0;">Titulares, cifras, CTA</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">--tinta sobre --luz</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">9,1:1</td><td style="padding:9px 10px; color:#2E6B54; font-weight:700;">Sí</td><td style="padding:9px 0;">Texto sobre CTA ámbar sólido</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">--vino sobre --noche</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">4,1:1</td><td style="padding:9px 10px; color:#F0A830; font-weight:700;">Solo texto grande</td><td style="padding:9px 0;">Chips y alertas ≥ 18px o en negrita ≥ 14px</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;">--humo sobre --barra</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">3,6:1</td><td style="padding:9px 10px; color:#9B2748; font-weight:700;">No</td><td style="padding:9px 0;">Solo metadatos no esenciales, nunca la única fuente de un dato</td></tr>
+    </tbody>
+  </table>
+  <div style="background:#fff; border-left:3px solid #9B2748; padding:16px 20px; font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; margin-bottom:24px; break-inside:avoid;">
+    <b>Regla:</b> ningún dato que el usuario necesita para decidir (precio, hora, regla, penalización) se escribe solo en --humo o solo en --vino sobre fondo oscuro pequeño. Sube a --papel o a texto grande.
+  </div>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">Tamaño mínimo real</h2>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.8; margin:0; padding-left:20px;">
+    <li>Objetivo táctil: 44×44 px mínimo — el botón Sí/No de la ronda, el más presionado del producto, nunca baja de ahí.</li>
+    <li>Cuerpo de app: 14px mínimo, nunca los 9,5px de eyebrow para texto que hay que leer, solo para etiquetas.</li>
+    <li>Contraste de foco visible en todo campo interactivo — el ámbar del CTA sirve también como anillo de foco.</li>
+    <li>Nada de información transmitida solo por color: el estado "en riesgo" lleva texto además del chip ámbar.</li>
+  </ul>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">16</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Variante papel</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">El sistema es dark-only, pero no todo lo que RONDA emite es una pantalla de noche. Una factura, un contrato con el bar o un correo transaccional no pueden llegar en fondo noche — y hoy cada quien lo resuelve distinto. Existe una sola variante clara, y es esta.</p>
+
+  <div style="background:#fff; border:1px solid rgba(27,21,32,.15); border-radius:8px; padding:28px; margin-bottom:24px; break-inside:avoid;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #1B1520; padding-bottom:16px; margin-bottom:16px;">
+      <div style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:20px; letter-spacing:.13em; color:#1B1520;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+      <div style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:10px; color:rgba(27,21,32,.6);">FACTURA #RND-4471<br>Martes 25 de marzo</div>
+    </div>
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; line-height:1.6; color:#1B1520; margin-bottom:14px;">CARONTE Cocktail Bar · Cra 4 # 69-15, Bogotá</div>
+    <table style="font-family:'JetBrains Mono',monospace; font-size:11px;">
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:6px 0;">Comisión por noche operada</td><td style="padding:6px 0; text-align:right;">$180.000</td></tr>
+        <tr><td style="padding:6px 0; font-weight:700;">TOTAL</td><td style="padding:6px 0; text-align:right; font-weight:700;">$180.000</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:20px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Elemento</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Regla</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">Fondo</td><td style="padding:9px 0;">Blanco puro, nunca --papel — el crema es para objetos físicos, no pantallas de facturación.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">Texto</td><td style="padding:9px 10px;">--tinta para cuerpo; el ámbar solo en la O del logotipo, nunca en cifras de dinero.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;">Tipografía</td><td style="padding:9px 0;">Bodoni Moda para el logotipo, JetBrains Mono para toda cifra — igual que en pantalla.</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;">Aplica a</td><td style="padding:9px 0;">Facturas, contratos, recibos Wompi, emails transaccionales, documentos de inversión impresos.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">17</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Arquitectura de marca</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">RONDA ya no es una sola línea de negocio: entrada, SaaS para bares, informe de afluencia valle y Signals. Sin regla de nombres, cada una se bautiza distinto y la marca se diluye justo cuando más locales la ven.</p>
+
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:8px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Línea</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Nombre</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Regla</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>La noche</b></td><td style="padding:9px 10px;">RONDA</td><td style="padding:9px 0;">Sin apellido. Es la marca madre y el producto que ve el usuario.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>SaaS para bares</b></td><td style="padding:9px 10px;">RONDA <span style="font-family:'JetBrains Mono',monospace;">Panel</span></td><td style="padding:9px 0;">Sustantivo común en minúscula tras el nombre, nunca sigla ni "Pro".</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Informe de afluencia</b></td><td style="padding:9px 10px;">RONDA <span style="font-family:'JetBrains Mono',monospace;">Valle</span></td><td style="padding:9px 0;">Nombra el hueco, no la tecnología detrás.</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>Signals</b></td><td style="padding:9px 10px;">RONDA <span style="font-family:'JetBrains Mono',monospace;">Signals</span></td><td style="padding:9px 0;">Único nombre en inglés — se dirige a inversión, no a bares ni usuarios.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.7; color:rgba(27,21,32,.7); margin:14px 0 24px;">Todas las líneas comparten logotipo, tokens y tipografía — solo cambia la palabra después de RONDA, siempre en JetBrains Mono para distinguir "línea de negocio" de "nombre de marca".</p>
+
+  <div style="background:#fff; border-left:3px solid #9B2748; padding:16px 20px; font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.7; break-inside:avoid;">
+    <b>El NFT de evento no tiene lugar en este sistema todavía.</b> Si se lanza, necesita su propia sesión de naming y visual antes de aparecer en cualquier pieza — no hereda automáticamente el ámbar ni el nombre RONDA sin esa definición.
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">18</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Gobierno del sistema</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">Un brand system sin dueño ni versión es un PDF que nadie vuelve a abrir a los seis meses. Esto es lo mínimo para que siga vivo.</p>
+
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:24px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Qué</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Regla</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Dueño</b></td><td style="padding:9px 0;">Una sola persona aprueba cualquier pieza que salga con el logotipo — no comité.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Versión</b></td><td style="padding:9px 0;">Este documento es v2.0. Un tono nuevo o una regla que cambia sube el número menor (v2.1); una regla que se elimina, el mayor (v3.0).</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Plantillas</b></td><td style="padding:9px 0;">Cada pieza recurrente (comanda, KPI, post feed, story, factura) vive en un archivo fuente reutilizable — nadie la rehace desde cero.</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>Revisión</b></td><td style="padding:9px 0;">El checklist de la sección 09 se corre antes de publicar, no después. Falló el checklist, no sale.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.7; color:rgba(27,21,32,.7); margin:0;">Un tono nuevo, aunque sea uno solo, se decide en equipo y entra al sistema — nunca se improvisa en una pieza suelta (regla ya fijada en la sección 09).</p>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">19</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Marca legible por máquina</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 22px; color:rgba(27,21,32,.7);">El público de RONDA cada vez más pregunta a un asistente "¿dónde salgo un martes en Bogotá?" en lugar de buscar en redes. Si RONDA no tiene una descripción canónica y estructurada, esa pregunta la responde otro.</p>
+
+  <pre style="background:#16101B; color:#F3EDE2; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.75; padding:20px; border-radius:8px; white-space:pre-wrap; margin:0 0 20px; break-inside:avoid;">RONDA es un formato de citas rápidas presencial en Bogotá, martes a jueves,
+90 minutos, 9 rondas de 6 minutos, ratio máximo 1,2:1, verificación por
+cédula. Precio desde $45.000 COP. Ciudad: Bogotá. Barrios activos: Zona G,
+Quinta Camacho, Chapinero Alto, Parque 93, Usaquén.</pre>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.8; margin:0 0 24px; padding-left:20px;">
+    <li>Esta descripción vive igual en el <span style="font-family:'JetBrains Mono',monospace;">meta description</span> del sitio, el "Acerca de" de LinkedIn y el pie del documento de inversión — misma frase, sin parafrasear.</li>
+    <li>Cada noche publicada lleva datos estructurados de evento (fecha, hora, ubicación, precio, disponibilidad) para que un asistente los pueda leer directamente, no solo un humano.</li>
+    <li>El nombre nunca varía: "RONDA", nunca "Ronda App" ni "Ronda Dating" — cualquier alias fragmenta cómo una IA identifica la marca.</li>
+  </ul>
+  <div style="background:#16101B; border-radius:8px; padding:22px 24px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#F0A830; margin-bottom:10px;">Regla de cierre</div>
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:17px; color:#F3EDE2; line-height:1.55;">Si un asistente no puede describir RONDA en una frase igual de precisa que la nuestra, todavía no hemos terminado de escribirla.</div>
+  </div>
+</section>
+
+<section style="break-before:page; padding:0.9in 1in;">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#F0A830; margin-bottom:8px;">20</div>
+  <h1 style="font-family:'Bodoni Moda',serif; font-weight:800; font-size:32px; margin:0 0 8px;">Handoff a desarrollo</h1>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:14.5px; line-height:1.7; margin:0 0 24px; color:rgba(27,21,32,.7);">Lo que falta para implementar sin adivinar: estados de cada componente, escala de espaciado y la lista exacta de archivos que el código necesita recibir.</p>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">20.1 · Estados de interacción</h2>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:10px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Componente</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Reposo</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Hover / Focus</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Active</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Disabled</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>CTA primario</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">--luz sólido</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">--luz 90% + anillo de foco --luz 2px</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">escala 0.97</td><td style="padding:9px 0; font-family:'JetBrains Mono',monospace; font-size:11px;">--barra-alta, texto --humo</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>CTA outline</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">borde --papel 40%</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">borde --papel 100%</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">fondo --barra-alta</td><td style="padding:9px 0; font-family:'JetBrains Mono',monospace; font-size:11px;">borde --papel 15%</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Tarjeta de noche</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">--barra</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">--barra-alta</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">—</td><td style="padding:9px 0; font-family:'JetBrains Mono',monospace; font-size:11px;">opacidad 50%, sin hover</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Campo de texto</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">borde --papel 15%</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">borde --luz 2px</td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;">—</td><td style="padding:9px 0; font-family:'JetBrains Mono',monospace; font-size:11px;">fondo --barra, sin borde</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>Campo con error</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace; font-size:11px;" colspan="3">borde --vino 2px + texto de error en --vino, JetBrains Mono 11px, debajo del campo</td><td style="padding:9px 0;">—</td></tr>
+    </tbody>
+  </table>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13px; line-height:1.7; color:rgba(27,21,32,.7); margin:0 0 24px;">Transiciones de estado: 150ms ease para hover/active, 0ms para disabled (cambia sin animar — evita que parezca un bug de carga).</p>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">20.2 · Espaciado y breakpoints</h2>
+  <div style="display:flex; gap:8px; align-items:flex-end; margin-bottom:14px; flex-wrap:wrap;">
+    <div style="text-align:center;"><div style="width:4px; height:4px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">4</div></div>
+    <div style="text-align:center;"><div style="width:8px; height:8px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">8</div></div>
+    <div style="text-align:center;"><div style="width:12px; height:12px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">12</div></div>
+    <div style="text-align:center;"><div style="width:16px; height:16px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">16</div></div>
+    <div style="text-align:center;"><div style="width:24px; height:24px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">24</div></div>
+    <div style="text-align:center;"><div style="width:32px; height:32px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">32</div></div>
+    <div style="text-align:center;"><div style="width:48px; height:48px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">48</div></div>
+    <div style="text-align:center;"><div style="width:64px; height:64px; background:#F0A830; margin:0 auto 6px;"></div><div style="font-family:'JetBrains Mono',monospace; font-size:9px;">64</div></div>
+  </div>
+  <p style="font-family:'Space Grotesk',sans-serif; font-size:13px; color:rgba(27,21,32,.7); margin:0 0 18px;">Escala base 4px. Padding interno de tarjeta: 16–24px. Separación entre secciones: 32–48px.</p>
+  <table style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; margin-bottom:24px; break-inside:avoid;">
+    <thead><tr style="border-bottom:2px solid #1B1520;"><th style="padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Breakpoint</th><th style="padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Rango</th><th style="padding:8px 0; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;">Layout</th></tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Móvil</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">&lt; 480px</td><td style="padding:9px 0;">Una columna. Referencia de diseño: iPhone SE 375px.</td></tr>
+      <tr style="border-bottom:1px solid rgba(27,21,32,.12);"><td style="padding:9px 10px 9px 0;"><b>Tablet</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">481–1024px</td><td style="padding:9px 0;">Paneles Administrador y Red pasan a 2 columnas.</td></tr>
+      <tr><td style="padding:9px 10px 9px 0;"><b>Escritorio</b></td><td style="padding:9px 10px; font-family:'JetBrains Mono',monospace;">&gt; 1024px</td><td style="padding:9px 0;">Panel Red y Super Admin a 3–4 columnas; landing conserva ancho máx. 1200px.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-family:'Bodoni Moda',serif; font-weight:600; font-size:18px; margin:0 0 12px;">20.3 · Assets exportables</h2>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.85; margin:0 0 20px; padding-left:20px;">
+    <li>Logotipo SVG — versión ámbar (fondo oscuro) y versión tinta sólida (fondo papel), con la O como <span style="font-family:'JetBrains Mono',monospace;">&lt;path&gt;</span> independiente para animarla si hace falta.</li>
+    <li>Favicon y app icon — la R sola en ámbar sobre noche, 512×512 fuente, exportado a los tamaños estándar de iOS/Android/web.</li>
+    <li>Archivos de fuente o enlace fijo a Google Fonts (sección 06) con los pesos exactos — nunca "todos los pesos" para no inflar el bundle.</li>
+    <li>Paleta y radios como variables de código (los mismos nombres de la sección 06: <span style="font-family:'JetBrains Mono',monospace;">--noche, --luz, --r</span>…) para que diseño y código usen el mismo nombre de token.</li>
+    <li>Set de iconos del producto (cronómetro, mapa de mesas, chips de estado) en un solo archivo SVG sprite, trazo uniforme.</li>
+  </ul>
+  <div style="background:#16101B; border-radius:8px; padding:22px 24px; break-inside:avoid;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#F0A830; margin-bottom:10px;">Regla de cierre</div>
+    <div style="font-family:'Bodoni Moda',serif; font-style:italic; font-size:17px; color:#F3EDE2; line-height:1.55;">Si un desarrollador tiene que abrir este documento para adivinar un valor que no está aquí escrito, el handoff no terminó.</div>
+  </div>
+</section>
+</div>
+</doc-page>
+
+</x-dc>
+</body>
+</html>

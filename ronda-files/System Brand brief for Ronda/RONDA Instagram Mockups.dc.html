@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background:#0a0a0a; margin:0; padding:20px; font-family:'Space Grotesk',sans-serif; }
+    .grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:40px; max-width:1200px; margin:0 auto; }
+    .mockup { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+    .mockup-label { background:#16101B; color:#F3EDE2; padding:14px 20px; font-size:12px; letter-spacing:.16em; font-family:'JetBrains Mono',monospace; text-transform:uppercase; }
+    .mockup-content { position:relative; width:100%; }
+    .feed { aspect-ratio:1/1.25; background:#16101B; display:flex; flex-direction:column; }
+    .story { aspect-ratio:9/16; background:#16101B; display:flex; align-items:center; justify-content:center; }
+    .feed-header { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid rgba(243,237,226,.1); }
+    .feed-avatar { width:32px; height:32px; background:#2C2033; border-radius:50%; }
+    .feed-info { flex:1; }
+    .feed-name { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:#F3EDE2; }
+    .feed-handle { font-family:'JetBrains Mono',monospace; font-size:10px; color:rgba(243,237,226,.6); }
+    .feed-body { flex:1; background:repeating-linear-gradient(135deg, #16101B 0px, #16101B 20px, #1a1122 20px, #1a1122 40px); position:relative; display:flex; align-items:flex-end; justify-content:center; padding:0; overflow:hidden; }
+    .photo-placeholder { position:absolute; inset:0; background:linear-gradient(135deg, #2C2033 0%, #221826 50%, #16101B 100%); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(243,237,226,.4); text-align:center; padding:20px; }
+    .photo-label { font-size:10px; letter-spacing:.08em; }
+    .overlay-data { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(22,16,27,.95), transparent); padding:20px 16px 16px; }
+    .data-row { display:flex; justify-content:space-between; align-items:baseline; }
+    .data-label { font-family:'JetBrains Mono',monospace; font-size:9px; color:rgba(243,237,226,.6); letter-spacing:.08em; text-transform:uppercase; }
+    .data-value { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; color:#F0A830; line-height:1; }
+    .bar-name { font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(243,237,226,.8); margin-top:4px; }
+    .feed-footer { display:flex; gap:8px; padding:12px 16px; border-top:1px solid rgba(243,237,226,.1); font-size:18px; }
+    .feed-actions { flex:1; }
+    .feed-caption { padding:0 16px 12px; font-size:13px; line-height:1.5; color:#F3EDE2; }
+    .caption-strong { font-weight:700; }
+    .caption-accent { color:#F0A830; }
+    .story-content { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; box-sizing:border-box; }
+    .story-main { font-family:'Bodoni Moda',serif; font-size:72px; font-weight:800; color:#F3EDE2; line-height:1; margin:0; }
+    .story-sub { font-family:'Space Grotesk',sans-serif; font-size:16px; color:rgba(243,237,226,.8); margin-top:16px; max-width:280px; line-height:1.4; }
+    .story-accent { position:absolute; width:100px; height:100px; background:radial-gradient(circle, rgba(240,168,48,.3) 0%, transparent 70%); border-radius:50%; }
+    .comanda { aspect-ratio:1/1.25; background:#F3EDE2; padding:16px; display:flex; flex-direction:column; gap:8px; border-left:3px dashed #16101B; }
+    .comanda-header { text-align:center; border-bottom:1px dashed #16101B; padding-bottom:10px; }
+    .comanda-logo { font-family:'Bodoni Moda',serif; font-weight:800; font-size:18px; letter-spacing:.13em; color:#16101B; }
+    .comanda-date { font-family:'JetBrains Mono',monospace; font-size:8px; color:#1B1520; letter-spacing:.1em; margin-top:4px; }
+    .comanda-item { display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:10px; color:#1B1520; padding:4px 0; }
+    .comanda-label { flex:1; }
+    .comanda-price { text-align:right; font-weight:700; }
+    .comanda-line { border-top:1px dashed #16101B; margin:6px 0; }
+    .comanda-total { display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:#16101B; padding-top:6px; }
+    .story-header { position:absolute; top:20px; left:20px; right:20px; display:flex; align-items:center; gap:10px; }
+    .story-avatar { width:40px; height:40px; background:#2C2033; border-radius:50%; border:2px solid #F0A830; }
+    .story-info { flex:1; }
+    .story-name { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:#F3EDE2; }
+    .story-time { font-family:'JetBrains Mono',monospace; font-size:9px; color:rgba(243,237,226,.6); }
+  </style>
+</helmet>
+
+<div style="text-align:center; margin-bottom:60px; color:#F3EDE2; padding:40px 20px;">
+  <h1 style="font-family:'Bodoni Moda',serif; font-size:42px; margin:0 0 8px; letter-spacing:.13em;">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</h1>
+  <p style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; margin:0; text-transform:uppercase;">Mockups de contenido Instagram — 4 arquetipos</p>
+</div>
+
+<div class="grid">
+
+  <div class="mockup">
+    <div class="mockup-label">1 · La noche de ayer</div>
+    <div class="mockup-content">
+      <div class="feed">
+        <div class="feed-header">
+          <div class="feed-avatar"></div>
+          <div class="feed-info">
+            <div class="feed-name">ronda.bogota</div>
+            <div class="feed-handle">Zona G</div>
+          </div>
+        </div>
+        <div class="feed-body">
+          <div class="photo-placeholder">
+            <div class="photo-label">FOTO REAL<br/>8 personas en conversación<br/>Zona G, martes 8 PM</div>
+          </div>
+          <div class="overlay-data">
+            <div class="data-row">
+              <div style="flex:1;">
+                <div class="data-label">Ocupación</div>
+                <div class="data-value">24/24</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="data-label">Local</div>
+                <div class="bar-name">CARONTE<br/>Cocktail Bar</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="feed-caption">
+          <span class="caption-strong">Martes, 20:00, Zona G.</span> 24 sillas, 9 rondas de 6 min. <span class="caption-accent">Quedan 3.</span>
+        </div>
+        <div class="feed-footer">
+          <span>♡</span>
+          <span>💬</span>
+          <span>⤴</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-label">2 · La comanda impresa</div>
+    <div class="mockup-content">
+      <div class="comanda">
+        <div class="comanda-header">
+          <div class="comanda-logo">R<i style="font-style:italic; font-weight:400; color:#F0A830;">O</i>NDA</div>
+          <div class="comanda-date">MARTES 25 DE MARZO · 20:00</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="comanda-item">
+              <span class="comanda-label">Local</span>
+              <span class="comanda-price">CARONTE</span>
+            </div>
+            <div class="comanda-item">
+              <span class="comanda-label">Dirección</span>
+              <span class="comanda-price">Cra 4 # 69-15</span>
+            </div>
+            <div class="comanda-line"></div>
+            <div class="comanda-item">
+              <span class="comanda-label">Entrada</span>
+              <span class="comanda-price">$45.000</span>
+            </div>
+            <div class="comanda-item">
+              <span class="comanda-label">Rondas</span>
+              <span class="comanda-price">9 × 6 min</span>
+            </div>
+            <div class="comanda-item">
+              <span class="comanda-label">Ratio</span>
+              <span class="comanda-price">1,2 : 1</span>
+            </div>
+            <div class="comanda-item">
+              <span class="comanda-label">Vuelves con</span>
+              <span class="comanda-price">−25%</span>
+            </div>
+          </div>
+          <div>
+            <div class="comanda-line"></div>
+            <div class="comanda-total">
+              <span>TOTAL</span>
+              <span>$45.000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-label">3 · Story de escasez</div>
+    <div class="mockup-content">
+      <div class="story">
+        <div class="story-header">
+          <div class="story-avatar"></div>
+          <div class="story-info">
+            <div class="story-name">ronda.bogota</div>
+            <div class="story-time">hace 1h</div>
+          </div>
+        </div>
+        <div class="story-accent" style="top:30%; left:-20px;"></div>
+        <div class="story-accent" style="bottom:10%; right:-30px;"></div>
+        <div class="story-content">
+          <p class="story-main">Faltan<br/>3</p>
+          <p class="story-sub">para cerrar el martes en Quinta Camacho</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-label">4 · KPI del bar</div>
+    <div class="mockup-content">
+      <div class="feed">
+        <div class="feed-header">
+          <div class="feed-avatar"></div>
+          <div class="feed-info">
+            <div class="feed-name">ronda.bogota</div>
+            <div class="feed-handle">Administrador</div>
+          </div>
+        </div>
+        <div class="feed-body" style="background:linear-gradient(135deg, #16101B 0%, #221826 50%, #2C2033 100%); align-items:center; justify-content:center;">
+          <div style="text-align:center; padding:40px; position:relative; z-index:1;">
+            <div class="data-label" style="margin-bottom:12px;">MARTES · OCUPACIÓN</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:56px; color:#F0A830; font-weight:700; line-height:1; margin-bottom:8px;">24 / 24</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-size:14px; color:rgba(243,237,226,.7);">CARONTE Cocktail Bar · 9 rondas</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-size:11px; color:rgba(243,237,226,.5); margin-top:12px;">sin publicidad, con riesgo asumido</div>
+          </div>
+        </div>
+        <div class="feed-caption">
+          <span class="caption-strong">Un martes sin RONDA:</span> 30% ocupación. <span class="caption-accent">Un martes con RONDA: 100%.</span> La diferencia es el modelo.
+        </div>
+        <div class="feed-footer">
+          <span>♡</span>
+          <span>💬</span>
+          <span>⤴</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:80px; background:#1a1122; padding:40px; border-radius:12px; max-width:1200px; margin-left:auto; margin-right:auto; color:#F3EDE2;">
+  <h2 style="font-family:'Bodoni Moda',serif; font-size:24px; margin:0 0 16px; letter-spacing:.13em;">Notas de implementación</h2>
+  <ul style="font-family:'Space Grotesk',sans-serif; font-size:13.5px; line-height:1.8; margin:0; padding-left:20px; color:rgba(243,237,226,.85);">
+    <li><b>Foto real reemplaza placeholder:</b> El área etiquetada "FOTO REAL" recibe la captura de la noche anterior — 5 a 8 personas en conversación, enfoque en interacción.</li>
+    <li><b>Comanda:</b> Se imprime y se fotografía directamente. El PDF con este diseño sale de la app cada noche operada.</li>
+    <li><b>Story:</b> Se publica solo la tarde del evento (4–6 PM) y la mañana siguiente. Máximo 3 historias por noche.</li>
+    <li><b>KPI:</b> Datos del panel Administrador capturados en el mismo momento de la noche cerrada. La cifra es siempre real.</li>
+    <li><b>Copy:</b> Máximo dos líneas antes del "ver más". Primera línea es el dato o la urgencia, no el saludo.</li>
+    <li><b>Hashtags:</b> Solo de lugar: #ZonaG #Chapinero #Bogotá. Nunca de categoría.</li>
+  </ul>
+</div>
+
+</x-dc>
+</body>
+</html>

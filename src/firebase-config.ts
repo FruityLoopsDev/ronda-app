@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getMessaging } from "firebase/messaging";
 
 export const RondaConfig = {
   // Modo demo SOLO en local. En producción (CI/lanzamiento) se define VITE_IS_DEMO=false:
@@ -23,6 +24,11 @@ export const RondaConfig = {
 const app = initializeApp(RondaConfig.firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+let messaging: any = null;
+if (typeof window !== 'undefined') {
+  try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
+}
+
 
 /*
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
@@ -35,5 +41,7 @@ if (window.location.hostname === "localhost" || window.location.hostname === "12
 export const RondaServices = {
   app,
   db,
-  auth
+  auth,
+  messaging
 };
+export { app, db, auth, messaging };

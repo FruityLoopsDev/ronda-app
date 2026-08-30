@@ -465,6 +465,63 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
   background: rgba(240,168,48,0.2); z-index: -1;
   width: var(--w, 0%);
 }
+/* ---- 1. PRINT STYLES (PDF Export) ---- */
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  body::before { display: none !important; }
+  .fab-btn, .top-nav-bar button, .nav-btns, .pitch-rotator { display: none !important; }
+  .wrap { max-width: 100% !important; padding: 0 !important; }
+  .panel { display: block !important; page-break-after: always; opacity: 1 !important; transform: none !important; }
+  .caja, .kpi, .nodo, .cta-gold { opacity: 1 !important; transform: none !important; break-inside: avoid; border: 1px solid #ccc; box-shadow: none !important; }
+  .tabs { display: none !important; }
+  .td-bar::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .top-nav-bar .invest-badge-pill { color: #000; border-color: #000; }
+  h2, h3, h4, p, th, td, span, li, b, em { color: #000 !important; }
+  .claim, .sub { color: #333 !important; }
+}
+
+/* ---- 2. MODAL STYLES (Data Room & Video) ---- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-content { background: var(--barra); border: 1px solid var(--linea); padding: 32px; border-radius: var(--r); max-width: 500px; width: 90%; transform: scale(0.95); transition: transform 0.3s; position: relative; }
+.modal-overlay.active .modal-content { transform: scale(1); }
+.modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--humo); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px; }
+.modal-close:hover { color: var(--papel); }
+.modal-content h3 { font-family: "Bodoni Moda", serif; margin: 0 0 16px; color: var(--luz); font-size: 24px; }
+.modal-content p { color: var(--humo); font-size: 14px; margin-bottom: 24px; }
+.modal-video iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 8px; }
+
+/* ---- 3. SIMULATOR STYLES ---- */
+.simulador { background: rgba(255,255,255,0.03); border: 1px solid var(--linea); border-radius: var(--r); padding: 24px; margin-top: 24px; }
+.sim-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.sim-row label { flex: 1; font-weight: 700; min-width: 150px; }
+.sim-row input[type=range] { flex: 2; width: 100%; min-width: 200px; accent-color: var(--luz); }
+.sim-val { font-family: "JetBrains Mono", monospace; color: var(--luz); font-size: 16px; font-weight: 700; width: 100px; text-align: right; }
+.sim-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--linea); }
+.sim-kpi { background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; text-align: center; }
+.sim-kpi span { display: block; font-size: 11px; text-transform: uppercase; color: var(--humo); margin-bottom: 8px; letter-spacing: 1px; }
+.sim-kpi b { font-size: 20px; color: var(--papel); font-family: "JetBrains Mono", monospace; }
+
+/* ---- 4. FULLSCREEN PRESENTATION STYLES ---- */
+:fullscreen .wrap { max-width: 1400px; padding: 40px; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+:fullscreen .panel.on { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+:fullscreen .top-nav-bar, :fullscreen .pitch-rotator, :fullscreen footer, :fullscreen .fab-btn, :fullscreen .cta-gold { display: none !important; }
+:fullscreen .marca { margin-bottom: 40px; }
+
+/* ---- 5. FORM STYLES ---- */
+.form-commit { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; text-align: left; }
+.form-commit input, .form-commit select { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(0,0,0,0.2); color: var(--papel); font-family: "Space Grotesk", sans-serif; font-size: 14px; }
+.form-commit input:focus, .form-commit select:focus { outline: none; border-color: var(--luz); }
+.form-commit select option { background: var(--barra-alta); color: var(--papel); }
+
+/* ---- 6. DROPDOWN MENU STYLES ---- */
+.nav-dropdown { position: relative; display: inline-block; margin-left: 12px; }
+.nav-dropdown-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--linea); color: var(--papel); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; font-family: "JetBrains Mono", monospace; transition: all 0.2s; }
+.nav-dropdown-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--humo); }
+.nav-dropdown-content { display: none; position: absolute; left: 0; top: 100%; margin-top: 4px; background: var(--barra-alta); border: 1px solid var(--linea); border-radius: 8px; min-width: 160px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 10000; overflow: hidden; }
+.nav-dropdown:hover .nav-dropdown-content { display: flex; flex-direction: column; }
+.nav-dropdown-content button { background: none; border: none; color: var(--papel); padding: 12px 16px; text-align: left; cursor: pointer; font-size: 13px; font-family: "Space Grotesk", sans-serif; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: 100%; margin: 0; }
+.nav-dropdown-content button:hover { background: rgba(255,255,255,0.05); color: var(--luz); }
 </style>
 </head>
 <body>
@@ -474,8 +531,17 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
     <div class="top-nav-bar">
       <a href="/" class="back-link">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Volver a RONDA (Experiencia)
+        Volver
       </a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn">🛠️ Herramientas ▾</button>
+        <div class="nav-dropdown-content">
+          <button onclick="window.print()">📄 Exportar PDF</button>
+          <button onclick="document.getElementById('modal-proyecciones').classList.add('active')">📈 Proyecciones</button>
+          <button onclick="document.getElementById('modal-video').classList.add('active')">🎥 Pitch Video</button>
+          <button onclick="document.getElementById('modal-dataroom').classList.add('active')">🔒 Data Room</button>
+        </div>
+      </div>
       <span class="invest-badge-pill">Ronda FFF · Seed</span>
     </div>
 
@@ -895,6 +961,26 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
         </ul>
       </div>
     </div>
+    <!-- Llamado a la Acción -->
+    <div class="cta-gold reveal" id="cta-section" style="margin-top: 24px; margin-bottom: 24px;">
+      <h3>Únete a la Ronda FFF / Seed</h3>
+      <p>Buscamos $150K USD para dominar el mercado de Bogotá en 12 meses antes de expandir a Medellín y CDMX. Cierre rápido mediante SAFE estándar.</p>
+      
+      <div style="max-width:400px; margin:0 auto; padding-top:16px;">
+        <div class="form-commit">
+          <input type="text" id="commit-name" placeholder="Tu Nombre o Fondo" required>
+          <select id="commit-ticket">
+            <option value="">Selecciona Ticket Estimado (USD)</option>
+            <option value="$10K - $25K">$10,000 - $25,000</option>
+            <option value="$25K - $50K">$25,000 - $50,000</option>
+            <option value="$50K+">Más de $50,000</option>
+          </select>
+        </div>
+        <button type="button" onclick="sendCommit()" class="btn-gold" style="width:100%; border:none; cursor:pointer;">
+          💬 Confirmar Interés por WhatsApp
+        </button>
+      </div>
+    </div>
 
     <div class="grid3" style="margin-top:16px">
       <div class="caja">
@@ -928,21 +1014,141 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       </div>
     </div>
 
-    <!-- Llamado a la Acción -->
-    <div class="cta-gold reveal">
-      <h3>Únete a la Ronda FFF / Seed</h3>
-      <p>Buscamos $150K USD para dominar el mercado de Bogotá en 12 meses antes de expandir a Medellín y CDMX. Inversión mínima ticket de $15K USD. Cierre rápido mediante SAFE.</p>
-      <a href="https://wa.me/573000000000?text=Hola,%20quiero%20conocer%20m%C3%A1s%20sobre%20la%20ronda%20de%20inversi%C3%B3n%20de%20RONDA" target="_blank" class="btn-gold">
-        💬 Hablar con los Founders
-      </a>
+    <!-- Simulador SAFE -->
+    <div class="simulador reveal">
+      <h3 style="margin-top:0;font-family:'Bodoni Moda',serif;color:var(--luz);">🎛️ Simulador de Retorno / SAFE</h3>
+      <div class="sim-row">
+        <label>Ticket Inversión (USD)</label>
+        <input type="range" id="sim-ticket" min="5000" max="150000" step="5000" value="25000" oninput="updateSim()">
+        <span class="sim-val" id="val-ticket">$25,000</span>
+      </div>
+      <div class="sim-row">
+        <label>Cap SAFE (USD)</label>
+        <input type="range" id="sim-cap" min="1000000" max="3000000" step="100000" value="1500000" oninput="updateSim()">
+        <span class="sim-val" id="val-cap">$1.5M</span>
+      </div>
+      <div class="sim-results">
+        <div class="sim-kpi"><span>Propiedad Est.</span><b id="res-prop">1.67%</b></div>
+        <div class="sim-kpi"><span>Valor a 3 años</span><b id="res-val">$150,000</b></div>
+        <div class="sim-kpi"><span>Múltiplo</span><b id="res-mult">6.0x</b></div>
+      </div>
     </div>
+
+
 
   </section>
 
+  <!-- Modal Proyecciones -->
+  <div class="modal-overlay" id="modal-proyecciones">
+    <div class="modal-content" style="max-width: 700px;">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
+      <h3>📈 Proyecciones Financieras</h3>
+      <p>Escenarios de crecimiento y rentabilidad esperada a 3 años.</p>
+      
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px; margin-bottom:16px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--linea); color:var(--luz);">
+              <th style="padding:12px 8px;">Métrica</th>
+              <th style="padding:12px 8px;">Año 1</th>
+              <th style="padding:12px 8px;">Año 2</th>
+              <th style="padding:12px 8px;">Año 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(243,237,226,0.05);">
+              <td style="padding:12px 8px; color:var(--humo);">Locales Activos</td>
+              <td style="padding:12px 8px; font-weight:bold;">15</td>
+              <td style="padding:12px 8px; font-weight:bold;">45</td>
+              <td style="padding:12px 8px; font-weight:bold;">120</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(243,237,226,0.05);">
+              <td style="padding:12px 8px; color:var(--humo);">Usuarios Activos Mensuales</td>
+              <td style="padding:12px 8px;">3,500</td>
+              <td style="padding:12px 8px;">15,000</td>
+              <td style="padding:12px 8px;">50,000</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(243,237,226,0.05);">
+              <td style="padding:12px 8px; color:var(--humo);">Gross Merchandise Value (GMV)</td>
+              <td style="padding:12px 8px;">$350K</td>
+              <td style="padding:12px 8px;">$1.8M</td>
+              <td style="padding:12px 8px;">$6.5M</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(243,237,226,0.05);">
+              <td style="padding:12px 8px; color:var(--humo);">Net Revenue (RONDA)</td>
+              <td style="padding:12px 8px; color:var(--luz);">$70K</td>
+              <td style="padding:12px 8px; color:var(--luz);">$360K</td>
+              <td style="padding:12px 8px; color:var(--luz);">$1.3M</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 8px; color:var(--humo);">EBITDA Margin</td>
+              <td style="padding:12px 8px;">-15%</td>
+              <td style="padding:12px 8px;">12%</td>
+              <td style="padding:12px 8px; color:var(--botella);">28%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12px; color:var(--humo); text-align:center;">*Cifras en USD. El modelo de ingresos asume un take-rate promedio del 20% sobre el consumo en los locales.</p>
+    </div>
+  </div>
+
+  <!-- Modal Data Room -->
+  <div class="modal-overlay" id="modal-dataroom">
+    <div class="modal-content">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
+      <h3>🔒 Data Room Privado</h3>
+      <p>Para proteger nuestra estrategia GTM y acuerdos pre-firmados, la documentación institucional requiere código de acceso.</p>
+      <div class="form-commit">
+        <input type="password" placeholder="Código PIN (ej. 1234)">
+        <button class="btn-gold" style="width:100%; border:none; cursor:pointer; padding:10px;" onclick="alert('PIN incorrecto. Solicita acceso a los founders.')">Acceder</button>
+      </div>
+      <p style="font-size:12px; text-align:center; margin-bottom:0;">
+        <a href="#cta-section" style="color:var(--luz);" onclick="document.getElementById('modal-dataroom').classList.remove('active')">Solicitar acceso a Founders</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Video Pitch -->
+  <div class="modal-overlay" id="modal-video">
+    <div class="modal-content modal-video">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
+      <h3>🎥 Elevator Pitch (90s)</h3>
+      <p>Conoce al equipo fundador y el modelo detrás de RONDA.</p>
+      <div style="background:#000; display:flex; align-items:center; justify-content:center; aspect-ratio:16/9; border-radius:8px;">
+        <p style="color:var(--humo);">[ Placeholder de Video Embed / Loom ]</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Contact Founders -->
+  <div class="modal-overlay" id="modal-contact">
+    <div class="modal-content">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
+      <h3>💬 Contactar Founders</h3>
+      <p>Déjanos tus datos y nos pondremos en contacto contigo de inmediato a través de WhatsApp.</p>
+      
+      <div class="form-commit">
+        <input type="text" id="contact-name" placeholder="Tu Nombre / Entidad" required style="width: 100%; margin-bottom: 12px;">
+        <input type="email" id="contact-email" placeholder="Correo Electrónico (Opcional)" style="width: 100%; margin-bottom: 12px; padding: 12px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel); font-family: 'Space Grotesk', sans-serif; border-radius: 8px;">
+        <select id="contact-topic" style="width: 100%;">
+          <option value="">¿Sobre qué quieres hablar?</option>
+          <option value="Inversión FFF / Seed">Inversión FFF / Seed</option>
+          <option value="Alianzas Estratégicas">Alianzas Estratégicas</option>
+          <option value="Medios / Prensa">Medios / Prensa</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <button type="button" onclick="sendContact()" class="btn-gold" style="width:100%; border:none; cursor:pointer; margin-top: 16px;">
+        📲 Iniciar Chat en WhatsApp
+      </button>
+    </div>
+  </div>
+
   <!-- Floating Action Button -->
-  <a href="https://wa.me/573000000000?text=Hola,%20quiero%20conocer%20m%C3%A1s%20sobre%20la%20ronda%20de%20inversi%C3%B3n%20de%20RONDA" target="_blank" class="fab-btn" id="fab-btn">
+  <button onclick="document.getElementById('modal-contact').classList.add('active')" class="fab-btn" id="fab-btn" style="border: none; font-family: inherit; font-size: inherit;">
     <span class="fab-icon">💬</span> Contactar Founders
-  </a>
+  </button>
 
   <footer>
     <span>RONDA · maqueta de producto y modelo · Bogotá</span>
@@ -969,6 +1175,70 @@ window.addEventListener('scroll', () => {
   if(fab) {
     if(window.scrollY > 500) fab.classList.add('visible');
     else fab.classList.remove('visible');
+  }
+});
+
+/* ---- simulador SAFE ---- */
+function updateSim() {
+  const t = parseInt(document.getElementById('sim-ticket').value);
+  const c = parseInt(document.getElementById('sim-cap').value);
+  document.getElementById('val-ticket').innerText = '$' + t.toLocaleString();
+  document.getElementById('val-cap').innerText = '$' + (c / 1000000).toFixed(1) + 'M';
+  
+  const prop = (t / c) * 100;
+  document.getElementById('res-prop').innerText = prop.toFixed(2) + '%';
+  
+  // Asumiendo salida (exit) a $9M en 3 años.
+  const val3 = (9000000 * (prop / 100));
+  document.getElementById('res-val').innerText = '$' + val3.toLocaleString(undefined, {maximumFractionDigits:0});
+  document.getElementById('res-mult').innerText = (val3 / t).toFixed(1) + 'x';
+}
+if(document.getElementById('sim-ticket')) updateSim();
+
+/* ---- soft commitment form ---- */
+function sendCommit() {
+  const name = document.getElementById('commit-name').value;
+  const amount = document.getElementById('commit-ticket').value;
+  
+  if (!name || !amount) {
+    alert("Por favor completa tu nombre y el ticket estimado.");
+    return;
+  }
+  
+  const msg = `Hola, mi nombre/fondo es ${name} y me interesa participar en la ronda de RONDA con un ticket estimado de ${amount}. Quiero agendar una llamada.`;
+  const whatsappUrl = `https://wa.me/573000000000?text=${encodeURIComponent(msg)}`;
+  
+  window.open(whatsappUrl, '_blank');
+}
+
+function sendContact() {
+  const name = document.getElementById('contact-name').value;
+  const email = document.getElementById('contact-email').value;
+  const topic = document.getElementById('contact-topic').value;
+
+  if (!name || !topic) {
+    alert('Por favor completa tu nombre y el motivo del contacto.');
+    return;
+  }
+
+  const msg = `Hola, soy ${name}. Me interesa contactarlos sobre: ${topic}. ${email ? 'Mi correo es '+email : ''}`;
+  const whatsappUrl = `https://wa.me/573000000000?text=${encodeURIComponent(msg)}`;
+  
+  document.getElementById('modal-contact').classList.remove('active');
+  window.open(whatsappUrl, '_blank');
+}
+
+/* ---- modo presentacion teclado ---- */
+document.addEventListener('keydown', (e) => {
+  if(document.fullscreenElement) {
+    const activeTab = document.querySelector('.tab[aria-selected="true"]');
+    const tabs = [...document.querySelectorAll('.tab')];
+    const idx = tabs.indexOf(activeTab);
+    if(e.key === 'ArrowRight' || e.key === ' ') {
+      if(idx < tabs.length - 1) tabs[idx+1].click();
+    } else if (e.key === 'ArrowLeft') {
+      if(idx > 0) tabs[idx-1].click();
+    }
   }
 });
 

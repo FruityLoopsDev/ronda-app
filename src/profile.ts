@@ -1,6 +1,8 @@
 import { DB, User } from './db.js';
 import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
+import { updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import notifications from './notifications.js';
 import { RondaDialog } from './dialog.js';
 import { Verification } from './verification.js';
 import { PrivacyPolicy } from './privacy-policy.js';
@@ -676,30 +678,7 @@ export class ProfileService {
   }
 
   showToast(message: string) {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--barra-alta);
-      color: var(--luz);
-      padding: 10px 20px;
-      border-radius: 999px;
-      border: 1px solid var(--luz);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      z-index: 9999;
-      animation: fadeInToast 0.3s ease;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transition = 'opacity 0.4s ease';
-      setTimeout(() => toast.remove(), 400);
-    }, 2500);
+    notifications.showLegacyToast(message);
   }
 }
 

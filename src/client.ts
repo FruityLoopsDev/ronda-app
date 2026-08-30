@@ -5,6 +5,7 @@ import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 import { RondaDialog } from './dialog.js';
 import { Wompi } from './wompi.js';
 import { PrivacyPolicy } from './privacy-policy.js';
+import notifications from './notifications.js';
 
 // client.ts: Lógica del Cliente, Eventos, Carta de Tragos Bartender/Sommelier, Chat Temporal Seguro con Autodestrucción Misión Imposible
 
@@ -1266,13 +1267,17 @@ class ClientAppService {
           </p>
         </div>
 
+        ${Auth.currentUser?.satisfactionFeedback ? '' : `
         <button id="btn-open-satisfaction" class="btn" style="width: 100%; margin-top: 14px; font-size: 11.5px; font-weight: 700; padding: 11px; border: 1px dashed rgba(240,168,48,0.4); background: rgba(240,168,48,0.06); color: var(--luz); display: flex; align-items: center; justify-content: center; gap: 8px;">
           🥂 ¿Cómo vibró tu noche? Sellar veredicto
         </button>
+        `}
 
+        ${postState.matches.length === 0 ? `
         <button id="btn-done-matches" class="btn ambar" style="width: 100%; margin-top: 10px; font-size: 12px; font-weight: 700; padding: 12px;">
           Explorar Próxima Cartelera de Eventos
         </button>
+        ` : ''}
       </div>
     `;
 
@@ -1866,32 +1871,7 @@ class ClientAppService {
   }
 
   showToast(message: string) {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--barra-alta);
-      color: var(--luz);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--luz);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      z-index: 9999;
-      pointer-events: none;
-      animation: fadeIn 0.3s ease;
-      white-space: nowrap;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transition = 'opacity 0.4s ease';
-      setTimeout(() => toast.remove(), 400);
-    }, 2800);
+    notifications.showLegacyToast(message);
   }
 }
 

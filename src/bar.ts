@@ -1,4 +1,6 @@
 import { DB } from './db.js';
+import { Auth } from './auth.js';
+import notifications from './notifications.js';
 import { RondaDialog } from './dialog.js';
 import { buildNightPlan } from './mem-rr-v2/engine.ts';
 import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
@@ -532,11 +534,7 @@ class HostConsoleService {
   }
 
   showToastQR(msg: string) {
-    const toast = document.createElement('div');
-    toast.textContent = msg;
-    toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--barra-alta); color:var(--luz); font-family:var(--font-mono); font-size:12px; padding:10px 18px; border-radius:999px; border:1px solid var(--luz); box-shadow:0 10px 30px rgba(0,0,0,.8); z-index:20000;';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2600);
+    notifications.showLegacyToast(msg);
   }
 
   /** Renderiza las métricas auditables del plan v2 en el dashboard del anfitrión. */
