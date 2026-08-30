@@ -24,7 +24,7 @@ Llevar RONDA a **100% producción** y dejar la base de datos **purga total** (re
 | ✅ | CI/CD: GitHub Actions despliega hosting a `live` en push a `main` con `VITE_IS_DEMO=false` | — | Verificado |
 | ✅ | Reglas de Firestore endurecidas (roles, `transactions` solo servidor, sin auto-elevación) | — | Verificado |
 | R1 | Demo mode por defecto: `isDemo: VITE_IS_DEMO !== 'false'` (build manual sin variable → BD en memoria) | Alta | ✅ HECHO (`build:prod`) |
-| R2 | Wompi en sandbox: `VITE_WOMPI_PUBLIC_KEY` comentado en CI → llave `pub_test_...` | Crítica | ✅ RESUELTO: checkout reemplazado por **enlace de cobro Nequi** (`src/payment.ts`, `VITE_NEQUI_PAYMENT_LINK`; verificación manual del anfitrión) |
+| R2 | Wompi en sandbox: `VITE_WOMPI_PUBLIC_KEY` comentado en CI → llave `pub_test_...` | Crítica | ✅ RESUELTO: checkout reemplazado por **QR de cobro Nequi** (`src/payment.ts` + `src/dialog.ts`, `VITE_NEQUI_QR_URL`; verificación manual del anfitrión). ⏳ **Pendiente:** colocar la imagen del QR en `public/nequi-qr.png` |
 | R3 | Repo sin `.firebaserc`; `Desktop\.firebaserc` apunta a `opheleia-f4c4b` | Crítica | ✅ HECHO (`.firebaserc` → `ronda-uno`) |
 | R4 | CI solo despliega hosting (rules y functions manual) | Alta | Parcial: rules en CI ✅ · functions sin Blaze |
 | R5 | Functions en Node 16 (EOL) | Alta | Código listo (node 20) · deploy bloqueado por Blaze |
@@ -114,3 +114,4 @@ Llevar RONDA a **100% producción** y dejar la base de datos **purga total** (re
 | 2026-08-30 | 3 | Bootstrap staff | ✅ superadmin cesar@ronda.uno creado (Auth + Firestore) |
 | 2026-08-30 | git | Merge feat/kyc-face-verify → main + push | ✅ `94100b3..f35a309` · CI deploy OK (run 33283729514) |
 | 2026-08-30 | 4 | Fixes CI | ✅ vite.config certs condicionales (a74a627) · revert rules step ADC (ca95737) · rules desplegadas manualmente |
+| 2026-08-30 | 4 | Checkout Nequi | ✅ Wompi sandbox eliminado (`src/wompi.ts` → `src/payment.ts`) · QR de cobro en diálogo · CI verde (0f227af). ⏳ Pendiente: `public/nequi-qr.png` |
