@@ -19,8 +19,8 @@ jobs:
       - run: npm run build
         env:
           VITE_IS_DEMO: 'false'
-          # Enlace de cobro Nequi (reemplaza la llave Wompi sandbox):
-          # VITE_NEQUI_PAYMENT_LINK: 'https://app.nequi.com.co/pagos/...'  # definir con el enlace real
+          # QR de cobro Nequi (reemplaza la llave Wompi sandbox):
+          # VITE_NEQUI_QR_URL: 'https://.../nequi-qr.png'  # o usa public/nequi-qr.png
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

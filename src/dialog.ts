@@ -4,9 +4,14 @@ export interface DialogOptions {
   title?: string;
   message: string;
   icon?: string;
+  imageUrl?: string;   // Imagen opcional (ej. QR de pago Nequi)
   confirmText?: string;
   cancelText?: string;
   type?: 'confirm' | 'alert' | 'danger';
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 }
 
 export class RondaDialog {
@@ -61,7 +66,10 @@ export class RondaDialog {
     const btnConfirm = document.getElementById('btn-dialog-confirm');
 
     if (titleEl) titleEl.textContent = opts.title || 'Confirmación';
-    if (msgEl) msgEl.textContent = opts.message;
+    const qrImg = opts.imageUrl
+      ? `<br/><img src="${escapeHtml(opts.imageUrl)}" alt="QR de pago" style="width:190px;height:190px;border-radius:12px;margin-top:12px;background:#fff;padding:10px;display:block;margin-left:auto;margin-right:auto;box-shadow:0 4px 18px rgba(0,0,0,.35);">`
+      : '';
+    if (msgEl) msgEl.innerHTML = escapeHtml(opts.message) + qrImg;
     if (iconEl) iconEl.textContent = opts.icon || (opts.type === 'danger' ? '⚠️' : '🍸');
 
     if (iconContainer) {
