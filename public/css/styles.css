@@ -286,3 +286,42 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
   text-align: center;
   margin-bottom: 20px;
 }
+
+/* Modal PIN de Acceso a Pruebas */
+.pin-digit {
+  width: 50px;
+  height: 56px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  background: rgba(22, 16, 27, 0.85);
+  border: 1.5px solid var(--linea, rgba(243, 237, 226, 0.16));
+  border-radius: 12px;
+  color: var(--papel, #f3ede2);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s, background 0.2s;
+}
+.pin-digit:focus {
+  border-color: var(--luz, #F0A830);
+  box-shadow: 0 0 16px rgba(240, 168, 48, 0.35);
+  background: rgba(22, 16, 27, 0.98);
+  transform: translateY(-2px);
+}
+.pin-digit.pin-success {
+  border-color: #2E6B54 !important;
+  box-shadow: 0 0 16px rgba(46, 107, 84, 0.5) !important;
+  color: #79D3AC !important;
+}
+.pin-digit.pin-error {
+  border-color: #ff5252 !important;
+  box-shadow: 0 0 16px rgba(255, 82, 82, 0.4) !important;
+}
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+.pin-shake {
+  animation: pinShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}

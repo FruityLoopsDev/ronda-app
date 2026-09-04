@@ -770,14 +770,135 @@ function initApp() {
   addEventListener('auth:login', updateNavbar);
   addEventListener('auth:logout', updateNavbar);
 
-  // Toggle entre Lista de Espera y Login Interno
+  // Toggle entre Lista de Espera y Login Interno protegido por PIN
   const waitlistContainer = document.getElementById('waitlist-container');
   const btnToggleAdminLogin = document.getElementById('btn-toggle-admin-login');
   const btnBackToWaitlist = document.getElementById('btn-back-to-waitlist');
+  const modalPin = document.getElementById('modal-pin-access');
+  const pinDigits = Array.from(document.querySelectorAll<HTMLInputElement>('.pin-digit'));
+  const pinErrorMsg = document.getElementById('pin-error-msg');
+  const btnPinCancel = document.getElementById('btn-pin-cancel');
+  const btnPinSubmit = document.getElementById('btn-pin-submit');
+  const pinContainer = document.getElementById('pin-inputs-container');
 
-  btnToggleAdminLogin?.addEventListener('click', () => {
-    if (waitlistContainer) waitlistContainer.style.display = 'none';
-    if (loginForm) loginForm.style.display = 'flex';
+  const openPinModal = () => {
+    if (!modalPin) return;
+    modalPin.classList.add('active');
+    if (pinErrorMsg) pinErrorMsg.style.display = 'none';
+    pinDigits.forEach(input => {
+      input.value = '';
+      input.classList.remove('pin-error', 'pin-success');
+    });
+    setTimeout(() => pinDigits[0]?.focus(), 60);
+  };
+
+  const closePinModal = () => {
+    if (!modalPin) return;
+    modalPin.classList.remove('active');
+    pinDigits.forEach(input => input.value = '');
+    if (pinErrorMsg) pinErrorMsg.style.display = 'none';
+  };
+
+  const verifyPin = () => {
+    const enteredPin = pinDigits.map(input => input.value).join('');
+    if (enteredPin.length < 4) {
+      if (pinErrorMsg) {
+        pinErrorMsg.textContent = 'Ingresa los 4 dígitos del PIN';
+        pinErrorMsg.style.display = 'block';
+      }
+      return;
+    }
+
+    // PINs autorizados: 2026 (año de lanzamiento / por defecto) o 1234 o personalizado
+    const customPin = localStorage.getItem('ronda_staff_pin') || '2026';
+    const isAuthorized = enteredPin === '2026' || enteredPin === '1234' || enteredPin === customPin;
+
+    if (isAuthorized) {
+      pinDigits.forEach(input => input.classList.add('pin-success'));
+      if (pinErrorMsg) pinErrorMsg.style.display = 'none';
+      setTimeout(() => {
+        closePinModal();
+        if (waitlistContainer) waitlistContainer.style.display = 'none';
+        if (loginForm) {
+          loginForm.style.display = 'flex';
+          const loginEmail = document.getElementById('login-email') as HTMLInputElement;
+          loginEmail?.focus();
+        }
+      }, 220);
+    } else {
+      if (pinContainer) {
+        pinContainer.classList.remove('pin-shake');
+        void pinContainer.offsetWidth; // Forzar reflow para re-disparar animación
+        pinContainer.classList.add('pin-shake');
+      }
+      pinDigits.forEach(input => {
+        input.classList.add('pin-error');
+        input.value = '';
+      });
+      if (pinErrorMsg) {
+        pinErrorMsg.textContent = 'PIN incorrecto. Intenta nuevamente.';
+        pinErrorMsg.style.display = 'block';
+      }
+      setTimeout(() => {
+        pinDigits.forEach(input => input.classList.remove('pin-error'));
+        pinDigits[0]?.focus();
+      }, 350);
+    }
+  };
+
+  btnToggleAdminLogin?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openPinModal();
+  });
+
+  btnPinCancel?.addEventListener('click', closePinModal);
+  btnPinSubmit?.addEventListener('click', verifyPin);
+
+  modalPin?.addEventListener('click', (e) => {
+    if (e.target === modalPin) closePinModal();
+  });
+
+  // Manejo de eventos en inputs de PIN (auto-avance, retroceso, pegado)
+  pinDigits.forEach((input, idx) => {
+    input.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const cleanVal = target.value.replace(/\D/g, '').slice(-1);
+      target.value = cleanVal;
+      if (cleanVal) {
+        if (idx < pinDigits.length - 1) {
+          pinDigits[idx + 1].focus();
+        } else {
+          verifyPin();
+        }
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) {
+        pinDigits[idx - 1].focus();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyPin();
+      } else if (e.key === 'Escape') {
+        closePinModal();
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pastedData = e.clipboardData?.getData('text') || '';
+      const numbers = pastedData.replace(/\D/g, '').slice(0, 4);
+      if (numbers) {
+        numbers.split('').forEach((num, i) => {
+          if (pinDigits[i]) pinDigits[i].value = num;
+        });
+        if (numbers.length === 4) {
+          verifyPin();
+        } else if (pinDigits[numbers.length]) {
+          pinDigits[numbers.length].focus();
+        }
+      }
+    });
   });
 
   btnBackToWaitlist?.addEventListener('click', () => {

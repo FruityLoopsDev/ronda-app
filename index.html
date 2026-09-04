@@ -1731,6 +1731,53 @@
     </div>
   </div>
 
+  <!-- Modal: Acceso a Pruebas (PIN de 4 dígitos) -->
+  <div id="modal-pin-access" class="modal-overlay" style="z-index: 10100;">
+    <div class="tel" style="width: 100%; max-width: 350px; box-shadow: 0 30px 70px rgba(0,0,0,0.92), 0 0 40px rgba(240,168,48,0.18); border: 1px solid rgba(240,168,48,0.35); background: #1a1120; border-radius: 24px;">
+      <div class="tel-in" style="padding: 26px 20px 22px; text-align: center;">
+        
+        <!-- Icono / Sello -->
+        <div style="width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 50%; background: rgba(240,168,48,0.12); border: 1.5px solid rgba(240,168,48,0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 0 20px rgba(240,168,48,0.2);">
+          <span>🔐</span>
+        </div>
+
+        <!-- Título -->
+        <h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--papel); margin: 0 0 6px; letter-spacing: -0.01em;">
+          Acceso a Pruebas
+        </h3>
+
+        <!-- Subtítulo -->
+        <p style="font-size: 12.5px; color: var(--humo); line-height: 1.48; margin: 0 0 20px; font-family: var(--font-body);">
+          Ingresa el PIN de 4 dígitos de anfitrión o equipo para habilitar el acceso.
+        </p>
+
+        <!-- Inputs de 4 dígitos -->
+        <div id="pin-inputs-container" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 14px;">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-1" autocomplete="off">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-2" autocomplete="off">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-3" autocomplete="off">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-4" autocomplete="off">
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="pin-error-msg" style="display: none; color: #ff5252; font-size: 11.5px; font-family: var(--font-mono); margin-bottom: 16px;">
+          PIN incorrecto. Intenta de nuevo.
+        </div>
+
+        <!-- Botones de Acción -->
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 6px;">
+          <button id="btn-pin-cancel" type="button" class="btn" style="flex: 1; font-size: 12px; padding: 11px; border-radius: 999px; background: rgba(243,237,226,.06); border-color: var(--linea); color: var(--humo); font-weight: 600;">
+            ✕ Cancelar
+          </button>
+          <button id="btn-pin-submit" type="button" class="btn ambar" style="flex: 1; font-size: 12px; padding: 11px; border-radius: 999px; font-weight: 700;">
+            ✓ Ingresar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Gestión de Reservas -->
   <div id="modal-manage-reservations" class="modal-overlay">
     <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none;">
