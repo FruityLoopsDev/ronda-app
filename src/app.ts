@@ -101,6 +101,44 @@ function initApp() {
 
   // Funciones de Vista
   function switchView(viewId: string, updateUrl: boolean = true) {
+    const user = Auth.currentUser;
+    const role = user?.role || 'client';
+
+    // Guardas de seguridad RBAC por vista
+    if (viewId === 'view-admin' && role !== 'admin' && role !== 'superadmin') {
+      console.warn(`[RBAC] Acceso no autorizado a consola admin para rol: ${role}`);
+      RondaDialog.alert({
+        title: 'Acceso Restringido',
+        message: 'Esta consola está reservada para anfitriones y administradores de sede.',
+        icon: '🔒'
+      });
+      viewId = user ? 'view-lobby' : 'view-auth';
+    } else if (viewId === 'view-superadmin' && role !== 'superadmin') {
+      console.warn(`[RBAC] Acceso denegado a SuperAdmin para rol: ${role}`);
+      RondaDialog.alert({
+        title: 'Acceso Restringido',
+        message: 'Se requieren credenciales de SuperAdmin para acceder a este panel.',
+        icon: '🛡️'
+      });
+      viewId = user ? 'view-lobby' : 'view-auth';
+    } else if (viewId === 'view-crm' && role !== 'sales' && role !== 'superadmin') {
+      console.warn(`[RBAC] Acceso denegado a CRM para rol: ${role}`);
+      RondaDialog.alert({
+        title: 'Acceso Restringido',
+        message: 'Panel reservado exclusivamente para la fuerza comercial B2B.',
+        icon: '💼'
+      });
+      viewId = user ? 'view-lobby' : 'view-auth';
+    } else if (viewId === 'view-network' && role !== 'network' && role !== 'superadmin') {
+      console.warn(`[RBAC] Acceso denegado a Network para rol: ${role}`);
+      RondaDialog.alert({
+        title: 'Acceso Restringido',
+        message: 'Panel reservado para operaciones y gestión de red de bares.',
+        icon: '🌐'
+      });
+      viewId = user ? 'view-lobby' : 'view-auth';
+    }
+
     document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
     
     const activeView = document.getElementById(viewId);

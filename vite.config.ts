@@ -37,6 +37,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         landing: resolve(__dirname, 'landing.html'),
         invest: resolve(__dirname, 'invest.html'),
+        partners: resolve(__dirname, 'partners.html'),
         artifact: resolve(__dirname, 'ronda-artifact.html'),
         faceVerify: resolve(__dirname, 'test/face-verify.html')
       }

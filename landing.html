@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#16101B">
   <title>RONDA — Una copa, nueve historias, una noche.</title>
   <meta name="description" content="9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, personas reales verificadas y una campana que marca el ritmo. Sin pantallas, sin chats eternos y sin ghosting.">
-  <link rel="canonical" href="https://ronda-uno.web.app/">
+  <link rel="canonical" href="https://ronda.uno/">
   <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
 
   <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ronda-uno.web.app/">
+  <meta property="og:url" content="https://ronda.uno/">
   <meta property="og:title" content="RONDA — Una copa, nueve historias, una noche.">
   <meta property="og:description" content="9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, personas reales verificadas y una campana que marca el ritmo. Sin pantallas ni ghosting.">
-  <meta property="og:image" content="https://ronda-uno.web.app/assets/img/acto-1-llegada.jpg">
+  <meta property="og:image" content="https://ronda.uno/assets/img/acto-1-llegada.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="RONDA — Citas reales en bares de Bogotá">
@@ -23,10 +23,10 @@
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://ronda-uno.web.app/">
+  <meta name="twitter:url" content="https://ronda.uno/">
   <meta name="twitter:title" content="RONDA — Una copa, nueve historias, una noche.">
   <meta name="twitter:description" content="9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, personas reales verificadas y una campana que marca el ritmo. Sin pantallas ni ghosting.">
-  <meta name="twitter:image" content="https://ronda-uno.web.app/assets/img/acto-1-llegada.jpg">
+  <meta name="twitter:image" content="https://ronda.uno/assets/img/acto-1-llegada.jpg">
   
   <!-- Tipografías de Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1005,7 +1005,7 @@
       <div class="hero-pre">
         <span class="badge luz">✦ Solteros Profesionales de Alto Valor · Bogotá</span>
       </div>
-      <h1 class="hero-title" aria-label="Una copa, nueve historias, una noche.">Una copa, nueve historias, <span class="typewriter-wrap"><em id="typewriter-target">una noche.</em><span class="typewriter-cursor" aria-hidden="true"></span></span></h1>
+      <h1 class="hero-title" aria-label="Una copa, nueve historias, una noche.">Una copa, nueve historias, <span class="typewriter-wrap"><em id="typewriter-target"></em><span class="typewriter-cursor" aria-hidden="true"></span></span></h1>
       <p class="hero-sub">
         9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, <b>solteros profesionales verificados con LinkedIn</b> y una campana que marca el ritmo. Sin pantallas, sin chats eternos y sin <i>ghosting</i>.
       </p>
@@ -1485,25 +1485,25 @@
       const beats = document.querySelectorAll('.story-beat');
       const bgSlides = document.querySelectorAll('.bg-slide');
 
-      if (!beats.length || !bgSlides.length) return;
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const actNum = entry.target.getAttribute('data-act');
-            if (actNum) {
-              bgSlides.forEach(bg => bg.classList.remove('active'));
-              beats.forEach(b => b.classList.remove('active'));
-              
-              const targetBg = document.getElementById('bg-act-' + actNum);
-              if (targetBg) targetBg.classList.add('active');
-              entry.target.classList.add('active');
+      if (beats.length > 0 && bgSlides.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const actNum = entry.target.getAttribute('data-act');
+              if (actNum) {
+                bgSlides.forEach(bg => bg.classList.remove('active'));
+                beats.forEach(b => b.classList.remove('active'));
+                
+                const targetBg = document.getElementById('bg-act-' + actNum);
+                if (targetBg) targetBg.classList.add('active');
+                entry.target.classList.add('active');
+              }
             }
-          }
-        });
-      }, { threshold: 0.6, rootMargin: "-10% 0px -40% 0px" });
+          });
+        }, { threshold: 0.6, rootMargin: "-10% 0px -40% 0px" });
 
-      beats.forEach(beat => observer.observe(beat));
+        beats.forEach(beat => observer.observe(beat));
+      }
 
       // FAQ Accordion
       const faqItems = document.querySelectorAll('.faq-item');
@@ -1528,7 +1528,7 @@
           "conexiones reales."
         ];
         let phraseIndex = 0;
-        let charIndex = phrases[0].length;
+        let charIndex = 0;
         let isDeleting = false;
         let typingSpeed = 95;
 
@@ -1560,7 +1560,7 @@
         }
 
         // Iniciar ciclo tras una pequeña pausa inicial
-        setTimeout(typeLoop, 2000);
+        setTimeout(typeLoop, 500);
       }
     });
 

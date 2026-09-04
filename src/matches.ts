@@ -37,6 +37,29 @@ class MatchServiceImpl {
     return mutualMatches;
   }
 
+  // Calcula matches mutuos a partir de lista de likes ($0 sin Cloud Functions)
+  findMutualMatchesFromLikes(likesList: { from: string; to: string; like: boolean }[]): { user1: string; user2: string }[] {
+    const likeMap = new Map<string, boolean>();
+    for (const item of likesList) {
+      if (item.like === true && item.from && item.to) {
+        likeMap.set(`${item.from}_${item.to}`, true);
+      }
+    }
+
+    const matches: { user1: string; user2: string }[] = [];
+    likeMap.forEach((_, key) => {
+      const [from, to] = key.split('_');
+      if (likeMap.has(`${to}_${from}`)) {
+        if (from < to) {
+          matches.push({ user1: from, user2: to });
+        }
+      }
+    });
+
+    console.log(`[Matches] ${matches.length} matches mutuos identificados de ${likesList.length} votos.`);
+    return matches;
+  }
+
   // Simulación de creación de chat que expira en 72h
   createTemporaryChat(match) {
     const expiration = match.timestamp + (72 * 60 * 60 * 1000);

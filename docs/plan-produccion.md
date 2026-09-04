@@ -1,8 +1,8 @@
 # RONDA — Plan de trabajo: 100% producción + purga de base de datos
 
 > **Estado:** EN EJECUCIÓN (Fase 2 ✅, Fase 3 pendiente)
-> **Proyecto Firebase:** `ronda-uno` (ID: `la-ronda`, nº 391712707230) · URL: https://ronda-uno.web.app
-> **Última actualización:** 2026-08-30 (purga ejecutada y verificada)
+> **Proyecto Firebase:** `ronda-uno` (ID: `la-ronda`, nº 391712707230) · URL: https://ronda.uno (Hosting: `ronda-uno.web.app`)
+> **Última actualización:** 2026-09-03
 
 ---
 

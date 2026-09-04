@@ -33,6 +33,14 @@
         "destination": "/invest.html"
       },
       {
+        "source": "/partners",
+        "destination": "/partners.html"
+      },
+      {
+        "source": "/partners/**",
+        "destination": "/partners.html"
+      },
+      {
         "source": "/inversionistas",
         "destination": "/invest.html"
       },

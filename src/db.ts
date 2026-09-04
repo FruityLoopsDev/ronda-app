@@ -1,5 +1,6 @@
-import { doc, getDoc, setDoc, onSnapshot, collection, addDoc, Unsubscribe } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, arrayUnion, Unsubscribe } from "firebase/firestore";
 import { RondaConfig, RondaServices } from "./firebase-config.js";
+import { Matches } from "./matches.js";
 
 // Basic Types
 export interface Reservation {
@@ -109,6 +110,7 @@ export interface User {
   }[];
   wallet_address?: string;
   nfts?: any[];
+  matches?: string[];
 }
 
 export interface Match {
@@ -268,8 +270,57 @@ export class DatabaseInterface {
     return event;
   }
 
-  async confirmarSala(eventId: string, usersConfirmed: string[]): Promise<RondaEvent | null> {
-    console.log(`[DB] Confirmando sala para el evento: ${eventId}...`);
+  async processEventMatches(eventId: string): Promise<{ matchedPairsCount: number }> {
+    console.log(`[DB] Calculando matches mutuos para el evento: ${eventId} ($0 - Consola Host)...`);
+    if (this.isDemo) {
+      const participants = Object.values(this.memoryDb.users).filter(u => u.activeEventId === eventId);
+      const mutual = Matches.calculateMutualMatches(participants);
+      for (const m of mutual) {
+        if (this.memoryDb.users[m.u1]) {
+          this.memoryDb.users[m.u1].matches = this.memoryDb.users[m.u1].matches || [];
+          if (!this.memoryDb.users[m.u1].matches.includes(m.u2)) this.memoryDb.users[m.u1].matches.push(m.u2);
+        }
+        if (this.memoryDb.users[m.u2]) {
+          this.memoryDb.users[m.u2].matches = this.memoryDb.users[m.u2].matches || [];
+          if (!this.memoryDb.users[m.u2].matches.includes(m.u1)) this.memoryDb.users[m.u2].matches.push(m.u1);
+        }
+      }
+      return { matchedPairsCount: mutual.length };
+    }
+
+    try {
+      const fs = this._getFirestore();
+      const likesCol = collection(fs, 'events', eventId, 'likes');
+      const likesSnap = await getDocs(likesCol);
+      const likesList: { from: string; to: string; like: boolean }[] = [];
+      
+      likesSnap.forEach(snap => {
+        const d = snap.data();
+        if (d && d.from && d.to) {
+          likesList.push({ from: d.from, to: d.to, like: Boolean(d.like) });
+        }
+      });
+
+      const mutualMatches = Matches.findMutualMatchesFromLikes(likesList);
+      if (mutualMatches.length > 0) {
+        const batch = writeBatch(fs);
+        for (const match of mutualMatches) {
+          const u1Ref = doc(fs, 'users', match.user1);
+          const u2Ref = doc(fs, 'users', match.user2);
+          batch.update(u1Ref, { matches: arrayUnion(match.user2) });
+          batch.update(u2Ref, { matches: arrayUnion(match.user1) });
+        }
+        await batch.commit();
+      }
+      return { matchedPairsCount: mutualMatches.length };
+    } catch (err) {
+      console.error("[DB] Error procesando matches mutuos:", err);
+      return { matchedPairsCount: 0 };
+    }
+  }
+
+  async confirmarSala(eventId: string, usersConfirmed: string[]): Promise<{ event: RondaEvent; matchesCount: number } | null> {
+    console.log(`[DB] Confirmando sala y finalizando evento: ${eventId}...`);
     
     let event = await this.getEvent(eventId);
     if (!event) return null;
@@ -278,10 +329,37 @@ export class DatabaseInterface {
     event.participants = usersConfirmed;
     await this.saveEvent(event);
     
-    // Simplificación de NFTs (Se integrará en la fase de Web3)
-    console.log("[DB] NFTs simulados...");
+    // 1. Procesar matches mutuos de forma autónoma en cliente ($0 sin Cloud Functions)
+    const matchResult = await this.processEventMatches(eventId);
+
+    // 2. Emisión de Certificados Digitales Proof-of-Attendance ($0 Web3 / Cryptographic Token)
+    const timestamp = Date.now();
+    for (const uid of usersConfirmed) {
+      try {
+        const user = await this.getUser(uid);
+        if (user) {
+          user.nfts = user.nfts || [];
+          const randomBytes = new Uint8Array(16);
+          crypto.getRandomValues(randomBytes);
+          const certHash = "0x" + Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+          
+          user.nfts.push({
+            tokenId: `POAP-${eventId.substring(0,6)}-${timestamp.toString().slice(-4)}`,
+            evento_nombre: event.name || `Ronda #${eventId.substring(0,6)}`,
+            fecha: new Date().toLocaleDateString('es-CO'),
+            image_url: '/assets/ronda-token-badge.png',
+            proofHash: certHash,
+            venue: event.venueName || 'CARONTE Gastrobar',
+            issuedAt: timestamp
+          });
+          await this.saveUser(user);
+        }
+      } catch (userErr) {
+        console.warn(`[DB] Error emitiendo certificado a ${uid}:`, userErr);
+      }
+    }
     
-    return event;
+    return { event, matchesCount: matchResult.matchedPairsCount };
   }
 
   subscribeToEvent(eventId: string, callback: (data: RondaEvent) => void): Unsubscribe | Function {

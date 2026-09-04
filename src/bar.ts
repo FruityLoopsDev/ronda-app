@@ -229,34 +229,39 @@ class HostConsoleService {
     }
 
     const confirmEnd = await RondaDialog.confirm({
-      title: 'Finalizar Evento y Emitir NFTs',
-      message: '¿Estás seguro de finalizar el evento y emitir los certificados NFT a los asistentes en la red Polygon?',
-      icon: '🎫',
-      confirmText: '✓ Finalizar y Emitir',
+      title: 'Finalizar Evento y Emitir Certificados',
+      message: '¿Estás seguro de finalizar el evento, procesar los matches mutuos y emitir los certificados Proof-of-Attendance a los asistentes?',
+      icon: '🍸',
+      confirmText: '✓ Finalizar y Procesar',
       cancelText: '✕ Cancelar'
     });
 
     if (confirmEnd) {
       const btnEnd = document.getElementById('btn-end-e') as HTMLButtonElement;
       if (btnEnd) {
-        btnEnd.textContent = "Emitiendo NFTs...";
+        btnEnd.textContent = "Procesando...";
         btnEnd.disabled = true;
       }
       try {
-        await DB.confirmarSala(this.currentEvent.id, this.currentEvent.participants);
+        const result = await DB.confirmarSala(this.currentEvent.id, this.currentEvent.participants);
+        const matchesCount = result?.matchesCount ?? 0;
         await RondaDialog.alert({
-          title: 'Certificados Emitidos',
-          message: 'Evento finalizado con éxito. Los NFTs de asistencia han sido emitidos en la blockchain Polygon.',
+          title: 'Evento Finalizado con Éxito',
+          message: `Evento cerrado correctamente. Se calcularon ${matchesCount} parejas con match mutuo y se emitieron los certificados digitales de asistencia ($0 sin Cloud Functions).`,
           icon: '✨'
         });
       } catch (err: any) {
         console.error("Error al finalizar evento:", err);
         await RondaDialog.alert({
-          title: 'Error de Emisión',
-          message: 'No se pudieron emitir los NFTs: ' + err.message,
+          title: 'Error al Finalizar',
+          message: 'Ocurrió un error al procesar el cierre: ' + err.message,
           icon: '⚠️',
           type: 'danger'
         });
+      } finally {
+        if (btnEnd) {
+          btnEnd.textContent = "✓ Evento Finalizado";
+        }
       }
     }
   }

@@ -46,6 +46,7 @@ Vanilla TS + Vite (SPA multi-vista) · Firebase (Auth/Firestore/Hosting/Function
 - **Stress test del motor:** `docs/bench-results/stress-*.md` (tiempos por escala).
 - **Inventario de divulgaciones:** `docs/divulgaciones-inventario.md`.
 - **Resumen ejecutivo (agente de patentes):** `docs/resumen-ejecutivo-agente-patentes.md`.
+- **Inversión FFF:** `docs/RONDA_MEMORANDUM_INVERSION_FFF.md` (Memorando oficial para ronda Friends, Family & Founders).
 
 ## Reglas para no quemar tokens
 1. **Nunca** glob/grep en `node_modules`, `dist/`, `.firebase/`.
