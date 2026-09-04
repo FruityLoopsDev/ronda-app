@@ -1,6 +1,6 @@
 {
   "name": "ronda-app",
-  "version": "1.0.0",
+  "version": "2.2.0",
   "description": "> **Plataforma B2B2C para la reactivación comercial de bares y gastrobares en días de baja afluencia.**   > Citas rápidas (speed dating) de 90 minutos con garantía de equilibrio, verificación de identidad y algoritmo de rotación con memoria.   > **Versión:** 1.0 (Planificación e Identidad) · **Mercado Objetivo:** Bogotá, Colombia (Zona G, Quinta Camacho y Chapinero Alto).",
   "main": "build.js",
   "directories": {
