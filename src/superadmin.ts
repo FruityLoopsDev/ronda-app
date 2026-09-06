@@ -15,9 +15,7 @@ export class SuperAdminController {
     const container = document.getElementById('superadmin-content');
     if (!container) return;
 
-    const usersCount = Object.keys(DB.memoryDb?.users || {}).length || 18;
     const venuesCount = Object.keys(DB.memoryDb?.venues || {}).length || 6;
-    const leadsCount = Object.keys(DB.memoryDb?.leads || {}).length || 4;
 
     container.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 24px;">
@@ -116,7 +114,7 @@ export class SuperAdminController {
 
         const user = Auth.currentUser;
         if (user) {
-          user.role = role as any;
+          user.role = role;
           await DB.saveUser(user);
         }
 

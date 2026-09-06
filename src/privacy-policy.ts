@@ -51,7 +51,6 @@ export class PrivacyPolicy {
 
     // Extraer secuencias numéricas ignorando espacios, puntos, guiones, paréntesis o barras
     // Ej: "3 1 2 4 5 6 7 8 9 0", "312-456-7890", "(312) 456 7890", "+57 300 123 4567"
-    const cleanedDigits = textNormalized.replace(/[^\d+]/g, '');
     const pureDigits = textNormalized.replace(/[^\d]/g, '');
 
     // Si contiene 7 o más dígitos consecutivos o agrupados en total

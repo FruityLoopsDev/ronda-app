@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore, connectFirestoreEmulator, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
+import { initializeFirestore, getFirestore, connectFirestoreEmulator, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 
@@ -20,23 +20,33 @@ export const RondaConfig = {
 const app = initializeApp(RondaConfig.firebaseConfig);
 // Carga instantánea desde IndexedDB: la caché local persistente evita round-trips
 // de red en visitas repetidas y deja que Firestore sincronice en segundo plano.
-const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-});
+let db: any;
+try {
+  // Carga instantánea desde IndexedDB: la caché local persistente evita round-trips
+  // de red en visitas repetidas y deja que Firestore sincronice en segundo plano.
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+} catch (e) {
+  console.warn("[Firebase] Falló la inicialización de caché persistente, usando Firestore estándar:", e);
+  db = getFirestore(app);
+}
+
 const auth = getAuth(app);
 let messaging: any = null;
 if (typeof window !== 'undefined') {
   try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
 }
 
-
-/*
-if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-  connectFirestoreEmulator(db, 'localhost', 8081); // Emulator port 8081 from prompt
-  connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-  console.log("Conectado a Firebase Local Emulator Suite.");
+if (typeof window !== 'undefined' && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+  try {
+    connectFirestoreEmulator(db, 'localhost', 8081);
+    connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+    console.log("Conectado a Firebase Local Emulator Suite (Firestore: 8081, Auth: 9099).");
+  } catch (e) {
+    console.warn("Emuladores ya conectados o no disponibles:", e);
+  }
 }
-*/
 
 export const RondaServices = {
   app,

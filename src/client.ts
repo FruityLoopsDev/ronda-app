@@ -1,7 +1,7 @@
-import { DB, User, Reservation } from './db.js';
+import { DB } from './db.js';
 import { Auth } from './auth.js';
 
-import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
+import { downloadICSFile } from './utils.js';
 import { RondaDialog } from './dialog.js';
 import { Payment } from './payment.js';
 import { PrivacyPolicy } from './privacy-policy.js';
@@ -1202,6 +1202,7 @@ class ClientAppService {
     const eventId = this.currentEvent?.id || 'ronda-demo';
     
     try {
+      if (!myUid || !targetUid) return;
       await DB.pushLike(eventId, myUid, targetUid, isYes);
       this.showToast(isYes ? '¡Preferencia mutua guardada! 😉' : 'Voto registrado.');
 

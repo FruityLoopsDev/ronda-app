@@ -1,5 +1,5 @@
-import { doc, getDoc, setDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, arrayUnion, Unsubscribe } from "firebase/firestore";
-import { RondaConfig, RondaServices } from "./firebase-config.js";
+import { doc, getDoc, setDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe } from "firebase/firestore";
+import { RondaServices } from "./firebase-config.js";
 import { Matches } from "./matches.js";
 
 // Basic Types
@@ -200,7 +200,7 @@ export class DatabaseInterface {
   
   async saveEvent(event: RondaEvent): Promise<RondaEvent> {
     const docRef = doc(this._getFirestore(), 'events', event.id);
-    await setDoc(docRef, event as any, { merge: true });
+    await setDoc(docRef, event, { merge: true });
     return event;
   }
 

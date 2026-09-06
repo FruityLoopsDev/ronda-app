@@ -1,7 +1,6 @@
 import { DB, User } from './db.js';
 import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
-import { updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import notifications from './notifications.js';
 import { RondaDialog } from './dialog.js';
 import { Verification } from './verification.js';

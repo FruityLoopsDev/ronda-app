@@ -5,7 +5,7 @@
 //
 // NOTA: este módulo vive fuera de src/mem-rr-v2/ porque depende de Firebase/DB (capa app).
 
-import { RondaConfig, RondaServices } from './firebase-config.js';
+import { RondaServices } from './firebase-config.js';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { History, Encounter, Participant } from './mem-rr-v2/types.ts';
 import { pairKey } from './mem-rr-v2/weights.ts';
@@ -28,7 +28,6 @@ function mulberry32(a: number) {
 class RondaHistoryAdapter implements History {
   private map = new Map<string, Encounter>();
   private loadedUids = new Set<string>();
-  private seeded = false;
 
   get(uid1: string, uid2: string): Encounter | null {
     return this.map.get(pairKey(uid1, uid2)) ?? null;
@@ -101,7 +100,6 @@ class RondaHistoryAdapter implements History {
   reset(): void {
     this.map.clear();
     this.loadedUids.clear();
-    this.seeded = false;
   }
 
   /** Sembrado determinista (~35% de pares, como el v1) para que la memoria sea visible en demo. */

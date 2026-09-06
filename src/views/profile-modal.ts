@@ -147,7 +147,7 @@ export class ProfileModal {
       btnSaveProfile.textContent = "Guardando...";
 
       try {
-        const user = Auth.currentUser || { uid: 'guest', role: 'client' } as any;
+        const user = Auth.currentUser || { uid: 'guest', role: 'client' };
         user.name = name || 'Usuario RONDA';
         user.age = age;
         user.gender = gender;

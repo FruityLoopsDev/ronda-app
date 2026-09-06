@@ -1,17 +1,15 @@
-import { Auth } from './auth.js';
-import { RondaServices } from './firebase-config.js';
-import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions';
 import { NFT_CONFIG } from './nft-config.js';
 
 // nft-utils.js: Funcionalidades de simulación Web3 para el entorno DEMO
 
 class NFTUtilsService {
   // Simular la subida de metadatos a Pinata (IPFS)
-  async uploadMetadataToPinata(eventData, userRole) {
+  async uploadMetadataToPinata(
+    eventData: { eventId: string; local: string; fecha: string; matchesCount: number },
+    _userRole: string
+  ): Promise<{ success: boolean; ipfsHash: string; gateway: string }> {
     console.log("[NFT Simulation] Generando metadatos para IPFS...");
-    
-    const { eventId, local, fecha, matchesCount } = eventData;
-    
+
     // Retraso simulado de red
     await new Promise(resolve => setTimeout(resolve, 600));
 
@@ -28,7 +26,7 @@ class NFTUtilsService {
   }
 
   // Llamar a la API Serverless en Vercel para el minting real, con fallback a simulación
-  async mintNFT(userAddress, eventId, ipfsHash) {
+  async mintNFT(userAddress: string, eventId: string, ipfsHash: string): Promise<any> {
     // 1. Intentar delegar al backend (Vercel API) si está configurado
     if ((import.meta as any).env?.VITE_VERCEL_API_URL) {
       try {

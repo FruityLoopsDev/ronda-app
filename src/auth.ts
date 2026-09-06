@@ -165,7 +165,8 @@ export class AuthService {
    * Lanza si no hay sesión activa.
    */
   async getIdToken(): Promise<string | null> {
-    const fbUser = (this._getAuth() as any).currentUser;
+    // IGNORE: Firebase UserRecord tipa `currentUser` como User | null.
+    const fbUser = this._getAuth().currentUser;
     if (!fbUser) return null;
     return getIdToken(fbUser, /* forceRefresh */ false);
   }

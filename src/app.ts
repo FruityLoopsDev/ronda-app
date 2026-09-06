@@ -1,15 +1,10 @@
 import { DB } from './db.js';
 import { Auth } from './auth.js';
-import { RondaConfig } from './firebase-config.js';
 import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
 import { Profile } from './profile.js';
 import { calculateAge, getZodiacSign } from './utils.js';
 import { RondaDialog } from './dialog.js';
-import { Admin } from './bar.js';
-import { Network } from './network.js';
-import { CRM } from './crm.js';
-import { SuperAdmin } from './superadmin.js';
 import { Icebreakers } from './icebreakers.js';
 import { Satisfaction } from './satisfaction.js';
 import notifications from './notifications.js';
@@ -50,8 +45,6 @@ function initApp() {
 
   // Elementos UI
   const viewAuth = document.getElementById('view-auth');
-  const viewClient = document.getElementById('view-client');
-  const viewAdmin = document.getElementById('view-admin');
   const userMenu = document.getElementById('user-menu');
 
   // Mapeo de Rutas URL para Paneles Autónomos
@@ -89,9 +82,6 @@ function initApp() {
 
   // Funciones de Vista
   function switchView(viewId: string, updateUrl: boolean = true) {
-    const user = Auth.currentUser;
-    const role = user?.role || 'client';
-
     document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
     
     const activeView = document.getElementById(viewId);
@@ -222,7 +212,7 @@ function initApp() {
         switchView('view-superadmin');
       }
     } else {
-      userMenu.innerHTML = ``;
+      if (userMenu) userMenu.innerHTML = ``;
       if (!handleUrlRouting()) {
         switchView('view-auth');
       }
@@ -344,7 +334,7 @@ function initApp() {
       btnSaveProfile.textContent = "Guardando...";
 
       try {
-        const user = Auth.currentUser || { uid: 'guest', role: 'client' } as any;
+        const user = Auth.currentUser || { uid: 'guest', role: 'client' };
         user.name = name || 'Usuario RONDA';
         user.age = age;
         user.gender = gender;
@@ -427,6 +417,10 @@ function initApp() {
 
       try {
         const user = Auth.currentUser;
+        if (!user) {
+          alert("Debes iniciar sesión para unirte a una ronda.");
+          return;
+        }
         const eventDoc = await DB.getEvent(code);
         if (!eventDoc) {
           alert(`El evento con código "${code}" no existe. Pídelo al anfitrión.`);
@@ -452,7 +446,7 @@ function initApp() {
         }
       } catch (err) {
         console.error("Error uniéndose al evento:", err);
-        alert("Error al unirse: " + err.message);
+        alert("Error al unirse: " + ((err as Error).message || String(err)));
       } finally {
         btnJoinEvent.textContent = "Unirse a la Ronda";
         btnJoinEvent.disabled = false;
@@ -696,7 +690,7 @@ function initApp() {
       linkedinSlug: linkedinValidation.slug,
       linkedinHeadline: linkedinResult.data?.headline,
       isVerified: true
-    }).then((user) => {
+    }).then(() => {
       // Successfully registered.
       triggerLoginAnimation();
       updateNavbar();

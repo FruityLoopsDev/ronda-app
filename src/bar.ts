@@ -58,7 +58,7 @@ class HostConsoleService {
   }
 
   /* PRNG determinista para simular "historial de noches previas" si Firestore no lo provee */
-  mulberry32(a) {
+  mulberry32(a: number) {
     return function() {
       a |= 0; a = a + 0x6D2B79F5 | 0;
       let t = Math.imul(a ^ a >>> 15, 1 | a);
@@ -67,7 +67,7 @@ class HostConsoleService {
     }
   }
 
-  async initAdminDashboard(adminUser) {
+  async initAdminDashboard(adminUser: { venueId?: string; uid?: string; role?: string }) {
     console.log("Iniciando Dashboard de Anfitrión (Producción) para:", adminUser.venueId);
     
     // Solicitar el ID del evento al anfitrión
@@ -629,7 +629,7 @@ class HostConsoleService {
     `;
   }
 
-  renderChart(totalParticipants) {
+  renderChart(totalParticipants: number) {
     const chart = document.getElementById('admin-chart');
     if (!chart) return;
     
@@ -659,7 +659,8 @@ class HostConsoleService {
   }
 
   init() {
-    const user = (window as any).Auth?.currentUser || { venueId: 'v1' };
+    // SAFETY: Auth ya se importa de './auth.js' (evita depender de window.Auth).
+    const user = Auth.currentUser || { venueId: 'v1' };
     this.initAdminDashboard(user);
   }
 }

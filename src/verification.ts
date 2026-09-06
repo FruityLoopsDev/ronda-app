@@ -1,5 +1,3 @@
-import { DB } from './db.js';
-import { RondaConfig } from './firebase-config.js';
 import { getDescriptor, evaluateIdentity } from './face-verify.js';
 
 // verification.js: Módulo de Seguridad, Geolocalización y Verificación de Identidad (KYC)
@@ -63,7 +61,7 @@ class VerificationService {
   }
 
   // OCR robusto: nunca lanza, devuelve { success, rawText, hits, error }.
-  async scanDocumentOCR(imageBlobOrUrl): Promise<{ success: boolean; rawText: string; hits: string[]; error?: string }> {
+  async scanDocumentOCR(imageBlobOrUrl: string | Blob | HTMLImageElement): Promise<{ success: boolean; rawText: string; hits: string[]; error?: string }> {
     let worker: any = null;
     try {
       await this.loadVerificationLibraries();

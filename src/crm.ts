@@ -18,7 +18,6 @@ export class CRMController {
   }
 
   render() {
-    const container = document.getElementById('crm-kanban-wrapper');
     const commissionsEl = document.getElementById('crm-commissions');
     const totalLeadsEl = document.getElementById('crm-total-leads');
     const closedCountEl = document.getElementById('crm-closed-count');
