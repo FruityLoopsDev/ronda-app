@@ -1,4 +1,4 @@
-import { DB } from './db.js';
+import { DB, RondaEvent } from './db.js';
 import { Auth } from './auth.js';
 import notifications from './notifications.js';
 import { RondaDialog } from './dialog.js';
@@ -70,8 +70,39 @@ class HostConsoleService {
   async initAdminDashboard(adminUser) {
     console.log("Iniciando Dashboard de Anfitrión (Producción) para:", adminUser.venueId);
     
-    // Para producción, asumimos que el admin administra 'e1'
-    const eventId = 'e1';
+    // Solicitar el ID del evento al anfitrión
+    let eventId = prompt("Ingresa el ID del evento que vas a gestionar:", "rnd-caronte-mar-25");
+    if (!eventId) {
+      console.warn("No se ingresó ID de evento. Cancelando inicialización del dashboard.");
+      return;
+    }
+    
+    let eventData = await DB.getEvent(eventId);
+    if (!eventData) {
+      const create = confirm(`El evento ${eventId} no existe. ¿Deseas crearlo ahora?`);
+      if (create) {
+        const venueName = prompt("Nombre del Bar / Local:", "Nuevo Evento");
+        const tablesStr = prompt("Número de mesas:", "8");
+        const tables = parseInt(tablesStr || '8', 10);
+        
+        eventData = {
+          id: eventId,
+          venueName: venueName || 'Bar',
+          status: 'waiting',
+          participants: [],
+          tables: tables,
+          currentRound: 0,
+          price: 45000,
+          priceFormatted: '$45.000',
+          dayDate: 'Hoy · 20:00'
+        } as RondaEvent;
+        
+        await DB.saveEvent(eventData);
+        console.log("Evento creado exitosamente:", eventData);
+      } else {
+        return;
+      }
+    }
     
     if (this.unsubscribe) this.unsubscribe();
     this.unsubscribe = DB.subscribeToEvent(eventId, async (eventData) => {
@@ -523,18 +554,43 @@ class HostConsoleService {
     await this.stopQrScan();
     if (!this.currentEvent) { this.showToastQR('Sin evento activo'); return; }
 
+    const user = await DB.getUser(uid);
+    if (!user) {
+      this.showToastQR('⚠️ Usuario no registrado en la plataforma');
+      return;
+    }
+
+    // Validación de pago en puerta si tiene pago pendiente o no tiene ticket confirmado
+    if (user.paymentPending || !user.hasTicket) {
+      const confirmed = await RondaDialog.confirm({
+        title: '⚠️ Pago Pendiente en Puerta',
+        message: `El asistente <b>${user.name || uid}</b> figura con pago pendiente o sin boleta confirmada.<br><br>¿Confirmar que el pago (Nequi / Efectivo) fue recibido para autorizar su ingreso?`,
+        icon: '💵',
+        confirmText: '✓ Confirmar Pago y Entrada',
+        cancelText: '✕ Denegar Ingreso',
+        type: 'confirm'
+      });
+
+      if (!confirmed) {
+        this.showToastQR(`❌ Ingreso denegado para ${user.name || uid}`);
+        return;
+      }
+
+      user.hasTicket = true;
+      user.paymentPending = false;
+    }
+
     const parts = this.currentEvent.participants || [];
     if (!parts.includes(uid)) {
       parts.push(uid);
       this.currentEvent.participants = parts;
       await DB.saveEvent(this.currentEvent); // la suscripción invalida nightPlan → re-planifica
     }
-    const user = await DB.getUser(uid);
-    if (user) {
-      user.checkedIn = true;
-      await DB.saveUser(user);
-    }
-    this.showToastQR(`✅ ${user?.name || uid} registrado`);
+
+    user.checkedIn = true;
+    await DB.saveUser(user);
+
+    this.showToastQR(`✅ ${user.name || uid} registrado`);
     this.renderDashboard();
   }
 

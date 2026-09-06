@@ -58,11 +58,11 @@
       },
       {
         "source": "/admin",
-        "destination": "/index.html"
+        "destination": "/admin.html"
       },
       {
         "source": "/admin/**",
-        "destination": "/index.html"
+        "destination": "/admin.html"
       },
       {
         "source": "/client",
@@ -74,43 +74,43 @@
       },
       {
         "source": "/net",
-        "destination": "/index.html"
+        "destination": "/network.html"
       },
       {
         "source": "/net/**",
-        "destination": "/index.html"
+        "destination": "/network.html"
       },
       {
         "source": "/network",
-        "destination": "/index.html"
+        "destination": "/network.html"
       },
       {
         "source": "/network/**",
-        "destination": "/index.html"
+        "destination": "/network.html"
       },
       {
         "source": "/superadmin",
-        "destination": "/index.html"
+        "destination": "/superadmin.html"
       },
       {
         "source": "/superadmin/**",
-        "destination": "/index.html"
+        "destination": "/superadmin.html"
       },
       {
         "source": "/sales",
-        "destination": "/index.html"
+        "destination": "/crm.html"
       },
       {
         "source": "/sales/**",
-        "destination": "/index.html"
+        "destination": "/crm.html"
       },
       {
         "source": "/crm",
-        "destination": "/index.html"
+        "destination": "/crm.html"
       },
       {
         "source": "/crm/**",
-        "destination": "/index.html"
+        "destination": "/crm.html"
       },
       {
         "source": "/ronda",
@@ -166,7 +166,7 @@
       "port": 8081
     },
     "hosting": {
-      "port": 5000
+      "port": 5001
     },
     "ui": {
       "enabled": true

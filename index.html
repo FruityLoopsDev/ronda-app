@@ -2326,559 +2326,206 @@
         <span id="offline-indicator" style="display:none; color: #ff5252; font-size: 10px; margin-right: 4px;">🔴 Local</span>
         <span style="width: 6px; height: 6px; border-radius: 50%; background: #4caf50; display: inline-block;"></span>
         Reserva Confirmada
+        <div id="chat-security-warning" style="display: none; background: #9b2748; color: #fff; font-size: 11px; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; text-align: center; font-weight: 600;">
+          ⛔ Mensaje bloqueado: Prohibido compartir información de contacto directo.
+        </div>
+
+        <!-- Input del Chat -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="input-chat-msg" class="ronda-input-premium" placeholder="Escribe un mensaje seguro..." style="margin-bottom: 0; font-size: 13px; padding: 11px 14px;">
+          <button id="btn-chat-send" class="btn ambar" style="padding: 11px 16px; border-radius: 12px; font-weight: 700; white-space: nowrap;">
+            Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Selector de Cóctel (Badge) -->
+  <div id="modal-select-cocktail" class="modal-overlay" style="z-index: 10100;">
+    <div class="tel" style="width: 100%; max-width: 410px; background: #1a1120; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
+      <div class="tel-in" style="padding: 22px 18px;">
+        <div class="edit-modal-top">
+          <button id="btn-close-cocktail" class="modal-icon-btn" title="Cerrar">✕</button>
+          <h3 class="modal-nav-title" style="font-size: 18px;">Mi Cóctel de Autor</h3>
+          <span style="width: 36px; height: 36px;"></span>
+        </div>
+        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px;">
+          Elige el cóctel que más te representa. Este dato ayuda a romper el hielo en tus rondas.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
+          <!-- Opciones (Negroni, Gin Tonic, Old Fashioned, Margarita, etc) -->
+          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
+            <input type="radio" name="badge-cocktail-choice" value="Negroni Ahumado" style="accent-color: var(--luz); width: 16px; height: 16px;">
+            <div style="font-size: 24px; width: 38px; text-align: center;">🥃</div>
+            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Negroni Ahumado</b></div>
+          </label>
+          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
+            <input type="radio" name="badge-cocktail-choice" value="Gin Tonic" style="accent-color: var(--luz); width: 16px; height: 16px;">
+            <div style="font-size: 24px; width: 38px; text-align: center;">🍸</div>
+            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Gin Tonic Botánico</b></div>
+          </label>
+          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
+            <input type="radio" name="badge-cocktail-choice" value="Margarita Mezcal" style="accent-color: var(--luz); width: 16px; height: 16px;">
+            <div style="font-size: 24px; width: 38px; text-align: center;">🍹</div>
+            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Margarita Picante</b></div>
+          </label>
+          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
+            <input type="radio" name="badge-cocktail-choice" value="Old Fashioned" style="accent-color: var(--luz); width: 16px; height: 16px;">
+            <div style="font-size: 24px; width: 38px; text-align: center;">🧊</div>
+            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Old Fashioned Clásico</b></div>
+          </label>
+          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
+            <input type="radio" name="badge-cocktail-choice" value="Mocktail" style="accent-color: var(--luz); width: 16px; height: 16px;">
+            <div style="font-size: 24px; width: 38px; text-align: center;">🍃</div>
+            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Mocktail (Sin alcohol)</b></div>
+          </label>
+        </div>
+        <button id="btn-save-badge-cocktail" class="btn ambar" style="width: 100%; margin-top: 16px; font-weight: 700;">✓ Guardar Selección</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Selector de Zonas (Badge) -->
+  <div id="modal-select-zone" class="modal-overlay" style="z-index: 10000;">
+    <div class="tel" style="width: 100%; max-width: 410px; background: #1a1120; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
+      <div class="tel-in" style="padding: 22px 18px;">
+        <div class="edit-modal-top">
+          <button id="btn-close-zone" class="modal-icon-btn" title="Cerrar">✕</button>
+          <h3 class="modal-nav-title" style="font-size: 18px;">Zonas Preferidas</h3>
+          <span style="width: 36px; height: 36px;"></span>
+        </div>
+        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px;">
+          Selecciona las zonas donde prefieres tener tus citas RONDA.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
+            <input type="checkbox" class="badge-zone-checkbox" value="Zona G" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Zona G</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
+            <input type="checkbox" class="badge-zone-checkbox" value="Quinta Camacho" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Quinta Camacho</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
+            <input type="checkbox" class="badge-zone-checkbox" value="Usaquén" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Usaquén</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
+            <input type="checkbox" class="badge-zone-checkbox" value="Chapinero Alto" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Chapinero Alto</span>
+          </label>
+        </div>
+        <button id="btn-save-badge-zone" class="btn ambar" style="width: 100%; margin-top: 16px; font-weight: 700;">✓ Guardar Zonas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Pase QR Pantalla Completa (Badge) -->
+  <div id="modal-full-qr" class="modal-overlay" style="z-index: 10000; background: #000;">
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+      <button id="btn-close-qr" class="modal-icon-btn" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.15); font-size: 24px; width: 44px; height: 44px; color: #fff;">✕</button>
+      
+      <h3 style="font-family: var(--font-display); font-size: 28px; color: var(--luz); margin-bottom: 6px; letter-spacing: 0.1em; text-align: center;">RONDA PASSPORT</h3>
+      <p style="color: var(--humo); font-size: 14px; font-family: var(--font-mono); margin-bottom: 40px; text-transform: uppercase;">Beneficio: -25% en Bares</p>
+
+      <div style="background: #fff; padding: 24px; border-radius: 20px; box-shadow: 0 0 40px rgba(240,168,48,0.3);">
+        <!-- Simulación de código QR grande -->
+        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; width: 220px; height: 220px;">
+          <div style="grid-column: span 12; display: flex; flex-wrap: wrap; gap: 2px;" id="big-qr-grid"></div>
+        </div>
+      </div>
+      
+      <p style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 30px; text-align: center; max-width: 280px; line-height: 1.5;">
+        Presenta este código al mesero para validar tu estatus RONDA y aplicar el descuento de la comunidad.
+      </p>
+    </div>
+  </div>
+  <div id="modal-ronda-services" class="modal-overlay" style="z-index: 10000;">
+    <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none; background: #180f20; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
+      <div class="tel-in" style="padding: 22px 18px 24px;">
+        
+        <!-- Header -->
+        <div class="edit-modal-top">
+          <button id="btn-services-close" class="modal-icon-btn" title="Cerrar">✕</button>
+          <h3 class="modal-nav-title" style="font-size: 18px;">Servicios Exclusivos</h3>
+          <span style="width: 36px; height: 36px;"></span>
+        </div>
+
+        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px; line-height: 1.4;">
+          Mejora tu presencia, habilidades y perfil con nuestros expertos aliados de RONDA en Bogotá.
+        </p>
+
+        <!-- Tarjetas de Servicios -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <!-- 1. Sesión de Fotos Profesional -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">📸 Sesión con Fotógrafo Pro</b>
+                <span style="font-size: 10.5px; color: var(--luz); font-family: var(--font-mono); display: block;">Retrato Urbano & Editorial · 45 min</span>
+              </div>
+              <span class="chip ambar" style="font-size: 9px; padding: 2px 8px;">$120.000 COP</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
+              5 fotos profesionales retocadas en locaciones exclusivas de Zona G o Parque Virrey para multiplicar tu atractivo presencial.
+            </p>
+            <button class="btn btn-book-service" data-service="Sesión de Fotos con Fotógrafo Profesional" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(240,168,48,0.1); border-color: rgba(240,168,48,0.3); color: var(--luz); font-weight: 700;">
+              Solicitar Fotógrafo Aliado
+            </button>
+          </div>
+
+          <!-- 2. Asesoría de Imagen y Maquillaje -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">💄 Asesoría de Imagen & Maquillaje</b>
+                <span style="font-size: 10.5px; color: var(--botella); font-family: var(--font-mono); display: block;">Estilismo Personalizado & Grooming</span>
+              </div>
+              <span class="chip verde" style="font-size: 9px; padding: 2px 8px;">$95.000 COP</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
+              Consultoría de estilo, paleta de colores y preparación previa al evento para proyectar máxima sofisticación y confianza.
+            </p>
+            <button class="btn btn-book-service" data-service="Asesoría de Imagen y Maquillaje Profesional" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(46,107,84,0.12); border-color: rgba(46,107,84,0.4); color: #79D3AC; font-weight: 700;">
+              Agendar Asesoría de Imagen
+            </button>
+          </div>
+
+          <!-- 3. Coaching en Habilidades Blandas -->
+          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <div>
+                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">🧠 Coaching en Habilidades Blandas</b>
+                <span style="font-size: 10.5px; color: #f08ca8; font-family: var(--font-mono); display: block;">Comunicación & Conexión Auténtica</span>
+              </div>
+              <span class="chip ambar" style="font-size: 9px; padding: 2px 8px;">$110.000 COP</span>
+            </div>
+            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
+              Sesión 1 a 1 para dominar el arte de las citas cortas: lenguaje no verbal, escucha activa y cómo generar intriga en 6 minutos.
+            </p>
+            <button class="btn btn-book-service" data-service="Coaching en Habilidades Blandas y Dinámica Social" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(155,39,72,0.12); border-color: var(--vino); color: #f08ca8; font-weight: 700;">
+              Reservar Sesión de Coaching
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista: Cliente / Reserva Activa -->
+  <section id="view-client" class="panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--linea);">
+      <button id="btn-client-back-feed" class="btn-round-back" title="Atrás">
+        ←
+      </button>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); display: inline-flex; align-items: center; gap: 6px;">
+        <span id="offline-indicator" style="display:none; color: #ff5252; font-size: 10px; margin-right: 4px;">🔴 Local</span>
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #4caf50; display: inline-block;"></span>
+        Reserva Confirmada
       </span>
     </div>
     <div id="client-content">Cargando reserva...</div>
   </section>
 
-  <!-- Vista: Anfitrión (Bar) -->
-  <section id="view-admin" class="panel">
-    <style>
-      /* Estilos específicos para el Dashboard Admin (Desktop View) */
-      #view-admin.panel.on {
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: #110A15;
-        z-index: 1000;
-        overflow-y: auto;
-        padding: 40px;
-        box-sizing: border-box;
-      }
-      .admin-dashboard {
-        max-width: 1400px;
-        margin: 0 auto;
-        font-family: var(--font-body), sans-serif;
-        color: var(--papel);
-      }
-      .admin-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 30px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        padding-bottom: 20px;
-      }
-      .admin-title {
-        font-family: 'Bodoni Moda', serif;
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--papel);
-        margin: 0 0 10px 0;
-        letter-spacing: 0.05em;
-      }
-      .admin-subtitle {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        color: var(--humo);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-      .admin-badge {
-        border: 1px solid rgba(46,107,84,0.6);
-        background: rgba(46,107,84,0.15);
-        color: #79D3AC;
-        padding: 6px 14px;
-        border-radius: 999px;
-        font-family: var(--font-mono);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-      }
-      
-      .kpi-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 30px;
-      }
-      .kpi-card {
-        background: #1A1120;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 12px;
-        padding: 24px;
-      }
-      .kpi-value {
-        font-family: var(--font-mono);
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--papel);
-        margin-bottom: 16px;
-      }
-      .kpi-label {
-        font-size: 12px;
-        color: var(--humo);
-        margin-bottom: 6px;
-      }
-      .kpi-sub {
-        font-family: var(--font-mono);
-        font-size: 10px;
-        color: var(--ambar);
-      }
-
-      .main-grid {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        gap: 30px;
-      }
-      
-      .left-col {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-      }
-      
-      .chart-card {
-        background: #1A1120;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 12px;
-        padding: 24px;
-      }
-      .section-title {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        color: var(--humo);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        margin-bottom: 24px;
-      }
-      
-      .bar-chart {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        height: 180px;
-        padding-top: 20px;
-      }
-      .bar-col {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        width: 12%;
-        height: 100%;
-        justify-content: flex-end;
-      }
-      .bar {
-        width: 100%;
-        background: rgba(255,255,255,0.1);
-        border-radius: 4px 4px 0 0;
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        padding-bottom: 8px;
-        transition: height 0.3s ease;
-      }
-      .bar.active {
-        background: var(--ambar);
-      }
-      .bar-pct {
-        font-family: var(--font-mono);
-        font-size: 10px;
-        color: #110A15;
-        font-weight: 700;
-      }
-      .bar-label {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        color: var(--humo);
-        text-transform: uppercase;
-      }
-      
-      .next-night-card {
-        background: #1A1120;
-        border: 1px solid var(--ambar);
-        border-radius: 16px;
-        padding: 32px;
-      }
-      .nn-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-      .nn-title {
-        font-family: 'Bodoni Moda', serif;
-        font-size: 28px;
-        color: var(--papel);
-      }
-      .nn-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 16px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        font-size: 14px;
-      }
-      .nn-row:last-of-type {
-        border-bottom: none;
-      }
-      .nn-val {
-        font-family: var(--font-mono);
-        font-weight: 700;
-      }
-      .nn-buttons {
-        display: flex;
-        gap: 12px;
-        margin-top: 32px;
-      }
-      .nn-buttons .btn {
-        padding: 14px 24px;
-        font-size: 13px;
-        border-radius: 8px;
-      }
-
-      .right-col {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-      }
-      .receipt {
-        background: #F3EDE2;
-        color: #1A120B;
-        border-radius: 8px;
-        padding: 30px 24px;
-        font-family: var(--font-mono);
-        position: relative;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      }
-      .receipt::after {
-        content: "";
-        position: absolute;
-        bottom: -6px;
-        left: 0;
-        right: 0;
-        height: 12px;
-        background: radial-gradient(circle, transparent, transparent 4px, #F3EDE2 4px, #F3EDE2);
-        background-size: 12px 12px;
-      }
-      .rec-title {
-        font-family: 'Bodoni Moda', serif;
-        font-size: 22px;
-        text-align: center;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        margin-bottom: 8px;
-      }
-      .rec-sub {
-        text-align: center;
-        font-size: 10px;
-        color: #73675a;
-        margin-bottom: 24px;
-        letter-spacing: 0.05em;
-      }
-      .rec-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        margin-bottom: 12px;
-      }
-      .rec-total {
-        display: flex;
-        justify-content: space-between;
-        font-size: 16px;
-        font-weight: 700;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 2px solid #1A120B;
-      }
-      .rec-footer {
-        text-align: center;
-        font-size: 9px;
-        color: #73675a;
-        margin-top: 24px;
-        line-height: 1.5;
-      }
-      .rec-divider {
-        border-top: 1px dashed #73675a;
-        margin: 16px 0;
-      }
-
-      .terms-card {
-        background: transparent;
-      }
-      .terms-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        font-size: 13px;
-        color: var(--humo);
-      }
-      .terms-row b {
-        color: var(--papel);
-        font-family: var(--font-mono);
-      }
-    </style>
-
-    <div class="admin-dashboard">
-      <div class="admin-header">
-        <div>
-          <h1 class="admin-title">CARONTE Cocktail Bar</h1>
-          <div class="admin-subtitle">ZONA G, BOGOTÁ · 14 MESAS · SOCIO DESDE ENE 2026</div>
-        </div>
-        <div class="admin-badge">PLAN SALA LLENA · 3 NOCHES/SEMANA</div>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpi-occ">78 %</div>
-          <div class="kpi-label">Ocupación martes a jueves</div>
-          <div class="kpi-sub" style="color: #79D3AC;">+41 pts vs. antes</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpi-ticket">$1.190.000</div>
-          <div class="kpi-label">Ticket de la última noche</div>
-          <div class="kpi-sub">martes normal: $330.000</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpi-avg">$78.000</div>
-          <div class="kpi-label">Consumo medio por asistente</div>
-          <div class="kpi-sub">objetivo: $66.000</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpi-return">19 %</div>
-          <div class="kpi-label">Citas de vuelta al local</div>
-          <div class="kpi-sub">14 reservas este mes</div>
-        </div>
-      </div>
-
-      <div class="main-grid">
-        <div class="left-col">
-          <div class="chart-card">
-            <div class="section-title">OCUPACIÓN DE LA SEMANA</div>
-            <div class="bar-chart" id="admin-chart">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-
-          <div class="next-night-card">
-            <div class="section-title" id="nn-header-sub">PRÓXIMA NOCHE · EN 2 DÍAS</div>
-            <div class="nn-title" id="nn-date-title">Martes 25 · 20:00 - 21:45</div>
-            <div style="margin-top: 30px;">
-              <div class="nn-row"><span>Confirmados</span><span class="nn-val" id="nn-confirmed">24 (12 + 12)</span></div>
-              <div class="nn-row"><span>Mesas que necesitamos</span><span class="nn-val" id="nn-tables">12 de 2 plazas</span></div>
-              <div class="nn-row"><span>Consumiciones garantizadas</span><span class="nn-val" id="nn-drinks">20 mínimo</span></div>
-              <div class="nn-row"><span>Cobros por consumición</span><span class="nn-val" id="nn-price">$22.000</span></div>
-              <div class="nn-row"><span>Ingreso mínimo asegurado</span><span class="nn-val" id="nn-revenue">$440.000</span></div>
-            </div>
-            <div class="nn-buttons">
-              <button class="btn ambar" id="btn-admin-start-event">Arrancar Noche (Motor)</button>
-              <button class="btn" style="background: transparent; border-color: rgba(255,255,255,0.2);">Cambiar aforo</button>
-              <button class="btn" style="background: transparent; border-color: rgba(255,255,255,0.2);">Proponer carta de la noche</button>
-              <button class="btn" id="btn-admin-end-event" style="background: transparent; border-color: var(--vino); color: var(--vino); display: none;">Finalizar y Emitir NFTs</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="right-col">
-          <div>
-            <div class="section-title">LA CUENTA DE LA NOCHE ANTERIOR</div>
-            <div class="receipt">
-              <div class="rec-title">CARONTE COCKTAIL BAR</div>
-              <div class="rec-sub" id="rec-date">MARTES 18 MARZO · RONDA #212</div>
-              <div class="rec-row"><span>24 bebidas incluidas</span><span id="rec-val1">528.000</span></div>
-              <div class="rec-row"><span>15 segundas rondas</span><span id="rec-val2">412.000</span></div>
-              <div class="rec-row"><span>Tapeo y picoteo</span><span id="rec-val3">250.000</span></div>
-              <div class="rec-divider"></div>
-              <div class="rec-row"><span>Comisión RONDA</span><span>0</span></div>
-              <div class="rec-row"><span>Costo de captación</span><span>0</span></div>
-              <div class="rec-divider"></div>
-              <div class="rec-total"><span>TOTAL BARRA</span><span id="rec-total-val">$1.190.000</span></div>
-              <div class="rec-footer">
-                Un martes sin RONDA: ~$330.000<br>
-                Margen bruto estimado en bebida: 68%
-              </div>
-            </div>
-          </div>
-
-          <div class="terms-card">
-            <div class="section-title">LO QUE FIRMA EL LOCAL</div>
-            <div class="terms-row"><span>Compromiso</span><b>3 meses</b></div>
-            <div class="terms-row"><span>Exclusividad valle</span><b>500 m</b></div>
-            <div class="terms-row"><span>Cancelar con &lt; 72 h</span><b>$550.000 penal.</b></div>
-            <div class="terms-row"><span>Precio consumición</span><b>cerrado en escandallo</b></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-    <!-- Vista: Panel de Red (Network & Exclusividad Territorial) -->
-  <section id="view-network" class="panel">
-    <div style="padding: 24px 16px; color: var(--papel); font-family: var(--font-body); max-width: 960px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
-        <div>
-          <h2 style="font-family: var(--font-display); font-size: 28px; margin: 0; color: var(--papel);">🗺️ Red de Bares Aliados</h2>
-          <p style="color: var(--humo); font-size: 12px; margin: 4px 0 0;">Gestión de Cobertura y Verificación de Exclusividad Territorial (500m)</p>
-        </div>
-        <span class="chip verde" style="font-size: 10.5px; padding: 4px 10px;">Radar Activo</span>
-      </div>
-      <div id="network-container"></div>
-    </div>
-  </section>
-
-  <!-- Vista: CRM Vendedores (Pipeline de Locales & Comisiones) -->
-  <section id="view-crm" class="panel">
-    <div style="padding: 24px 16px; color: var(--papel); font-family: var(--font-body); max-width: 1050px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-        <div>
-          <h2 style="font-family: var(--font-display); font-size: 28px; margin: 0; color: var(--papel);">💼 CRM de Ventas & Expansión</h2>
-          <p style="color: var(--humo); font-size: 12px; margin: 4px 0 0;">Pipeline de Afiliación de Bares · Comisión Fija ($500.000 COP) por Local Cerrado</p>
-        </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <div style="background: rgba(240,168,48,0.12); border: 1px solid var(--luz); padding: 8px 16px; border-radius: 999px;">
-            <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">Comisiones Fijas: </span>
-            <b id="crm-commissions" style="font-size: 15px; color: var(--luz); font-family: var(--font-mono);">$0</b>
-          </div>
-          <button id="btn-crm-add-lead-btn" class="btn ambar" style="font-size: 11px; font-weight: 700; padding: 9px 16px;">+ Nuevo Lead</button>
-        </div>
-      </div>
-
-      <!-- Kanban Board -->
-      <div id="crm-kanban-wrapper" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-        <!-- Columna 1: Lead -->
-        <div class="kanban-column" style="background: rgba(243,237,226,0.03); border: 1px solid var(--linea); border-radius: 16px; padding: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--linea); padding-bottom: 10px;">
-            <b style="font-family: var(--font-display); font-size: 15px; color: var(--papel);">📥 1. Lead / Prospección</b>
-            <span class="chip gris" style="font-size: 9px;">Etapa Inicial</span>
-          </div>
-          <div id="kanban-lead" class="kanban-list" style="min-height: 280px;"></div>
-        </div>
-
-        <!-- Columna 2: Negociación -->
-        <div class="kanban-column" style="background: rgba(240,168,48,0.04); border: 1px solid rgba(240,168,48,0.3); border-radius: 16px; padding: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(240,168,48,0.3); padding-bottom: 10px;">
-            <b style="font-family: var(--font-display); font-size: 15px; color: var(--luz);">🤝 2. En Negociación / Escandallo</b>
-            <span class="chip ambar" style="font-size: 9px;">En Curso</span>
-          </div>
-          <div id="kanban-negotiating" class="kanban-list" style="min-height: 280px;"></div>
-        </div>
-
-        <!-- Columna 3: Firmado -->
-        <div class="kanban-column" style="background: rgba(46,107,84,0.06); border: 1px solid var(--botella); border-radius: 16px; padding: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--botella); padding-bottom: 10px;">
-            <b style="font-family: var(--font-display); font-size: 15px; color: var(--papel);">🍾 3. Firmado / En Red</b>
-            <span class="chip verde" style="font-size: 9px;">Comisión Ganada</span>
-          </div>
-          <div id="kanban-signed" class="kanban-list" style="min-height: 280px;"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Vista: Super Admin Dashboard -->
-  <section id="view-superadmin" class="panel">
-    <div style="padding: 24px 16px; color: var(--papel); font-family: var(--font-body); max-width: 1050px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 12px;">
-        <div>
-          <h2 style="font-family: var(--font-display); font-size: 28px; margin: 0; color: var(--papel);">👑 Super Admin Global</h2>
-          <p style="color: var(--humo); font-size: 12px; margin: 4px 0 0;">Consola Maestra de Operaciones, Ingresos Multi-Línea y Control de Permisos</p>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <span class="chip ambar" style="font-size: 11px; font-weight: 700; padding: 4px 10px;">Master Control</span>
-          <span class="chip verde" style="font-size: 11px; padding: 4px 10px;">Sistemas OK</span>
-        </div>
-      </div>
-      <div id="superadmin-content"></div>
-    </div>
-  </section>
-
-  <!-- Animación Flash Overlay -->
-  <div id="login-flash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--ambar); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;"></div>
-
-  <footer class="ronda-footer">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--linea); padding-top: 24px; margin-top: 40px; font-family: var(--font-mono); font-size: 11px; color: var(--humo); flex-wrap: wrap; gap: 10px;">
-      <span>RONDA System © 2026</span>
-      <span style="display: inline-flex; align-items: center; gap: 5px; color: var(--papel); font-weight: 500;">
-        Hecho por amor ❤️ a Colombia <img src="https://flagcdn.com/16x12/co.png" alt="Colombia" style="height: 11px; width: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle;">
-      </span>
-      <span style="opacity: 0.6; letter-spacing: 0.05em;">v2.2.0-prod</span>
-      <span id="visit-counter-container" style="display: flex; align-items: center; gap: 4px; color: var(--ambar); font-weight: 600;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        <span id="visit-count">0</span>
-      </span>
-    </div>
-  </footer>
-</div>
-
-<script>
-  // Contador de visitas dinámico (Simulado / LocalStorage)
-  document.addEventListener("DOMContentLoaded", () => {
-    const el = document.getElementById('visit-count');
-    if (!el) return;
-    
-    // Base number for realism
-    const baseVisits = 145032; 
-    let localVisits = parseInt(localStorage.getItem('ronda_visit_count') || '0', 10);
-    
-    // Si es la primera visita, incrementar
-    if (!sessionStorage.getItem('ronda_session_counted')) {
-      localVisits++;
-      localStorage.setItem('ronda_visit_count', localVisits);
-      sessionStorage.setItem('ronda_session_counted', 'true');
-    }
-
-    let total = baseVisits + localVisits;
-    
-    // Animación del número
-    let current = baseVisits;
-    const duration = 1500;
-    const steps = 30;
-    const stepTime = duration / steps;
-    const increment = Math.max(1, Math.floor((total - current) / steps));
-
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= total) {
-        current = total;
-        clearInterval(timer);
-      }
-      el.textContent = current.toLocaleString('es-CO');
-    }, stepTime);
-
-    // Simular picos de visitas en vivo cada 10-30 segs
-    setInterval(() => {
-      if (Math.random() > 0.5) {
-        total += Math.floor(Math.random() * 3) + 1;
-        el.textContent = total.toLocaleString('es-CO');
-        // Efecto visual
-        el.style.color = '#fff';
-        setTimeout(() => el.style.color = '', 300);
-      }
-    }, 15000);
-  });
-</script>
-
-<!-- Notificaciones UI -->
-<div class="notification-panel" id="notification-panel">
-  <div class="notif-header">
-    <h4>Notificaciones</h4>
-    <button class="btn" style="padding:4px 8px; font-size:10px; border:none;" onclick="if(window.Notifications) window.Notifications.markAllRead()">Leídas ✔</button>
-  </div>
-  <div class="notif-list" id="notification-list">
-    <div class="notif-empty">No hay notificaciones recientes</div>
-  </div>
-</div>
-<div id="toast-container"></div>
-
-<script type="module" src="/src/app.ts"></script>
-
-<!-- Scripts decorativos de la maqueta adaptados -->
-<script>
-/* ---- QR decorativo determinista ---- */
-const qr=document.getElementById('qr');
-if(qr){
-  let s=99;
-  const rnd=()=>(s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff;
-  for(let i=0;i<121;i++){
-    const c=document.createElement('i');
-    const r=Math.floor(i/11),co=i%11;
-    const esquina=(r<3&&co<3)||(r<3&&co>7)||(r>7&&co<3);
-    c.style.background = (esquina||rnd()>.48) ? 'var(--tinta)' : 'transparent';
-    qr.appendChild(c);
-  }
-}
-</script>
+  <script type="module" src="/src/app.ts"></script>
 </body>
 </html>
-

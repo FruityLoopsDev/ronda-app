@@ -47,8 +47,8 @@ export interface User {
   safeword?: string;
   emergencyContact?: string;
   hasTicket?: boolean;
-  paymentPending?: boolean;  // Pago Nequi realizado, pendiente de verificación manual del anfitrión
-  paymentMethod?: string;    // 'nequi'
+  paymentPending?: boolean;
+  paymentMethod?: string;
   checkedIn?: boolean;
   phoneNumber?: string;
   stats?: {
@@ -127,6 +127,8 @@ export interface RondaEvent {
   currentRound: number;
   activeMatches?: Match[];
   playedPairs?: string[];
+  name?: string;
+  venueName?: string;
 }
 
 export interface Venue {
@@ -166,29 +168,7 @@ function cleanFirestoreData(obj: any): any {
 }
 
 export class DatabaseInterface {
-  isDemo: boolean;
-  memoryDb: {
-    users: Record<string, User>;
-    events: Record<string, RondaEvent>;
-    venues: Record<string, Venue>;
-    leads: Record<string, Lead>;
-  };
-
-  constructor() {
-    this.isDemo = RondaConfig.isDemo;
-    this.memoryDb = {
-      users: {},
-      events: {},
-      venues: {
-        'v1': { id: 'v1', name: 'CARONTE Cocktail Bar', address: 'Cra. 4A #66-22', zone: 'Zona G', lat: 4.6543, lng: -74.0567, status: 'active' },
-        'v2': { id: 'v2', name: 'La María Quinta Camacho', address: 'Calle 70A #9-44', zone: 'Quinta Camacho', lat: 4.6565, lng: -74.0592, status: 'active' }
-      },
-      leads: {
-        'l1': { id: 'l1', name: 'Patio Poca Prisa', contactName: 'Carlos M.', status: 'negotiating', sales_uid: 'sales1', commission: 500000 },
-        'l2': { id: 'l2', name: 'Bar Enigma', contactName: 'Luis F.', status: 'lead', sales_uid: 'sales1', commission: 500000 }
-      }
-    };
-  }
+  constructor() {}
 
   private _getFirestore() {
     return RondaServices.db;
@@ -196,19 +176,12 @@ export class DatabaseInterface {
 
   // --- Usuarios ---
   async getUser(userId: string): Promise<User | null> {
-    if (this.isDemo) {
-      return this.memoryDb.users[userId] || null;
-    }
     const docRef = doc(this._getFirestore(), 'users', userId);
     const docSnap = await getDoc(docRef);
     return docSnap.exists() ? (docSnap.data() as User) : null;
   }
 
   async saveUser(user: User): Promise<User> {
-    if (this.isDemo) {
-      this.memoryDb.users[user.uid] = user;
-      return user;
-    }
     const docRef = doc(this._getFirestore(), 'users', user.uid);
     const sanitized = cleanFirestoreData(user);
     await setDoc(docRef, sanitized, { merge: true });
@@ -217,37 +190,18 @@ export class DatabaseInterface {
 
   // --- Eventos / Salas ---
   async getEvent(eventId: string): Promise<RondaEvent | null> {
-    if (this.isDemo) {
-      return this.memoryDb.events[eventId] || null;
-    }
     const docRef = doc(this._getFirestore(), 'events', eventId);
     const docSnap = await getDoc(docRef);
     return docSnap.exists() ? (docSnap.data() as RondaEvent) : null;
   }
   
   async saveEvent(event: RondaEvent): Promise<RondaEvent> {
-    if (this.isDemo) {
-      this.memoryDb.events[event.id] = event;
-      return event;
-    }
     const docRef = doc(this._getFirestore(), 'events', event.id);
     await setDoc(docRef, event as any, { merge: true });
     return event;
   }
 
   async joinEvent(eventId: string, userId: string): Promise<RondaEvent> {
-    if (this.isDemo) {
-      const event = this.memoryDb.events[eventId] || { id: eventId, status: 'waiting', currentRound: 0, participants: [] };
-      if (!event.participants.includes(userId)) {
-        event.participants.push(userId);
-      }
-      this.memoryDb.events[eventId] = event;
-      if (this.memoryDb.users[userId]) {
-        this.memoryDb.users[userId].activeEventId = eventId;
-      }
-      return event;
-    }
-    
     const event = await this.getEvent(eventId);
     if (!event) throw new Error("El evento no existe.");
     
@@ -272,22 +226,6 @@ export class DatabaseInterface {
 
   async processEventMatches(eventId: string): Promise<{ matchedPairsCount: number }> {
     console.log(`[DB] Calculando matches mutuos para el evento: ${eventId} ($0 - Consola Host)...`);
-    if (this.isDemo) {
-      const participants = Object.values(this.memoryDb.users).filter(u => u.activeEventId === eventId);
-      const mutual = Matches.calculateMutualMatches(participants);
-      for (const m of mutual) {
-        if (this.memoryDb.users[m.u1]) {
-          this.memoryDb.users[m.u1].matches = this.memoryDb.users[m.u1].matches || [];
-          if (!this.memoryDb.users[m.u1].matches.includes(m.u2)) this.memoryDb.users[m.u1].matches.push(m.u2);
-        }
-        if (this.memoryDb.users[m.u2]) {
-          this.memoryDb.users[m.u2].matches = this.memoryDb.users[m.u2].matches || [];
-          if (!this.memoryDb.users[m.u2].matches.includes(m.u1)) this.memoryDb.users[m.u2].matches.push(m.u1);
-        }
-      }
-      return { matchedPairsCount: mutual.length };
-    }
-
     try {
       const fs = this._getFirestore();
       const likesCol = collection(fs, 'events', eventId, 'likes');
@@ -363,14 +301,6 @@ export class DatabaseInterface {
   }
 
   subscribeToEvent(eventId: string, callback: (data: RondaEvent) => void): Unsubscribe | Function {
-    if (this.isDemo) {
-      setTimeout(() => {
-        const event = this.memoryDb.events[eventId];
-        if (event) callback(event);
-      }, 1000);
-      return () => { console.log('Unsubscribed'); };
-    }
-    
     const docRef = doc(this._getFirestore(), 'events', eventId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -385,32 +315,31 @@ export class DatabaseInterface {
 
   // --- Venues (Red) ---
   async getVenues(): Promise<Venue[]> {
-    if (this.isDemo) {
-      return Object.values(this.memoryDb.venues);
+    try {
+      const snap = await getDocs(collection(this._getFirestore(), 'venues'));
+      return snap.docs.map(d => d.data() as Venue);
+    } catch (e) {
+      console.error("Error obteniendo venues:", e);
+      return [];
     }
-    // In a real app we would use getDocs(collection(db, 'venues'))
-    return [];
   }
 
   // --- Leads (CRM) ---
   async getLeads(salesUid?: string): Promise<Lead[]> {
-    if (this.isDemo) {
-      let leads = Object.values(this.memoryDb.leads);
+    try {
+      const snap = await getDocs(collection(this._getFirestore(), 'leads'));
+      let leads = snap.docs.map(d => d.data() as Lead);
       if (salesUid) leads = leads.filter(l => l.sales_uid === salesUid);
       return leads;
+    } catch (e) {
+      console.error("Error obteniendo leads:", e);
+      return [];
     }
-    return [];
   }
 
   async updateLeadStatus(leadId: string, status: 'lead' | 'negotiating' | 'signed'): Promise<void> {
-    if (this.isDemo) {
-      if (this.memoryDb.leads[leadId]) {
-        this.memoryDb.leads[leadId].status = status;
-      }
-      return;
-    }
     const docRef = doc(this._getFirestore(), 'leads', leadId);
-    // setDoc or updateDoc in prod
+    await setDoc(docRef, { status }, { merge: true });
   }
 
   // --- Waitlist (Lista de Espera) ---

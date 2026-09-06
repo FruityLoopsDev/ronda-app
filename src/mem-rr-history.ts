@@ -46,13 +46,7 @@ class RondaHistoryAdapter implements History {
   async loadFor(participants: Participant[]): Promise<void> {
     if (participants.length < 2) return;
 
-    if (RondaConfig.isDemo) {
-      if (!this.seeded) {
-        this.seedDemo(participants);
-        this.seeded = true;
-      }
-      return;
-    }
+
 
     // Producción: leer users/{uid}/encounters/{otherUid}
     for (const p of participants) {
@@ -95,13 +89,11 @@ class RondaHistoryAdapter implements History {
       };
       this.map.set(key, enc);
 
-      if (!RondaConfig.isDemo) {
-        setDoc(
-          doc(RondaServices.db, 'users', a.uid, 'encounters', b.uid),
-          { n: enc.n, lastAt: now, match: enc.match },
-          { merge: true }
-        ).catch((err) => console.warn('[Historial] No se pudo escribir', err));
-      }
+      setDoc(
+        doc(RondaServices.db, 'users', a.uid, 'encounters', b.uid),
+        { n: enc.n, lastAt: now, match: enc.match },
+        { merge: true }
+      ).catch((err) => console.warn('[Historial] No se pudo escribir', err));
     }
   }
 

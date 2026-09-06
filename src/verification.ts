@@ -42,7 +42,6 @@ class VerificationService {
 
   async getNearbyEvents() {
     if (!this.location) await this.requestLocation();
-    if (RondaConfig.isDemo) return [DB.memoryDb.events['e1']];
     return [];
   }
 
@@ -193,12 +192,7 @@ class VerificationService {
    * Nunca lanza; errores de infraestructura se reportan como false con mensaje claro.
    */
   async startVerification(videoId: string, canvasId: string): Promise<boolean> {
-    // Solo se simula cuando isDemo Y kycSimulated están activos; por defecto
-    // el flujo real (cámara + rostro + OCR) corre aunque la DB sea demo.
-    if (RondaConfig.isDemo && RondaConfig.kycSimulated) {
-      this.setStatus('✓ Modo Demo: verificación KYC simulada.');
-      return new Promise((resolve) => setTimeout(() => resolve(true), 1200));
-    }
+    // El flujo de KYC siempre ejecuta su ruta normal en producción.
 
     const videoEl = document.getElementById(videoId) as HTMLVideoElement | null;
     const canvasEl = document.getElementById(canvasId) as HTMLCanvasElement | null;

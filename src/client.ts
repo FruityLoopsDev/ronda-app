@@ -6,7 +6,7 @@ import { RondaDialog } from './dialog.js';
 import { Payment } from './payment.js';
 import { PrivacyPolicy } from './privacy-policy.js';
 import notifications from './notifications.js';
-
+import QRCode from 'qrcode';
 // client.ts: Lógica del Cliente, Eventos, Carta de Tragos Bartender/Sommelier, Chat Temporal Seguro con Autodestrucción Misión Imposible
 
 export interface DrinkOption {
@@ -50,7 +50,7 @@ export interface RondaEvent {
   bookingCode: string;
 }
 
-export const RONDA_EVENTS: RondaEvent[] = [
+export let RONDA_EVENTS: RondaEvent[] = [
   {
     id: 'rnd-caronte-mar-25',
     venueName: 'CARONTE Cocktail Bar',
@@ -570,11 +570,63 @@ class ClientAppService {
   }
 
   async init() {
+    await this.loadEvents();
     const user = Auth.currentUser;
     if (user) {
       this.initClientDashboard(user);
     } else {
       this.renderDiscoveryFeed();
+    }
+  }
+
+  async loadEvents() {
+    try {
+      const dynamicEvents = await DB.getUpcomingEvents();
+      if (dynamicEvents && dynamicEvents.length > 0) {
+        // Merge with template data in RONDA_EVENTS or add new ones
+        dynamicEvents.forEach(dbEvt => {
+          const existing = RONDA_EVENTS.find(e => e.id === dbEvt.id);
+          if (existing) {
+            Object.assign(existing, dbEvt);
+          } else {
+            // New event created by host
+            RONDA_EVENTS.push({
+              ...dbEvt,
+              venueAddress: 'Dirección por confirmar',
+              mapsUrl: '#',
+              timeRange: '20:00 a 21:45',
+              roundsInfo: `${dbEvt.tables || 8} mesas · Rotación en vivo`,
+              ageRange: 'Todas las edades',
+              drinkMenuTitle: '🍸 CARTA DE AUTOR',
+              drinkOptions: [{
+                id: 'opt-generic',
+                name: 'Cóctel de la Casa',
+                desc: 'Bebida premium seleccionada por el bartender.',
+                type: 'cocktail',
+                tag: 'Firma',
+                img: '/assets/coctel-negroni.svg'
+              }],
+              cocktailIncluded: 'Cóctel de la Casa',
+              cocktailDesc: 'Bebida premium seleccionada por el bartender.',
+              cocktailImg: '/assets/coctel-negroni.svg',
+              hostTips: ['👔 Dress Code: Casual elegante.', '⏰ Llegada: 15 mins antes.'],
+              priceFormatted: `$${(dbEvt.price || 45000).toLocaleString('es-CO')}`,
+              priceSub: 'Cupos limitados',
+              statusLabel: 'Disponible',
+              chipClass: 'verde',
+              balanceTag: 'Nuevos cupos',
+              balancePercent1: 50,
+              balancePercent2: 50,
+              registeredText: 'Apuntados',
+              neededText: 'Faltan cupos',
+              tableNumber: '01',
+              bookingCode: '#RND-NEW'
+            } as unknown as RondaEvent);
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Error loading events", err);
     }
   }
 
@@ -1853,20 +1905,27 @@ class ClientAppService {
     }
   }
 
-  renderQRCode(elementId: string) {
+  async renderQRCode(elementId: string) {
     const qr = document.getElementById(elementId);
     if (!qr) return;
     qr.innerHTML = '';
-    let s = 103;
-    const rnd = () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
-    for (let i = 0; i < 121; i++) {
-      const c = document.createElement('i');
-      const r = Math.floor(i / 11);
-      const co = i % 11;
-      const esquina = (r < 3 && co < 3) || (r < 3 && co > 7) || (r > 7 && co < 3);
-      c.style.background = (esquina || rnd() > 0.48) ? 'var(--tinta)' : 'transparent';
-      c.style.borderRadius = '1px';
-      qr.appendChild(c);
+    const user = Auth.currentUser;
+    const uid = user ? user.uid : 'guest';
+    
+    try {
+      const canvas = document.createElement('canvas');
+      await QRCode.toCanvas(canvas, `CHECKIN:${uid}`, {
+        width: 140,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      });
+      canvas.style.borderRadius = '8px';
+      qr.appendChild(canvas);
+    } catch (err) {
+      console.error('Error generating QR', err);
     }
   }
 

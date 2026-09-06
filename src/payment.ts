@@ -35,27 +35,7 @@ class PaymentService {
 
     console.log(`[Pago] Nequi QR — evento ${eventId}, monto: ${price}`);
 
-    if (RondaConfig.isDemo) {
-      // Modo Demo / Sandbox interactivo (sin dinero real).
-      const confirmed = await RondaDialog.confirm({
-        title: 'Pago con Nequi (Demo)',
-        message: `Estás a punto de adquirir tu pase oficial de 90 min + Cóctel de autor en ${venueName} por ${price}.\n\nEn producción se mostraría el QR de cobro de Nequi.`,
-        icon: '💚',
-        confirmText: '✓ Pagar (Demo)',
-        cancelText: '✕ Cancelar'
-      });
 
-      if (confirmed) {
-        user.hasTicket = true;
-        user.activeEventId = eventId;
-        await DB.saveUser(user);
-        if (onSuccess) {
-          onSuccess({ id: 'demo_tx_' + Date.now(), status: 'APPROVED', reference: `TICKET-${user.uid}-${eventId}` });
-        }
-        return true;
-      }
-      return false;
-    }
 
     // --- Producción: pago escaneando el QR de Nequi (verificación manual) ---
     const confirmed = await RondaDialog.confirm({

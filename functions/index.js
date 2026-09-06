@@ -79,20 +79,12 @@ exports.wompiWebhook = functions.https.onRequest(async (req, res) => {
             activeEventId: eventId
           });
 
-          // 3. Añadirlo a los participantes del evento
-          const eventRef = db.collection("events").doc(eventId);
-          await db.runTransaction(async (t) => {
-            const doc = await t.get(eventRef);
-            if (doc.exists) {
-              const participants = doc.data().participants || [];
-              if (!participants.includes(uid)) {
-                participants.push(uid);
-                t.update(eventRef, { participants });
-              }
-            }
-          });
-
-          console.log(`✓ User ${uid} approved and activated for event ${eventId}`);
+          // NOTA: El paso 3 (Añadir a participantes) se eliminó por diseño arquitectónico.
+          // Solo el Anfitrión (Host) debe añadir al usuario a los participantes de la sala
+          // cuando escanee el código QR en la puerta, garantizando que el motor
+          // empareje únicamente a los asistentes reales que llegaron al bar.
+          
+          console.log(`✓ User ${uid} approved and ticket generated for event ${eventId}`);
         }
       }
     }

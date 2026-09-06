@@ -157,6 +157,26 @@ export class AuthService {
       console.error("Error cerrando sesión en Firebase:", error);
     }
   }
+
+  /**
+   * Registra un callback que se invoca cuando el usuario inicia sesión.
+   * Si ya hay un usuario logueado en el momento de llamar a la función,
+   * el callback se ejecutará inmediatamente.
+   */
+  onAuthStateChanged(callback: (user: User | null) => void) {
+    if (this.currentUser) {
+      callback(this.currentUser);
+    }
+    
+    // Escuchar el evento auth:login (emitido desde initAuthStateListener)
+    window.addEventListener('auth:login', (e: any) => {
+      callback(e.detail);
+    });
+
+    window.addEventListener('auth:logout', () => {
+      callback(null);
+    });
+  }
 }
 
 export const Auth = new AuthService();

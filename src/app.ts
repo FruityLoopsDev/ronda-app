@@ -58,16 +58,7 @@ function initApp() {
   function getPathViewMapping(path: string): string | null {
     const cleanPath = path.toLowerCase().replace(/\/$/, '');
     switch (cleanPath) {
-      case '/admin':
-        return 'view-admin';
-      case '/net':
-      case '/network':
-        return 'view-network';
-      case '/superadmin':
-        return 'view-superadmin';
-      case '/sales':
-      case '/crm':
-        return 'view-crm';
+      
       case '/client':
       case '/ronda':
         return 'view-client';
@@ -80,10 +71,7 @@ function initApp() {
 
   function getViewPathMapping(viewId: string): string {
     switch (viewId) {
-      case 'view-admin': return '/admin';
-      case 'view-network': return '/net';
-      case 'view-superadmin': return '/superadmin';
-      case 'view-crm': return '/sales';
+      
       case 'view-client': return '/client';
       case 'view-lobby': return '/';
       default: return '/';
@@ -104,41 +92,6 @@ function initApp() {
     const user = Auth.currentUser;
     const role = user?.role || 'client';
 
-    // Guardas de seguridad RBAC por vista
-    if (viewId === 'view-admin' && role !== 'admin' && role !== 'superadmin') {
-      console.warn(`[RBAC] Acceso no autorizado a consola admin para rol: ${role}`);
-      RondaDialog.alert({
-        title: 'Acceso Restringido',
-        message: 'Esta consola está reservada para anfitriones y administradores de sede.',
-        icon: '🔒'
-      });
-      viewId = user ? 'view-lobby' : 'view-auth';
-    } else if (viewId === 'view-superadmin' && role !== 'superadmin') {
-      console.warn(`[RBAC] Acceso denegado a SuperAdmin para rol: ${role}`);
-      RondaDialog.alert({
-        title: 'Acceso Restringido',
-        message: 'Se requieren credenciales de SuperAdmin para acceder a este panel.',
-        icon: '🛡️'
-      });
-      viewId = user ? 'view-lobby' : 'view-auth';
-    } else if (viewId === 'view-crm' && role !== 'sales' && role !== 'superadmin') {
-      console.warn(`[RBAC] Acceso denegado a CRM para rol: ${role}`);
-      RondaDialog.alert({
-        title: 'Acceso Restringido',
-        message: 'Panel reservado exclusivamente para la fuerza comercial B2B.',
-        icon: '💼'
-      });
-      viewId = user ? 'view-lobby' : 'view-auth';
-    } else if (viewId === 'view-network' && role !== 'network' && role !== 'superadmin') {
-      console.warn(`[RBAC] Acceso denegado a Network para rol: ${role}`);
-      RondaDialog.alert({
-        title: 'Acceso Restringido',
-        message: 'Panel reservado para operaciones y gestión de red de bares.',
-        icon: '🌐'
-      });
-      viewId = user ? 'view-lobby' : 'view-auth';
-    }
-
     document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
     
     const activeView = document.getElementById(viewId);
@@ -157,17 +110,8 @@ function initApp() {
       }
     }
 
-    if (viewId === 'view-admin') {
-      Admin.init();
-    } else if (viewId === 'view-client') {
+    if (viewId === 'view-client') {
       ClientApp.init();
-    } else if (viewId === 'view-network') {
-      Network.init();
-    } else if (viewId === 'view-crm') {
-      const user = Auth.currentUser;
-      CRM.init(user?.uid || 'sales1');
-    } else if (viewId === 'view-superadmin') {
-      SuperAdmin.init();
     } else if (viewId === 'view-lobby') {
       ClientApp.renderDiscoveryFeed();
     }
@@ -207,6 +151,11 @@ function initApp() {
     if (e.detail === 'view-lobby') {
       ClientApp.renderDiscoveryFeed();
     }
+  });
+
+  // Escuchar evento de login para persistencia
+  window.addEventListener('auth:login', () => {
+    updateNavbar();
   });
 
   // Inicializar servicio de perfil
@@ -484,7 +433,7 @@ function initApp() {
           return;
         }
 
-        if (!user.hasTicket && !user.paymentPending && !RondaConfig.isDemo) {
+        if (!user.hasTicket && !user.paymentPending) {
           // Sin pase: bloquear el ingreso hasta pagar con Nequi (verificación manual)
           btnJoinEvent.style.display = 'none';
           const codeInput = document.getElementById('event-code') as HTMLInputElement;
@@ -493,9 +442,9 @@ function initApp() {
           return;
         }
 
-        await DB.joinEvent(code, user.uid);
         user.activeEventId = code;
-        
+        await DB.saveUser(user);
+
         updateNavbar();
         
         if (ClientApp) {
