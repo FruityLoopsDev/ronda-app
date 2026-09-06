@@ -1,6 +1,6 @@
 import { DB, User, Reservation } from './db.js';
 import { Auth } from './auth.js';
-import { OfflineSync } from './offline-sync.js';
+
 import { downloadICSFile, generateCalendarEventUrl } from './utils.js';
 import { RondaDialog } from './dialog.js';
 import { Payment } from './payment.js';
