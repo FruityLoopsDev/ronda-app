@@ -1,0 +1,16 @@
+{
+  "name": "ronda-api-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API serverless de RONDA en Vercel (reemplaza Cloud Functions de Firebase sin plan Blaze). Proyecto raiz: esta carpeta (rootDirectory).",
+  "engines": { "node": "20" },
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "ethers": "^5.7.2"
+  }
+}
