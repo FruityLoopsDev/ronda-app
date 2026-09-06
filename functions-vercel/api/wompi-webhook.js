@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
         return res.status(500).send('Webhook misconfigured');
       }
       if (!data.signature || !data.signature.checksum) {
-        console.warn('Firma de webhook ausente; rechazando.');
+        console.warning('Firma de webhook ausente; rechazando.');
         return res.status(401).send('Invalid Signature');
       }
 
@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
       concatenated += data.timestamp + eventsSecret;
       const calculatedChecksum = crypto.createHash('sha256').update(concatenated).digest('hex');
       if (calculatedChecksum !== data.signature.checksum) {
-        console.warn('Wompi signature mismatch.');
+        console.warning('Wompi signature mismatch.');
         return res.status(401).send('Invalid Signature');
       }
 
@@ -59,6 +59,16 @@ module.exports = async function handler(req, res) {
         if (parts.length >= 3) {
           const uid = parts[1];
           const eventId = parts[2];
+
+          // Validación de integridad del importe (belt-and-suspenders sobre la firma):
+          // se rechaza el aprobado si el monto/divisa no son consistentes.
+          // NOTA: la autoridad real es la firma SHA-256 (que debe cubrir amount_in_cents
+          // y currency en `properties` desde Wompi). Este check es un cortafuegos adicional.
+          const amount = Number(tx.amount_in_cents);
+          if (!Number.isFinite(amount) || amount <= 0 || tx.currency !== 'COP') {
+            console.error(`Wompi: importe/divisa inconsistentes para ${reference}; rechazado.`);
+            return res.status(409).send('Invalid Amount');
+          }
 
           // 1. Guardar registro de transacción
           await db.collection('transactions').doc(tx.id).set({

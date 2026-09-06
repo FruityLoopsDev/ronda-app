@@ -105,7 +105,7 @@ function initApp() {
         try {
           window.history.pushState({ viewId }, '', targetPath);
         } catch(e) {
-          console.warn('history.pushState falló (entorno local probable)', e);
+          console.warning('history.pushState falló (entorno local probable)', e);
         }
       }
     }

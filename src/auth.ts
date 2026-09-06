@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getIdToken } from "firebase/auth";
 import { RondaServices } from "./firebase-config.js";
 import { DB, User } from "./db.js";
 
@@ -45,7 +45,7 @@ export class AuthService {
         let userProfile = await DB.getUser(firebaseUser.uid);
         
         if (!userProfile) {
-          console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
+          console.warning("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
           userProfile = {
             uid: firebaseUser.uid,
             name: '',
@@ -156,6 +156,18 @@ export class AuthService {
     } catch (error) {
       console.error("Error cerrando sesión en Firebase:", error);
     }
+  }
+
+  /**
+   * Devuelve el ID token de Firebase del usuario autenticado (forzando
+   * renovación si hace falta). Requerido para llamar a las API serverless
+   * (mint-nft, process-matches) vía Authorization: Bearer <idToken>.
+   * Lanza si no hay sesión activa.
+   */
+  async getIdToken(): Promise<string | null> {
+    const fbUser = (this._getAuth() as any).currentUser;
+    if (!fbUser) return null;
+    return getIdToken(fbUser, /* forceRefresh */ false);
   }
 
   /**

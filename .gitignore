@@ -45,3 +45,18 @@ firestore-debug.log
 
 # Backups y auditorías locales (contienen PII; nunca subir a git)
 backups/
+
+# Herramientas de análisis de terceros y sus cachés (no son parte de la app)
+graphify/
+graphify-out/
+
+# Documentos legales/institucionales con PII y contratos (¡no versionar!)
+# Mantener ronda-files/ fuera del repositorio o moverla a almacenamiento privado.
+ronda-files/
+
+# Entornos y secretos locales
+.env
+.env.*
+*.pem
+service-account*.json
+!.env.example

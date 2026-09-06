@@ -66,7 +66,7 @@ class RondaHistoryAdapter implements History {
             });
           }
         } catch (err) {
-          console.warn('[Historial] No se pudo leer el historial de', p.uid, err);
+          console.warning('[Historial] No se pudo leer el historial de', p.uid, err);
         }
       }
       this.loadedUids.add(p.uid);
@@ -93,7 +93,7 @@ class RondaHistoryAdapter implements History {
         doc(RondaServices.db, 'users', a.uid, 'encounters', b.uid),
         { n: enc.n, lastAt: now, match: enc.match },
         { merge: true }
-      ).catch((err) => console.warn('[Historial] No se pudo escribir', err));
+      ).catch((err) => console.warning('[Historial] No se pudo escribir', err));
     }
   }
 

@@ -22,7 +22,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 let messaging: any = null;
 if (typeof window !== 'undefined') {
-  try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
+  try { messaging = getMessaging(app); } catch (e) { console.warning('FCM not supported', e); }
 }
 
 

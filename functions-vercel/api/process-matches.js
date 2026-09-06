@@ -25,14 +25,22 @@ module.exports = async function handler(req, res) {
     // 1. Leer todos los likes de events/{eventId}/likes
     const likesSnapshot = await db.collection('events').doc(eventId).collection('likes').get();
     const likes = [];
-    likesSnapshot.forEach((doc) => likes.push(doc.data()));
+    likesSnapshot.forEach((doc) => likes.push({ id: doc.id, ...doc.data() }));
 
     // 2. Encontrar likes recíprocos
+    //
+    // SEGURIDAD: el `from` NO se toma del cuerpo del documento (que el emisor
+    // controla y podría falsear para fabricar matches). Se deriva del propio
+    // `likeId`, cuyo prefijo `{uid}_{target}` Firestore ya autentica contra
+    // `request.auth.uid` (regla `allow create/update/delete`). Así un usuario
+    // solo puede emitir likes salientes con su propio UID.
     const likeMap = new Map();
     likes.forEach((item) => {
-      if (item.like === true && item.from && item.to) {
-        likeMap.set(`${item.from}_${item.to}`, true);
-      }
+      if (item.like !== true || typeof item.to !== 'string') return;
+      const from = String(item.id || '').split('_')[0];
+      const to = item.to;
+      if (!from || !to || from === to) return;
+      likeMap.set(`${from}_${to}`, true);
     });
 
     const matches = [];

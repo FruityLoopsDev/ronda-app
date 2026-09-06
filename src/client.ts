@@ -1067,7 +1067,7 @@ class ClientAppService {
   }
 
   triggerSafeWord() {
-    console.warn("¡Safe-word activado! Notificando a seguridad y anfitrión...");
+    console.warning("¡Safe-word activado! Notificando a seguridad y anfitrión...");
     RondaDialog.alert({
       title: 'Asistencia en Camino',
       message: 'Hemos notificado discretamente al anfitrión de sala con tu palabra clave de seguridad. Un miembro del equipo se acercará a tu mesa de inmediato.',

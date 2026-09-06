@@ -13,6 +13,15 @@ service cloud.firestore {
     function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
     function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
 
+    // Campos que el propio usuario NO puede alterar (verificación, NFTs, wallet,
+    // matches, safeword). Solo staff/servidor los modifican.
+    function clientTouchedSensitive() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'isVerified', 'linkedinVerified', 'nfts', 'wallet_address', 'matches', 'safeword',
+        'paymentPending', 'paymentMethod'
+      ]);
+    }
+
     // --- Usuarios ---
     match /users/{userId} {
       // Privacidad: cada quien lee solo su propio documento; el staff lee todo.
@@ -28,7 +37,8 @@ service cloud.firestore {
       allow update: if request.auth != null && (
         (request.auth.uid == userId
           && request.resource.data.role == resource.data.role
-          && request.resource.data.get('hasTicket', false) == resource.data.get('hasTicket', false))
+          && request.resource.data.get('hasTicket', false) == resource.data.get('hasTicket', false)
+          && !clientTouchedSensitive())
         || isSuperAdmin()
         || isAdmin()
       );
@@ -114,7 +124,15 @@ service cloud.firestore {
 
     // --- Lista de espera: alta pública desde la landing; solo lectura staff. ---
     match /waitlist/{entryId} {
-      allow create: if true;
+      // Alta pública: únicamente se permiten campos whitelist y con tipos correctos
+      // (evita spam de campos arbitrarios). Sin rate-limit a nivel de reglas; mitigar
+      // con funciones o detección de abuso si fuese necesario.
+      allow create: if request.resource.data.keys().hasOnly([
+            'name', 'linkedin', 'whatsapp', 'email', 'interestZone', 'source', 'createdAt'
+          ])
+          && request.resource.data.name is string
+          && request.resource.data.email is string
+          && request.resource.data.whatsapp is string;
       allow read, update, delete: if isSuperAdmin();
     }
   }

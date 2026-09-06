@@ -38,12 +38,17 @@ class MatchServiceImpl {
   }
 
   // Calcula matches mutuos a partir de lista de likes ($0 sin Cloud Functions)
-  findMutualMatchesFromLikes(likesList: { from: string; to: string; like: boolean }[]): { user1: string; user2: string }[] {
+  // SEGURIDAD: se prefiere derivar `from` del `id` del documento (
+  // prefijo `{uid}_{target}` ya autenticado por las reglas de Firestore),
+  // no del cuerpo (`item.from`), que el emisor podría falsear.
+  findMutualMatchesFromLikes(likesList: { id?: string; from: string; to: string; like: boolean }[]): { user1: string; user2: string }[] {
     const likeMap = new Map<string, boolean>();
     for (const item of likesList) {
-      if (item.like === true && item.from && item.to) {
-        likeMap.set(`${item.from}_${item.to}`, true);
-      }
+      if (item.like !== true || !item.to) continue;
+      const to = item.to;
+      const from = (typeof item.id === 'string' ? item.id.split('_')[0] : null) || item.from;
+      if (!from || from === to) continue;
+      likeMap.set(`${from}_${to}`, true);
     }
 
     const matches: { user1: string; user2: string }[] = [];
