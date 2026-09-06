@@ -111,6 +111,7 @@ export interface User {
   wallet_address?: string;
   nfts?: any[];
   matches?: string[];
+  satisfactionFeedback?: any;
 }
 
 export interface Match {
@@ -168,6 +169,8 @@ function cleanFirestoreData(obj: any): any {
 }
 
 export class DatabaseInterface {
+  memoryDb?: any;
+
   constructor() {}
 
   private _getFirestore() {
@@ -200,6 +203,25 @@ export class DatabaseInterface {
     await setDoc(docRef, event as any, { merge: true });
     return event;
   }
+
+  async getUpcomingEvents(): Promise<any[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'events');
+      const snap = await getDocs(colRef);
+      const events: any[] = [];
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.status === 'upcoming' || data.status === 'active') {
+          events.push(data);
+        }
+      });
+      return events;
+    } catch (e) {
+      console.warn("getUpcomingEvents no implementado o falló", e);
+      return [];
+    }
+  }
+
 
   async joinEvent(eventId: string, userId: string): Promise<RondaEvent> {
     const event = await this.getEvent(eventId);
