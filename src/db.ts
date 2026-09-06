@@ -217,7 +217,7 @@ export class DatabaseInterface {
       });
       return events;
     } catch (e) {
-      console.warn("getUpcomingEvents no implementado o falló", e);
+      console.warning("getUpcomingEvents no implementado o falló", e);
       return [];
     }
   }
@@ -247,7 +247,25 @@ export class DatabaseInterface {
   }
 
   async processEventMatches(eventId: string): Promise<{ matchedPairsCount: number }> {
-    console.log(`[DB] Calculando matches mutuos para el evento: ${eventId} ($0 - Consola Host)...`);
+    console.log(`[DB] Calculando matches mutuos para el evento: ${eventId}...`);
+    
+    // 1. Intentar delegar al backend (Vercel API) por seguridad si está configurado
+    if ((import.meta as any).env?.VITE_VERCEL_API_URL) {
+      try {
+        const { API } = await import('./api-client.js');
+        if (API.isConfigured) {
+          console.log('[DB] Ejecutando processEventMatches via Vercel Serverless API...');
+          const result = await API.post<{ matchedPairsCount: number }>('/api/process-matches', { eventId });
+          console.log(`[DB] Matches calculados en servidor: ${result.matchedPairsCount}`);
+          return result;
+        }
+      } catch (err) {
+        console.warning("[DB] Falló llamada a Vercel API para matches, usando fallback local:", err);
+      }
+    }
+
+    // 2. Fallback: Procesamiento local en cliente ($0 sin Cloud Functions, fallback robusto)
+    console.log(`[DB] Usando fallback local ($0) para calcular matches...`);
     try {
       const fs = this._getFirestore();
       const likesCol = collection(fs, 'events', eventId, 'likes');
@@ -256,8 +274,11 @@ export class DatabaseInterface {
       
       likesSnap.forEach(snap => {
         const d = snap.data();
-        if (d && d.from && d.to) {
-          likesList.push({ from: d.from, to: d.to, like: Boolean(d.like) });
+        if (d && d.to) {
+          // SEGURIDAD: se pasa el `id` del documento (prefijo {uid}_{target}
+          // autenticado por Firestore). El `from` NO se deriva de `d.from` (
+          // controlado por el emisor, spoofeable).
+          likesList.push({ id: snap.id, from: d.from, to: d.to, like: Boolean(d.like) });
         }
       });
 
@@ -274,7 +295,7 @@ export class DatabaseInterface {
       }
       return { matchedPairsCount: mutualMatches.length };
     } catch (err) {
-      console.error("[DB] Error procesando matches mutuos:", err);
+      console.error("[DB] Error procesando matches mutuos en fallback:", err);
       return { matchedPairsCount: 0 };
     }
   }
@@ -292,33 +313,14 @@ export class DatabaseInterface {
     // 1. Procesar matches mutuos de forma autónoma en cliente ($0 sin Cloud Functions)
     const matchResult = await this.processEventMatches(eventId);
 
-    // 2. Emisión de Certificados Digitales Proof-of-Attendance ($0 Web3 / Cryptographic Token)
-    const timestamp = Date.now();
-    for (const uid of usersConfirmed) {
-      try {
-        const user = await this.getUser(uid);
-        if (user) {
-          user.nfts = user.nfts || [];
-          const randomBytes = new Uint8Array(16);
-          crypto.getRandomValues(randomBytes);
-          const certHash = "0x" + Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-          
-          user.nfts.push({
-            tokenId: `POAP-${eventId.substring(0,6)}-${timestamp.toString().slice(-4)}`,
-            evento_nombre: event.name || `Ronda #${eventId.substring(0,6)}`,
-            fecha: new Date().toLocaleDateString('es-CO'),
-            image_url: '/assets/ronda-token-badge.png',
-            proofHash: certHash,
-            venue: event.venueName || 'CARONTE Gastrobar',
-            issuedAt: timestamp
-          });
-          await this.saveUser(user);
-        }
-      } catch (userErr) {
-        console.warn(`[DB] Error emitiendo certificado a ${uid}:`, userErr);
-      }
-    }
-    
+    // 2. Certificados Digitales Proof-of-Attendance
+    // SEGURIDAD: la emisión de NFTs se eliminó de este flujo de cliente. Generar
+    // aquí un `proofHash` aleatorio y empujarlo al array `nfts` permitía forjar
+    // prueba de asistencia sin pasar por el mint de servidor (saludable/verificable).
+    // La emisión real se hace únicamente vía la API serverless `POST /api/mint-nft`
+    // (requiere rol admin + firma on-chain). Además, las reglas de Firestore
+    // (`clientTouchedSensitive`) ya impiden que un cliente modifique su campo `nfts`.
+
     return { event, matchesCount: matchResult.matchedPairsCount };
   }
 

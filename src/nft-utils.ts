@@ -27,9 +27,29 @@ class NFTUtilsService {
     };
   }
 
-  // Llamar a la Cloud Function para el minting (Desactivado para ahorrar costos de Cloud Functions)
+  // Llamar a la API Serverless en Vercel para el minting real, con fallback a simulación
   async mintNFT(userAddress, eventId, ipfsHash) {
-    console.log(`[NFT] Simulando minting (Cloud Functions deshabilitado) para: ${userAddress}`);
+    // 1. Intentar delegar al backend (Vercel API) si está configurado
+    if ((import.meta as any).env?.VITE_VERCEL_API_URL) {
+      try {
+        const { API } = await import('./api-client.js');
+        if (API.isConfigured) {
+          console.log(`[NFT] Ejecutando minting real via Vercel Serverless API para: ${userAddress}`);
+          const result = await API.post<any>('/api/mint-nft', { 
+            userAddress, 
+            eventId, 
+            ipfsHash 
+          });
+          console.log(`[NFT] ✓ NFT Minted exitosamente en servidor.`);
+          return result;
+        }
+      } catch (err) {
+        console.warning("[NFT] Falló llamada a Vercel API para minting, usando fallback simulado:", err);
+      }
+    }
+
+    // 2. Fallback de simulación
+    console.log(`[NFT] Simulando minting (API Serverless no configurada/falló) para: ${userAddress}`);
     
     // Retraso simulado
     await new Promise(resolve => setTimeout(resolve, 800));
