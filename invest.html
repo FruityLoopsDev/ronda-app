@@ -4,19 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#16101B">
-<title>RONDA Invest — Oportunidad de Inversión (Ronda FFF) · Bogotá</title>
-<meta name="description" content="Pitch deck y modelo de negocio B2B2C de RONDA. Llenamos bares en días valle con tecnología de rotación y solteros reales verificados.">
+<title>RONDA Invest — Oportunidad de Inversión (Micro-ronda FFF)</title>
+<meta name="description" content="Pitch deck y modelo de negocio Demand-First (Riesgo Cero). Financiamos colectivamente eventos de citas rápidas en ubicaciones secretas en Bogotá.">
 <link rel="canonical" href="https://ronda.uno/invest">
 <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
 
 <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ronda.uno/invest">
-<meta property="og:title" content="RONDA Invest — Oportunidad de Inversión (Ronda FFF)">
-<meta property="og:description" content="Pitch deck interactivo y modelo de negocio B2B2C de RONDA. Llenamos bares en días valle con tecnología y experiencias reales en Bogotá.">
-<meta property="og:image" content="https://ronda.uno/assets/img/acto-4-brindis.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:title" content="RONDA Invest — Oportunidad de Inversión (Micro-ronda FFF)">
+<meta property="og:description" content="Pitch deck y modelo de negocio Demand-First. Financiamos colectivamente eventos de citas rápidas en ubicaciones secretas en Bogotá.">
+<meta property="og:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
+<meta property="og:image:type" content="image/svg+xml">
 <meta property="og:image:alt" content="RONDA Invest — Pitch Deck">
 <meta property="og:site_name" content="RONDA Invest">
 <meta property="og:locale" content="es_CO">
@@ -24,9 +23,18 @@
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://ronda.uno/invest">
-<meta name="twitter:title" content="RONDA Invest — Oportunidad de Inversión (Ronda FFF)">
-<meta name="twitter:description" content="Pitch deck interactivo y modelo de negocio B2B2C de RONDA. Llenamos bares en días valle con tecnología y experiencias reales en Bogotá.">
-<meta name="twitter:image" content="https://ronda.uno/assets/img/acto-4-brindis.jpg">
+<meta name="twitter:title" content="RONDA Invest — Oportunidad de Inversión (Micro-ronda FFF)">
+<meta name="twitter:description" content="Pitch deck y modelo de negocio Demand-First. Financiamos colectivamente eventos de citas rápidas en ubicaciones secretas en Bogotá.">
+<meta name="twitter:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
+
+<!-- Google Analytics 4 (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RH65BSDMP5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-RH65BSDMP5', { send_page_view: true });
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,7 +74,7 @@ body::before{
     radial-gradient(50vw 40vw at 6% 104%, rgba(155,39,72,.20), transparent 60%);
   animation: breathe 12s infinite ease-in-out;
 }
-.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 80px}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 44px}
 
 /* ---------- cabecera ---------- */
 .top{padding:24px 0 8px}
@@ -91,7 +99,7 @@ body::before{
 .pitch b{color:var(--papel);font-weight:500}
 
 /* ---------- pestañas ---------- */
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:26px 0 34px;border-bottom:1px solid var(--linea);padding-bottom:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 22px;border-bottom:1px solid var(--linea);padding-bottom:10px}
 .tab{
   appearance:none;border:1px solid var(--linea);background:transparent;color:var(--humo);
   font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
@@ -387,7 +395,7 @@ th{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.14em;t
 td:last-child,th:last-child{text-align:right;font-family:"JetBrains Mono",monospace}
 tr.tot td{border-bottom:none;border-top:2px solid var(--linea);font-weight:700;color:var(--luz)}
 
-footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--humo);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--linea);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--humo);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 
 @media (max-width:860px){
   .pl-body{grid-template-columns:1fr}
@@ -400,7 +408,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 }
 
 /* Animaciones de Reveal */
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* Micro-interacciones Hover */
@@ -411,8 +419,8 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 .cta-gold {
   background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(240,168,48,0.12) 100%);
   border: 1px solid rgba(212,175,55,0.4);
-  border-radius: var(--r); padding: 40px 20px; text-align: center;
-  box-shadow: 0 0 40px rgba(212,175,55,0.1); margin-top: 40px; margin-bottom: 20px;
+  border-radius: var(--r); padding: 28px 20px; text-align: center;
+  box-shadow: 0 0 40px rgba(212,175,55,0.1); margin-top: 24px; margin-bottom: 16px;
 }
 .cta-gold h3 { font-family: "Bodoni Moda", serif; font-size: clamp(26px, 4vw, 32px); color: #F9E596; margin: 0 0 12px; font-weight: 700; }
 .cta-gold p { color: var(--humo); max-width: 60ch; margin: 0 auto 24px; font-size: 15px; }
@@ -492,12 +500,12 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 .modal-video iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 8px; }
 
 /* ---- 3. SIMULATOR STYLES ---- */
-.simulador { background: rgba(255,255,255,0.03); border: 1px solid var(--linea); border-radius: var(--r); padding: 24px; margin-top: 24px; }
+.simulador { background: rgba(255,255,255,0.03); border: 1px solid var(--linea); border-radius: var(--r); padding: 20px; margin-top: 18px; }
 .sim-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
 .sim-row label { flex: 1; font-weight: 700; min-width: 150px; }
 .sim-row input[type=range] { flex: 2; width: 100%; min-width: 200px; accent-color: var(--luz); }
 .sim-val { font-family: "JetBrains Mono", monospace; color: var(--luz); font-size: 16px; font-weight: 700; width: 100px; text-align: right; }
-.sim-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--linea); }
+.sim-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--linea); }
 .sim-kpi { background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; text-align: center; }
 .sim-kpi span { display: block; font-size: 11px; text-transform: uppercase; color: var(--humo); margin-bottom: 8px; letter-spacing: 1px; }
 .sim-kpi b { font-size: 20px; color: var(--papel); font-family: "JetBrains Mono", monospace; }
@@ -515,13 +523,54 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 .form-commit select option { background: var(--barra-alta); color: var(--papel); }
 
 /* ---- 6. DROPDOWN MENU STYLES ---- */
-.nav-dropdown { position: relative; display: inline-block; margin-left: 12px; }
-.nav-dropdown-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--linea); color: var(--papel); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; font-family: "JetBrains Mono", monospace; transition: all 0.2s; }
-.nav-dropdown-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--humo); }
-.nav-dropdown-content { display: none; position: absolute; left: 0; top: 100%; margin-top: 4px; background: var(--barra-alta); border: 1px solid var(--linea); border-radius: 8px; min-width: 160px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 10000; overflow: hidden; }
+.top-nav-controls { display: flex; align-items: center; gap: 10px; }
+.nav-dropdown { position: relative; display: inline-block; }
+.nav-dropdown-btn {
+  background: rgba(34, 24, 38, 0.7); border: 1px solid rgba(243, 237, 226, 0.16); color: var(--papel);
+  padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: 11px; display: inline-flex;
+  align-items: center; gap: 6px; font-family: "JetBrains Mono", monospace; letter-spacing: 0.04em;
+  transition: all 0.2s ease; box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.nav-dropdown-btn:hover { background: rgba(44, 32, 51, 0.9); border-color: rgba(240, 168, 48, 0.4); color: var(--luz); }
+.nav-dropdown-content { display: none; position: absolute; left: 0; top: 100%; margin-top: 6px; background: var(--barra-alta); border: 1px solid var(--linea); border-radius: 12px; min-width: 170px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); z-index: 10000; overflow: hidden; }
 .nav-dropdown:hover .nav-dropdown-content { display: flex; flex-direction: column; }
-.nav-dropdown-content button { background: none; border: none; color: var(--papel); padding: 12px 16px; text-align: left; cursor: pointer; font-size: 13px; font-family: "Space Grotesk", sans-serif; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: 100%; margin: 0; }
-.nav-dropdown-content button:hover { background: rgba(255,255,255,0.05); color: var(--luz); }
+.nav-dropdown-content button { background: none; border: none; color: var(--papel); padding: 11px 16px; text-align: left; cursor: pointer; font-size: 12.5px; font-family: "Space Grotesk", sans-serif; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: 100%; margin: 0; }
+.nav-dropdown-content button:hover { background: rgba(255,255,255,0.06); color: var(--luz); }
+
+/* ---- 7. LANGUAGE SWITCHER ---- */
+.lang-switch {
+  display: inline-flex; align-items: center; background: rgba(34, 24, 38, 0.7);
+  border: 1px solid rgba(243, 237, 226, 0.16); border-radius: 999px; padding: 3px; gap: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.lang-btn {
+  appearance: none; border: none; background: transparent; color: var(--humo);
+  font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex;
+  align-items: center; gap: 4px; line-height: 1;
+}
+.lang-btn:hover:not(.active) { color: var(--papel); background: rgba(243, 237, 226, 0.08); }
+.lang-btn.active { background: var(--luz); color: var(--tinta); font-weight: 700; box-shadow: 0 0 12px rgba(240, 168, 48, 0.4); }
+
+/* Ocultar elementos inyectados por Google Translate */
+body { top: 0 !important; position: static !important; }
+.goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame, div#goog-gt-, .goog-te-spinner-pos { display: none !important; visibility: hidden !important; }
+iframe.skiptranslate { display: none !important; }
+.goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+
+/* ---- 8. FAQ ACCORDION ---- */
+.faq-section { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--linea); }
+.faq-item { border-bottom: 1px solid var(--linea); }
+.faq-q { width: 100%; appearance: none; border: none; background: transparent; color: var(--papel); font-family: "Space Grotesk", sans-serif; font-size: 15px; font-weight: 600; padding: 18px 40px 18px 0; text-align: left; cursor: pointer; position: relative; transition: color 0.2s; display: block; }
+.faq-q:hover { color: var(--luz); }
+.faq-q::after { content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 22px; color: var(--luz); font-weight: 300; transition: transform 0.3s ease; }
+.faq-item.open .faq-q::after { content: "−"; transform: translateY(-50%) rotate(0deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 0; }
+.faq-item.open .faq-a { max-height: 300px; padding: 0 0 18px; }
+.faq-a p { margin: 0; font-size: 14px; color: var(--humo); line-height: 1.6; }
+.faq-a p b { color: var(--papel); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -529,33 +578,34 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
 
   <header class="top">
     <div class="top-nav-bar">
-      <a href="/" class="back-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Volver
-      </a>
-      <div id="google_translate_element" style="display:inline-block; margin-left: 12px; transform: translateY(4px);"></div>
-      <div class="nav-dropdown">
-        <button class="nav-dropdown-btn">🛠️ Herramientas ▾</button>
-        <div class="nav-dropdown-content">
-          <button onclick="window.print()">📄 Exportar PDF</button>
-          <button onclick="document.getElementById('modal-proyecciones').classList.add('active')">📈 Proyecciones</button>
-          <button onclick="document.getElementById('modal-video').classList.add('active')">🎥 Pitch Video</button>
-          <button onclick="document.getElementById('modal-dataroom').classList.add('active')">🔒 Data Room</button>
+      <div class="top-nav-controls">
+        <div class="lang-switch notranslate" translate="no" id="lang-switch">
+          <button class="lang-btn active" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-btn">🛠️ Herramientas ▾</button>
+          <div class="nav-dropdown-content">
+            <button onclick="window.print()">📄 Exportar PDF</button>
+            <button onclick="document.getElementById('modal-proyecciones').classList.add('active')">📈 Proyecciones</button>
+            <button onclick="document.getElementById('modal-video').classList.add('active')">🎥 Pitch Video</button>
+            <button onclick="document.getElementById('modal-dataroom').classList.add('active')">🔒 Data Room</button>
+          </div>
         </div>
       </div>
-      <span class="invest-badge-pill">Micro-Ronda FFF · Deuda a 90 Días</span>
+      <span class="invest-badge-pill" translate="no" class="notranslate">Micro-Ronda FFF · Deuda a 90 Días</span>
     </div>
 
     <div class="marca">
       <div class="logo-group">
-        <a href="/" class="logo-link"><h1 class="logo">R<em>O</em>NDA</h1></a>
-        <span class="logo-invest-tag">INVEST</span>
+        <a href="/" class="logo-link"><h1 class="logo" translate="no" class="notranslate">R<em>O</em>NDA</h1></a>
+        <span class="logo-invest-tag" translate="no" class="notranslate">INVEST</span>
       </div>
       <span class="claim">Pitch Deck & Modelo de Negocio · Bogotá</span>
     </div>
     <div class="pitch-rotator">
-      <p class="pitch active"><b>Una copa, nueve historias, una noche.</b> 9 citas de 6 minutos para <b>solteros profesionales de alto valor</b> en los mejores bares de Bogotá. Verificación estricta con perfil de LinkedIn y biometría. Sin pantallas, sin chats eternos y sin ghosting.</p>
-      <p class="pitch"><b>El negocio:</b> RONDA llena bares y gastrobares en días valle. El local aporta la sala y la barra; nosotros convocamos a 24 solteros profesionales verificados con perfil activo en LinkedIn.</p>
+      <p class="pitch active"><b>Una copa, nueve historias, una noche.</b> 9 citas de 6 minutos para <b>solteros profesionales de alto valor</b> en ubicaciones secretas reveladas 24h antes. Verificación estricta con perfil de LinkedIn y biometría. Sin pantallas, sin chats eternos y sin ghosting.</p>
+      <p class="pitch"><b>El negocio:</b> <span translate="no" class="notranslate">RONDA</span> financia colectivamente citas en días valle (Crowdfunding). El usuario compra su entrada para su barrio, y al juntar 24 perfiles compatibles, se desbloquea el evento y se revela el local secreto.</p>
     </div>
   </header>
 
@@ -570,44 +620,44 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
   <section class="panel on" id="cliente" role="tabpanel">
     <p class="rotulo">Lado consumidor</p>
     <h2 class="h2">Una copa, nueve historias, una noche</h2>
-    <p class="sub">El usuario compra una noche (día + franja de edad + barrio). El local se asigna al confirmarse el evento, lo que nos deja mover la demanda al bar que más nos convenga llenar. El precio se mueve según qué lado va escaso: es la palanca que mantiene el 50/50.</p>
+    <p class="sub">El usuario compra su ticket para una franja de edad en su barrio. El evento se marca como "Ubicación Secreta". Al llegar a 24 perfiles compatibles (ratio 50/50), se <b>desbloquea la fecha</b>, el dinero queda firme y se revela el local. Cero riesgo de salas vacías.</p>
 
     <div class="fila">
 
       <!-- pantalla 1 -->
       <div>
         <div class="tel"><div class="tel-in">
-          <div class="status"><span>20:12</span><span>RONDA · Bogotá</span></div>
+          <div class="status"><span>20:12</span><span><span translate="no" class="notranslate">RONDA</span> · Bogotá</span></div>
           <div class="pant">
             <div class="cab-pant"><h3>Esta semana</h3><span>25–34 · Zona G</span></div>
 
             <article class="noche-card escaso">
               <div class="dia">Martes 25 · 20:00</div>
-              <div class="local">CARONTE Cocktail Bar</div>
-              <div class="detalle">9 rondas de 6 min · acaba a las 21:45</div>
+              <div class="local">Ubicación Secreta 🔒</div>
+              <div class="detalle">Cocktail Bar en Zona G · 9 rondas</div>
               <div class="barra-balance">
                 <i style="width:62%;background:var(--luz)"></i><i style="width:38%;background:rgba(243,237,226,.22)"></i>
               </div>
-              <div class="leyenda"><span>12 apuntadas</span><span>faltan 3 · lado B</span></div>
+              <div class="leyenda"><span>21 confirmados</span><span>faltan 3 · lado B</span></div>
               <div class="linea-precio">
-                <div class="precio">$45.000<small>Sube a $55.000 al equilibrarse</small></div>
-                <span class="chip ambar">Tu lado va escaso</span>
+                <div class="precio">$45.000<small>Pago inmediato / Crowdfund</small></div>
+                <span class="chip ambar">Pre-autorizar</span>
               </div>
             </article>
 
             <article class="noche-card ok">
               <div class="dia">Miércoles 26 · 20:00</div>
-              <div class="local">La María Quinta Camacho · gastrobar</div>
-              <div class="detalle">Noche de vinos · 35–49 años</div>
+              <div class="local">CARONTE Cocktail Bar</div>
+              <div class="detalle">¡Desbloqueado! · 35–49 años</div>
               <div class="linea-precio">
-                <div class="precio">$55.000<small>Incluye 1ª bebida incluida</small></div>
-                <span class="chip verde">Confirmado 12/12</span>
+                <div class="precio">$55.000<small>Incluye 1ª bebida</small></div>
+                <span class="chip verde">Lleno 24/24</span>
               </div>
             </article>
 
             <article class="noche-card lleno">
               <div class="dia">Jueves 27 · 20:30</div>
-              <div class="local">Patio Poca Prisa</div>
+              <div class="local">Ubicación Secreta 🔒</div>
               <div class="detalle">Temática: cine · 28–38 años</div>
               <div class="linea-precio">
                 <div class="precio">$65.000<small>Jueves, tarifa alta</small></div>
@@ -615,7 +665,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
               </div>
             </article>
 
-            <div class="aviso">Si el jueves no se equilibra antes de las <b>20:00 del martes</b>, se cancela y te devolvemos el importe + $20.000 de saldo.</div>
+            <div class="aviso">El cobro es inmediato; el evento solo sucede al llegar a 24 personas. Si no se logra la meta a 48h, se <b>reembolsa el 100%</b>.</div>
           </div>
         </div></div>
         <p class="pie-tel">Descubrir · precio por escasez de lado</p>
@@ -624,14 +674,14 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       <!-- pantalla 2 -->
       <div>
         <div class="tel"><div class="tel-in">
-          <div class="status"><span>20:12</span><span>Confirmada</span></div>
+          <div class="status"><span>20:12</span><span>¡Evento Desbloqueado!</span></div>
           <div class="pant">
             <div class="cab-pant"><h3>Tu reserva</h3><span>#RND-4471</span></div>
 
             <div class="comanda">
-              <p class="com-tit">RONDA</p>
+              <p class="com-tit"><span translate="no" class="notranslate">RONDA</span></p>
               <p class="com-sub">Martes 25 de marzo · 20:00</p>
-              <div class="kv"><span>Local</span><b>CARONTE Cocktail Bar</b></div>
+              <div class="kv"><span>Local revelado</span><b>CARONTE Cocktail Bar</b></div>
               <div class="kv"><span>Dirección</span><b>Cra 4 # 69-15</b></div>
               <div class="kv"><span>Check-in</span><b>19:40–19:55</b></div>
               <div class="rule"></div>
@@ -655,12 +705,12 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       <div style="flex:1;min-width:250px">
         <div class="caja" style="margin-bottom:14px">
           <p class="quien">La regla que sostiene todo</p>
-          <h4>Nadie entra si el evento no está equilibrado</h4>
+          <h4>Crowdfunding de Citas: Cero riesgo</h4>
           <ul>
-            <li><b>Ratio máximo 1,2 : 1</b> entre lados. Al superarlo se cierra la venta del lado sobrante.</li>
-            <li><b>Mínimo 9 + 9</b> para confirmar. Se decide a T-48 h.</li>
-            <li>El lado escaso baja de precio; el excedente sube. <b>El precio equilibra la sala</b>, no la publicidad.</li>
-            <li>Si no cuadra, se cancela y la gente se recoloca en otra noche de la misma semana.</li>
+            <li><b>Cobro inmediato:</b> El usuario paga para unirse a la lista. El dinero se retiene de forma segura.</li>
+            <li><b>Ubicación secreta:</b> No atamos el evento a un local hasta tener la demanda asegurada.</li>
+            <li><b>Desbloqueo:</b> Al llegar a 12 + 12 personas compatibles, el evento se confirma y se revela el bar.</li>
+            <li><b>Reembolso 100%:</b> Si no se alcanza la meta a T-48h, se devuelve el dinero automático. Riesgo nulo.</li>
           </ul>
         </div>
         <div class="caja">
@@ -749,15 +799,15 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
   <section class="panel" id="local" role="tabpanel">
     <p class="rotulo">Lado negocio</p>
     <h2 class="h2">Lo que ve el bar</h2>
-    <p class="sub">El local no gestiona nada: publica sus franjas valle, recibe personas confirmadas y cobra las bebidas incluidas pactadas. Su métrica no es "reservas", es <b>pesos por mesa y hora en un martes</b>.</p>
+    <p class="sub">El local no gestiona nada: nosotros publicamos un evento "Secreto", captamos la demanda, y cuando tenemos 24 personas pagas para un martes, cerramos el trato con el bar. Su métrica no es "reservas", es <b>pesos por mesa garantizados sin esfuerzo</b>.</p>
 
     <div class="panel-local">
       <div class="pl-head">
         <div>
-          <h3>CARONTE Cocktail Bar</h3>
-          <p>Zona G, Bogotá · 14 mesas · socio desde ene 2026</p>
+          <h3>Propuesta Pop-Up de <span translate="no" class="notranslate">RONDA</span> al Bar</h3>
+          <p>Zona G, Bogotá · 12 mesas requeridas · Evento Secreto</p>
         </div>
-        <span class="chip verde">Plan Sala Llena · 3 noches/semana</span>
+        <span class="chip verde">Demanda Garantizada · 100% Lleno</span>
       </div>
 
       <div class="kpis">
@@ -807,18 +857,18 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
             <div class="kv"><span>15 segundas rondas</span><b>412.000</b></div>
             <div class="kv"><span>Tapeo y picoteo</span><b>250.000</b></div>
             <div class="rule"></div>
-            <div class="kv"><span>Comisión RONDA</span><b>0</b></div>
+            <div class="kv"><span>Comisión <span translate="no" class="notranslate">RONDA</span></span><b>0</b></div>
             <div class="kv"><span>Costo de captación</span><b>0</b></div>
             <div class="total"><span>TOTAL BARRA</span><span>$1.190.000</span></div>
-            <p class="compara">Un martes sin RONDA: <b>~$330.000</b><br>Margen bruto estimado en bebida: <b>68 %</b></p>
+            <p class="compara">Un martes sin <span translate="no" class="notranslate">RONDA</span>: <b>~$330.000</b><br>Margen bruto estimado en bebida: <b>68 %</b></p>
           </div>
 
           <p class="pl-tit" style="margin:24px 0 12px">Lo que firma el local</p>
           <ul class="lista" style="font-size:13px">
-            <li><span>Compromiso</span><b>3 meses</b></li>
-            <li><span>Exclusividad valle</span><b>500 m</b></li>
-            <li><span>Cancelar con &lt; 72 h</span><b>$550.000 penal.</b></li>
-            <li><span>Precio de bebida incluida</span><b>cerrado en escandallo</b></li>
+            <li><span>Compromiso</span><b>1 evento (Pop-up)</b></li>
+            <li><span>Exclusividad</span><b>Ninguna requerida</b></li>
+            <li><span>Cancelar con &lt; 24 h</span><b>$550.000 penal.</b></li>
+            <li><span>Precio de bebida</span><b>cerrado al por mayor</b></li>
           </ul>
         </div>
       </div>
@@ -828,8 +878,8 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
   <!-- ============ 04 NEGOCIO ============ -->
   <section class="panel" id="negocio" role="tabpanel">
     <p class="rotulo">Modelo</p>
-    <h2 class="h2">B2B2C: cobramos al usuario, compramos barra al local</h2>
-    <p class="sub">El local nunca paga una factura: cobra por cada bebida incluida servida. Nosotros asumimos el riesgo de llenado a cambio de un precio de barra cerrado. Es lo que nos permite vender "sala llena garantizada" en lugar de "publicidad". Pero la entrada es solo el motor: el verdadero activo es <b>una audiencia de solteros verificados por barrio</b>, y ese activo se monetiza cuatro veces.</p>
+    <h2 class="h2">B2B2C: cobramos al usuario, aseguramos la demanda, cerramos barra</h2>
+    <p class="sub">El local nunca paga una factura: cobra por bebida servida. Al captar primero la demanda vía crowdfunding, <b>eliminamos el riesgo de alquilar salas vacías</b>. Entramos a negociar con los bares con 24 clientes ya pagados en la mano. El verdadero activo es <b>una audiencia de solteros verificados por barrio</b>, que monetizamos cuatro veces.</p>
 
     <div class="flujo">
       <div class="nodo">
@@ -852,7 +902,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
     <!-- Las 4 líneas de ingreso -->
     <p class="rotulo" style="margin-top:34px">Cuatro líneas de ingreso</p>
     <h2 class="h2" style="font-size:clamp(20px,2.6vw,26px)">El mismo activo, monetizado cuatro veces</h2>
-    <p class="sub">La entrada financia la operación. Las otras tres convierten a RONDA de operador de eventos en plataforma de datos con márgenes de software. Todas comparten un solo activo: <b>el conocimiento profundo y consentido de los solteros de la ciudad</b>.</p>
+    <p class="sub">La entrada financia la operación. Las otras tres convierten a <span translate="no" class="notranslate">RONDA</span> de operador de eventos en plataforma de datos con márgenes de software. Todas comparten un solo activo: <b>el conocimiento profundo y consentido de los solteros de la ciudad</b>.</p>
 
     <div class="grid3" style="margin-bottom:16px">
       <div class="caja" style="border-color:rgba(240,168,48,.4)">
@@ -865,7 +915,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       </div>
       <div class="caja" style="border-color:rgba(46,107,84,.45)">
         <p class="quien">Línea 2 · Q2+ · SaaS</p>
-        <h4>RONDA para locales</h4>
+        <h4><span translate="no" class="notranslate">RONDA</span> para locales</h4>
         <ul>
           <li><b>$550.000/mes + $7.500/asistente</b>: el local monta sus propias noches con nuestro motor de rotación, check-in y matching.</li>
           <li>Convierte la amenaza de "que el local copie" en ingreso recurrente. Software puro: <b>costo marginal ≈ 0</b>.</li>
@@ -876,7 +926,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
         <h4>Afluencia valle por barrio</h4>
         <ul>
           <li>Informe trimestral para grupos de restauración e inmobiliarias comerciales.</li>
-          <li>RONDA sabe con datos reales <b>cuánto y qué se consume los martes-jueves</b> en cada corredor. Nadie más lo tiene estructurado en Bogotá.</li>
+          <li><span translate="no" class="notranslate">RONDA</span> sabe con datos reales <b>cuánto y qué se consume los martes-jueves</b> en cada corredor. Nadie más lo tiene estructurado en Bogotá.</li>
         </ul>
       </div>
     </div>
@@ -886,7 +936,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap">
         <div>
           <p class="quien">Línea 4 · Q3+ · nueva</p>
-          <h4 style="font-size:24px">RONDA Signals — publicidad como micro-sondeo</h4>
+          <h4 style="font-size:24px"><span translate="no" class="notranslate">RONDA</span> Signals — publicidad como micro-sondeo</h4>
         </div>
         <span class="chip ambar">Margen casi puro</span>
       </div>
@@ -919,7 +969,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
         <tr><td>Q3 · Escala</td><td>~72%</td><td>~12%</td><td>~8%</td><td>~8%</td></tr>
         <tr><td>Q4 · Plataforma</td><td>~62%</td><td>~15%</td><td>~10%</td><td>~13%</td></tr>
       </table>
-      <p style="font-size:12.5px;color:var(--humo);margin-top:12px">La tesis: RONDA empieza como <b style="color:var(--papel)">operador de eventos</b> (margen sano, acotado por la sala física) y evoluciona hacia una <b style="color:var(--papel)">plataforma de datos y software</b> (márgenes de software, escalables sin límite físico). La entrada financia el activo; el activo se vende cuatro veces.</p>
+      <p style="font-size:12.5px;color:var(--humo);margin-top:12px">La tesis: <span translate="no" class="notranslate">RONDA</span> empieza como <b style="color:var(--papel)">operador de eventos</b> (margen sano, acotado por la sala física) y evoluciona hacia una <b style="color:var(--papel)">plataforma de datos y software</b> (márgenes de software, escalables sin límite físico). La entrada financia el activo; el activo se vende cuatro veces.</p>
     </div>
 
     <p class="rotulo" style="margin-top:34px">Unit economics y escala</p>
@@ -963,7 +1013,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       </div>
     </div>
     <!-- Llamado a la Acción -->
-    <div class="cta-gold reveal" id="cta-section" style="margin-top: 24px; margin-bottom: 24px;">
+    <div class="cta-gold" id="cta-section">
       <h3>Únete a la Micro-Ronda FFF (Préstamo)</h3>
       <p>Buscamos $8.000.000 COP para financiar los primeros 12 eventos piloto. Estructurado como Préstamo a Corto Plazo (90 días) al 9% de interés. Cero dilución de equity.</p>
       
@@ -1005,33 +1055,28 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
         </ul>
       </div>
       <div class="caja">
-        <p class="quien">Primeros 90 días</p>
+        <p class="quien">Primeros 90 días (Estrategia Fría)</p>
         <ul>
-          <li><b>Días 1–15:</b> 4 locales de un solo barrio (Zona G), contrato de 3 meses.</li>
-          <li><b>Días 16–45:</b> 12 eventos operados a mano (formularios + WhatsApp) para calibrar rotación y precio.</li>
-          <li><b>Días 46–90:</b> app de check-in, reserva y matching. Escalar a 12 locales del mismo distrito.</li>
-          <li>Densidad antes que cobertura: <b>un barrio lleno vale más que tres localidades a medias</b>.</li>
+          <li><b>Días 1–30:</b> Captación del segmento frío (caballeros) mediante pauta segmentada y material impreso táctico. Se capturan pagos para desbloquear barrios.</li>
+          <li><b>Días 31–60:</b> Desbloqueo progresivo de los 12 eventos piloto en ubicaciones secretas rotativas (Pop-ups). Cero riesgo operativo.</li>
+          <li><b>Días 61–90:</b> App de check-in y matching consolidada. Expansión agresiva a 3 barrios simultáneos.</li>
+          <li>Densidad antes que cobertura: <b>un barrio desbloqueado vale más que tres a medias</b>.</li>
         </ul>
       </div>
     </div>
 
-    <!-- Simulador SAFE -->
-    <div class="simulador reveal">
-      <h3 style="margin-top:0;font-family:'Bodoni Moda',serif;color:var(--luz);">🎛️ Simulador de Retorno / SAFE</h3>
+    <!-- Simulador Préstamo FFF -->
+    <div class="simulador" id="simulador-section">
+      <h3 style="margin-top:0;font-family:'Bodoni Moda',serif;color:var(--luz);">🎛️ Simulador de Préstamo FFF</h3>
       <div class="sim-row">
-        <label>Ticket Inversión (USD)</label>
-        <input type="range" id="sim-ticket" min="5000" max="150000" step="5000" value="25000" oninput="updateSim()">
-        <span class="sim-val" id="val-ticket">$25,000</span>
-      </div>
-      <div class="sim-row">
-        <label>Cap SAFE (USD)</label>
-        <input type="range" id="sim-cap" min="1000000" max="3000000" step="100000" value="1500000" oninput="updateSim()">
-        <span class="sim-val" id="val-cap">$1.5M</span>
+        <label>Ticket Inversión (COP)</label>
+        <input type="range" id="sim-ticket" min="1000000" max="8000000" step="500000" value="1000000" oninput="updateSim()">
+        <span class="sim-val" id="val-ticket">$1,000,000</span>
       </div>
       <div class="sim-results">
-        <div class="sim-kpi"><span>Propiedad Est.</span><b id="res-prop">1.67%</b></div>
-        <div class="sim-kpi"><span>Valor a 3 años</span><b id="res-val">$150,000</b></div>
-        <div class="sim-kpi"><span>Múltiplo</span><b id="res-mult">6.0x</b></div>
+        <div class="sim-kpi"><span>Interés Fijo</span><b id="res-int">9%</b></div>
+        <div class="sim-kpi"><span>Ganancia Neta</span><b id="res-ganancia">$90,000</b></div>
+        <div class="sim-kpi"><span>Retorno Total</span><b id="res-val">$1,090,000</b></div>
       </div>
     </div>
 
@@ -1076,21 +1121,21 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
               <td style="padding:12px 8px;">$6.5M</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(243,237,226,0.05);">
-              <td style="padding:12px 8px; color:var(--humo);">Net Revenue (RONDA)</td>
-              <td style="padding:12px 8px; color:var(--luz);">$70K</td>
-              <td style="padding:12px 8px; color:var(--luz);">$360K</td>
-              <td style="padding:12px 8px; color:var(--luz);">$1.3M</td>
+              <td style="padding:12px 8px; color:var(--humo);">Net Revenue (<span translate="no" class="notranslate">RONDA</span>)</td>
+              <td style="padding:12px 8px; color:var(--luz);">$95K</td>
+              <td style="padding:12px 8px; color:var(--luz);">$420K</td>
+              <td style="padding:12px 8px; color:var(--luz);">$1.5M</td>
             </tr>
             <tr>
               <td style="padding:12px 8px; color:var(--humo);">EBITDA Margin</td>
-              <td style="padding:12px 8px;">-15%</td>
-              <td style="padding:12px 8px;">12%</td>
-              <td style="padding:12px 8px; color:var(--botella);">28%</td>
+              <td style="padding:12px 8px; color:var(--botella);">8%</td>
+              <td style="padding:12px 8px; color:var(--botella);">18%</td>
+              <td style="padding:12px 8px; color:var(--botella);">32%</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p style="font-size:12px; color:var(--humo); text-align:center;">*Cifras en USD. El modelo de ingresos asume un take-rate promedio del 20% sobre el consumo en los locales.</p>
+      <p style="font-size:12px; color:var(--humo); text-align:center;">*Cifras en USD. El margen EBITDA positivo desde el Año 1 es posible gracias al modelo Demand-First, que elimina costos fijos de local y el riesgo de ocupación.</p>
     </div>
   </div>
 
@@ -1115,9 +1160,12 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
     <div class="modal-content modal-video">
       <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
       <h3>🎥 Elevator Pitch (90s)</h3>
-      <p>Conoce al equipo fundador y el modelo detrás de RONDA.</p>
-      <div style="background:#000; display:flex; align-items:center; justify-content:center; aspect-ratio:16/9; border-radius:8px;">
-        <p style="color:var(--humo);">[ Placeholder de Video Embed / Loom ]</p>
+      <p>Conoce al equipo fundador y el modelo detrás de <span translate="no" class="notranslate">RONDA</span>.</p>
+      <div style="background:#000; display:flex; align-items:center; justify-content:center; aspect-ratio:16/9; border-radius:8px; overflow: hidden;">
+        <video controls playsinline style="width: 100%; height: 100%; object-fit: cover;">
+          <source src="/assets/RONDA_speed-dating_experience_in._202609041317.mp4" type="video/mp4">
+          Tu navegador no soporta el formato de video.
+        </video>
       </div>
     </div>
   </div>
@@ -1127,7 +1175,7 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
     <div class="modal-content">
       <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
       <h3>💬 Contactar Founders</h3>
-      <p>Déjanos tus datos y nos pondremos en contacto contigo de inmediato a través de WhatsApp.</p>
+      <p>Déjanos tus datos y nos pondremos en contacto contigo de inmediato.</p>
       
       <div class="form-commit">
         <input type="text" id="contact-name" placeholder="Tu Nombre / Entidad" required style="width: 100%; margin-bottom: 12px;">
@@ -1143,6 +1191,14 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
       <button type="button" onclick="sendContact()" class="btn-gold" style="width:100%; border:none; cursor:pointer; margin-top: 16px;">
         📲 Iniciar Chat en WhatsApp
       </button>
+      <div style="display:flex; align-items:center; gap:12px; margin-top:14px;">
+        <span style="flex:1; height:1px; background:var(--linea);"></span>
+        <span style="font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase;">o escríbenos</span>
+        <span style="flex:1; height:1px; background:var(--linea);"></span>
+      </div>
+      <a href="mailto:invest@ronda.uno?subject=Interés en Micro-Ronda FFF" style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; padding:10px 18px; border:1px solid var(--linea); border-radius:12px; color:var(--papel); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(240,168,48,0.5)';this.style.background='rgba(240,168,48,0.06)'" onmouseout="this.style.borderColor='';this.style.background=''">
+        ✉️ invest@ronda.uno
+      </a>
     </div>
   </div>
 
@@ -1151,10 +1207,46 @@ footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--linea);font-f
     <span class="fab-icon">💬</span> Contactar Founders
   </button>
 
+  <!-- ============ FAQ ============ -->
+  <section class="faq-section" id="faq">
+    <p class="rotulo">Preguntas Frecuentes</p>
+    <h2 class="h2">Lo que todo inversionista quiere saber</h2>
+
+    <div class="faq-item">
+      <button class="faq-q" data-i18n="faq_q1">¿Qué pasa si un evento no llega a 24 personas?</button>
+      <div class="faq-a"><p data-i18n="faq_a1">El evento simplemente no se desbloquea. Si a 48 horas de la fecha propuesta no se alcanza la meta de 12 hombres y 12 mujeres, el evento se cancela y se devuelve el 100% del importe de forma automática. <b>Cero riesgo operativo</b> de operar una sala rota o de pagar consumiciones por adelantado.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" data-i18n="faq_q2">¿El pagaré a 90 días es legal en Colombia?</button>
+      <div class="faq-a"><p data-i18n="faq_a2">Sí. El pagaré es un título valor reconocido por el Código de Comercio colombiano (Art. 709-711). Se firma digitalmente con autenticación ante notaría digital. Es un instrumento ejecutivo: en caso de incumplimiento, el acreedor tiene vía directa de cobro. El presupuesto de $700.000 COP incluye la formalización legal con abogado.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" data-i18n="faq_q3">¿Cuál es la garantía de repago?</button>
+      <div class="faq-a"><p data-i18n="faq_a3">El flujo de caja directo de la venta de boletería de los 12 eventos piloto. Con 24 asistentes × $55.000 × 12 eventos = <b>$15.840.000 COP</b> de ingresos brutos y <b>$5.760.000 COP</b> de margen neto. El repago total ($8.720.000 COP con intereses) se cubre con los ingresos acumulados de las semanas 6 a 12.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" data-i18n="faq_q4">¿Para qué necesitan $8 millones si la app ya está hecha?</button>
+      <div class="faq-a"><p data-i18n="faq_a4">El software está 100% operativo. Los fondos van a lo que el software no puede hacer solo: <b>Marketing para Segmento Frío</b> (43.8% pauta para caballeros solteros), <b>material táctico (props) para bares potenciales y RRSS</b> (22.5%), <b>fondo de operación inicial</b> (25%) y <b>formalización legal</b> (8.7%). Todo destinado a captar la demanda que desbloquea los eventos.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" data-i18n="faq_q5">¿Qué diferencia a <span translate="no" class="notranslate">RONDA</span> de otras apps de citas?</button>
+      <div class="faq-a"><p data-i18n="faq_a5"><span translate="no" class="notranslate">RONDA</span> no es una app de citas. Las apps monetizan que la gente <b>se quede chateando</b>; nosotros monetizamos que la gente <b>salga de la app y llegue a un bar</b>. Verificación biométrica real (no solo fotos), encuentros presenciales de 6 minutos, algoritmo patentable de rotación con memoria, y un modelo de negocio B2B2C donde el bar gana sin pagar.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" data-i18n="faq_q6">¿Puedo invertir con SAFE en vez de préstamo?</button>
+      <div class="faq-a"><p data-i18n="faq_a6">Sí. Ofrecemos una estructura alternativa como <b>SAFE Post-Money</b> con Valuation Cap de $1.500.000 USD y 20% de descuento para la ronda Seed institucional. En este caso, tu inversión se convierte en equity al cierre de la siguiente ronda con un descuento significativo. Usa el simulador de arriba para modelar tu retorno.</p></div>
+    </div>
+  </section>
+
   <footer>
-    <span>RONDA · maqueta de producto y modelo · Bogotá</span>
+    <span><span translate="no" class="notranslate">RONDA</span> · maqueta de producto y modelo · Bogotá</span>
     <span>Días valle: martes · miércoles · jueves</span>
-    <span style="opacity: 0.6; font-family: var(--font-mono, monospace); font-size: 11px;">v2.2.0-prod</span>
+    <span id="footer-counter" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--humo); letter-spacing:0.04em;">
+      <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
+      <span>Visitas:</span>
+      <b style="color:var(--luz); font-weight:700;" id="visit-count-num">--</b>
+    </span>
+    <span style="opacity: 0.6; font-family: var(--font-mono, monospace); font-size: 11px;">v2.3.0-prod</span>
   </footer>
 </div>
 
@@ -1167,7 +1259,7 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1 });
-document.querySelectorAll('.caja, .kpi, .nodo, .cta-gold').forEach(el => {
+document.querySelectorAll('.caja, .kpi, .nodo').forEach(el => {
   el.classList.add('reveal');
   observer.observe(el);
 });
@@ -1180,20 +1272,111 @@ window.addEventListener('scroll', () => {
   }
 });
 
-/* ---- simulador SAFE ---- */
+/* =========================================================
+   RONDA INVEST TELEMETRY & LEAD ATTRIBUTION
+   ========================================================= */
+const RondaTracker = {
+  getParams() {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      ref: p.get('ref') || p.get('inv') || p.get('r') || sessionStorage.getItem('ronda_inv_ref') || 'direct',
+      source: p.get('utm_source') || (document.referrer ? (document.referrer.includes('whatsapp') ? 'whatsapp' : 'web') : 'direct'),
+      campaign: p.get('utm_campaign') || 'fff-round',
+      medium: p.get('utm_medium') || 'c2c'
+    };
+  },
+  init() {
+    const meta = this.getParams();
+    if (meta.ref && meta.ref !== 'direct') {
+      sessionStorage.setItem('ronda_inv_ref', meta.ref);
+      const cleanRef = meta.ref.charAt(0).toUpperCase() + meta.ref.slice(1);
+      const commitInput = document.getElementById('commit-name');
+      const contactInput = document.getElementById('contact-name');
+      if (commitInput && !commitInput.value) commitInput.placeholder = `Tu Nombre (ej. ${cleanRef})`;
+      if (contactInput && !contactInput.value) contactInput.placeholder = `Tu Nombre (ej. ${cleanRef})`;
+    }
+    this.track('investor_page_view', {
+      investor_ref: meta.ref,
+      source: meta.source,
+      campaign: meta.campaign,
+      screen_width: window.innerWidth,
+      is_mobile: window.innerWidth <= 768
+    });
+
+    // Time on page milestones (30s, 60s, 120s, 240s)
+    [30, 60, 120, 240].forEach(sec => {
+      setTimeout(() => {
+        this.track('investor_time_milestone', {
+          investor_ref: this.getParams().ref,
+          seconds_spent: sec
+        });
+      }, sec * 1000);
+    });
+  },
+  track(eventName, eventData = {}) {
+    const payload = {
+      event: eventName,
+      timestamp: new Date().toISOString(),
+      investor_ref: this.getParams().ref,
+      ...eventData
+    };
+    if (typeof gtag === 'function') {
+      gtag('event', eventName, payload);
+    }
+    try {
+      const history = JSON.parse(localStorage.getItem('ronda_invest_telemetry') || '[]');
+      history.push(payload);
+      if (history.length > 50) history.shift();
+      localStorage.setItem('ronda_invest_telemetry', JSON.stringify(history));
+    } catch(e) {}
+    console.log(`[RONDA TELEMETRY] 📊 ${eventName}`, payload);
+  }
+};
+RondaTracker.init();
+
+/* ---- Contador de Visitas en Vivo ---- */
+(function initVisitorCounter() {
+  const el = document.getElementById('visit-count-num');
+  if (!el) return;
+  fetch('https://hits.sh/ronda.uno/invest.svg?color=f0a830&label=Visitas&labelColor=221826')
+    .then(r => r.text())
+    .then(svg => {
+      const match = svg.match(/aria-label="Visitas:\s*([0-9]+)"/i);
+      if (match && match[1]) {
+        const count = parseInt(match[1], 10);
+        el.textContent = count.toLocaleString('es-CO');
+      } else {
+        el.textContent = '1+';
+      }
+    })
+    .catch(() => {
+      const local = parseInt(localStorage.getItem('ronda_invest_local_views') || '28', 10) + 1;
+      localStorage.setItem('ronda_invest_local_views', local.toString());
+      el.textContent = local.toLocaleString('es-CO');
+    });
+})();
+
+/* ---- simulador Préstamo FFF ---- */
+let simTrackTimer = null;
 function updateSim() {
   const t = parseInt(document.getElementById('sim-ticket').value);
-  const c = parseInt(document.getElementById('sim-cap').value);
-  document.getElementById('val-ticket').innerText = '$' + t.toLocaleString();
-  document.getElementById('val-cap').innerText = '$' + (c / 1000000).toFixed(1) + 'M';
+  document.getElementById('val-ticket').innerText = '$' + t.toLocaleString('es-CO');
   
-  const prop = (t / c) * 100;
-  document.getElementById('res-prop').innerText = prop.toFixed(2) + '%';
+  const interestRate = 0.09;
+  const ganancia = t * interestRate;
+  const total = t + ganancia;
   
-  // Asumiendo salida (exit) a $9M en 3 años.
-  const val3 = (9000000 * (prop / 100));
-  document.getElementById('res-val').innerText = '$' + val3.toLocaleString(undefined, {maximumFractionDigits:0});
-  document.getElementById('res-mult').innerText = (val3 / t).toFixed(1) + 'x';
+  document.getElementById('res-ganancia').innerText = '$' + ganancia.toLocaleString('es-CO');
+  document.getElementById('res-val').innerText = '$' + total.toLocaleString('es-CO');
+
+  clearTimeout(simTrackTimer);
+  simTrackTimer = setTimeout(() => {
+    RondaTracker.track('investor_sim_change', {
+      ticket_amount: t,
+      ganancia_estimada: ganancia,
+      total_retorno: total
+    });
+  }, 900);
 }
 if(document.getElementById('sim-ticket')) updateSim();
 
@@ -1207,7 +1390,13 @@ function sendCommit() {
     return;
   }
   
-  const msg = `Hola, mi nombre/fondo es ${name} y me interesa participar en la micro-ronda FFF de RONDA con un ticket estimado de ${amount}. Quiero conversar los detalles.`;
+  const refTag = RondaTracker.getParams().ref !== 'direct' ? ` [Ref: ${RondaTracker.getParams().ref}]` : '';
+  RondaTracker.track('investor_commit_click', {
+    name: name,
+    amount: amount
+  });
+
+  const msg = `Hola, mi nombre/fondo es ${name} y me interesa participar en la micro-ronda FFF de RONDA con un ticket estimado de ${amount}. Quiero conversar los detalles.${refTag}`;
   const whatsappUrl = `https://wa.me/573026543854?text=${encodeURIComponent(msg)}`;
   
   window.open(whatsappUrl, '_blank');
@@ -1223,7 +1412,14 @@ function sendContact() {
     return;
   }
 
-  const msg = `Hola, soy ${name}. Me interesa contactarlos sobre: ${topic}. ${email ? 'Mi correo es '+email : ''}`;
+  const refTag = RondaTracker.getParams().ref !== 'direct' ? ` [Ref: ${RondaTracker.getParams().ref}]` : '';
+  RondaTracker.track('investor_contact_click', {
+    name: name,
+    email: email,
+    topic: topic
+  });
+
+  const msg = `Hola, soy ${name}. Me interesa contactarlos sobre: ${topic}. ${email ? 'Mi correo es '+email : ''}${refTag}`;
   const whatsappUrl = `https://wa.me/573026543854?text=${encodeURIComponent(msg)}`;
   
   document.getElementById('modal-contact').classList.remove('active');
@@ -1249,7 +1445,9 @@ const tabs=[...document.querySelectorAll('.tab')];
 tabs.forEach(t=>t.addEventListener('click',()=>{
   tabs.forEach(x=>x.setAttribute('aria-selected',x===t));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p));
+  document.querySelectorAll('.panel.on .reveal').forEach(el => el.classList.add('visible'));
   window.scrollTo({top:0,behavior:'smooth'});
+  RondaTracker.track('investor_tab_view', { tab_id: t.dataset.p });
 }));
 
 /* ---- rotador del pitch ---- */
@@ -1342,7 +1540,7 @@ pinta();reloj();
     if (iconEl) iconEl.textContent = '🔄';
     if (tagEl) tagEl.textContent = 'Modo Presentación Móvil';
     if (titleEl) titleEl.textContent = 'Gira tu pantalla';
-    if (descEl) descEl.innerHTML = 'Para apreciar el <b>Pitch Deck y Modelo de Negocio de RONDA</b> con máxima claridad, te sugerimos colocar tu dispositivo en <b>posición horizontal 📱↔️</b>.';
+    if (descEl) descEl.innerHTML = 'Para apreciar el <b>Pitch Deck y Modelo de Negocio de <span translate="no" class="notranslate">RONDA</span></b> con máxima claridad, te sugerimos colocar tu dispositivo en <b>posición horizontal 📱↔️</b>.';
     if (primaryBtn) {
       primaryBtn.innerHTML = '📱 Entendido, ver Pitch';
       primaryBtn.onclick = () => closeModal();
@@ -1402,16 +1600,105 @@ pinta();reloj();
   </div>
 </div>
 
-<!-- Google Translate Widget -->
+<!-- Language Switcher + FAQ Accordion -->
+<script>
+/* ---- Language Switcher (Instant Programmatic Translate) ---- */
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+function updateLangUI(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    const isActive = b.dataset.lang === lang;
+    b.classList.toggle('active', isActive);
+  });
+}
+
+function triggerGoogleTranslate(lang) {
+  const select = document.querySelector('.goog-te-combo');
+  if (select) {
+    if (select.value !== lang) {
+      select.value = lang;
+      select.dispatchEvent(new Event('change'));
+    }
+    return true;
+  }
+  return false;
+}
+
+function setLanguage(lang) {
+  updateLangUI(lang);
+  const cookieVal = lang === 'en' ? '/es/en' : '/es/es';
+  document.cookie = "googtrans=" + cookieVal + "; path=/";
+
+  if (!triggerGoogleTranslate(lang)) {
+    setTimeout(() => {
+      if (!triggerGoogleTranslate(lang)) {
+        window.location.reload();
+      }
+    }, 250);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const cookie = getCookie('googtrans');
+  const currentLang = (cookie && cookie.includes('/en')) ? 'en' : 'es';
+  updateLangUI(currentLang);
+
+  const checkSelect = setInterval(() => {
+    const select = document.querySelector('.goog-te-combo');
+    if (select) {
+      clearInterval(checkSelect);
+      if (currentLang === 'en' && select.value !== 'en') {
+        select.value = 'en';
+        select.dispatchEvent(new Event('change'));
+      }
+    }
+  }, 150);
+  setTimeout(() => clearInterval(checkSelect), 4000);
+});
+
+document.getElementById('lang-switch')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('.lang-btn');
+  if (!btn || btn.classList.contains('active')) return;
+  setLanguage(btn.dataset.lang);
+});
+
+/* ---- FAQ Accordion ---- */
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    // Toggle clicked
+    if (!wasOpen) {
+      item.classList.add('open');
+      if (typeof RondaTracker !== 'undefined') {
+        RondaTracker.track('investor_faq_open', {
+          question: btn.textContent.trim()
+        });
+      }
+    }
+  });
+});
+</script>
+
+<!-- Google Translate Script -->
+<div id="google_translate_element" style="display:none;"></div>
 <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'es',
     includedLanguages: 'en,de,es',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    autoDisplay: false
   }, 'google_translate_element');
 }
 </script>
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
