@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { initializeFirestore, connectFirestoreEmulator, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 
@@ -18,11 +18,15 @@ export const RondaConfig = {
 };
 
 const app = initializeApp(RondaConfig.firebaseConfig);
-const db = getFirestore(app);
+// Carga instantánea desde IndexedDB: la caché local persistente evita round-trips
+// de red en visitas repetidas y deja que Firestore sincronice en segundo plano.
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+});
 const auth = getAuth(app);
 let messaging: any = null;
 if (typeof window !== 'undefined') {
-  try { messaging = getMessaging(app); } catch (e) { console.warning('FCM not supported', e); }
+  try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
 }
 
 

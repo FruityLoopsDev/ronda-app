@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
         return res.status(500).send('Webhook misconfigured');
       }
       if (!data.signature || !data.signature.checksum) {
-        console.warning('Firma de webhook ausente; rechazando.');
+        console.warn('Firma de webhook ausente; rechazando.');
         return res.status(401).send('Invalid Signature');
       }
 
@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
       concatenated += data.timestamp + eventsSecret;
       const calculatedChecksum = crypto.createHash('sha256').update(concatenated).digest('hex');
       if (calculatedChecksum !== data.signature.checksum) {
-        console.warning('Wompi signature mismatch.');
+        console.warn('Wompi signature mismatch.');
         return res.status(401).send('Invalid Signature');
       }
 

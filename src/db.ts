@@ -217,7 +217,7 @@ export class DatabaseInterface {
       });
       return events;
     } catch (e) {
-      console.warning("getUpcomingEvents no implementado o falló", e);
+      console.warn("getUpcomingEvents no implementado o falló", e);
       return [];
     }
   }
@@ -246,6 +246,17 @@ export class DatabaseInterface {
     return event;
   }
 
+  // Registra el voto/like de un participante hacia otro.
+  // Escribe en events/{eventId}/likes/{fromUid}_{toUid}: el prefijo del id
+  // coincide con request.auth.uid, tal y como exigen las reglas de Firestore
+  // (cada usuario escribe únicamente su propio like) y como leen tanto el
+  // serverless process-matches como el fallback local ($0).
+  async pushLike(eventId: string, fromUid: string, toUid: string, isYes: boolean): Promise<void> {
+    const likeId = `${fromUid}_${toUid}`;
+    const ref = doc(this._getFirestore(), 'events', eventId, 'likes', likeId);
+    await setDoc(ref, { from: fromUid, to: toUid, like: isYes }, { merge: true });
+  }
+
   async processEventMatches(eventId: string): Promise<{ matchedPairsCount: number }> {
     console.log(`[DB] Calculando matches mutuos para el evento: ${eventId}...`);
     
@@ -260,7 +271,7 @@ export class DatabaseInterface {
           return result;
         }
       } catch (err) {
-        console.warning("[DB] Falló llamada a Vercel API para matches, usando fallback local:", err);
+        console.warn("[DB] Falló llamada a Vercel API para matches, usando fallback local:", err);
       }
     }
 
@@ -270,7 +281,7 @@ export class DatabaseInterface {
       const fs = this._getFirestore();
       const likesCol = collection(fs, 'events', eventId, 'likes');
       const likesSnap = await getDocs(likesCol);
-      const likesList: { from: string; to: string; like: boolean }[] = [];
+      const likesList: { id?: string; from: string; to: string; like: boolean }[] = [];
       
       likesSnap.forEach(snap => {
         const d = snap.data();

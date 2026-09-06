@@ -30,59 +30,6 @@
   <link rel="stylesheet" href="/assets/ronda-tokens.css">
   <link rel="stylesheet" href="/css/styles.css">
 
-  <!-- Firebase SDKs (Compat version for simplicity without bundlers, or Modular) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { 
-      getFirestore, 
-      connectFirestoreEmulator,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { 
-      getAuth, 
-      connectAuthEmulator,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { 
-      getFunctions, 
-      connectFunctionsEmulator,
-      httpsCallable 
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-functions.js";
-    
-    window.firebaseModules = { 
-      initializeApp, 
-      getFirestore, 
-      connectFirestoreEmulator, 
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp,
-      getAuth, 
-      connectAuthEmulator,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged,
-      getFunctions,
-      connectFunctionsEmulator,
-      httpsCallable
-    };
-  </script>
-
     <style>
       .ronda-input {
         margin-bottom: 10px; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); 

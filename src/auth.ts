@@ -45,7 +45,7 @@ export class AuthService {
         let userProfile = await DB.getUser(firebaseUser.uid);
         
         if (!userProfile) {
-          console.warning("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
+          console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
           userProfile = {
             uid: firebaseUser.uid,
             name: '',

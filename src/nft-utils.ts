@@ -44,7 +44,7 @@ class NFTUtilsService {
           return result;
         }
       } catch (err) {
-        console.warning("[NFT] Falló llamada a Vercel API para minting, usando fallback simulado:", err);
+        console.warn("[NFT] Falló llamada a Vercel API para minting, usando fallback simulado:", err);
       }
     }
 

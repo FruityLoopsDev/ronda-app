@@ -1067,7 +1067,7 @@ class ClientAppService {
   }
 
   triggerSafeWord() {
-    console.warning("¡Safe-word activado! Notificando a seguridad y anfitrión...");
+    console.warn("¡Safe-word activado! Notificando a seguridad y anfitrión...");
     RondaDialog.alert({
       title: 'Asistencia en Camino',
       message: 'Hemos notificado discretamente al anfitrión de sala con tu palabra clave de seguridad. Un miembro del equipo se acercará a tu mesa de inmediato.',
@@ -1202,7 +1202,7 @@ class ClientAppService {
     const eventId = this.currentEvent?.id || 'ronda-demo';
     
     try {
-      await OfflineSync.pushVote(myUid, targetUid, isYes, eventId);
+      await DB.pushLike(eventId, myUid, targetUid, isYes);
       this.showToast(isYes ? '¡Preferencia mutua guardada! 😉' : 'Voto registrado.');
 
       const btnYes = document.getElementById('btn-vote-yes') as HTMLButtonElement;

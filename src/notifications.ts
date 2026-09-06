@@ -70,7 +70,7 @@ class NotificationSystem {
         }
       }
     } catch (error) {
-      console.warning('Error configuring Push Notifications', error);
+      console.warn('Error configuring Push Notifications', error);
     }
   }
 
@@ -95,7 +95,7 @@ class NotificationSystem {
       this.notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AppNotification));
       this.updateUI();
     }, (error) => {
-      console.warning('No se pudo suscribir a notificaciones:', error.message);
+      console.warn('No se pudo suscribir a notificaciones:', error.message);
     });
   }
 

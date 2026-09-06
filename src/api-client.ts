@@ -29,6 +29,9 @@ class ApiClient {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
+        // Timeout de 4s: evita que peticiones colgadas/frías hacia Vercel
+        // congelen la UI antes de activar el fallback local.
+        signal: AbortSignal.timeout(4000),
         body: JSON.stringify(body)
       });
 

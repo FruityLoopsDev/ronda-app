@@ -73,7 +73,7 @@ class HostConsoleService {
     // Solicitar el ID del evento al anfitrión
     let eventId = prompt("Ingresa el ID del evento que vas a gestionar:", "rnd-caronte-mar-25");
     if (!eventId) {
-      console.warning("No se ingresó ID de evento. Cancelando inicialización del dashboard.");
+      console.warn("No se ingresó ID de evento. Cancelando inicialización del dashboard.");
       return;
     }
     
@@ -201,7 +201,7 @@ class HostConsoleService {
     if (this.motorVersion === 'v2') {
       const ok = await this.generateNextRoundV2();
       if (ok) return;
-      console.warning("[Motor] Plan v2 no disponible; usando motor v1 de respaldo.");
+      console.warn("[Motor] Plan v2 no disponible; usando motor v1 de respaldo.");
     }
 
     if (this.currentEvent.currentRound === 0) {
@@ -331,7 +331,7 @@ class HostConsoleService {
       .filter((p: any) => p && p.uid);
 
     if (profiles.length < 2) {
-      console.warning("[Motor v2] Perfiles insuficientes cargados todavía.");
+      console.warn("[Motor v2] Perfiles insuficientes cargados todavía.");
       return null;
     }
 
