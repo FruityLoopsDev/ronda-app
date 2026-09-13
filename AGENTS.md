@@ -1,33 +1,44 @@
-# AGENTS.md — Instrucciones para agentes que trabajan en RONDA
+# AGENTS.md — God Prompt & Reglas para Agentes (RONDA)
 
-> **Fuente de verdad:** este repo (`Desktop\ronda-app`). Las carpetas `Documents\ronda-app-v3` y
-> `Documents\ronda-app` quedaron como copias/trabajo previo y **no se deben usar** para editar.
+> **PROMPT CACHING PROTOCOL (CRÍTICO)**
+> Para aprovechar el Prompt Caching de los LLMs y minimizar el costo de tokens:
+> 1. Este archivo (`AGENTS.md`) y `docs/index.md` son el **Bloque Estático Principal**.
+> 2. Los agentes DEBEN leer este archivo y `docs/index.md` EXACTAMENTE en el mismo orden al inicio de cada conversación o sesión.
+> 3. NUNCA edites este archivo de forma impulsiva; mantén su estructura inmutable en la medida de lo posible.
+> 4. Lee el código dinámico y los archivos del proyecto *después* de cargar este bloque estático.
 
-Objetivo: **gastar el mínimo de tokens por tarea**. Léelo junto a `docs/index.md`.
+## 1. El Stack Multi-Agente (Roles y Responsabilidades)
+RONDA es mantenido por un equipo de IA. Deriva el trabajo a la herramienta adecuada:
 
-## Antes de actuar
-1. Lee `docs/index.md` (mapa de archivos y coste de lectura). Ya te dice qué leer.
-2. Identifica el archivo objetivo por rol, no por tanteo.
+- **Antigravity (IDE Agent):** *Arquitecto y Orquestador.*
+  Planea (`implementation_plan.md`), diseña arquitectura, asigna tareas a otros agentes y documenta flujos (`walkthrough.md`).
+- **Cline (VS Code Agent):** *Ejecutor Autónomo.*
+  Especialista en refactorización masiva, ejecución local (tests, scripts, builds). Lee los `task.md` de Antigravity y ejecuta modificaciones en bucle.
+- **Perplexity (Vía OmniRoute/MCP):** *Investigador Externo.*
+  Consulta documentación actualizada (Wompi, Vite, Polygon, Firebase) ANTES de implementar integraciones externas.
+- **DeepSeek Harness (Vía OmniRoute/MCP):** *Algoritmista Matemático.*
+  Encargado exclusivamente del razonamiento profundo y matemáticas discretas del motor de matching (`src/mem-rr-v2/`).
 
-## Técnicas obligatorias de ahorro
-- **grep > read**: localiza símbolos con `grep -n` y abre solo el rango necesario (`read` con `offset`/`limit`).
-- **Nunca** listes ni leas `node_modules`, `dist/`, `.firebase/`, `*.log` grandes. Usa `include`/patrón.
-- **Batch**: agrupa lecturas y consultas independientes en una sola tanda paralela.
-- **No releas**: si ya leíste un archivo en la conversación, no lo releas.
-- **Módulo puro**: el motor (`mem-rr-v2/`) se prueba en Node con `node src/mem-rr-v2/bench.ts`, sin abrir el bundle.
+## 2. Técnicas Obligatorias de Ahorro de Tokens
+- **grep > read**: Localiza símbolos con `grep -n` y abre solo el rango necesario (`read` con `offset`/`limit`).
+- **Nunca** listes ni leas `node_modules`, `dist/`, `.firebase/`, `*.log` grandes. Usa filtros.
+- **No releas**: Si el contexto ya fue leído y cacheado en la conversación, no vuelvas a pedirlo.
+- **Módulo puro**: El motor (`mem-rr-v2/`) se prueba en Node con `node src/mem-rr-v2/bench.ts` SIN abrir bundles de UI.
 
-## Archivos prohibidos de lectura completa
-`src/client.ts` (XL) e `index.html` (XL). Si los necesitas, `grep` la sección o lee por rangos.
+## 3. Restricciones de Lectura
+Archivos **prohibidos** de lectura completa (usa `grep` o lee por rangos):
+- `src/client.ts` (XL)
+- `index.html` (XL)
 
-## Formato de respuesta
-- Respuestas cortas, sin re-explicar el contexto ya establecido.
-- Tablas compactas; una línea por hallazgo, no párrafos extensos.
+## 4. Tareas Frecuentes y Puntos de Entrada
+- **Validar motor:** `node src/mem-rr-v2/bench.ts` (incluye validación M4: mesas de 4 y grafo local).
+- **Motor integrado:** hook en `src/bar.ts` (M2/M4/M5), historial en `src/mem-rr-history.ts`, suscripción en vivo en `src/client.ts`.
+- **Re-planificación:** `buildV2Plan` en `src/bar.ts` usa `alreadyMet` + `nightPlanStartRound`.
+- **Mesas de 4:** `buildNightPlan({ ..., tableSize: 4 })`; **Grafo local:** `room` + `config.delta > 0`.
+- **Prueba de existencia Web3:** `node scripts/register-proof.cjs` (hash keccak256, modo reserva).
+- **Evidencia técnica:** `docs/bench-results/bench-2026-08-27.md` (✅ BENCH OK).
 
-## Tareas frecuentes
-- **Validar motor**: `node src/mem-rr-v2/bench.ts` (incluye validación M4: mesas de 4 y grafo local).
-- **Motor integrado**: hook en `bar.ts` (M2/M4/M5, fallback v1), historial (`mem-rr-history.ts`),
-  suscripción en vivo del cliente (`client.ts`, M3), panel de métricas (M5) y check-in QR (M3).
-- **Evidencia técnica**: `docs/bench-results/bench-2026-08-27.md` (✅ BENCH OK).
-- **Re-planificación**: `buildV2Plan` en `src/bar.ts` usa `alreadyMet` + `nightPlanStartRound`.
-- **Mesas de 4**: `buildNightPlan({ ..., tableSize: 4 })`; **grafo local**: `room` + `config.delta > 0`.
-- **Prueba de existencia**: `node scripts/register-proof.cjs` (modo **reserva**: hash keccak256, no publica).
+## 5. Formato de Respuesta
+- Respuestas cortas, sin re-explicar el contexto ya establecido en la caché.
+- Usa tablas compactas; una línea por hallazgo, no párrafos extensos.
+- Deriva al usuario o al agente correspondiente si la tarea escapa a tu rol (ej. "Antigravity delega a Cline el refactor").

@@ -1,56 +1,43 @@
-# RONDA — Índice del proyecto (mapa de archivos)
+# RONDA — Índice del proyecto y Reglas de Caching (Mapa de Archivos)
 
-> Léelo PRIMERO en cada sesión. Evita leer los archivos grandes (L/XL) salvo necesidad.
-> Coste de tokens por lectura: S < 1k · M ~1–3k · L ~5–10k · XL > 15k.
+> **PROMPT CACHING PROTOCOL (CRÍTICO)**
+> Este archivo `docs/index.md` junto con `AGENTS.md` forman el bloque estático de la sesión.
+> - **DEBEN** leerse al mismo tiempo en el turno 1 de cualquier agente (Antigravity o Cline).
+> - Evita leer los archivos grandes (L/XL) salvo necesidad estricta para mantener la ventana limpia.
+> - Coste de tokens por lectura: S < 1k · M ~1–3k · L ~5–10k · XL > 15k.
 
-## Stack
-Vanilla TS + Vite (SPA multi-vista) · Firebase (Auth/Firestore/Hosting/Functions) · Web3 (ERC-721/Polygon) · Wompi · localforage.
+## 1. Stack Tecnológico
+Vanilla TS + Vite (SPA multi-vista) · Firebase (Auth/Firestore/Hosting) · Vercel (Serverless Backend) · Web3 (ERC-721/Polygon) · Wompi (Web Checkout) · localforage (Offline cache).
 
-## Entradas
-- `index.html` (XL, 2.2k líneas) — SPA: vistas auth/lobby/profile/client/admin. **No leer entero**.
-- `landing.html` (M) — landing de marketing (entrada secundaria).
-- `src/app.ts` (M) — orquestador y eventos de vista. **Inicio recomendado**: conexión login/registro → vistas → check-in.
+## 2. Entradas Principales
+- `index.html` (XL) — SPA con vistas combinadas (auth/lobby/profile/client/admin). **No leer entero**. Usa grep.
+- `landing.html` (M) — Landing externa de marketing.
+- `src/app.ts` (M) — Orquestador y render de vistas. Conecta Auth → Views → Check-in.
 
-## Módulos clave `src/` (S = pequeño, M = medio)
+## 3. Módulos clave `src/` (S = pequeño, M = medio)
 | Archivo | Rol | Coste |
 |---|---|---|
-| `firebase-config.ts` | init Firebase, `isDemo` | S |
-| `db.ts` | abstracción Firestore/memoria demo | M |
-| `auth.ts` | Firebase Auth + perfil | S |
-| `ronda-core.ts` | motor v1 teórico (afinidad+colisión) | S |
-| `bar.ts` | consola anfitrión + motor v1/v2 | M |
-| `client.ts` | dashboard cliente (feed, reservas, chat 72h) | **XL** |
-| `profile.ts` | vista perfil | M |
-| `verification.ts` | KYC (geo + OCR + biometría) | S |
-| `matches.ts` | likes/matches post-evento | S |
-| `offline-sync.ts` | cola offline de votos | S |
-| `seed.ts` | datos demo | S |
-| `utils.ts`, `dialog.ts`, `nft-utils.ts`, `nft-config.ts` | utilidades | S |
+| `firebase-config.ts` | Inicialización Firebase, variables de entorno. | S |
+| `db.ts` | Abstracción Firestore, perfil, y fallback matches locales. | M |
+| `auth.ts` | Firebase Auth. | S |
+| `ronda-core.ts` | Motor v1 teórico. | S |
+| `bar.ts` | Lógica consola del anfitrión (panel admin). | M |
+| `client.ts` | Dashboard cliente. **Archivo XL, no leer completo.** | XL |
+| `payment.ts` | Pasarela Web Wompi y fallback Nequi. | M |
+| `api-client.ts` | Cliente POST con ID Token Auth para Vercel API. | S |
+| `profile.ts`, `verification.ts` | Manejo de UI de perfil y KYC/Geo. | M / S |
 
-## Motor de rotación `src/mem-rr-v2/` (módulo puro, testable en Node)
-- `types.ts`, `weights.ts` (modelo `α·A+β·F−γ·R−δ·D`), `flow.ts` (bipartito exacto), `exact.ts` (DP n≤18), `general.ts` (búsqueda local), `engine.ts` (orquestador), `bench.ts` (validación v1 vs v2).
-- `src/mem-rr-history.ts` — adaptador de historial (demo + Firestore).
-- **Bench**: `node src/mem-rr-v2/bench.ts`.
+## 4. Motor de rotación (Matches Mutuos) `src/mem-rr-v2/`
+Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
+- `weights.ts` (modelo de pesos), `exact.ts` (solución DP exacta), `flow.ts`, `general.ts`.
+- **Comando clave de validación local:** `node src/mem-rr-v2/bench.ts`.
 
-## Funciones Firebase `functions/index.js` (M)
-`wompiWebhook` · `mintAttendanceNFT` · `processEventMatches`. Contiene secreto hardcodeado (ver docs de IP).
+## 5. Backend (Serverless & Web3)
+- **Vercel API:** `functions-vercel/api/` contiene `wompi-webhook.js`, `mint-nft.js`, `process-matches.js`. (Remplaza a Firebase Cloud Functions).
+- **Web3:** `scripts/register-proof.cjs` (keccak256 proof of existence local, modo reserva, 0 gas).
 
-## Web3 / Prueba de existencia (reserva)
-- `contracts/RondaEventNFT.sol` (ERC-721 asistencia) · `contracts/ProvenanceRegistry.sol` (timestamp proof-of-existence, **no publicado**).
-- `scripts/register-proof.cjs` — imprime keccak256 de un archivo; modo **reserva** (sin on-chain salvo credenciales+gas).
-- `scripts/deploy-nft.js` (Hardhat; requiere toolchain en `ronda-files`).
-
-## Documentación (leer antes que el código)
-- `docs/index.md` (este archivo) · `docs/algorithm-v2-spec.md` (motor v2) · `docs/ip-patent-strategy.md` · `docs/invention-disclosure-mem-rr-v2.md` · `docs/provisional-us-mem-rr-v2.md` · `docs/architecture.md`
-- **Evidencia técnica:** `docs/bench-results/bench-*.md` (resultados del motor con fecha).
-- **Stress test del motor:** `docs/bench-results/stress-*.md` (tiempos por escala).
-- **Inventario de divulgaciones:** `docs/divulgaciones-inventario.md`.
-- **Resumen ejecutivo (agente de patentes):** `docs/resumen-ejecutivo-agente-patentes.md`.
-- **Inversión FFF:** `docs/RONDA_MEMORANDUM_INVERSION_FFF.md` (Memorando oficial para ronda Friends, Family & Founders).
-
-## Reglas para no quemar tokens
-1. **Nunca** glob/grep en `node_modules`, `dist/`, `.firebase/`.
-2. **grep antes que read**: localiza símbolos con `grep` y lee solo el rango.
-3. No leer `client.ts` ni `index.html` completos; leer por sección o con grep.
-4. Agrupar lecturas/consultas independientes en paralelo.
-5. Respuestas concisas; tablas compactas.
+- `docs/MASTER_REFERENCE.md` (Documento maestro de referencia técnica y arquitectura completa).
+- `docs/architecture.md` (Arquitectura general).
+- `docs/algorithm-v2-spec.md` (Teoría del motor mem-rr-v2).
+- `docs/RONDA_MEMORANDUM_INVERSION_FFF.md` (Deck para inversores).
+- `docs/ip-patent-strategy.md` (Estrategia de Propiedad Intelectual).
