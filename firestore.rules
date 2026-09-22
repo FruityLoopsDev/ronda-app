@@ -128,12 +128,17 @@ service cloud.firestore {
       // (evita spam de campos arbitrarios). Sin rate-limit a nivel de reglas; mitigar
       // con funciones o detección de abuso si fuese necesario.
       allow create: if request.resource.data.keys().hasOnly([
-            'name', 'linkedin', 'whatsapp', 'email', 'interestZone', 'source', 'createdAt'
+            'name', 'linkedin', 'whatsapp', 'email', 'interestZone', 'source', 'createdAt', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'referred_by'
           ])
           && request.resource.data.name is string
           && request.resource.data.email is string
           && request.resource.data.whatsapp is string;
       allow read, update, delete: if isSuperAdmin();
+    }
+
+    // --- Estadísticas Públicas ---
+    match /stats/{statId} {
+      allow read, write: if true;
     }
   }
 }

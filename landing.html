@@ -956,6 +956,11 @@
       font-size: 22px;
       cursor: pointer;
     }
+    @keyframes pulse-visit {
+      0% { box-shadow: 0 0 0 0 rgba(240, 168, 48, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(240, 168, 48, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(240, 168, 48, 0); }
+    }
   </style>
 </head>
 <body>
@@ -1018,6 +1023,7 @@
         <span>💼 Solteros Profesionales Verificados (LinkedIn)</span>
         <span>🍸 2 Cócteles de Autor incluidos</span>
         <span>🔒 Votación 100% secreta</span>
+        <span style="color: var(--luz); border-color: rgba(240, 168, 48, 0.45); animation: pulse-visit 2s infinite;">👁️ <b id="visit-count">142</b> personas viendo esto</span>
       </div>
     </div>
   </section>
@@ -1355,8 +1361,9 @@
         <p style="font-size: 11px; font-family: var(--font-mono);">Cumplimiento Ley 1581 de Protección de Datos Personales</p>
         <p style="font-size: 11px; margin-top: 2px;">© 2026 RONDA System. Todos los derechos reservados. <span style="opacity: 0.5; margin-left: 8px;">v2.2.0-prod</span></p>
       </div>
-      <div>
-        <a href="https://wa.me/573000000000?text=Hola%20RONDA,%20tengo%20una%20pregunta%20sobre%20los%20eventos" target="_blank" class="btn outline sm">Soporte WhatsApp 💬</a>
+      <div style="text-align: right;">
+        <a href="https://wa.me/573000000000?text=Hola%20RONDA,%20tengo%20una%20pregunta%20sobre%20los%20eventos" target="_blank" class="btn outline sm" style="margin-bottom: 8px; display: inline-block;">Soporte WhatsApp 💬</a>
+        <p id="global-visit-counter" style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); margin-top: 4px; letter-spacing: 0.5px;">Visitas totales: <span style="color: var(--luz); font-weight: 700;">...</span></p>
       </div>
     </div>
   </footer>
@@ -1610,6 +1617,75 @@
 
         // Iniciar ciclo tras una pequeña pausa inicial
         setTimeout(typeLoop, 500);
+      }
+
+      // Contador de visitas dinámico (Simulado para marketing)
+      const visitCountEl = document.getElementById('visit-count');
+      if (visitCountEl) {
+        let baseVisits = 120 + Math.floor(Math.random() * 40);
+        visitCountEl.textContent = baseVisits;
+        
+        setInterval(() => {
+          if (Math.random() > 0.6) {
+            baseVisits += Math.floor(Math.random() * 3) + 1;
+            visitCountEl.textContent = baseVisits;
+          }
+        }, 3500);
+      }
+
+      // Contador global persistente conectado a la base de datos real (Firestore)
+      const globalCounterEl = document.querySelector('#global-visit-counter span');
+      if (globalCounterEl) {
+        async function trackRealVisit() {
+          const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          const firebaseUrl = isLocal ? 'http://127.0.0.1:8081' : 'https://firestore.googleapis.com';
+          
+          try {
+            const hasVisited = sessionStorage.getItem('ronda_real_visit');
+            
+            if (!hasVisited) {
+              // Realizamos un incremento atómico real en Firestore
+              const payload = {
+                writes: [{
+                  transform: {
+                    document: `projects/ronda-uno/databases/(default)/documents/stats/visits`,
+                    fieldTransforms: [{
+                      fieldPath: "count",
+                      increment: { integerValue: "1" }
+                    }]
+                  }
+                }]
+              };
+              
+              const res = await fetch(`${firebaseUrl}/v1/projects/ronda-uno/databases/(default)/documents:commit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+              
+              const data = await res.json();
+              if (data.writeResults && data.writeResults[0] && data.writeResults[0].transformResults) {
+                const newCount = data.writeResults[0].transformResults[0].integerValue;
+                globalCounterEl.textContent = parseInt(newCount, 10).toLocaleString('es-CO');
+                sessionStorage.setItem('ronda_real_visit', 'true');
+                return; // Exito
+              }
+            }
+            
+            // Si ya visitó en esta sesión, simplemente consultamos el dato actual
+            const res = await fetch(`${firebaseUrl}/v1/projects/ronda-uno/databases/(default)/documents/stats/visits`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.fields && data.fields.count) {
+                globalCounterEl.textContent = parseInt(data.fields.count.integerValue, 10).toLocaleString('es-CO');
+              }
+            }
+          } catch (e) {
+            console.error("Error obteniendo visitas", e);
+          }
+        }
+        
+        trackRealVisit();
       }
     });
 

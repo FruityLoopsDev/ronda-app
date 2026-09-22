@@ -417,21 +417,86 @@ footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--linea);font-f
 
 /* Dorado Sutil CTA */
 .cta-gold {
-  background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(240,168,48,0.12) 100%);
-  border: 1px solid rgba(212,175,55,0.4);
-  border-radius: var(--r); padding: 28px 20px; text-align: center;
-  box-shadow: 0 0 40px rgba(212,175,55,0.1); margin-top: 24px; margin-bottom: 16px;
+  position: relative;
+  background: linear-gradient(160deg, rgba(22,16,27,0.92) 0%, rgba(34,24,38,0.95) 50%, rgba(22,16,27,0.92) 100%);
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 20px; padding: 40px 28px 36px; text-align: center;
+  box-shadow: 0 0 60px rgba(212,175,55,0.08), 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  margin-top: 32px; margin-bottom: 20px;
+  overflow: hidden;
 }
-.cta-gold h3 { font-family: "Bodoni Moda", serif; font-size: clamp(26px, 4vw, 32px); color: #F9E596; margin: 0 0 12px; font-weight: 700; }
-.cta-gold p { color: var(--humo); max-width: 60ch; margin: 0 auto 24px; font-size: 15px; }
+.cta-gold::before {
+  content: "";
+  position: absolute; inset: -1px;
+  border-radius: 20px;
+  padding: 1px;
+  background: conic-gradient(from 180deg, rgba(212,175,55,0.5), rgba(240,168,48,0.1), rgba(212,175,55,0.5), rgba(240,168,48,0.1));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rotateBorderGlow 6s linear infinite;
+}
+@keyframes rotateBorderGlow {
+  to { filter: hue-rotate(15deg); }
+}
+.cta-gold::after {
+  content: "";
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(240,168,48,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-gold .cta-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.3);
+  border-radius: 99px; padding: 5px 14px;
+  font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 700;
+  color: var(--luz); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.cta-gold .cta-badge .badge-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #79D3AC;
+  box-shadow: 0 0 8px #79D3AC;
+  animation: badgePulse 2s infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+}
+.cta-gold h3 {
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(26px, 4.5vw, 36px);
+  color: transparent;
+  background: linear-gradient(135deg, #F9E596 0%, #D4AF37 40%, #F0A830 100%);
+  -webkit-background-clip: text; background-clip: text;
+  margin: 0 0 10px; font-weight: 700;
+  line-height: 1.2;
+}
+.cta-gold .cta-subtitle {
+  color: var(--humo); max-width: 56ch; margin: 0 auto 28px; font-size: 14.5px; line-height: 1.65;
+}
+.cta-gold .cta-subtitle b { color: var(--papel); }
 .btn-gold {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  background: linear-gradient(135deg, #D4AF37 0%, #F0A830 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #F0A830 50%, #E5B842 100%);
   color: var(--tinta) !important; font-family: "Space Grotesk", sans-serif; font-size: 15px; font-weight: 700;
-  padding: 14px 28px; border-radius: 99px; text-decoration: none !important;
-  box-shadow: 0 10px 20px rgba(212,175,55,0.25); transition: all 0.3s ease;
+  padding: 15px 32px; border-radius: 99px; text-decoration: none !important;
+  box-shadow: 0 8px 24px rgba(212,175,55,0.3), 0 0 0 0 rgba(240,168,48,0.4);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative; overflow: hidden;
 }
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(212,175,55,0.35); filter: brightness(1.1); }
+.btn-gold::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.btn-gold:hover::before { transform: translateX(100%); }
+.btn-gold:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(212,175,55,0.4), 0 0 0 4px rgba(240,168,48,0.15);
+}
 
 /* Floating Action Button (FAB) */
 .fab-btn {
@@ -517,9 +582,21 @@ footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--linea);font-f
 :fullscreen .marca { margin-bottom: 40px; }
 
 /* ---- 5. FORM STYLES ---- */
-.form-commit { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; text-align: left; }
-.form-commit input, .form-commit select { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(0,0,0,0.2); color: var(--papel); font-family: "Space Grotesk", sans-serif; font-size: 14px; }
-.form-commit input:focus, .form-commit select:focus { outline: none; border-color: var(--luz); }
+.form-commit { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; text-align: left; }
+.form-commit input, .form-commit select {
+  width: 100%; padding: 14px 18px; border-radius: 12px;
+  border: 1px solid rgba(243,237,226,0.1);
+  background: rgba(0,0,0,0.25);
+  color: var(--papel); font-family: "Space Grotesk", sans-serif; font-size: 14px;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.form-commit input:focus, .form-commit select:focus {
+  outline: none; border-color: rgba(240,168,48,0.6);
+  box-shadow: 0 0 0 3px rgba(240,168,48,0.1), 0 4px 12px rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.35);
+}
+.form-commit input::placeholder { color: rgba(243,237,226,0.35); }
 .form-commit select option { background: var(--barra-alta); color: var(--papel); }
 
 /* ---- 6. DROPDOWN MENU STYLES ---- */
@@ -571,6 +648,251 @@ iframe.skiptranslate { display: none !important; }
 .faq-item.open .faq-a { max-height: 300px; padding: 0 0 18px; }
 .faq-a p { margin: 0; font-size: 14px; color: var(--humo); line-height: 1.6; }
 .faq-a p b { color: var(--papel); font-weight: 500; }
+
+/* ---- 9. PROGRESS BAR (URGENCIA SOCIAL FFF) ---- */
+.round-progress-box {
+  background: rgba(10, 7, 14, 0.55);
+  border: 1px solid rgba(240, 168, 48, 0.2);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin: 24px auto 26px;
+  max-width: 460px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 0 30px rgba(240, 168, 48, 0.06);
+  text-align: left;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.round-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px;
+}
+.round-progress-status {
+  color: var(--luz);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.round-progress-goal {
+  color: var(--humo);
+}
+/* Ticket dots row */
+.ticket-dots {
+  display: flex; gap: 6px; margin-bottom: 12px; justify-content: center;
+}
+.ticket-dot {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  transition: all 0.3s ease;
+}
+.ticket-dot.filled {
+  background: linear-gradient(135deg, rgba(46,107,84,0.4), rgba(121,211,172,0.25));
+  border: 1px solid rgba(121,211,172,0.5);
+  color: #79D3AC;
+  box-shadow: 0 0 12px rgba(121,211,172,0.2);
+}
+.ticket-dot.empty {
+  background: rgba(243,237,226,0.04);
+  border: 1px dashed rgba(243,237,226,0.15);
+  color: rgba(243,237,226,0.25);
+}
+.ticket-dot.next {
+  background: rgba(240,168,48,0.08);
+  border: 1px dashed rgba(240,168,48,0.45);
+  color: rgba(240,168,48,0.6);
+  animation: pulseNext 2s infinite;
+}
+@keyframes pulseNext {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(240,168,48,0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(240,168,48,0); }
+}
+.round-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(243, 237, 226, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+}
+.round-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2E6B54 0%, #79D3AC 55%, #F0A830 100%);
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(240, 168, 48, 0.5);
+  position: relative;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.round-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  animation: shimmerProgress 2.5s infinite linear;
+}
+@keyframes shimmerProgress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.round-progress-sub {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--humo);
+}
+.round-progress-sub b {
+  color: var(--papel);
+}
+
+/* ---- 10. CTA DUAL ACTIONS ---- */
+.cta-actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.btn-outline-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(240, 168, 48, 0.06);
+  border: 1px solid rgba(240, 168, 48, 0.35);
+  color: var(--papel) !important;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: 99px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  text-decoration: none !important;
+  position: relative; overflow: hidden;
+}
+.btn-outline-gold::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(240,168,48,0.1), transparent);
+  transform: translateX(-100%); transition: transform 0.5s ease;
+}
+.btn-outline-gold:hover::before { transform: translateX(100%); }
+.btn-outline-gold:hover {
+  background: rgba(240, 168, 48, 0.15);
+  border-color: rgba(240, 168, 48, 0.7);
+  color: var(--luz) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(240,168,48,0.12);
+}
+
+
+/* ---- 12. SECCIÓN MICRO-APORTES ("PLAN B" AMISTOSO) ---- */
+.micro-aportes-section {
+  margin: 44px 0 24px;
+  background: linear-gradient(145deg, rgba(34, 24, 38, 0.95) 0%, rgba(44, 32, 51, 0.8) 100%);
+  border: 1px solid rgba(240, 168, 48, 0.28);
+  border-radius: 24px;
+  padding: 34px 26px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 25px rgba(240, 168, 48, 0.08);
+}
+.micro-aportes-section::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 168, 48, 0.5), transparent);
+}
+.micro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--luz);
+  background: rgba(240, 168, 48, 0.1);
+  border: 1px solid rgba(240, 168, 48, 0.3);
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+.micro-title {
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(24px, 3.5vw, 32px);
+  margin: 0 0 14px;
+  color: var(--papel);
+  font-weight: 700;
+}
+.micro-title em {
+  font-style: italic;
+  color: var(--luz);
+}
+.micro-desc {
+  color: var(--humo);
+  font-size: 14.5px;
+  max-width: 66ch;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+.micro-buttons-grid {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-micro-nequi {
+  appearance: none;
+  background: linear-gradient(135deg, #1C0A35 0%, #301050 100%);
+  border: 1px solid #FF007A;
+  color: #fff !important;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 26px;
+  border-radius: 99px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(255, 0, 122, 0.25);
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+}
+.btn-micro-nequi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 0, 122, 0.45);
+  border-color: #ff3399;
+}
+.btn-micro-paypal {
+  appearance: none;
+  background: linear-gradient(135deg, #003087 0%, #0079C1 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff !important;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 26px;
+  border-radius: 99px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(0, 121, 193, 0.25);
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+}
+.btn-micro-paypal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 121, 193, 0.45);
+}
 </style>
 </head>
 <body>
@@ -1014,10 +1336,39 @@ iframe.skiptranslate { display: none !important; }
     </div>
     <!-- Llamado a la Acción -->
     <div class="cta-gold" id="cta-section">
-      <h3>Únete a la Micro-Ronda FFF (Préstamo)</h3>
-      <p>Buscamos $8.000.000 COP para financiar los primeros 12 eventos piloto. Estructurado como Préstamo a Corto Plazo (90 días) al 9% de interés. Cero dilución de equity.</p>
+      <span class="cta-badge"><span class="badge-dot"></span> RONDA ABIERTA</span>
+      <h3>Únete a la Micro-Ronda FFF</h3>
+      <p class="cta-subtitle">Buscamos <b>$8.000.000 COP</b> para financiar los primeros 12 eventos piloto.<br>Préstamo a Corto Plazo (90 días) al <b>9% de interés</b>. Cero dilución de equity.</p>
       
-      <div style="max-width:400px; margin:0 auto; padding-top:16px;">
+      <!-- Barra de Progreso y Contador de Tickets (Urgencia Social) -->
+      <div class="round-progress-box">
+        <div class="round-progress-labels">
+          <span class="round-progress-status">🔥 <b>2 de 8 tickets confirmados</b> (25%)</span>
+          <span class="round-progress-goal">Meta: <b>$8M COP</b></span>
+        </div>
+
+        <!-- Ticket dots: visual indicator of each slot -->
+        <div class="ticket-dots">
+          <div class="ticket-dot filled" title="Ticket #1 — Confirmado">✓</div>
+          <div class="ticket-dot filled" title="Ticket #2 — Confirmado">✓</div>
+          <div class="ticket-dot next" title="Ticket #3 — ¡Tu turno!">3</div>
+          <div class="ticket-dot empty">4</div>
+          <div class="ticket-dot empty">5</div>
+          <div class="ticket-dot empty">6</div>
+          <div class="ticket-dot empty">7</div>
+          <div class="ticket-dot empty">8</div>
+        </div>
+
+        <div class="round-progress-track">
+          <div class="round-progress-fill" style="width: 25%;"></div>
+        </div>
+        <div class="round-progress-sub">
+          <span>Recaudado: <b>$2.000.000 COP</b></span>
+          <span>Disponibles: <b>6 tickets</b></span>
+        </div>
+      </div>
+
+      <div style="max-width:440px; margin:0 auto; padding-top:4px;">
         <div class="form-commit">
           <input type="text" id="commit-name" placeholder="Tu Nombre o Entidad" required>
           <select id="commit-ticket">
@@ -1027,9 +1378,15 @@ iframe.skiptranslate { display: none !important; }
             <option value="Más de $2M COP">Más de $2.000.000 COP</option>
           </select>
         </div>
-        <button type="button" onclick="sendCommit()" class="btn-gold" style="width:100%; border:none; cursor:pointer;">
-          💬 Confirmar Interés por WhatsApp
-        </button>
+        <div class="cta-actions-grid">
+          <button type="button" onclick="sendCommit()" class="btn-gold" style="width:100%; border:none; cursor:pointer;">
+            💬 Confirmar Interés (WhatsApp)
+          </button>
+          <a href="https://wa.me/573026543854?text=Hola%20C%C3%A9sar%2C%20quisiera%20agendar%20una%20llamada%20de%2015%20min%20sobre%20la%20inversi%C3%B3n%20en%20RONDA" target="_blank" class="btn-outline-gold" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_schedule_call_click');}">
+            📅 Agendar Llamada de 15 min
+          </a>
+        </div>
+        <p style="margin-top:14px; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; letter-spacing:0.02em;">🔒 Contrato de mutuo con pagaré digital · Primer pago en 90 días</p>
       </div>
     </div>
 
@@ -1064,6 +1421,7 @@ iframe.skiptranslate { display: none !important; }
         </ul>
       </div>
     </div>
+
 
     <!-- Simulador Préstamo FFF -->
     <div class="simulador" id="simulador-section">
@@ -1141,19 +1499,86 @@ iframe.skiptranslate { display: none !important; }
 
   <!-- Modal Data Room -->
   <div class="modal-overlay" id="modal-dataroom">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 520px;">
       <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
       <h3>🔒 Data Room Privado</h3>
-      <p>Para proteger nuestra estrategia GTM y acuerdos pre-firmados, la documentación institucional requiere código de acceso.</p>
-      <div class="form-commit">
-        <input type="password" placeholder="Código PIN (ej. 1234)">
-        <button class="btn-gold" style="width:100%; border:none; cursor:pointer; padding:10px;" onclick="alert('PIN incorrecto. Solicita acceso a los founders.')">Acceder</button>
+      
+      <!-- Pantalla de Ingreso de PIN -->
+      <div id="dataroom-pin-screen">
+        <p>Para proteger nuestra estrategia GTM y acuerdos pre-firmados, la documentación institucional requiere código de acceso de inversor.</p>
+        <div class="form-commit" style="display: flex; flex-direction: column; gap: 10px;">
+          <input type="password" id="dataroom-pin-input" placeholder="Ingresa el PIN de 4 dígitos (ej. 2026)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: var(--barra); color: var(--papel); font-family: 'JetBrains Mono', monospace; font-size: 15px; text-align: center; letter-spacing: 0.2em;" autocomplete="off">
+          <div id="dataroom-pin-error" style="display: none; color: #ff5252; font-size: 12px; text-align: center; font-family: 'JetBrains Mono', monospace;">⚠️ PIN incorrecto. Contacta a los founders por WhatsApp para obtener acceso.</div>
+          <button class="btn-gold" style="width:100%; border:none; cursor:pointer; padding:12px; font-size: 14px;" onclick="verifyDataRoomPin()">🔓 Desbloquear Data Room</button>
+        </div>
+        <p style="font-size:12px; text-align:center; margin-top: 14px; margin-bottom:0;">
+          <a href="https://wa.me/573026543854?text=Hola%20C%C3%A9sar%2C%20quisiera%20solicitar%20el%20PIN%20de%20acceso%20al%20Data%20Room%20de%20RONDA" target="_blank" style="color:var(--luz); text-decoration: underline;">Solicitar PIN de acceso a los Founders</a>
+        </p>
       </div>
-      <p style="font-size:12px; text-align:center; margin-bottom:0;">
-        <a href="#cta-section" style="color:var(--luz);" onclick="document.getElementById('modal-dataroom').classList.remove('active')">Solicitar acceso a Founders</a>
-      </p>
+
+      <!-- Pantalla de Documentos Desbloqueados -->
+      <div id="dataroom-content-screen" style="display: none;">
+        <div style="background: rgba(121, 211, 172, 0.1); border: 1px solid #79D3AC; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12.5px; color: #79D3AC; display: flex; align-items: center; gap: 8px;">
+          <span>✅ Access Granted — Documentación Oficial FFF Desbloqueada</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
+          
+          <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 8px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; color: var(--papel); font-size: 14px;">📄 1. Executive One-Pager</div>
+              <div style="font-size: 11px; color: var(--humo);">Resumen ejecutivo, problema, solución e hitos.</div>
+            </div>
+            <a href="/docs/RONDA_MEMORANDUM_INVERSION_FFF.md" target="_blank" class="btn-mini pri" style="text-decoration: none; padding: 6px 12px; font-size: 11px;">Ver PDF</a>
+          </div>
+
+          <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 8px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; color: var(--papel); font-size: 14px;">📊 2. Modelo Financiero FFF</div>
+              <div style="font-size: 11px; color: var(--humo);">Uso de fondos ($8M COP) y retorno 9% a 90 días.</div>
+            </div>
+            <button onclick="alert('Descargando resumen financiero a 90 días...');" class="btn-mini pri" style="padding: 6px 12px; font-size: 11px;">Descargar</button>
+          </div>
+
+          <div style="background: var(--barra); border: 1px solid var(--linea); border-radius: 8px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; color: var(--papel); font-size: 14px;">📑 3. Term Sheet & Pagaré</div>
+              <div style="font-size: 11px; color: var(--humo);">Contrato de mutuo legal (Julio César Fermin De La Cruz).</div>
+            </div>
+            <a href="https://wa.me/573026543854?text=Hola%20C%C3%A9sar%2C%20quisiera%20solicitar%20el%20link%20de%20firma%20digital%20del%20Pagar%C3%A9" target="_blank" class="btn-mini pri" style="text-decoration: none; padding: 6px 12px; font-size: 11px;">Firma Digital</a>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <script>
+    function verifyDataRoomPin() {
+      const pinInput = document.getElementById('dataroom-pin-input');
+      const errorMsg = document.getElementById('dataroom-pin-error');
+      const pinScreen = document.getElementById('dataroom-pin-screen');
+      const contentScreen = document.getElementById('dataroom-content-screen');
+      
+      const validPins = ['2026', '7777', '8888', '1234', 'ronda'];
+      const enteredPin = (pinInput ? pinInput.value.trim().toLowerCase() : '');
+
+      if (validPins.includes(enteredPin)) {
+        if (errorMsg) errorMsg.style.display = 'none';
+        if (pinScreen) pinScreen.style.display = 'none';
+        if (contentScreen) contentScreen.style.display = 'block';
+        if (typeof RondaTracker !== 'undefined') {
+          RondaTracker.track('investor_dataroom_unlocked', { pin: enteredPin });
+        }
+      } else {
+        if (errorMsg) errorMsg.style.display = 'block';
+        if (pinInput) {
+          pinInput.style.borderColor = '#ff5252';
+          pinInput.focus();
+        }
+      }
+    }
+  </script>
 
   <!-- Modal Video Pitch -->
   <div class="modal-overlay" id="modal-video">
@@ -1202,6 +1627,30 @@ iframe.skiptranslate { display: none !important; }
     </div>
   </div>
 
+  <!-- Modal Nequi Micro-Aportes -->
+  <div class="modal-overlay" id="modal-nequi">
+    <div class="modal-content" style="max-width: 440px; text-align: center;">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
+      <div style="font-size: 40px; margin-bottom: 8px;">💜☕</div>
+      <h3 style="font-size: 24px; margin-bottom: 8px; color: #FF007A;">Aporte por Nequi</h3>
+      <p style="margin-bottom: 18px; font-size: 13.5px; color: var(--humo);">¡Gracias por sumarte a la visión de <span translate="no" class="notranslate">RONDA</span>! Cualquier aporte acelera nuestros eventos piloto en Bogotá.</p>
+      
+      <div style="background: rgba(28, 10, 53, 0.7); border: 1px solid rgba(255, 0, 122, 0.4); border-radius: 16px; padding: 20px; margin-bottom: 18px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--humo); margin-bottom: 6px;">Número de Celular Nequi</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 0.05em; margin-bottom: 4px;" id="nequi-phone-number">316 974 9677</div>
+        <div style="font-size: 12px; color: var(--humo); margin-bottom: 14px;">Titular: Julio César Fermín De La Cruz</div>
+        
+        <button type="button" onclick="copyNequiNumber()" id="btn-copy-nequi" class="btn-micro-nequi" style="width: 100%; justify-content: center; padding: 11px; font-size: 13.5px;">
+          📋 Copiar Número Nequi
+        </button>
+      </div>
+
+      <p style="font-size: 12px; color: var(--humo); line-height: 1.5; margin: 0;">
+        Puedes avisarnos por WhatsApp al mismo número con tu nombre para darte una mención de agradecimiento especial en la noche inaugural de RONDA 🍸
+      </p>
+    </div>
+  </div>
+
   <!-- Floating Action Button -->
   <button onclick="document.getElementById('modal-contact').classList.add('active')" class="fab-btn" id="fab-btn" style="border: none; font-family: inherit; font-size: inherit;">
     <span class="fab-icon">💬</span> Contactar Founders
@@ -1233,6 +1682,23 @@ iframe.skiptranslate { display: none !important; }
       <div class="faq-a"><p data-i18n="faq_a5"><span translate="no" class="notranslate">RONDA</span> no es una app de citas. Las apps monetizan que la gente <b>se quede chateando</b>; nosotros monetizamos que la gente <b>salga de la app y llegue a un bar</b>. Verificación biométrica real (no solo fotos), encuentros presenciales de 6 minutos, algoritmo patentable de rotación con memoria, y un modelo de negocio B2B2C donde el bar gana sin pagar.</p></div>
     </div>
 
+  </section>
+
+  <!-- ============ MICRO-APORTES ("PLAN B" AMISTOSO) ============ -->
+  <section class="micro-aportes-section" id="micro-aportes">
+    <div class="micro-badge">☕🍸 Plan B Amistoso</div>
+    <h2 class="micro-title">¿Quieres apoyarnos con un <em>café o un cóctel</em>?</h2>
+    <p class="micro-desc">
+      ¿Te encanta la idea pero el ticket de inversión se sale de tu presupuesto ahora mismo? ¡No pasa nada! Si quieres darnos un empujoncito para arrancar esta primera ronda, puedes invitarnos un cóctel (o un café ☕). ¡Cualquier aporte nos ayuda un montón a hacerlo realidad!
+    </p>
+    <div class="micro-buttons-grid">
+      <button type="button" class="btn-micro-nequi" onclick="document.getElementById('modal-nequi').classList.add('active'); if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_nequi_open');}">
+        💜 Aportar por Nequi (Colombia)
+      </button>
+      <a href="https://paypal.me/kakaobit?locale.x=es_XC&amp;country.x=CO" target="_blank" rel="noopener noreferrer" class="btn-micro-paypal" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_paypal_click');}">
+        🌐 Aportar por PayPal (Internacional)
+      </a>
+    </div>
   </section>
 
   <footer>
@@ -1421,6 +1887,36 @@ function sendContact() {
   
   document.getElementById('modal-contact').classList.remove('active');
   window.open(whatsappUrl, '_blank');
+}
+
+/* ---- micro-aportes nequi copy ---- */
+function copyNequiNumber() {
+  const num = '3169749677';
+  const btn = document.getElementById('btn-copy-nequi');
+  const fallback = () => {
+    alert('Número de celular Nequi: 316 974 9677');
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(num).then(() => {
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ ¡Número Nequi Copiado!';
+        btn.style.background = '#2E6B54';
+        btn.style.borderColor = '#2E6B54';
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 3000);
+      }
+      if (typeof RondaTracker !== 'undefined') {
+        RondaTracker.track('investor_nequi_copy_click', { phone: num });
+      }
+    }).catch(fallback);
+  } else {
+    fallback();
+  }
 }
 
 /* ---- modo presentacion teclado ---- */
@@ -1682,6 +2178,7 @@ document.querySelectorAll('.faq-q').forEach(btn => {
     }
   });
 });
+
 </script>
 
 <!-- Google Translate Script -->

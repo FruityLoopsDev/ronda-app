@@ -10,13 +10,17 @@ export interface PaymentCheckoutOptions {
   onError?: (err: any) => void;
 }
 
-// QR de cobro Nequi. Coloca la imagen en public/nequi-qr.png o define
-// VITE_NEQUI_QR_URL con la URL de la imagen.
+// QR y datos de cobro Nequi. Coloca la imagen en public/nequi-qr.png o define
+// VITE_NEQUI_QR_URL y VITE_NEQUI_PHONE con los valores correspondientes.
 const DEFAULT_QR_URL = '/nequi-qr.png';
+const DEFAULT_NEQUI_PHONE = '316 974 9677';
 
 class PaymentService {
   private qrUrl: string =
     (import.meta as any).env?.VITE_NEQUI_QR_URL || DEFAULT_QR_URL;
+
+  private nequiPhone: string =
+    (import.meta as any).env?.VITE_NEQUI_PHONE || DEFAULT_NEQUI_PHONE;
     
   private get wompiPublicKey(): string {
     return (import.meta as any).env?.VITE_WOMPI_PUBLIC_KEY || '';
@@ -95,7 +99,7 @@ class PaymentService {
     // --- Fallback de Producción: pago escaneando el QR de Nequi (verificación manual) ---
     const confirmed = await RondaDialog.confirm({
       title: 'Pago con Nequi',
-      message: `Tu pase de 90 min + cóctel en ${venueName} cuesta ${price}.\n\n1️⃣ Escanea el QR con tu app Nequi (puedes usar "Subir imagen" desde la galería).\n2️⃣ Confirma el pago desde Nequi.\n3️⃣ Vuelve aquí y pulsa "Ya pagué".\n\nEl anfitrión verificará tu pago al llegar al evento.`,
+      message: `Tu pase de 90 min + cóctel en ${venueName} cuesta ${price}.\n\n1️⃣ Envía a Nequi al número ${this.nequiPhone} (o escanea el QR).\n2️⃣ Confirma la transferencia desde Nequi.\n3️⃣ Vuelve aquí y pulsa "Ya pagué".\n\nEl anfitrión verificará tu pago al llegar al evento.`,
       icon: '💚',
       imageUrl: this.qrUrl,
       confirmText: '✅ Ya pagué',

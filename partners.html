@@ -1750,8 +1750,9 @@ footer {
 </a>
 
 <footer>
-  <div class="container">
+  <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
     <p>© 2026 RONDA — Experiencias Presenciales B2B2C · Bogotá D.C. <span style="opacity: 0.5; margin-left: 8px; font-family: var(--font-mono, monospace); font-size: 11px;">v2.2.0-prod</span></p>
+    <p id="global-visit-counter" style="font-family: var(--font-mono, monospace); font-size: 11px; color: var(--humo); letter-spacing: 0.5px;">Visitas totales: <span style="color: var(--luz); font-weight: 700;">...</span></p>
   </div>
 </footer>
 
@@ -1896,6 +1897,63 @@ footer {
     });
   }, { threshold: 0.3 });
   tlObserver.observe(document.querySelector('.tl-wrapper'));
+
+  // Contador global persistente conectado a la base de datos real (Firestore)
+  document.addEventListener('DOMContentLoaded', () => {
+    const globalCounterEl = document.querySelector('#global-visit-counter span');
+    if (globalCounterEl) {
+      async function trackRealVisit() {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const firebaseUrl = isLocal ? 'http://127.0.0.1:8081' : 'https://firestore.googleapis.com';
+        
+        try {
+          const hasVisited = sessionStorage.getItem('ronda_real_visit');
+          
+          if (!hasVisited) {
+            // Realizamos un incremento atómico real en Firestore
+            const payload = {
+              writes: [{
+                transform: {
+                  document: `projects/ronda-uno/databases/(default)/documents/stats/visits`,
+                  fieldTransforms: [{
+                    fieldPath: "count",
+                    increment: { integerValue: "1" }
+                  }]
+                }
+              }]
+            };
+            
+            const res = await fetch(`${firebaseUrl}/v1/projects/ronda-uno/databases/(default)/documents:commit`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            
+            const data = await res.json();
+            if (data.writeResults && data.writeResults[0] && data.writeResults[0].transformResults) {
+              const newCount = data.writeResults[0].transformResults[0].integerValue;
+              globalCounterEl.textContent = parseInt(newCount, 10).toLocaleString('es-CO');
+              sessionStorage.setItem('ronda_real_visit', 'true');
+              return; // Éxito
+            }
+          }
+          
+          // Si ya visitó en esta sesión, simplemente consultamos el dato actual
+          const res = await fetch(`${firebaseUrl}/v1/projects/ronda-uno/databases/(default)/documents/stats/visits`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.fields && data.fields.count) {
+              globalCounterEl.textContent = parseInt(data.fields.count.integerValue, 10).toLocaleString('es-CO');
+            }
+          }
+        } catch (e) {
+          console.error("Error obteniendo visitas", e);
+        }
+      }
+      
+      trackRealVisit();
+    }
+  });
 </script>
 
 </body>
