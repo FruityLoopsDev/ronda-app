@@ -21,15 +21,24 @@ service cloud.firestore {
       ]);
     }
 
+    // En el alta no existe `resource`: se revisan las claves del documento entrante.
+    function createTouchedSensitive() {
+      return request.resource.data.keys().hasAny([
+        'isVerified', 'linkedinVerified', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches', 'safeword'
+      ]);
+    }
+
     // --- Usuarios ---
     match /users/{userId} {
       // Privacidad: cada quien lee solo su propio documento; el staff lee todo.
       allow read: if request.auth != null && (request.auth.uid == userId || isStaff());
 
-      // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación).
+      // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación
+      // ni auto-verificación: sin trustTier/verifications/isVerified desde el cliente).
       allow create: if request.auth != null
                     && request.auth.uid == userId
-                    && request.resource.data.role == 'client';
+                    && request.resource.data.role == 'client'
+                    && !createTouchedSensitive();
 
       // Actualización: el propio usuario sin poder escalar su rol ni auto-otorgarse
       // ticket. El staff/admin puede actualizar para check-in, matches y emisión de certificados ($0 sin Cloud Functions).
