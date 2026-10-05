@@ -181,6 +181,20 @@
 
 ---
 
+## FASE 8 — TRUST TIERS Y KYC MULTI-AGENTE (SEGMENTO SIN LINKEDIN)
+
+> **Documento de Trazabilidad Principal:** `docs/KYC_MULTIAGENT_EXECUTION_PLAN.md`  
+> **Requisito del Negocio:** T2 obligatorio para comprar tickets y entrar a rotación. Costo $0.00 COP.
+
+### 8.1 Tareas Asignadas a Cline (Ejecutor Autónomo)
+- [ ] **[C-1] UI Captura Biométrica con Óvalo Guía:** En `src/verification.ts`, agregar al canvas de captura un óvalo guía semitransparente con feedback visual en tiempo real (rojo = fuera de cuadro/desenfocado, verde = óptimo para captura).
+- [ ] **[C-2] Componente de Reto de Liveness en Pantalla:** Implementar el display interactivo que muestra las instrucciones aleatorias al usuario ("Parpadea ahora", "Gira la cabeza suavemente").
+- [ ] **[C-3] Escáner de Cédula:** Integrar escaneo de código de barras/MRZ para el reverso del documento de identidad.
+- [ ] **[C-4] Cola de Revisión Manual en SuperAdmin:** En `superadmin.html`, implementar el panel para el Administrador Central para revisar casos pendientes en `kycReviews` (visor de fotos lado a lado, métricas de confianza, botones de Aprobar T1 / Rechazar).
+- [ ] **[C-5] Gating Estricto de Tier 2:** En `src/client.ts` y `src/bar.ts`, verificar que los usuarios con `trustTier < 2` no puedan comprar entradas ni ser admitidos al check-in sin pasar antes por verificación.
+
+---
+
 ## ⚠️ RESTRICCIONES IMPORTANTES PARA CLINE
 
 1. **NO modifiques `AGENTS.md` ni `docs/index.md`** (Prompt Caching).
@@ -189,3 +203,4 @@
 4. **NO modifiques `src/client.ts` completo** — es un archivo XL (1938 líneas). Misma regla.
 5. **Ejecuta `npx tsc --noEmit` después de CADA fase** para verificar que no introduces regresiones.
 6. **Si un flujo requiere datos de prueba en Firestore**, créalos via los emuladores, no hardcodees datos en el código.
+
