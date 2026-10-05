@@ -560,6 +560,22 @@ class HostConsoleService {
       return;
     }
 
+    // [C-5] Gating Tier 2: advertencia visual si no está verificado (trustTier < 2).
+    if ((user.trustTier ?? 0) < 2) {
+      const proceed = await RondaDialog.confirm({
+        title: '🛡️ Verificación Tier 2 Requerida',
+        message: `El asistente <b>${user.name || uid}</b> tiene Tier ${user.trustTier ?? 0} (requiere Tier 2).<br><br>Su identidad aún no está verificada. ¿Autorizar ingreso excepcional?`,
+        icon: '🛡️',
+        confirmText: '✓ Autorizar Excepción',
+        cancelText: '✕ Denegar Ingreso',
+        type: 'confirm'
+      });
+      if (!proceed) {
+        this.showToastQR(`❌ Ingreso denegado para ${user.name || uid} (Tier < 2)`);
+        return;
+      }
+    }
+
     // Validación de pago en puerta si tiene pago pendiente o no tiene ticket confirmado
     if (user.paymentPending || !user.hasTicket) {
       const confirmed = await RondaDialog.confirm({

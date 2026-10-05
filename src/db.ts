@@ -38,6 +38,24 @@ export interface User {
   preferredZones?: string[];
   ageRangePreference?: { min: number; max: number };
   isVerified?: boolean;
+  trustTier?: 0 | 1 | 2 | 3;
+  verifications?: {
+    identity?: {
+      method: 'face_kyc' | 'linkedin_persona' | 'manual_admin';
+      verifiedAt: string;
+      confidenceScore?: number;
+      reviewerUid?: string;
+    };
+    professional?: {
+      method: 'linkedin_oauth' | 'corporate_email' | 'professional_card' | 'rut' | 'portfolio' | 'referral';
+      verifiedAt: string;
+      details?: {
+        companyOrDomain?: string;
+        sourceUrl?: string;
+        referrerUid?: string;
+      };
+    };
+  };
   linkedinUrl?: string;
   linkedinVerified?: boolean;
   linkedinVerifiedAt?: string;

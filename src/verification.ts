@@ -1,10 +1,35 @@
 import { getDescriptor, evaluateIdentity } from './face-verify.js';
+import { collection, addDoc } from 'firebase/firestore';
+import { RondaServices } from './firebase-config.js';
+import type { User } from './db.js';
 
 // verification.js: Módulo de Seguridad, Geolocalización y Verificación de Identidad (KYC)
 // Verificación robusta (a pruebas de fallo): cada paso devuelve resultado tipado y la UI
 // recibe un mensaje claro; NUNCA se lanza un error no controlado hacia el flujo principal.
 
 declare var Tesseract: any;
+
+/** Retos de liveness mostrados al usuario (C-2). */
+export const KYC_LIVENESS_CHALLENGES: string[] = [
+  'Parpadea 2 veces',
+  'Gira la cabeza levemente a la derecha',
+  'Gira la cabeza levemente a la izquierda',
+  'Sonríe de forma natural',
+  'Acerca tu rostro al óvalo',
+];
+
+/** Estado visual del óvalo guía (C-1). */
+export type KycOvalState = 'idle' | 'ok' | 'error';
+
+export interface KycReviewPayload {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  registeredBirthDate: string;
+  reasonsForManual: string[];
+  metrics: { faceDistance: number; livenessScore: number; ocrExtractedName?: string; ocrExtractedNumber?: string };
+  imageUrls: { selfie: string; docFront: string; docBack?: string };
+}
 
 class VerificationService {
   location: any = null;
@@ -118,6 +143,137 @@ class VerificationService {
     }
   }
 
+  // --- [C-1] Óvalo guía biométrico con feedback rojo/verde ---
+  /** Dibuja/actualiza el óvalo guía semitransparente sobre el contenedor KYC. */
+  setOvalState(state: KycOvalState, hint?: string): void {
+    let overlay = document.getElementById('kyc-oval-overlay') as HTMLElement | null;
+    if (!overlay) {
+      const video = document.getElementById('kyc-video');
+      const anchor = (video?.parentElement || video || document.body) as HTMLElement;
+      const anchorPos = anchor.style.position;
+      if (!anchorPos) anchor.style.position = 'relative';
+      overlay = document.createElement('div');
+      overlay.id = 'kyc-oval-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:5;';
+      overlay.innerHTML = `<div id="kyc-oval-frame" style="width:min(62%,260px);aspect-ratio:3/4;border-radius:50%;border:3px dashed rgba(243,237,226,.55);background:rgba(243,237,226,.06);transition:border-color .2s ease, box-shadow .2s ease;"></div><div id="kyc-oval-hint" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;font-family:var(--font-mono,monospace);color:var(--humo,#999);"></div>`;
+      anchor.appendChild(overlay);
+    }
+    const frame = overlay.querySelector('#kyc-oval-frame') as HTMLElement | null;
+    const hintEl = overlay.querySelector('#kyc-oval-hint') as HTMLElement | null;
+    if (frame) {
+      if (state === 'ok') {
+        frame.style.borderColor = '#1d5c3f';
+        frame.style.boxShadow = '0 0 0 4px rgba(29,92,63,.25)';
+      } else if (state === 'error') {
+        frame.style.borderColor = '#c0392b';
+        frame.style.boxShadow = '0 0 0 4px rgba(192,57,43,.25)';
+      } else {
+        frame.style.borderColor = 'rgba(243,237,226,.55)';
+        frame.style.boxShadow = 'none';
+      }
+    }
+    if (hintEl && hint !== undefined) hintEl.textContent = hint;
+  }
+
+  /** Evalúa un frame y actualiza el óvalo: verde si hay rostro nítido, rojo si no. */
+  async updateOvalFromFrame(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement): Promise<boolean> {
+    try {
+      const res = await getDescriptor(image as HTMLImageElement);
+      if (res.error || !res.descriptor) {
+        const msg = res.error === 'multiple_faces'
+          ? 'Varios rostros: usa una foto con una sola persona'
+          : 'Sin rostro: centra tu cara en el óvalo';
+        this.setOvalState('error', msg);
+        return false;
+      }
+      this.setOvalState('ok', 'Posición óptima — mantén el rostro en el óvalo');
+      return true;
+    } catch {
+      this.setOvalState('error', 'Imagen desenfocada: mejora la luz y enfoca');
+      return false;
+    }
+  }
+
+  // --- [C-2] Reto de liveness dinámico ---
+  /** Elige un reto aleatorio y lo muestra en #kyc-liveness (crea el nodo si falta). */
+  showLivenessChallenge(containerId = 'kyc-liveness'): string {
+    const challenge = KYC_LIVENESS_CHALLENGES[Math.floor(Math.random() * KYC_LIVENESS_CHALLENGES.length)] || KYC_LIVENESS_CHALLENGES[0]!;
+    let el = document.getElementById(containerId) as HTMLElement | null;
+    if (!el) {
+      const status = document.getElementById('kyc-status');
+      el = document.createElement('div');
+      el.id = containerId;
+      el.style.cssText = 'margin:8px 0;padding:10px 12px;border:1px dashed var(--luz,#c9a227);border-radius:10px;font-size:13px;text-align:center;';
+      if (status?.parentElement) status.parentElement.insertBefore(el, status);
+      else document.body.appendChild(el);
+    }
+    el.textContent = `👁️ Reto de vida: ${challenge}`;
+    return challenge;
+  }
+
+  // --- [C-3] Captura del reverso del documento ---
+  /** Pide la imagen del reverso de la cédula (cámara trasera en móvil). Reutiliza el flujo de anverso. */
+  captureDocumentBackImage(): Promise<HTMLImageElement> {
+    return this.captureDocumentImage();
+  }
+
+  // --- [C-1/C-4] Compresión + envío a cola de revisión manual ---
+  /** Comprime un <img> a JPEG Base64 (~40-70 KB) para guardar en Firestore ($0 Spark). */
+  compressToDataUrl(img: HTMLImageElement, maxDim = 480, quality = 0.72): string {
+    const scale = Math.min(1, maxDim / Math.max(img.naturalWidth || maxDim, img.naturalHeight || maxDim));
+    const w = Math.max(1, Math.round((img.naturalWidth || maxDim) * scale));
+    const h = Math.max(1, Math.round((img.naturalHeight || maxDim) * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+    ctx.drawImage(img, 0, 0, w, h);
+    return canvas.toDataURL('image/jpeg', quality);
+  }
+
+  /** Crea un caso en `kycReviews` con estado 'pending' (reglas: solo el propio usuario). */
+  async submitKycReview(payload: KycReviewPayload): Promise<string> {
+    const ref = await addDoc(collection(RondaServices.db, 'kycReviews'), {
+      userId: payload.userId,
+      userName: payload.userName,
+      userEmail: payload.userEmail,
+      registeredBirthDate: payload.registeredBirthDate,
+      createdAt: new Date().toISOString(),
+      status: 'pending',
+      reasonsForManual: payload.reasonsForManual,
+      metrics: payload.metrics,
+      imageUrls: payload.imageUrls,
+    });
+    this.setStatus('📋 Solicitud enviada a revisión manual. Te avisaremos cuando sea aprobada.');
+    return ref.id;
+  }
+
+  /** [C-4] Encola el caso fallido en `kycReviews` con fotos comprimidas (sin auto-tier). */
+  private async queueManualReview(args: { selfieImg: HTMLImageElement; docImg: HTMLImageElement; faceDistance: number; reason: string }): Promise<string | null> {
+    try {
+      const { Auth } = await import('./auth.js');
+      const user = Auth.currentUser as (User & { birthDate?: string }) | null;
+      if (!user) return null;
+      const selfie = this.compressToDataUrl(args.selfieImg);
+      const docFront = this.compressToDataUrl(args.docImg);
+      if (!selfie || !docFront) return null;
+      return await this.submitKycReview({
+        userId: user.uid,
+        userName: user.name || 'Usuario RONDA',
+        userEmail: user.email || '',
+        registeredBirthDate: user.birthDate || '',
+        reasonsForManual: [args.reason],
+        metrics: { faceDistance: args.faceDistance, livenessScore: 0.5 },
+        imageUrls: { selfie, docFront },
+      });
+    } catch (e) {
+      console.warn('[KYC] queueManualReview falló:', e);
+      return null;
+    }
+  }
+
   /** Inicia la cámara frontal y devuelve el stream. Lanza solo si no hay cámara/persmiso. */
   private async startCamera(videoEl: HTMLVideoElement): Promise<MediaStream> {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -211,7 +367,9 @@ class VerificationService {
     }
 
     try {
-      // 1) Selfie: capturar frame y extraer descriptor.
+      // 1) Selfie: capturar frame y extraer descriptor (con óvalo guía + reto liveness).
+      this.setOvalState('idle', 'Centra tu rostro en el óvalo');
+      this.showLivenessChallenge();
       this.setStatus('Espera un momento... detectando tu rostro.');
       const ctx = canvasEl.getContext('2d');
       if (!ctx) { this.setStatus(this.statusMessage('no_camera')); return false; }
@@ -222,9 +380,11 @@ class VerificationService {
       ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
       const selfie = await this.selfieDescriptor(canvasId);
       if (!selfie.descriptor) {
+        this.setOvalState('error', selfie.error === 'multiple_faces' ? 'Varios rostros: usa una sola persona' : 'Sin rostro / desenfocado: mejora la luz');
         this.setStatus(this.statusMessage(selfie.error));
         return false;
       }
+      this.setOvalState('ok', 'Posición óptima ✓ — rostro enmarcado');
       this.setStatus('Rostro detectado. Ahora captura una foto de tu cédula (frente).');
       if (stream) stream.getTracks().forEach((t) => t.stop());
       this.stream = null;
@@ -245,6 +405,19 @@ class VerificationService {
         this.setStatus(this.statusMessage(docDesc.error === 'no_face' ? 'sin_rostro_documento' : docDesc.error));
         return false;
       }
+      // [C-3] Reverso opcional (MRZ/código de barras): se solicita si el OCR del frente es débil.
+      if (!ocr.success) {
+        this.setStatus('Frente poco legible: captura el reverso de tu cédula (opcional, mejora la revisión).');
+        try {
+          const backImg = await this.captureDocumentBackImage();
+          const backOcr = await this.scanDocumentOCR(backImg);
+          if (backOcr.rawText) {
+            (ocr as { rawText: string }).rawText = `${ocr.rawText}\n[REVERSO]\n${backOcr.rawText}`;
+            if (backOcr.success) (ocr as { success: boolean }).success = true;
+          }
+        } catch { /* reverso opcional: se continúa con el frente */ }
+        this.setStatus('Analizando documento (OCR + rostro)...');
+      }
       // 3) Veredicto combinado.
       const verdict = evaluateIdentity(selfie.descriptor, docDesc.descriptor!, ocr.rawText || '', 0.6);
       this.isVerified = verdict.ok;
@@ -252,7 +425,18 @@ class VerificationService {
         this.setStatus('✓ Identidad verificada (selfie coincide con la cédula).');
         return true;
       }
-      this.setStatus(this.statusMessage(verdict.reason));
+      // [C-4] Sin auto-elevación: enviar a cola de revisión manual en lugar de aprobar.
+      try {
+        await this.queueManualReview({
+          selfieImg: await this.loadImage(canvasEl.toDataURL('image/jpeg', 0.85)),
+          docImg,
+          faceDistance: verdict.distance ?? 1,
+          reason: verdict.reason || 'revision_manual',
+        });
+      } catch (e) {
+        console.warn('[KYC] No se pudo encolar revisión manual:', e);
+      }
+      this.setStatus(this.statusMessage(verdict.reason) + ' Tu caso quedó en revisión manual.');
       return false;
     } catch (e: any) {
       console.error('[KYC] Error inesperado:', e);

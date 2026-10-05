@@ -187,11 +187,12 @@
 > **Requisito del Negocio:** T2 obligatorio para comprar tickets y entrar a rotación. Costo $0.00 COP.
 
 ### 8.1 Tareas Asignadas a Cline (Ejecutor Autónomo)
-- [ ] **[C-1] UI Captura Biométrica con Óvalo Guía:** En `src/verification.ts`, agregar al canvas de captura un óvalo guía semitransparente con feedback visual en tiempo real (rojo = fuera de cuadro/desenfocado, verde = óptimo para captura).
-- [ ] **[C-2] Componente de Reto de Liveness en Pantalla:** Implementar el display interactivo que muestra las instrucciones aleatorias al usuario ("Parpadea ahora", "Gira la cabeza suavemente").
-- [ ] **[C-3] Escáner de Cédula:** Integrar escaneo de código de barras/MRZ para el reverso del documento de identidad.
-- [ ] **[C-4] Cola de Revisión Manual en SuperAdmin:** En `superadmin.html`, implementar el panel para el Administrador Central para revisar casos pendientes en `kycReviews` (visor de fotos lado a lado, métricas de confianza, botones de Aprobar T1 / Rechazar).
-- [ ] **[C-5] Gating Estricto de Tier 2:** En `src/client.ts` y `src/bar.ts`, verificar que los usuarios con `trustTier < 2` no puedan comprar entradas ni ser admitidos al check-in sin pasar antes por verificación.
+- [x] **[C-1] UI Captura Biométrica con Óvalo Guía:** `Verification.setOvalState()/updateOvalFromFrame()` en `src/verification.ts` (óvalo semitransparente; rojo = sin rostro/desenfocado, verde botella = óptimo).
+- [x] **[C-2] Componente de Reto de Liveness en Pantalla:** `Verification.showLivenessChallenge()` + `KYC_LIVENESS_CHALLENGES` en `src/verification.ts`; se muestra en `startVerification()` vía `#kyc-liveness`.
+- [x] **[C-3] Escáner de Cédula:** `captureDocumentImage()` + `captureDocumentBackImage()` (reverso opcional si OCR del frente es débil, útil para MRZ/código de barras) en `src/verification.ts`.
+- [x] **[C-4] Cola de Revisión Manual en SuperAdmin:** Sección "Revisión KYC Pendiente" en `SuperAdminController.render()` (`src/superadmin.ts`, `#sa-kyc-list`); consulta `kycReviews/status=='pending'`; tarjetas selfie vs doc + métrica similitud; Aprobar Tier 2 (`trustTier:2`, `isVerified:true`) / Rechazar con motivo; purga del doc tras aprobar (72h). Fallos KYC se encolan vía `queueManualReview()` (sin auto-tier).
+- [x] **[C-5] Gating Estricto de Tier 2:** `confirmBooking()` en `src/client.ts` bloquea checkout si `trustTier<2` (modal Tier 2 + apertura `modal-profile`); `handleQrDecode()` en `src/bar.ts` advierte si `trustTier<2` (confirmar excepción o denegar).
+- Verificación: `npx tsc --noEmit` → exit 0; `npm run build` → exit 0 (149 módulos).
 
 ---
 

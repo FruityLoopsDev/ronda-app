@@ -903,6 +903,20 @@ class ClientAppService {
     const evt = this.selectedEvent;
     const drink = this.selectedDrink || evt.drinkOptions[0];
 
+    // [C-5] Gating Tier 2: bloquear checkout si trustTier < 2.
+    if ((user.trustTier ?? 0) < 2) {
+      this.closeEventModal();
+      await RondaDialog.alert({
+        title: 'Verificación Requerida 🛡️',
+        message: 'Para comprar tu pase debes completar tu verificación de identidad (Tier 2). Completa tu selfie + cédula en tu perfil para habilitar la compra.',
+        icon: '🛡️'
+      });
+      const modal = document.getElementById('modal-profile');
+      if (modal) modal.classList.add('active');
+      window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
+      return;
+    }
+
     if (evt.status === 'lleno') {
       if (btn) { btn.textContent = 'Anotándote en lista...'; btn.disabled = true; }
       try {
