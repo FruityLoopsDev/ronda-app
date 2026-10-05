@@ -47,7 +47,7 @@
 | **F0-3** | Antigravity | Corrección del bug de permisos en reservas de Firestore | — | 🟢 COMPLETADO | `firestore.rules` actualizado y desplegado |
 | **P-1** | Perplexity | Especificación y términos de la API "Verified on LinkedIn" | — | 🟡 EN PROGRESO | Documento de endpoints, scopes y payloads de LinkedIn |
 | **P-2** | Perplexity | Librerías ligeras para lectura de PDF417 y MRZ en browser/Vite | — | ⚪ PENDIENTE | Módulo / snippet de decodificación de código de barras |
-| **A-1** | Antigravity | Reglas de Firebase Storage para fotos de verificación (`storage.rules`) | — | 🟡 EN PROGRESO | `storage.rules` desplegado con expiración 72h |
+| **A-1** | Antigravity | Reglas de Firestore para fotos de verificación (`kycReviews`) | — | 🟢 COMPLETADO | `firestore.rules` actualizado y desplegado a prod |
 | **A-2** | Antigravity | Serverless function `verify-kyc.js` con validación de nonces | D-1, D-3 | ⚪ PENDIENTE | `functions-vercel/api/verify-kyc.js` |
 | **A-3** | Antigravity | Serverless function `linkedin-oauth.js` para OIDC real | P-1 | ⚪ PENDIENTE | `functions-vercel/api/linkedin-oauth.js` |
 | **D-1** | DeepSeek | Algoritmo de prueba de vida activa (EAR + Yaw/Pitch) | — | ⚪ PENDIENTE | Módulo matemático puro `src/kyc/liveness-math.ts` |
@@ -63,13 +63,16 @@
 
 ## 4. Contratos de Arquitectura y Datos
 
-### 4.1 Bucket de Almacenamiento (`firebase-storage`)
-* **Ruta de Carga Temporal:** `kyc-temp/{userId}/{challengeId}_{type}.jpg`
-  * `type`: `selfie_frame_1..N`, `doc_front`, `doc_back`.
-* **Reglas de Acceso:**
-  * **Escritura:** Solo el usuario autenticado para su propia carpeta `userId`.
-  * **Lectura:** Exclusiva para administradores (`superadmin`). Clientes no pueden leer imágenes de otros ni las propias tras la subida.
-  * **Ciclo de Vida:** TTL de 72 horas para eliminación automática en Google Cloud Storage.
+### 4.1 Almacenamiento de Fotos KYC (Firestore Base64 — $0 Spark, Sin Tarjeta)
+* **Colección:** `kycReviews/{reviewId}`
+* **Estructura de Imágenes:**
+  * Las imágenes se capturan, recortan y comprimen en el cliente a JPEG de calidad controlada (**~40 KB – 70 KB** cada una).
+  * Se guardan como cadenas `data:image/jpeg;base64,...` en los campos `imageUrls.selfie`, `imageUrls.docFront` y `imageUrls.docBack`.
+  * Tamaño total por caso: **~120 KB – 180 KB** (dentro del límite de 1.000 KB por documento de Firestore).
+* **Reglas de Acceso (`firestore.rules`):**
+  * **Escritura:** Solo el usuario autenticado para crear su propia solicitud inicial en estado `'pending'`.
+  * **Lectura y Resolución:** Exclusiva para el Administrador Central (`role == 'superadmin'`). Clientes no pueden leer imágenes de otros ni las suyas tras enviar el caso.
+  * **Purga / Eliminación:** Al ser aprobado/rechazado en `superadmin.html` (o a las 72h), el documento se elimina y las fotos desaparecen permanentemente.
 
 ### 4.2 Documento de Usuario en Firestore (`users/{uid}`)
 ```typescript
@@ -135,3 +138,4 @@ interface KycReviewCase {
   * Ejecución de **Fase 0**: Eliminación de headlines simulados y reseteo de usuarios en prod a T0 vía `scripts/migrate-users-to-t0.cjs`.
   * Creación del plan maestro de trazabilidad multi-agente (`docs/KYC_MULTIAGENT_EXECUTION_PLAN.md`).
   * Sincronización completa con repositorio remoto (`git push origin v0/maxiapp-recipe-to-cart` completado).
+  * **Pivote a Opción A (Sin Tarjeta / Plan Spark):** Eliminada dependencia de Cloud Storage. Implementadas y desplegadas las reglas de seguridad en `firestore.rules` para la colección `kycReviews` (fotos comprimidas en Base64). Tarea **A-1** completada.
