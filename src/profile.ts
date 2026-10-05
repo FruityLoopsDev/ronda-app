@@ -325,14 +325,11 @@ export class ProfileService {
 
       if (result.success && result.data) {
         input.value = result.data.url;
-        status.textContent = `✓ ${result.data.badge} (${result.data.headline})`;
+        status.textContent = `✓ ${result.data.badge}`;
         status.style.color = 'var(--botella)';
         if (this.currentUser) {
           this.currentUser.linkedinUrl = result.data.url;
-          this.currentUser.linkedinVerified = true;
           this.currentUser.linkedinSlug = result.data.slug;
-          this.currentUser.linkedinHeadline = result.data.headline;
-          this.currentUser.isVerified = true;
         }
       } else {
         status.textContent = `✕ ${result.error || 'No se pudo verificar el perfil.'}`;

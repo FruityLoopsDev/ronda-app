@@ -296,17 +296,14 @@ function initApp() {
     if (result.success && result.data) {
       linkedinInput.value = result.data.url;
       if (linkedinStatus) {
-        linkedinStatus.textContent = `✓ ${result.data.badge} · ${result.data.headline}`;
+        linkedinStatus.textContent = `✓ ${result.data.badge}`;
         linkedinStatus.style.color = 'var(--botella)';
       }
       const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
       if (saveBtn) saveBtn.disabled = false;
       if (user) {
         user.linkedinUrl = result.data.url;
-        user.linkedinVerified = true;
         user.linkedinSlug = result.data.slug;
-        user.linkedinHeadline = result.data.headline;
-        user.isVerified = true;
       }
     } else {
       if (linkedinStatus) {
@@ -343,14 +340,12 @@ function initApp() {
           const val = Verification.validateLinkedInUrl(linkedinUrl);
           user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
           if (val.valid) {
-            user.linkedinVerified = true;
             user.linkedinSlug = val.slug;
-            user.isVerified = true;
           }
         }
 
-        // Persistir el estado de verificación de identidad en el perfil.
-        if (Verification.isVerified || user.linkedinVerified) user.isVerified = true;
+        // Persistir el estado de verificación de identidad solo si KYC está verificado
+        if (Verification.isVerified) user.isVerified = true;
 
         if (Auth.currentUser) {
           await DB.saveUser(user);
@@ -673,10 +668,10 @@ function initApp() {
     const zodiac = getZodiacSign(birthDate);
 
     const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-    btn.textContent = 'Verificando LinkedIn y creando cuenta...';
+    btn.textContent = 'Enlazando perfil y creando cuenta...';
     btn.disabled = true;
 
-    const linkedinResult = await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+    await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
 
     Auth.registerWithEmail(email, password, { 
       name, 
@@ -686,10 +681,10 @@ function initApp() {
       gender, 
       orientation,
       linkedinUrl: linkedinValidation.normalizedUrl,
-      linkedinVerified: true,
+      linkedinVerified: false,
       linkedinSlug: linkedinValidation.slug,
-      linkedinHeadline: linkedinResult.data?.headline,
-      isVerified: true
+      isVerified: false,
+      trustTier: 0
     }).then(() => {
       // Successfully registered.
       triggerLoginAnimation();

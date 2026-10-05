@@ -252,10 +252,10 @@ export class AuthView {
       const zodiac = getZodiacSign(birthDate);
 
       const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-      btn.textContent = 'Verificando LinkedIn y creando cuenta...';
+      btn.textContent = 'Enlazando perfil y creando cuenta...';
       btn.disabled = true;
 
-      const linkedinResult = await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+      await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
 
       Auth.registerWithEmail(email, password, {
         name,
@@ -265,10 +265,10 @@ export class AuthView {
         gender,
         orientation,
         linkedinUrl: linkedinValidation.normalizedUrl,
-        linkedinVerified: true,
+        linkedinVerified: false,
         linkedinSlug: linkedinValidation.slug,
-        linkedinHeadline: linkedinResult.data?.headline,
-        isVerified: true
+        isVerified: false,
+        trustTier: 0
       }).then(() => {
         this.cb.onRegisterSuccess();
       }).catch(async (err: any) => {

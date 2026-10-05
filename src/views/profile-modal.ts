@@ -104,17 +104,14 @@ export class ProfileModal {
       if (result.success && result.data) {
         linkedinInput.value = result.data.url;
         if (linkedinStatus) {
-          linkedinStatus.textContent = `✓ ${result.data.badge} · ${result.data.headline}`;
+          linkedinStatus.textContent = `✓ ${result.data.badge}`;
           linkedinStatus.style.color = 'var(--botella)';
         }
         const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
         if (saveBtn) saveBtn.disabled = false;
         if (user) {
           user.linkedinUrl = result.data.url;
-          user.linkedinVerified = true;
           user.linkedinSlug = result.data.slug;
-          user.linkedinHeadline = result.data.headline;
-          user.isVerified = true;
         }
       } else {
         if (linkedinStatus) {

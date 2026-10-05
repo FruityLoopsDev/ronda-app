@@ -337,27 +337,8 @@ class VerificationService {
       return { success: false, error: validation.error };
     }
 
-    // Simulación de verificación segura de identidad profesional / OAuth handshake
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    const headlines = [
-      'Senior Tech Lead & Founder',
-      'Finance & Private Equity Consultant',
-      'Product Strategist & Growth Lead',
-      'Creative Director & Brand Architect',
-      'Corporate Attorney & Legal Counsel',
-      'Senior Architect & Urban Designer',
-      'Medical Specialist & Researcher'
-    ];
-    // Asignar headline determinista según slug para coherencia
-    let hash = 0;
-    for (let i = 0; i < validation.slug.length; i++) {
-      hash = (hash << 5) - hash + validation.slug.charCodeAt(i);
-      hash |= 0;
-    }
-    const headline = headlines[Math.abs(hash) % headlines.length];
-
-    this.isVerified = true;
+    // Validación sintáctica y normalización del enlace de LinkedIn
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     return {
       success: true,
@@ -365,8 +346,8 @@ class VerificationService {
         slug: validation.slug,
         url: validation.normalizedUrl,
         verifiedAt: new Date().toISOString(),
-        headline,
-        badge: '💼 LinkedIn Verificado'
+        headline: '',
+        badge: '🔗 Perfil Enlazado'
       }
     };
   }
