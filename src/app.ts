@@ -344,8 +344,7 @@ function initApp() {
           }
         }
 
-        // Persistir el estado de verificación de identidad solo si KYC está verificado
-        if (Verification.isVerified) user.isVerified = true;
+        // Se remueve la modificación de isVerified desde el cliente (ahora es tarea del backend/staff)
 
         if (Auth.currentUser) {
           await DB.saveUser(user);
@@ -683,8 +682,8 @@ function initApp() {
       linkedinUrl: linkedinValidation.normalizedUrl,
       linkedinVerified: false,
       linkedinSlug: linkedinValidation.slug,
-      isVerified: false,
-      trustTier: 0
+      // isVerified, trustTier, and verifications are managed by the server/staff
+
     }).then(() => {
       // Successfully registered.
       triggerLoginAnimation();
