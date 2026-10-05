@@ -17,8 +17,7 @@ service cloud.firestore {
     // matches, safeword). Solo staff/servidor los modifican.
     function clientTouchedSensitive() {
       return request.resource.data.diff(resource.data).affectedKeys().hasAny([
-        'isVerified', 'linkedinVerified', 'nfts', 'wallet_address', 'matches', 'safeword',
-        'paymentPending', 'paymentMethod'
+        'isVerified', 'linkedinVerified', 'nfts', 'wallet_address', 'matches', 'safeword'
       ]);
     }
 

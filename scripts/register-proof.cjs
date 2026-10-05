@@ -12,13 +12,22 @@
 
 const fs = require('fs');
 const path = require('path');
-const { keccak256 } = require('js-sha3');
+const crypto = require('crypto');
+
+function getHash(data) {
+  try {
+    const { keccak256 } = require('js-sha3');
+    return '0x' + keccak256(data);
+  } catch (e) {
+    return '0x' + crypto.createHash('sha3-256').update(data).digest('hex');
+  }
+}
 
 const file = process.argv[2] || path.join(__dirname, '..', 'docs', 'invention-disclosure-mem-rr-v2.md');
 const label = process.argv[3] || path.basename(file);
 
 const content = fs.readFileSync(file, 'utf8');
-const hash = '0x' + keccak256(content);
+const hash = getHash(content);
 
 console.log('=== Prueba de existencia (RESERVA) ===');
 console.log('Archivo   :', file);

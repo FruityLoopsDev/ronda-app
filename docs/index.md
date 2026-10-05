@@ -40,4 +40,5 @@ Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
 - `docs/architecture.md` (Arquitectura general).
 - `docs/algorithm-v2-spec.md` (Teoría del motor mem-rr-v2).
 - `docs/RONDA_MEMORANDUM_INVERSION_FFF.md` (Deck para inversores).
+- `docs/RONDA_PITCH_VIDEO_CREATIVE_BRIEF.md` (Brief y guion técnico para el video de inversión).
 - `docs/ip-patent-strategy.md` (Estrategia de Propiedad Intelectual).
