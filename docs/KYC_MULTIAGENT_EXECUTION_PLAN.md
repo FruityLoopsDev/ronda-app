@@ -134,3 +134,4 @@ interface KycReviewCase {
   * Despliegue de reglas de Firestore a producción (`ronda-uno`).
   * Ejecución de **Fase 0**: Eliminación de headlines simulados y reseteo de usuarios en prod a T0 vía `scripts/migrate-users-to-t0.cjs`.
   * Creación del plan maestro de trazabilidad multi-agente (`docs/KYC_MULTIAGENT_EXECUTION_PLAN.md`).
+  * Sincronización completa con repositorio remoto (`git push origin v0/maxiapp-recipe-to-cart` completado).
