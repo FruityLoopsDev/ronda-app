@@ -30,60 +30,7 @@
   <link rel="stylesheet" href="/assets/ronda-tokens.css">
   <link rel="stylesheet" href="/css/styles.css">
 
-  <!-- Firebase SDKs (Compat version for simplicity without bundlers, or Modular) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { 
-      getFirestore, 
-      connectFirestoreEmulator,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { 
-      getAuth, 
-      connectAuthEmulator,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { 
-      getFunctions, 
-      connectFunctionsEmulator,
-      httpsCallable 
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-functions.js";
-    
-    window.firebaseModules = { 
-      initializeApp, 
-      getFirestore, 
-      connectFirestoreEmulator, 
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp,
-      getAuth, 
-      connectAuthEmulator,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged,
-      getFunctions,
-      connectFunctionsEmulator,
-      httpsCallable
-    };
-  </script>
-
-    <style>
+  <style>
       .ronda-input {
         margin-bottom: 10px; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); 
         background: rgba(243,237,226,.06); color: var(--papel); outline: none; 
@@ -100,6 +47,10 @@
       .login-anim {
         animation: loginSuccess 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
+
+      /* SuperAdmin: spinner del botón de refresco de cola KYC */
+      @keyframes sa-spin { to { transform: rotate(360deg); } }
+      .sa-spin { display: inline-block; animation: sa-spin 0.9s linear infinite; }
       
       /* Modales Elegantes Mobile-First */
       .modal-overlay {
@@ -1395,9 +1346,9 @@
           </div>
 
           <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Requisito Obligatorio)</label>
+            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Opcional - Recomendado)</label>
             <input type="url" id="reg-linkedin" placeholder="https://linkedin.com/in/tu-perfil" class="ronda-input" style="margin-bottom: 2px;">
-            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de solteros profesionales de alto valor. Verificamos tu identidad con LinkedIn.</span>
+            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de profesionales. <span style="color: var(--ambar); font-weight: bold;">🍺 ¡Añade tu LinkedIn para recibir una bebida de cortesía al llegar al evento!</span></span>
           </div>
 
           <button type="button" id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
@@ -1432,11 +1383,11 @@
 
   <footer class="ronda-footer">
     <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--linea); padding-top: 24px; margin-top: 40px; font-family: var(--font-mono); font-size: 11px; color: var(--humo); flex-wrap: wrap; gap: 10px;">
-      <span>RONDA System © 2026</span>
-      <span style="display: inline-flex; align-items: center; gap: 5px; color: var(--papel); font-weight: 500;">
+      <span data-ronda-copyright>RONDA System © 2026</span>
+      <span data-ronda-madein style="display: inline-flex; align-items: center; gap: 5px; color: var(--papel); font-weight: 500;">
         Hecho por amor ❤️ a Colombia <img src="https://flagcdn.com/16x12/co.png" alt="Colombia" style="height: 11px; width: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle;">
       </span>
-      <span style="opacity: 0.6; letter-spacing: 0.05em;">v2.3.0-prod</span>
+      <span style="opacity: 0.6; letter-spacing: 0.05em;" data-ronda-version>v2.3.0-prod</span>
       <span id="visit-counter-container" style="display: flex; align-items: center; gap: 4px; color: var(--ambar); font-weight: 600;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         <span id="visit-count">0</span>

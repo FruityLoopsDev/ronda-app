@@ -14,18 +14,23 @@ service cloud.firestore {
     function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
 
     // Campos que el propio usuario NO puede alterar (verificación, NFTs, wallet,
-    // matches, safeword). Solo staff/servidor los modifican.
+    // matches). Solo staff/servidor los modifican.
     function clientTouchedSensitive() {
       return request.resource.data.diff(resource.data).affectedKeys().hasAny([
-        'isVerified', 'linkedinVerified', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches', 'safeword'
+        'isVerified', 'linkedinVerified', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
       ]);
     }
 
-    // En el alta no existe `resource`: se revisan las claves del documento entrante.
+    // En el alta no existe `resource`: se verifica que el usuario no se auto-verifique ni otorgue privilegios/tickets.
     function createTouchedSensitive() {
-      return request.resource.data.keys().hasAny([
-        'isVerified', 'linkedinVerified', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches', 'safeword'
-      ]);
+      return request.resource.data.get('isVerified', false) == true
+          || request.resource.data.get('linkedinVerified', false) == true
+          || request.resource.data.get('trustTier', 0) > 0
+          || ('verifications' in request.resource.data && request.resource.data.verifications != null)
+          || (request.resource.data.get('nfts', []).size() > 0)
+          || (request.resource.data.get('wallet_address', '') != '')
+          || ('matches' in request.resource.data && request.resource.data.matches.size() > 0)
+          || request.resource.data.get('hasTicket', false) == true;
     }
 
     // --- Usuarios ---
@@ -114,14 +119,86 @@ service cloud.firestore {
     // --- Locales (venues) ---
     match /venues/{venueId} {
       allow read: if request.auth != null && isStaff();
-      allow write: if isSuperAdmin();
+      allow write: if isSuperAdmin() || isNetwork();
     }
 
     // --- Leads (CRM / ventas) ---
+    // Scout/Sales ve y crea leads, pero NO puede auto-otorgarse estado 'paid', alterar verificaciones ni fijar tiers.
     match /leads/{leadId} {
-      allow read, update: if isSuperAdmin() || (isSales() && resource.data.sales_uid == request.auth.uid);
-      allow create: if isSuperAdmin() || isSales();
+      allow read: if isSuperAdmin() || isSales();
+      allow create: if isSuperAdmin() || (
+        isSales() &&
+        // No permitir auto-liquidación de comisiones en el alta
+        !request.resource.data.keys().hasAny(['verified_at', 'cohort_tier', 'retention_review_at']) &&
+        (!request.resource.data.keys().hasAny(['milestone_status']) ||
+         (request.resource.data.milestone_status.A != 'paid' &&
+          request.resource.data.milestone_status.B != 'paid' &&
+          request.resource.data.milestone_status.C != 'paid'))
+      );
+      allow update: if isSuperAdmin() || (
+        isSales() &&
+        // Solo superadmin puede modificar hitos de pago, tiers y fechas de verificación
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'milestone_status', 'cohort_tier', 'verified_at', 'retention_review_at', 'first_valid_event_at'
+        ])
+      );
       allow delete: if isSuperAdmin();
+    }
+
+    // --- Scouts ---
+    match /scouts/{scoutId} {
+      // Un Scout solo ve su propio perfil, o si es de operaciones/ventas lo ve el staff
+      allow read: if request.auth != null && (request.auth.uid == scoutId || isStaff());
+      allow write: if isSuperAdmin();
+    }
+
+    // --- Hosts ---
+    match /hosts/{hostId} {
+      allow read: if request.auth != null && (request.auth.uid == hostId || isStaff());
+      allow write: if isSuperAdmin();
+    }
+
+    // --- Ofertas y Reportes de Hosters ---
+    match /host_offers/{offerId} {
+      allow read: if request.auth != null && (resource.data.accepted_host_uid == request.auth.uid || isStaff());
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin() || (
+        request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['offer_status', 'accepted_at', 'rejection_reason', 'accepted_host_uid'])
+      );
+    }
+
+    match /host_reports/{reportId} {
+      allow read: if request.auth != null && (resource.data.host_uid == request.auth.uid || isStaff());
+      allow create: if request.auth != null && request.resource.data.host_uid == request.auth.uid;
+      allow update, delete: if isSuperAdmin();
+    }
+
+    match /event_verifications/{verificationId} {
+      allow read: if request.auth != null && isStaff();
+      allow write: if isSuperAdmin();
+    }
+
+    // --- Configuración B2B (Políticas económicas: solo lectura para staff, escritura superadmin) ---
+    match /config/{document=**} {
+      allow read: if request.auth != null && isStaff();
+      allow write: if isSuperAdmin();
+    }
+
+    // --- Pagos y Comisiones (Ledger, Payouts) ---
+    // NUNCA permitir que el cliente (Scout/Hoster) cree/actualice su ledger o payout directamente
+    match /commission_ledger/{ledgerId} {
+      allow read: if request.auth != null && (resource.data.payee_uid == request.auth.uid || isStaff());
+      allow write: if isSuperAdmin(); // Solo Cloud Functions / Admin SDK en produccion, pero temporalmente para emuladores dejamos al superadmin
+    }
+
+    match /payouts/{payoutId} {
+      allow read: if request.auth != null && (resource.data.payee_uid == request.auth.uid || isStaff());
+      allow write: if isSuperAdmin();
+    }
+
+    match /audit_logs/{logId} {
+      allow read, write: if isSuperAdmin();
     }
 
     // --- Transacciones: solo servidor (Admin SDK). Clientes sin acceso. ---

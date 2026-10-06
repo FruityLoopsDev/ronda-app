@@ -17,10 +17,46 @@ function escapeHtml(s: string): string {
 export class RondaDialog {
   private static modalEl: HTMLElement | null = null;
   private static resolvePromise: ((value: boolean) => void) | null = null;
+  private static bound = false;
 
   static init() {
     this.modalEl = document.getElementById('modal-ronda-dialog');
-    
+
+    // Portales (crm/admin/superadmin/network) no incluyen el modal en su HTML:
+    // se crea dinámicamente para que RondaDialog no quede colgado (el promise
+    // nunca resolvería sin botones) — esto rompía el botón "Nuevo Lead" del CRM.
+    if (!this.modalEl) {
+      const style = document.createElement('style');
+      style.textContent = `
+        .ronda-dialog-overlay{position:fixed;inset:0;z-index:10100;display:none;align-items:center;justify-content:center;background:rgba(10,7,14,0.88);backdrop-filter:blur(8px);padding:16px;font-family:var(--font-body,'Space Grotesk',sans-serif);}
+        .ronda-dialog-overlay.active{display:flex;}
+      `;
+      document.head.appendChild(style);
+
+      const overlay = document.createElement('div');
+      overlay.id = 'modal-ronda-dialog';
+      overlay.className = 'ronda-dialog-overlay';
+      overlay.innerHTML = `
+        <div style="width:100%;max-width:360px;background:#1a1120;border:1px solid rgba(240,168,48,0.35);border-radius:24px;box-shadow:0 30px 70px rgba(0,0,0,0.85);">
+          <div style="padding:26px 20px 22px;text-align:center;">
+            <div id="dialog-icon-container" style="width:58px;height:58px;margin:0 auto 16px;border-radius:50%;background:rgba(240,168,48,0.12);border:1.5px solid rgba(240,168,48,0.4);display:flex;align-items:center;justify-content:center;font-size:26px;">
+              <span id="dialog-icon">🍸</span>
+            </div>
+            <h3 id="dialog-title" style="font-family:var(--font-display,'Bodoni Moda',serif);font-size:21px;color:var(--papel,#f3ede2);margin:0 0 8px;">Confirmar Acción</h3>
+            <p id="dialog-message" style="font-size:13px;color:var(--humo,#8c8378);line-height:1.48;margin:0 0 22px;"></p>
+            <div style="display:flex;gap:10px;justify-content:center;">
+              <button id="btn-dialog-cancel" class="btn" style="flex:1;font-size:12px;padding:11px;border-radius:999px;background:rgba(243,237,226,.06);border:1px solid var(--linea,rgba(243,237,226,0.12));color:var(--humo,#8c8378);font-weight:600;cursor:pointer;">✕ Cancelar</button>
+              <button id="btn-dialog-confirm" class="btn ambar" style="flex:1;font-size:12px;padding:11px;border-radius:999px;background:var(--luz,#f0a830);border:1px solid var(--luz,#f0a830);color:#14101a;font-weight:700;cursor:pointer;">✓ Aceptar</button>
+            </div>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      this.modalEl = overlay;
+    }
+
+    if (RondaDialog.bound) return;
+    RondaDialog.bound = true;
+
     document.getElementById('btn-dialog-cancel')?.addEventListener('click', () => {
       this.close(false);
     });

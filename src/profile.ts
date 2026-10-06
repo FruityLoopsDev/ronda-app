@@ -449,9 +449,7 @@ export class ProfileService {
         const val = Verification.validateLinkedInUrl(linkedinUrl);
         this.currentUser.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
         if (val.valid) {
-          this.currentUser.linkedinVerified = true;
           this.currentUser.linkedinSlug = val.slug;
-          this.currentUser.isVerified = true;
         }
       }
 

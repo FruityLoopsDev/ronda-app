@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe } from "firebase/firestore";
 import { RondaServices } from "./firebase-config.js";
 import { Matches } from "./matches.js";
 
@@ -150,6 +150,162 @@ export interface RondaEvent {
   venueName?: string;
 }
 
+export type MilestoneState = 'not_eligible' | 'accrued' | 'review' | 'payable' | 'paid' | 'held' | 'void';
+
+export interface Scout {
+  uid: string;
+  user_uid?: string;
+  name?: string;
+  email?: string;
+  status: 'active' | 'inactive';
+  identity_verified?: boolean;
+  contract_id?: string;
+  contract_version?: string;
+  contract_signed_at?: string;
+  tax_profile_id?: string;
+  payout_account_ref?: string;
+  conflict_declared_at?: string;
+  tier?: 1 | 2 | 3;
+  total_earnings_cop?: number;
+  // Perfil fiscal (T1: persistencia para aprobación de desembolsos)
+  rutVerified?: boolean;
+  pilaVerified?: boolean;
+  pilaPeriod?: string; // YYYY-MM en America/Bogota; si ≠ mes actual se trata como false
+  tax_verified_by?: string;
+  tax_verified_at?: string;
+}
+
+export interface Host {
+  uid: string;
+  user_uid?: string;
+  name?: string;
+  email?: string;
+  status: 'active' | 'inactive';
+  contract_id?: string;
+  contract_version?: string;
+  tax_profile_id?: string;
+  payout_account_ref?: string;
+  founder_mode?: boolean;
+  frequency_review_flag?: boolean;
+  total_earnings_cop?: number;
+  // Perfil fiscal (T1: persistencia para aprobación de desembolsos)
+  rutVerified?: boolean;
+  pilaVerified?: boolean;
+  pilaPeriod?: string; // YYYY-MM en America/Bogota; si ≠ mes actual se trata como false
+  tax_verified_by?: string;
+  tax_verified_at?: string;
+}
+
+export interface LedgerEntry {
+  id: string;
+  payee_uid: string;
+  payee_type: 'scout' | 'host';
+  venue_id?: string;
+  lead_id?: string;
+  event_id?: string;
+  offer_id?: string;
+  milestone: 'A' | 'B' | 'C' | 'residual' | 'tier_adjustment' | 'host_base' | 'host_bonus' | 'cancellation' | 'reversal';
+  amount_gross_cop: number;
+  withholding_cop?: number;
+  applicable_invoice_tax_cop?: number;
+  amount_net_cop?: number;
+  status: MilestoneState;
+  accrued_at: string;
+  payable_after?: string;
+  paid_at?: string;
+  policy_version: string;
+  idempotency_key: string;
+  original_entry_id?: string;
+  payout_id?: string;
+  approved_by?: string;
+  reason?: string;
+  notes?: string;
+}
+
+export interface Payout {
+  id: string;
+  payee_uid: string;
+  ledger_entry_ids: string[];
+  gross_cop: number;
+  withholding_cop?: number;
+  net_cop: number;
+  status: 'pending' | 'processing' | 'approved' | 'completed' | 'reconciled';
+  approved_by?: string;
+  transfer_reference?: string;
+  reconciled_at?: string;
+  bank_account_version?: string;
+  createdAt: string;
+}
+
+export interface AuditLog {
+  id?: string;
+  actor_uid: string;
+  actor_type: 'superadmin' | 'sales' | 'host' | 'scout' | 'system';
+  entity_type: 'lead' | 'venue' | 'event' | 'ledger' | 'payout' | 'policy' | 'scout' | 'host';
+  entity_id: string;
+  action: string;
+  previous_state?: any;
+  new_state?: any;
+  reason?: string;
+  timestamp: string;
+  correlation_id?: string;
+}
+
+export interface EventTicket {
+  ticket_id: string;
+  event_id: string;
+  attendee_uid: string;
+  purchaser_uid: string;
+  transaction_id: string;
+  payment_state: 'paid' | 'free' | 'refunded' | 'failed';
+  refund_state?: 'none' | 'partial' | 'full';
+  checked_in_at?: string;
+  checked_in_by?: string;
+  ip_address?: string;
+  device_hash?: string;
+}
+
+export interface EventVerification {
+  event_id: string;
+  distinct_paid_checked_in_attendees: number;
+  exclusions: string[];
+  evidence_refs: string[];
+  valid_for_scout: boolean;
+  validation_status: 'pending' | 'verified' | 'rejected' | 'risk_review';
+  verified_by?: string;
+  verified_at?: string;
+  review_deadline?: string;
+  risk_review_id?: string;
+}
+
+export interface HostOffer {
+  id: string;
+  event_id: string;
+  offered_rate_cop: number;
+  accepted_rate_cop?: number;
+  service_starts_at: string;
+  service_ends_at: string;
+  cancellation_policy_version: string;
+  offer_status: 'offered' | 'accepted' | 'declined' | 'cancelled';
+  accepted_host_uid?: string;
+  accepted_at?: string;
+  proposed_substitute_uid?: string;
+  approved_substitute_uid?: string;
+  rejection_reason?: string;
+}
+
+export interface HostReport {
+  id: string;
+  event_id: string;
+  host_uid: string;
+  checkin_evidence_ref?: string;
+  service_completed: boolean;
+  operational_report?: string;
+  incident_refs?: string[];
+  reviewed_by?: string;
+  reviewed_at?: string;
+}
+
 export interface Venue {
   id: string;
   name: string;
@@ -158,6 +314,19 @@ export interface Venue {
   lat: number;
   lng: number;
   status: 'active' | 'inactive';
+  nit?: string;
+  branch_key?: string;
+  normalized_address?: string;
+  origin_scout_uid?: string;
+  affiliation_status?: 'registered' | 'qualified' | 'signed' | 'verified' | 'first_event_completed' | 'active' | 'inactive' | 'terminated';
+  agreed_weekdays?: string[];
+  bar_package_price_cop?: number;
+  bar_price_tax_included?: boolean;
+  included_consumptions?: number;
+  contract_id?: string;
+  territorial_terms?: string;
+  termination_at?: string;
+  termination_reason?: string;
 }
 
 export interface Lead {
@@ -165,8 +334,35 @@ export interface Lead {
   name: string;
   contactName: string;
   status: 'lead' | 'negotiating' | 'signed';
-  sales_uid: string;
+  sales_uid: string; // Propietario comercial original (se mantiene para retrocompatibilidad)
+  scout_uid?: string; // Mapeo explícito para B2B Scout
+  venue_id?: string;
+  attribution_status?: 'assigned' | 'verified' | 'disputed';
   commission: number;
+  phone?: string;
+  zone?: string;
+  notes?: string;
+  tablesCount?: number;
+  preferredDay?: 'martes' | 'miércoles' | 'jueves';
+  venueId?: string;
+  createdAt?: string;
+  registered_at?: string;
+  signed_at?: string;
+  verified_at?: string;
+  first_valid_event_at?: string;
+  activation_month?: string; // Formato YYYY-MM en America/Bogota
+  policy_version?: string;
+  cohort_tier?: 1 | 2 | 3;
+  retention_review_at?: string;
+  retention_window_ends_at?: string;
+  valid_event_count?: number;
+  residual_accrued_count?: number;
+  milestone_status?: {
+    A: MilestoneState;
+    B: MilestoneState;
+    C: MilestoneState;
+  };
+  risk_review_id?: string;
 }
 
 function cleanFirestoreData(obj: any): any {
@@ -299,6 +495,12 @@ export class DatabaseInterface {
       const fs = this._getFirestore();
       const likesCol = collection(fs, 'events', eventId, 'likes');
       const likesSnap = await getDocs(likesCol);
+      
+      // PROTECCIÓN DE BANDA ANCHA (Spark Tier): Evita procesar cientos de miles de docs en local.
+      if (likesSnap.size > 500) {
+        throw new Error('Demasiados likes para procesar en cliente (Fallback local abortado para proteger ancho de banda). Por favor, contacta a soporte o revisa el estado de Vercel API.');
+      }
+      
       const likesList: { id?: string; from: string; to: string; like: boolean }[] = [];
       
       likesSnap.forEach(snap => {
@@ -377,6 +579,13 @@ export class DatabaseInterface {
     }
   }
 
+  // Conversión Lead -> Venue oficial (Tarea 3 CRM). Requiere permiso de escritura
+  // en `venues` (superadmin según firestore.rules).
+  async saveVenue(venue: Venue): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'venues', venue.id);
+    await setDoc(docRef, venue);
+  }
+
   // --- Leads (CRM) ---
   async getLeads(salesUid?: string): Promise<Lead[]> {
     try {
@@ -388,6 +597,16 @@ export class DatabaseInterface {
       console.error("Error obteniendo leads:", e);
       return [];
     }
+  }
+
+  async saveLead(lead: Lead): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'leads', lead.id);
+    await setDoc(docRef, lead);
+  }
+
+  async deleteLead(leadId: string): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'leads', leadId);
+    await deleteDoc(docRef);
   }
 
   async updateLeadStatus(leadId: string, status: 'lead' | 'negotiating' | 'signed'): Promise<void> {
@@ -410,6 +629,113 @@ export class DatabaseInterface {
       console.error("[DB] Error al guardar en waitlist:", err);
       throw err;
     }
+  }
+
+  // --- B2B Scouts & Hosters (Módulo Operativo) ---
+  async getScout(uid: string): Promise<Scout | null> {
+    const docRef = doc(this._getFirestore(), 'scouts', uid);
+    const snap = await getDoc(docRef);
+    return snap.exists() ? (snap.data() as Scout) : null;
+  }
+
+  async getScouts(): Promise<Scout[]> {
+    try {
+      const snap = await getDocs(collection(this._getFirestore(), 'scouts'));
+      return snap.docs.map(d => d.data() as Scout);
+    } catch (err) {
+      console.error("[DB] Error obteniendo scouts:", err);
+      return [];
+    }
+  }
+
+  async getHosts(): Promise<Host[]> {
+    try {
+      const snap = await getDocs(collection(this._getFirestore(), 'hosts'));
+      return snap.docs.map(d => d.data() as Host);
+    } catch (err) {
+      console.error("[DB] Error obteniendo hosts:", err);
+      return [];
+    }
+  }
+
+  async saveScout(scout: Scout): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'scouts', scout.uid);
+    await setDoc(docRef, cleanFirestoreData(scout), { merge: true });
+  }
+
+  async getHost(uid: string): Promise<Host | null> {
+    const docRef = doc(this._getFirestore(), 'hosts', uid);
+    const snap = await getDoc(docRef);
+    return snap.exists() ? (snap.data() as Host) : null;
+  }
+
+  async saveHost(host: Host): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'hosts', host.uid);
+    await setDoc(docRef, cleanFirestoreData(host), { merge: true });
+  }
+
+  async getLedgerEntries(payeeUid?: string): Promise<LedgerEntry[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'commission_ledger');
+      const snap = await getDocs(colRef);
+      let entries = snap.docs.map(d => d.data() as LedgerEntry);
+      if (payeeUid) entries = entries.filter(e => e.payee_uid === payeeUid);
+      return entries;
+    } catch (err) {
+      console.error("[DB] Error obteniendo commission_ledger:", err);
+      return [];
+    }
+  }
+
+  async saveLedgerEntry(entry: LedgerEntry): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'commission_ledger', entry.id);
+    await setDoc(docRef, cleanFirestoreData(entry), { merge: true });
+  }
+
+  async getPayouts(payeeUid?: string): Promise<Payout[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'payouts');
+      const snap = await getDocs(colRef);
+      let payouts = snap.docs.map(d => d.data() as Payout);
+      if (payeeUid) payouts = payouts.filter(p => p.payee_uid === payeeUid);
+      return payouts;
+    } catch (err) {
+      console.error("[DB] Error obteniendo payouts:", err);
+      return [];
+    }
+  }
+
+  async savePayout(payout: Payout): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'payouts', payout.id);
+    await setDoc(docRef, cleanFirestoreData(payout), { merge: true });
+  }
+
+  async logAudit(log: AuditLog): Promise<void> {
+    try {
+      const id = log.id || `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const docRef = doc(this._getFirestore(), 'audit_logs', id);
+      await setDoc(docRef, { ...log, id, timestamp: log.timestamp || new Date().toISOString() });
+    } catch (err) {
+      console.warn("[DB] Error escribiendo audit_log:", err);
+    }
+  }
+
+  async getHostOffers(hostUid?: string): Promise<HostOffer[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'host_offers');
+      const snap = await getDocs(colRef);
+      let offers = snap.docs.map(d => d.data() as HostOffer);
+      if (hostUid) offers = offers.filter(o => o.accepted_host_uid === hostUid || o.offer_status === 'offered');
+      return offers;
+    } catch (err) {
+      console.error("[DB] Error obteniendo host_offers:", err);
+      return [];
+    }
+  }
+
+  async saveHostOffer(offer: HostOffer): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'host_offers', offer.id);
+    await setDoc(docRef, cleanFirestoreData(offer), { merge: true });
   }
 }
 

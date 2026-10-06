@@ -606,6 +606,14 @@ class HostConsoleService {
     user.checkedIn = true;
     await DB.saveUser(user);
 
+    if (user.linkedinUrl || user.verifications?.professional?.method === 'linkedin_oauth' || user.verifications?.identity?.method === 'linkedin_persona') {
+      await RondaDialog.alert({
+        title: '🎉 ¡Incentivo LinkedIn!',
+        message: `El asistente <b>${user.name || uid}</b> verificó su perfil con LinkedIn.<br><br><b>¡Entrégale una bebida de cortesía! 🍺</b>`,
+        icon: '🎉'
+      });
+    }
+
     this.showToastQR(`✅ ${user.name || uid} registrado`);
     this.renderDashboard();
   }

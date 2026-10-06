@@ -8,6 +8,7 @@ import { RondaDialog } from './dialog.js';
 import { Icebreakers } from './icebreakers.js';
 import { Satisfaction } from './satisfaction.js';
 import notifications from './notifications.js';
+import { renderRondaFooter } from './footer.js';
 // app.js: Orquestador principal de la vista y eventos de RONDA
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
@@ -18,6 +19,7 @@ if (document.readyState === 'loading') {
 function initApp() {
   console.log("Inicializando App RONDA...");
   notifications.init();
+  renderRondaFooter();
   
   // Connection Indicator Logic
   const offlineInd = document.getElementById('offline-indicator');
@@ -263,9 +265,9 @@ function initApp() {
       if (orientationInput) orientationInput.value = user.orientation || '';
       if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
-      // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
+      // El perfil de LinkedIn es opcional
       const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-      if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
+      if (saveBtn) saveBtn.disabled = false;
     }
   });
 
@@ -633,11 +635,11 @@ function initApp() {
     const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
     const linkedinUrl = ((document.getElementById('reg-linkedin') as HTMLInputElement)?.value || '').trim();
 
-    if (!name || !birthDate || !gender || !orientation || !linkedinUrl) {
+    if (!name || !birthDate || !gender || !orientation) {
       await RondaDialog.alert({
-        title: 'Verificación Profesional Requerida',
-        message: 'RONDA es una comunidad para solteros profesionales de alto valor. Ingresa todos tus datos y tu perfil de LinkedIn actualizado para validar tu membresía.',
-        icon: '💼'
+        title: 'Datos Incompletos',
+        message: 'Por favor completa todos tus datos personales. (Opcional: añade tu LinkedIn para recibir una bebida de cortesía 🍺)',
+        icon: '⚠️'
       });
       return;
     }
@@ -653,24 +655,32 @@ function initApp() {
       return;
     }
 
-    const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
-    if (!linkedinValidation.valid) {
-      await RondaDialog.alert({
-        title: 'Perfil de LinkedIn No Válido',
-        message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
-        icon: '💼',
-        type: 'alert'
-      });
-      return;
+    let normalizedUrl = '';
+    let slug = '';
+    if (linkedinUrl) {
+      const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
+      if (!linkedinValidation.valid) {
+        await RondaDialog.alert({
+          title: 'Perfil de LinkedIn No Válido',
+          message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
+          icon: '💼',
+          type: 'alert'
+        });
+        return;
+      }
+      normalizedUrl = linkedinValidation.normalizedUrl;
+      slug = linkedinValidation.slug;
     }
 
     const zodiac = getZodiacSign(birthDate);
 
     const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-    btn.textContent = 'Enlazando perfil y creando cuenta...';
+    btn.textContent = linkedinUrl ? 'Enlazando perfil y creando cuenta...' : 'Creando cuenta...';
     btn.disabled = true;
 
-    await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+    if (linkedinUrl) {
+      await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+    }
 
     Auth.registerWithEmail(email, password, { 
       name, 
@@ -679,11 +689,9 @@ function initApp() {
       age, 
       gender, 
       orientation,
-      linkedinUrl: linkedinValidation.normalizedUrl,
-      linkedinVerified: false,
-      linkedinSlug: linkedinValidation.slug,
+      linkedinUrl: normalizedUrl,
+      linkedinSlug: slug,
       // isVerified, trustTier, and verifications are managed by the server/staff
-
     }).then(() => {
       // Successfully registered.
       triggerLoginAnimation();

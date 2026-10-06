@@ -87,11 +87,10 @@ function classifyFaceError(e: any): FaceError {
 
 async function ensureModels(uri: string): Promise<any> {
   const faceapi = await import('@vladmandic/face-api');
-  await Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri(uri),
-    faceapi.nets.faceLandmark68Net.loadFromUri(uri),
-    faceapi.nets.faceRecognitionNet.loadFromUri(uri),
-  ]);
+  // Load sequentially to prevent memory/CPU spikes on mobile devices
+  await faceapi.nets.tinyFaceDetector.loadFromUri(uri);
+  await faceapi.nets.faceLandmark68TinyNet.loadFromUri(uri);
+  await faceapi.nets.faceRecognitionNet.loadFromUri(uri);
   return faceapi;
 }
 
@@ -135,7 +134,7 @@ export async function getDescriptor(image: any): Promise<DescriptorResult> {
         faceapi = await ensureModels(uri);
         loadedUri = uri;
       }
-      const detections = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceDescriptors();
+      const detections = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceDescriptors();
       if (!detections || detections.length === 0) {
         return { error: 'no_face', message: 'No se detectó ningún rostro.' };
       }

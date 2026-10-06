@@ -218,11 +218,11 @@ export class AuthView {
       const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
       const linkedinUrl = ((document.getElementById('reg-linkedin') as HTMLInputElement)?.value || '').trim();
 
-      if (!name || !birthDate || !gender || !orientation || !linkedinUrl) {
+      if (!name || !birthDate || !gender || !orientation) {
         await RondaDialog.alert({
-          title: 'Verificación Profesional Requerida',
-          message: 'RONDA es una comunidad para solteros profesionales de alto valor. Ingresa todos tus datos y tu perfil de LinkedIn actualizado para validar tu membresía.',
-          icon: '💼'
+          title: 'Datos Incompletos',
+          message: 'Por favor completa todos tus datos personales. (Opcional: añade tu LinkedIn para recibir una bebida de cortesía 🍺)',
+          icon: '⚠️'
         });
         return;
       }
@@ -238,24 +238,33 @@ export class AuthView {
         return;
       }
 
-      const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
-      if (!linkedinValidation.valid) {
-        await RondaDialog.alert({
-          title: 'Perfil de LinkedIn No Válido',
-          message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
-          icon: '💼',
-          type: 'alert'
-        });
-        return;
+      let normalizedUrl = '';
+      let slug = '';
+      if (linkedinUrl) {
+        const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
+        if (!linkedinValidation.valid) {
+          await RondaDialog.alert({
+            title: 'Perfil de LinkedIn No Válido',
+            message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
+            icon: '💼',
+            type: 'alert'
+          });
+          return;
+        }
+        normalizedUrl = linkedinValidation.normalizedUrl;
+        slug = linkedinValidation.slug;
       }
 
       const zodiac = getZodiacSign(birthDate);
 
       const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-      btn.textContent = 'Enlazando perfil y creando cuenta...';
+      btn.textContent = 'Creando cuenta...';
       btn.disabled = true;
 
-      await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+      if (linkedinUrl) {
+        btn.textContent = 'Enlazando perfil y creando cuenta...';
+        await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+      }
 
       Auth.registerWithEmail(email, password, {
         name,
@@ -264,11 +273,8 @@ export class AuthView {
         age,
         gender,
         orientation,
-        linkedinUrl: linkedinValidation.normalizedUrl,
-        linkedinVerified: false,
-        linkedinSlug: linkedinValidation.slug,
-        isVerified: false,
-        trustTier: 0
+        linkedinUrl: normalizedUrl,
+        linkedinSlug: slug
       }).then(() => {
         this.cb.onRegisterSuccess();
       }).catch(async (err: any) => {

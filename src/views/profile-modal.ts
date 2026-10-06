@@ -67,9 +67,9 @@ export class ProfileModal {
         if (orientationInput) orientationInput.value = user.orientation || '';
         if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
-        // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
+        // El perfil de LinkedIn es opcional en esta etapa
         const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-        if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
+        if (saveBtn) saveBtn.disabled = false;
       }
     });
   }
@@ -153,14 +153,9 @@ export class ProfileModal {
           const val = Verification.validateLinkedInUrl(linkedinUrl);
           user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
           if (val.valid) {
-            user.linkedinVerified = true;
             user.linkedinSlug = val.slug;
-            user.isVerified = true;
           }
         }
-
-        // Persistir el estado de verificación de identidad en el perfil.
-        if (Verification.isVerified || user.linkedinVerified) user.isVerified = true;
 
         if (Auth.currentUser) {
           await DB.saveUser(user);

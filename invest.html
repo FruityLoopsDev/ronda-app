@@ -2261,14 +2261,14 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
   </section>
 
   <footer>
-    <span><span translate="no" class="notranslate">RONDA</span> · maqueta de producto y modelo · Bogotá</span>
+    <span><span translate="no" class="notranslate">RONDA</span> · maqueta de producto y modelo · <span data-ronda-copyright>RONDA System © 2026</span> · Bogotá</span>
     <span>Días valle: martes · miércoles · jueves</span>
     <span id="footer-counter" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--humo); letter-spacing:0.04em;">
       <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
       <span>Visitas:</span>
       <b style="color:var(--luz); font-weight:700;" id="visit-count-num">--</b>
     </span>
-    <span style="opacity: 0.6; font-family: var(--font-mono, monospace); font-size: 11px;">v2.3.0-prod</span>
+    <span style="opacity: 0.6; font-family: var(--font-mono, monospace); font-size: 11px;" data-ronda-version>v2.3.0-prod</span>
   </footer>
 </div>
 
@@ -2351,7 +2351,6 @@ const RondaTracker = {
       if (history.length > 50) history.shift();
       localStorage.setItem('ronda_invest_telemetry', JSON.stringify(history));
     } catch(e) {}
-    console.log(`[RONDA TELEMETRY] 📊 ${eventName}`, payload);
   }
 };
 RondaTracker.init();
@@ -2752,6 +2751,7 @@ function googleTranslateElementInit() {
 }
 </script>
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="module" src="/src/entry-footer.ts"></script>
 
 </body>
 </html>

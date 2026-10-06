@@ -51,9 +51,7 @@ export class AuthService {
             name: '',
             role: 'client',
             gender: '',
-            orientation: '',
-            wallet_address: '',
-            nfts: []
+            orientation: ''
           } as User;
           
           await DB.saveUser(userProfile);
@@ -114,8 +112,6 @@ export class AuthService {
         gender: profileData.gender || '',
         orientation: profileData.orientation || '',
         email: email,
-        wallet_address: '',
-        nfts: [],
         ...profileData
       };
       
