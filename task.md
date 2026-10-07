@@ -39,4 +39,41 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 
 ## FASE 4: REPORTE FINAL AL USUARIO
 - [x] Una vez finalizado todo, informa al usuario que has completado el archivo `task.md`.
-- [ ] Espera la orden del usuario para ejecutar `firebase deploy --only hosting,firestore:rules`.
+
+## FASE 5: BLINDAJE DE FACE-ID & KYC (PARA CLINE - EJECUTOR AUTÓNOMO)
+> **Diagnóstico del Arquitecto (Antigravity):**
+> 1. El cálculo matemático y matriz de decisión han sido blindados y probados en `test/test-face-verification-suite.cjs` (`npm run test:face`).
+> 2. Puntos de falla en runtime identificados en `src/verification.ts`:
+>    - **Captura prematura de video:** En `startVerification`, `ctx.drawImage` a veces lee cuando `videoEl.videoWidth === 0` o el stream aún no envía fotogramas activos, resultando en un canvas vacío (`no_face`).
+>    - **Sobrecarga de Tesseract OCR:** Si la descarga del CDN de Tesseract se demora o falla, el usuario queda atascado. Si el OCR no detecta palabras clave pero sí hay rostro en el documento, debe degradar limpiamente enviando a `kycReviews` (`queueManualReview`) con estado `pending`, nunca lanzar pantalla rota.
+>    - **Rutas de modelos:** Confirmar que `src/face-verify.ts` intente `/models` y el CDN de respaldo sin lanzar excepciones no controladas.
+
+### Tareas para Cline:
+- [ ] **T-1: Loop de Validación de Video Activo:**
+  En `src/verification.ts` (`startVerification`), reemplazar el `setTimeout(600)` por un wait activo que verifique `videoEl.readyState >= 2 && videoEl.videoWidth > 0`.
+- [ ] **T-2: Timeout & Fallback en Tesseract OCR:**
+  En `src/verification.ts` (`scanDocumentOCR`), agregar un timeout de 8 segundos. Si expira o falla la red, retornar `{ success: false, rawText: '', hits: [], error: 'ocr_timeout' }` sin interrumpir la extracción del rostro del documento.
+- [ ] **T-3: Degradación Limpia a Revisión Manual:**
+  Asegurar que ante cualquier duda de coincidencia o falla leve de OCR, el usuario reciba el feedback de "Enviado a revisión manual" (`kycReviews`) y no un bloqueo con error rojo.
+- [ ] **T-4: Ejecución y Validación de Suite:**
+  Ejecutar `npm run test:face` y verificar que pase 15/15.
+- [ ] **T-5: Comprobación de Build:**
+  Ejecutar `npm run build` para asegurar cero regresiones en TypeScript y en el bundle final.
+
+## FASE 6: INCENTIVO Y BADGE "CLUB FUNDADOR 100" (PARA CLINE - EJECUTOR AUTÓNOMO)
+> **Especificación del Arquitecto (Antigravity):**
+> Implementar el programa de captación de los primeros 100 usuarios ("Club Fundador 100") para incentivar el registro temprano, el balance 50/50 y la viralidad por referidos.
+
+### Tareas para Cline:
+- [ ] **T-6.1: Asignación de Badge en Registro:**
+  En `src/auth.ts` (al crear perfil de usuario), contar los usuarios existentes o verificar `usersCount < 100`. Si cumple, asignar en el perfil del usuario: `isFoundingMember: true` y `founderNumber: count + 1`.
+- [ ] **T-6.2: Insignia Dorada en Modal de Perfil:**
+  En `src/views/profile-modal.ts` y `src/profile.ts`, si `user.isFoundingMember` es `true`, renderizar en la parte superior del perfil el badge visual:
+  `<span class="badge-founder">⭐ Miembro Fundador #${user.founderNumber || 1}</span>` con estilo dorado (`var(--luz)` / `#F0A830`).
+- [ ] **T-6.3: Banner / Contador en Landing:**
+  En `landing.html`, añadir un chip/banner informativo en la cabecera del héroe o formulario:
+  `🏆 Beneficios del Club Fundador 100: Insignia Dorada + Prioridad de Cupo + 1er Cóctel de Cortesía`.
+- [ ] **T-6.4: Validación de Build:**
+  Ejecutar `npm run build` para garantizar cero errores de TypeScript o empaquetado.
+
+

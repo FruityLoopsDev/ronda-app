@@ -102,25 +102,7 @@ class RondaHistoryAdapter implements History {
     this.loadedUids.clear();
   }
 
-  /** Sembrado determinista (~35% de pares, como el v1) para que la memoria sea visible en demo. */
-  private seedDemo(participants: Participant[]): void {
-    const n = Math.floor(participants.length / 2);
-    const rnd = mulberry32(1234 + n * 7);
-    const half = participants.slice(0, n);
-    const rest = participants.slice(n);
-    for (const a of half) {
-      for (const b of rest) {
-        if (rnd() < 0.35) {
-          this.map.set(pairKey(a.uid, b.uid), {
-            n: 1 + Math.floor(rnd() * 3),
-            lastAtDaysAgo: 1 + Math.floor(rnd() * 90),
-            match: rnd() < 0.3
-          });
-        }
-      }
-    }
-    console.log(`[Historial] Demo: ${this.map.size} encuentros previos sembrados para ${participants.length} participantes.`);
-  }
+
 }
 
 export const RRHistory = new RondaHistoryAdapter();

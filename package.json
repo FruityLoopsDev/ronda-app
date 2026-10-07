@@ -16,7 +16,8 @@
     "build:prod": "node scripts/build-prod.cjs",
     "preview": "vite preview",
     "simulate:b2b": "node src/b2b-simulation.ts",
-    "test:b2b": "node test/test-b2b-scouts-hosters.cjs && node src/b2b-simulation.ts"
+    "test:b2b": "node test/test-b2b-scouts-hosters.cjs && node src/b2b-simulation.ts",
+    "test:face": "node test/test-face-verification-suite.cjs"
   },
   "repository": {
     "type": "git",

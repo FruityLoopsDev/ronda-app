@@ -2,8 +2,8 @@
 
 > **PROMPT CACHING PROTOCOL (CRÍTICO)**
 > Para aprovechar el Prompt Caching de los LLMs y minimizar el costo de tokens:
-> 1. Este archivo (`AGENTS.md`) y `docs/index.md` son el **Bloque Estático Principal**.
-> 2. Los agentes DEBEN leer este archivo y `docs/index.md` EXACTAMENTE en el mismo orden al inicio de cada conversación o sesión.
+> 1. Este archivo (`AGENTS.md`), `docs/index.md` y `docs/HISTORIAL_INTERACCIONES.md` son el **Bloque Estático Principal**.
+> 2. Los agentes DEBEN leer estos archivos EXACTAMENTE en ese orden al inicio de cada conversación o sesión.
 > 3. NUNCA edites este archivo de forma impulsiva; mantén su estructura inmutable en la medida de lo posible.
 > 4. Lee el código dinámico y los archivos del proyecto *después* de cargar este bloque estático.
 

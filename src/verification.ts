@@ -91,7 +91,11 @@ class VerificationService {
     try {
       await this.loadVerificationLibraries();
       worker = await Tesseract.createWorker('spa');
-      const ret = await worker.recognize(imageBlobOrUrl);
+      // Timeout de 8s
+      const ret = await Promise.race([
+        worker.recognize(imageBlobOrUrl),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('ocr_timeout')), 8000)),
+      ]);
       const rawText = (ret && ret.data && ret.data.text) || '';
       const upper = rawText.toUpperCase();
       const hits: string[] = [];
@@ -99,6 +103,12 @@ class VerificationService {
       if (upper.includes('CEDULA DE CIUDADANIA')) hits.push('CEDULA DE CIUDADANIA');
       return { success: hits.length > 0, rawText, hits };
     } catch (err: any) {
+      // Timeout: degradación limpia a revisión manual (no pantalla roja, no interrumpe
+      // la extracción del descriptor facial del documento).
+      if (err && err.message === 'ocr_timeout') {
+        console.warn('[OCR] Tesseract sobrecargado / timeout: degradando a revisión manual.');
+        return { success: false, rawText: '', hits: [], error: 'ocr_timeout' };
+      }
       console.error('[OCR] Error:', err);
       return { success: false, rawText: '', hits: [], error: (err && err.message) || 'Error de OCR' };
     } finally {
@@ -373,19 +383,51 @@ class VerificationService {
       this.setStatus('Espera un momento... detectando tu rostro.');
       const ctx = canvasEl.getContext('2d');
       if (!ctx) { this.setStatus(this.statusMessage('no_camera')); return false; }
-      // Usar el frame del video una vez que esté listo.
-      await new Promise((r) => setTimeout(r, 600));
-      canvasEl.width = videoEl.videoWidth || 640;
-      canvasEl.height = videoEl.videoHeight || 480;
-      ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-      const selfie = await this.selfieDescriptor(canvasId);
-      if (!selfie.descriptor) {
-        this.setOvalState('error', selfie.error === 'multiple_faces' ? 'Varios rostros: usa una sola persona' : 'Sin rostro / desenfocado: mejora la luz');
-        this.setStatus(this.statusMessage(selfie.error));
-        return false;
+      
+      let selfie: { descriptor: Float32Array | null; error?: string } = { descriptor: null, error: 'no_face' };
+      let ready = false;
+      const maxRetries = 5;
+      const retryDelay = 800; // ms
+      
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        ready = false;
+        const maxWait = 4000; // timeout máximo de espera por frame
+        const start = Date.now();
+        while (!ready && (Date.now() - start) < maxWait) {
+          if (videoEl.readyState >= 2 && videoEl.videoWidth > 0) {
+            ready = true;
+            break;
+          }
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        
+        if (ready) {
+          canvasEl.width = videoEl.videoWidth || 640;
+          canvasEl.height = videoEl.videoHeight || 480;
+          ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+          
+          selfie = await this.selfieDescriptor(canvasId);
+          if (selfie.descriptor) {
+            break; // Éxito
+          } else {
+            const msg = selfie.error === 'multiple_faces' ? 'Varios rostros: usa una sola persona' : 'Centra tu rostro en el óvalo y asegura buena luz';
+            this.setOvalState('error', msg);
+            this.setStatus(`Intento ${attempt}/${maxRetries}... ${msg}`);
+          }
+        }
+        if (attempt < maxRetries) await new Promise(r => setTimeout(r, retryDelay));
       }
-      this.setOvalState('ok', 'Posición óptima ✓ — rostro enmarcado');
-      this.setStatus('Rostro detectado. Ahora captura una foto de tu cédula (frente).');
+
+      // Fallback a revisión manual si falla la extracción del selfie, pero logramos capturar al menos la imagen
+      if (!selfie.descriptor) {
+        this.setOvalState('error', 'Procesamiento facial automático fallido. Se requerirá revisión manual.');
+        this.setStatus('No pudimos procesar tu rostro. Continúa para enviar a revisión manual.');
+        // No retornamos false aquí. Queremos que siga y capture el documento.
+      } else {
+        this.setOvalState('ok', 'Posición óptima ✓ — rostro enmarcado');
+        this.setStatus('Rostro detectado. Ahora captura una foto de tu cédula (frente).');
+      }
+      
       if (stream) stream.getTracks().forEach((t) => t.stop());
       this.stream = null;
       videoEl.srcObject = null;
@@ -401,10 +443,7 @@ class VerificationService {
       this.setStatus('Analizando documento (OCR + rostro)...');
       const ocr = await this.scanDocumentOCR(docImg);
       const docDesc = await getDescriptor(docImg);
-      if (docDesc.error) {
-        this.setStatus(this.statusMessage(docDesc.error === 'no_face' ? 'sin_rostro_documento' : docDesc.error));
-        return false;
-      }
+      
       // [C-3] Reverso opcional (MRZ/código de barras): se solicita si el OCR del frente es débil.
       if (!ocr.success) {
         this.setStatus('Frente poco legible: captura el reverso de tu cédula (opcional, mejora la revisión).');
@@ -418,13 +457,23 @@ class VerificationService {
         } catch { /* reverso opcional: se continúa con el frente */ }
         this.setStatus('Analizando documento (OCR + rostro)...');
       }
-      // 3) Veredicto combinado.
-      const verdict = evaluateIdentity(selfie.descriptor, docDesc.descriptor!, ocr.rawText || '', 0.6);
+      
+      // 3) Veredicto combinado robusto.
+      let verdict: any = { ok: false, reason: 'unknown' };
+      if (!selfie.descriptor) {
+        verdict = { ok: false, reason: selfie.error || 'no_face', distance: 1 };
+      } else if (docDesc.error || !docDesc.descriptor) {
+        verdict = { ok: false, reason: docDesc.error === 'no_face' ? 'sin_rostro_documento' : docDesc.error, distance: 1 };
+      } else {
+        verdict = evaluateIdentity(selfie.descriptor, docDesc.descriptor, ocr.rawText || '', 0.6);
+      }
+
       this.isVerified = verdict.ok;
       if (verdict.ok) {
         this.setStatus('✓ Identidad verificada (selfie coincide con la cédula).');
         return true;
       }
+      
       // [C-4] Sin auto-elevación: enviar a cola de revisión manual en lugar de aprobar.
       try {
         await this.queueManualReview({

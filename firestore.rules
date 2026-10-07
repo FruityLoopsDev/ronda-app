@@ -77,7 +77,7 @@ service cloud.firestore {
 
     // --- Eventos / Salas ---
     match /events/{eventId} {
-      allow read: if request.auth != null;
+      allow read: if true;
       allow create, update, delete: if isStaff();
 
       // Likes: cada usuario escribe únicamente su propio like (${uid}_${targetUid}).

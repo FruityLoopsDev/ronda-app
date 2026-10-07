@@ -36,9 +36,9 @@ export class ProfileService {
     const statVenues = document.getElementById('stat-venues');
     const statMatches = document.getElementById('stat-matches');
 
-    const rounds = user.stats?.roundsPlayed ?? 12;
-    const venues = user.stats?.venuesVisited ?? 3;
-    const matches = user.stats?.matchesCount ?? 5;
+    const rounds = user.stats?.roundsPlayed ?? 0;
+    const venues = user.stats?.venuesVisited ?? 0;
+    const matches = user.stats?.matchesCount ?? 0;
 
     if (statRounds) statRounds.textContent = rounds.toString();
     if (statVenues) statVenues.textContent = venues.toString();
@@ -483,6 +483,35 @@ export class ProfileService {
     if (inputSafeword) inputSafeword.value = user.safeword || 'Martini Azul';
     if (chkDrinkStats) chkDrinkStats.checked = user.privacySettings?.shareDrinkStats !== false;
     if (chkMarketing) chkMarketing.checked = user.privacySettings?.marketingConsent !== false;
+
+    const kycContainer = document.getElementById('kyc-settings-container');
+    if (kycContainer) {
+      if (user.faceVerified) {
+        kycContainer.innerHTML = `
+            <div>
+              <p style="font-size: 11px; color: #79D3AC; font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 3px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                🛡️ VERIFICACIÓN BIOMÉTRICA (KYC)
+              </p>
+              <span style="font-size: 11px; color: var(--humo);">Cédula de Colombia validada · Cero perfiles falsos</span>
+            </div>
+            <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px;">100% OK</span>
+        `;
+        kycContainer.style.background = 'rgba(46,107,84,.1)';
+        kycContainer.style.borderColor = 'rgba(46,107,84,.35)';
+      } else {
+        kycContainer.innerHTML = `
+            <div>
+              <p style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 3px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                🛡️ VERIFICACIÓN BIOMÉTRICA (KYC)
+              </p>
+              <span style="font-size: 11px; color: var(--humo);">Aún no has completado tu validación de identidad.</span>
+            </div>
+            <span class="chip ambar" style="font-size: 9.5px; padding: 3px 8px;">Pendiente</span>
+        `;
+        kycContainer.style.background = 'rgba(240,168,48,.06)';
+        kycContainer.style.borderColor = 'rgba(240,168,48,.35)';
+      }
+    }
 
     // Sincronizar zonas
     const zones = user.preferredZones || ['Zona G', 'Quinta Camacho'];

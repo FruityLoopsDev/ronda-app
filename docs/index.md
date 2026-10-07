@@ -36,6 +36,7 @@ Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
 - **Vercel API:** `functions-vercel/api/` contiene `wompi-webhook.js`, `mint-nft.js`, `process-matches.js`. (Remplaza a Firebase Cloud Functions).
 - **Web3:** `scripts/register-proof.cjs` (keccak256 proof of existence local, modo reserva, 0 gas).
 
+- `docs/HISTORIAL_INTERACCIONES.md` (Registro persistente de decisiones y contexto entre sesiones de chat).
 - `docs/MASTER_REFERENCE.md` (Documento maestro de referencia técnica y arquitectura completa).
 - `docs/architecture.md` (Arquitectura general).
 - `docs/algorithm-v2-spec.md` (Teoría del motor mem-rr-v2).

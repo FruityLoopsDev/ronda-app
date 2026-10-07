@@ -1,9 +1,9 @@
 # RONDA — Memorando de Inversión (Micro-Ronda FFF)
 
 > **Documento Oficial para Inversionistas · Ronda Friends, Family & Founders**  
-> **Fecha:** Septiembre 2026 · **Sede Inicial:** Bogotá, Colombia (Zona G & Quinta Camacho)  
-> **Estado de la Plataforma:** 100% Desplegada, Auditada y Operativa (`https://ronda.uno`)  
-> **Coste de Servidores:** $0 USD/mes (Arquitectura Serverless-Free en Firebase Spark)
+> **Fecha:** Octubre 2026 · **Sede Inicial:** Bogotá, Colombia (Zona G & Quinta Camacho)  
+> **Estado de la Plataforma:** MVP en Fase Piloto con Motor Core Desarrollado y Probado (`https://ronda.uno`)  
+> **Coste de Servidores:** $0 USD/mes (Arquitectura Serverless en Firebase Spark)
 
 ---
 
@@ -13,8 +13,8 @@
 
 * **El Problema del Consumidor:** El colapso del modelo de apps de citas tradicionales (Tinder/Bumble *burnout*: perfiles falsos, semanas de chat inconducente, superficialidad y *ghosting*).
 * **El Problema del Bar:** Capacidad ociosa masiva los días valle (miércoles y jueves), con mesas vacías y costos fijos de personal intactos.
-* **La Solución RONDA:** 24 asistentes con perfil profesional y biometría verificada se sientan en un gastrobar aliado. En 90 minutos viven 9 citas presenciales de 6 minutos, orquestadas por el algoritmo patentable **MEM-RR v2** (cero colisiones, memoria de encuentros previos y balance de afinidad).
-* **Oportunidad de Inversión:** Levantamiento de **$8.000.000 COP** en formato de deuda ágil a 90 días (o SAFE convertible) para financiar el despliegue de los primeros 12 eventos piloto en Bogotá.
+* **La Solución RONDA:** 24 asistentes con perfil profesional y biometría verificada se sientan en un gastrobar aliado. En 90 minutos viven 9 citas presenciales de 6 minutos, orquestadas por el algoritmo propietario **MEM-RR v2** (cero colisiones, memoria de encuentros previos y balance de afinidad).
+* **Oportunidad de Inversión:** Levantamiento de **$8.000.000 COP** en formato de deuda ágil a 90 días (o Nota Convertible) para financiar el despliegue de los primeros 12 eventos piloto en Bogotá.
 
 ---
 
@@ -24,7 +24,7 @@
 | :--- | :--- |
 | **Monto Objetivo** | **$8.000.000 COP** (~$2.000 USD) |
 | **Monto Mínimo por Ticket** | **$1.000.000 COP** (Opción 1 Ticket: $2.000.000 COP) |
-| **Estructura Principal (Deuda)** | **Pagaré a 90 días con retorno del 9% de interés fijo** (36% E.A. equivalente). Cero dilución de capital. |
+| **Estructura Principal (Deuda)** | **Pagaré a 90 días con retorno del 6.0% de interés fijo** (26.2% E.A. equivalente, en pleno cumplimiento de la tasa de usura). Cero dilución de capital. |
 | **Estructura Alternativa (Equity)** | **SAFE Post-Money** con Valuation Cap de **$1.500.000 USD** y 20% de descuento para la ronda Seed institucional. |
 | **Garantía y Respaldo** | Flujo de caja directo de la venta de boletería de los 12 eventos piloto garantizados en contrato con sedes aliadas. |
 | **Cierre de la Ronda** | Inmediato (Primeros compromisos confirmados para desembolso). |
