@@ -1375,7 +1375,8 @@ class ClientAppService {
     const match = this.getMyCurrentMatch(user);
 
     if (match) {
-      const partnerTags = partner.tags || [];
+      const partner: any = match.p1.uid === user.uid ? match.p2 : match.p1;
+      const partnerTags: string[] = partner.tags || [];
       
       container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -1395,12 +1396,12 @@ class ClientAppService {
         </div>
         
         <div style="background: rgba(14,9,18,0.7); border: 1px solid rgba(243,237,226,0.1); border-radius: 16px; padding: 20px 16px; margin-bottom: 16px; text-align: center;">
-          <h4 style="font-family: var(--font-display); font-size: 32px; color: var(--papel); margin: 0 0 4px; font-weight: 700;">${partner.name.split(' ')[0]}</h4>
+          <h4 style="font-family: var(--font-display); font-size: 32px; color: var(--papel); margin: 0 0 4px; font-weight: 700;">${(partner.name || 'Invitado').split(' ')[0]}</h4>
           <span class="chip verde" style="font-size: 9.5px; padding: 2px 8px; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 4px;">💼 LinkedIn Verificado</span>
           <p style="font-size: 13px; color: var(--humo); font-family: var(--font-body); margin: 0 0 16px;">${partner.age ? partner.age + ' años - ' : ''}mesa ${match.tableId}</p>
           
           <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-bottom: 20px;">
-            ${partnerTags.map(tag => `<span style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); background: rgba(243,237,226,0.06); border: 1px solid rgba(243,237,226,0.12); padding: 6px 14px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase;">${tag}</span>`).join('')}
+            ${partnerTags.map((tag: string) => `<span style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); background: rgba(243,237,226,0.06); border: 1px solid rgba(243,237,226,0.12); padding: 6px 14px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase;">${tag}</span>`).join('')}
           </div>
         </div>
 

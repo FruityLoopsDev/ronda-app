@@ -67,6 +67,19 @@ export class ProfileModal {
         if (orientationInput) orientationInput.value = user.orientation || '';
         if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
+        // Badge Club Fundador 100 en modal (T-6.2)
+        if (user.isFoundingMember) {
+          const pant = document.querySelector('#modal-profile .pant');
+          if (pant && !document.getElementById('modal-profile-founder-badge')) {
+            const badge = document.createElement('span');
+            badge.id = 'modal-profile-founder-badge';
+            badge.textContent = `⭐ Miembro Fundador #${user.founderNumber || 1}`;
+            badge.style.cssText =
+              'display:inline-flex;align-items:center;gap:6px;background:rgba(240,168,48,0.18);color:var(--luz-brillo);border:1px solid rgba(240,168,48,0.45);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;margin:8px auto 0 auto;';
+            pant.insertAdjacentElement('afterend', badge);
+          }
+        }
+
         // El perfil de LinkedIn es opcional en esta etapa
         const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
         if (saveBtn) saveBtn.disabled = false;
@@ -180,6 +193,8 @@ export class ProfileModal {
     if (!btnStartKyc) return;
 
     btnStartKyc.addEventListener('click', async () => {
+      const kycWrapper = document.getElementById('kyc-camera-wrapper');
+      if (kycWrapper) kycWrapper.style.display = 'flex';
       const kycVideo = document.getElementById('kyc-video');
       const kycCanvas = document.getElementById('kyc-canvas');
       if (kycVideo) kycVideo.style.display = 'block';

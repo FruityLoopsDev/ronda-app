@@ -9,7 +9,7 @@ Este documento detalla el paso a paso exacto que debe seguir el equipo fundador 
 
 | Documento | Archivo en Repositorio | Función Jurídica |
 |---|---|---|
-| **Contrato de Mutuo Comercial** | [`CONTRATO_MUTUO_COMERCIAL_FFF.md`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/ronda-files/CONTRATO_MUTUO_COMERCIAL_FFF.md) | Regula la relación contractual, plazo (90 días), tasa (9% simple), prelación de pago sobre taquilla y beneficios Founding Backer. |
+| **Contrato de Mutuo Comercial** | [`CONTRATO_MUTUO_COMERCIAL_FFF.md`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/ronda-files/CONTRATO_MUTUO_COMERCIAL_FFF.md) | Regula la relación contractual, plazo (90 días), tasa (6.0% simple / 26.2% E.A.), prelación de pago sobre taquilla y beneficios Founding Backer. |
 | **Pagaré a la Orden** | [`PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/ronda-files/PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md) (Parte 1) | Título valor con mérito ejecutivo inmediato (Art. 709 C.Co. y Art. 422 CGP) para total respaldo del inversionista. |
 | **Carta de Instrucciones** | [`PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/ronda-files/PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md) (Parte 2) | Autorización legal bajo Art. 622 C.Co. para llenar espacios en blanco ante eventual mora. |
 | **Acta de Desembolso** | [`PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/ronda-files/PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md) (Parte 3) | Fija la fecha exacta de inicio y vencimiento del término de 90 días con el comprobante bancario. |
@@ -19,14 +19,14 @@ Este documento detalla el paso a paso exacto que debe seguir el equipo fundador 
 
 ### 2. Tabla de Liquidación por Tipo de Ticket
 
-Todos los créditos tienen una tasa fija simple del **9.0% a 90 días calendario**:
+Todos los créditos tienen una tasa fija simple del **6.0% a 90 días calendario (26.2% E.A., conforme al límite legal de usura)**:
 
-| Ticket | Capital Desembolsado | Rendimiento (9.0%) | Total a Pagar al Vencimiento | Beneficios Asociados |
+| Ticket | Capital Desembolsado | Rendimiento (6.0%) | Total a Pagar al Vencimiento | Beneficios Asociados |
 |:---:|:---:|:---:|:---:|:---|
-| **Fracción Mínima** | $1.000.000 COP | $90.000 COP | **$1.090.000 COP** | Pase VIP + Reporte Quincenal |
-| **Ticket Estándar (1/4)** | $2.000.000 COP | $180.000 COP | **$2.180.000 COP** | Pase VIP + 2 Cortesías + Reporte Quincenal |
-| **Medio Bloque (1/2)** | $4.000.000 COP | $360.000 COP | **$4.360.000 COP** | Pase VIP + 4 Cortesías + Derecho Preferente Seed |
-| **Ronda Completa (Full)** | $8.000.000 COP | $720.000 COP | **$8.720.000 COP** | Título de Founding Angel + Prioridad Absoluta |
+| **Fracción Mínima** | $1.000.000 COP | $60.000 COP | **$1.060.000 COP** | Pase VIP + Reporte Quincenal |
+| **Ticket Estándar (1/4)** | $2.000.000 COP | $120.000 COP | **$2.120.000 COP** | Pase VIP + 2 Cortesías + Reporte Quincenal |
+| **Medio Bloque (1/2)** | $4.000.000 COP | $240.000 COP | **$4.240.000 COP** | Pase VIP + 4 Cortesías + Derecho Preferente Seed |
+| **Ronda Completa (Full)** | $8.000.000 COP | $480.000 COP | **$8.480.000 COP** | Título de Founding Angel + Prioridad Absoluta |
 
 ---
 
@@ -56,3 +56,5 @@ Todos los créditos tienen una tasa fija simple del **9.0% a 90 días calendario
 - El inversionista conserva el original firmado del Contrato y del Acta.
 - El pagaré original firmado queda en custodia debidamente archivado.
 - Se activa la suscripción del inversionista a los reportes de tracción de los 12 eventos piloto.
+
+

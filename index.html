@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>RONDA — Citas presenciales en ubicaciones secretas</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
   <meta name="description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos para profesionales de alto valor.">
   
   <!-- Open Graph / Facebook / WhatsApp -->
@@ -1370,8 +1371,15 @@
 
             <div id="kyc-container" style="margin-top: 6px; border: 1px dashed var(--linea); padding: 10px; border-radius: 8px; position: relative;">
               <p style="font-size: 11px; color: var(--luz); margin-bottom: 5px; font-weight: 700;">💼 Verificación Profesional (LinkedIn) & Biométrica</p>
-              <video id="kyc-video" style="width: 100%; border-radius: 8px; display: none;" autoplay playsinline></video>
-              <canvas id="kyc-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;"></canvas>
+              <div id="kyc-camera-wrapper" style="position: relative; width: 100%; aspect-ratio: 4/3; max-height: 280px; border-radius: 8px; overflow: hidden; background: #0b0b0b; display: none; align-items: center; justify-content: center; margin: 8px 0;"><video id="kyc-video" style="width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1);" autoplay playsinline></video><canvas id="kyc-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block;"></canvas></div>
+              <!-- Canvas integrado en kyc-camera-wrapper -->
+                            <!-- Consentimiento Expreso Ley 1581 Biometría -->
+              <div style="margin: 8px 0; font-size: 10px; color: var(--humo); text-align: left; display: flex; align-items: flex-start; gap: 6px; line-height: 1.35;">
+                <input type="checkbox" id="kyc-biometric-consent" style="margin-top: 2px; accent-color: var(--luz); cursor: pointer;">
+                <label for="kyc-biometric-consent" style="cursor: pointer;">
+                  Autorizo el tratamiento de mis <b>datos biométricos sensibles</b> (reconocimiento facial) exclusivamente para validar mi identidad y seguridad en sala, bajo la <b>Ley 1581 de 2012</b>.
+                </label>
+              </div>
               <button id="btn-start-kyc" class="btn" style="width: 100%; font-size: 12px; margin-bottom: 5px;">📸 Iniciar Verificación Facial</button>
               <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Filtro estricto: Solteros profesionales verificados con LinkedIn + Rostro</p>
             </div>
@@ -1452,7 +1460,7 @@
         <h4 style="font-family: var(--font-display); font-size: 20px; color: var(--papel); margin-bottom: 4px;">Acceso del Equipo</h4>
         <p class="detalle" style="margin-bottom: 16px; font-size: 11.5px;">Acceso para pruebas y administración.</p>
         <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
-        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
+        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input" autocomplete="current-password">
         <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
         <button type="button" id="btn-back-to-waitlist" class="btn" style="background: transparent; margin-top: 8px; font-size: 12px; border: none; color: var(--humo);">← Volver a Lista de Espera</button>
         <button type="button" id="btn-show-register" class="btn" style="background: transparent; margin-top: 6px; font-size: 11px; border: none; color: rgba(243,237,226,0.4);">Registro interno</button>
@@ -1465,7 +1473,7 @@
         <div id="reg-step-1">
           <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
           <div style="position: relative; width: 100%;">
-            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" style="padding-right: 40px; margin-bottom: 4px;">
+            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" autocomplete="new-password" style="padding-right: 40px; margin-bottom: 4px;">
             <button type="button" id="btn-toggle-reg-password" style="position: absolute; right: 12px; top: 21px; transform: translateY(-50%); background: none; border: none; color: var(--humo); cursor: pointer; padding: 4px; font-size: 14px;" title="Mostrar / Ocultar contraseña">👁️</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0 10px; font-size: 11px;">
@@ -1510,6 +1518,13 @@
             <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Opcional - Recomendado)</label>
             <input type="url" id="reg-linkedin" placeholder="https://linkedin.com/in/tu-perfil" class="ronda-input" style="margin-bottom: 2px;">
             <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de profesionales. <span style="color: var(--ambar); font-weight: bold;">🍺 ¡Añade tu LinkedIn para recibir una bebida de cortesía al llegar al evento!</span></span>
+          </div>
+
+          <div style="margin-top: 12px; margin-bottom: 8px; font-size: 10.5px; color: var(--humo); text-align: left; display: flex; align-items: flex-start; gap: 8px; line-height: 1.35;">
+            <input type="checkbox" id="reg-terms-consent" style="margin-top: 2px; accent-color: var(--luz); cursor: pointer;">
+            <label for="reg-terms-consent" style="cursor: pointer;">
+              Acepto los términos y autorizo el tratamiento de mis datos personales conforme a la <b>Ley 1581 de 2012</b> y la Política de Privacidad de RONDA.
+            </label>
           </div>
 
           <button type="button" id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
@@ -1583,6 +1598,7 @@
         <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
         <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px;">🛡️ KYC Verificado</span>
         <span id="profile-linkedin-badge" class="chip verde" style="font-size: 9px; padding: 2px 8px; display: none;">💼 LinkedIn Verificado</span>
+        <span id="profile-founder-badge" class="chip founder" style="font-size: 9px; padding: 2px 8px; display: none;">⭐ Miembro Fundador #<span id="profile-founder-number">1</span></span>
       </div>
       <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;">@julio.ronda</p>
       <p id="profile-display-bio" style="font-size: 13px; color: var(--papel); margin: 0 0 6px; line-height: 1.4;"></p>
@@ -1718,12 +1734,14 @@
         </p>
 
         <!-- Inputs de 4 dígitos -->
-        <div id="pin-inputs-container" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 14px;">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-1" autocomplete="off">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-2" autocomplete="off">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-3" autocomplete="off">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-4" autocomplete="off">
-        </div>
+        <form id="pin-form" onsubmit="event.preventDefault();">
+          <div id="pin-inputs-container" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 14px;">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-1" autocomplete="off">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-2" autocomplete="off">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-3" autocomplete="off">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-4" autocomplete="off">
+          </div>
+        </form>
 
         <!-- Mensaje de error -->
         <div id="pin-error-msg" style="display: none; color: #ff5252; font-size: 11.5px; font-family: var(--font-mono); margin-bottom: 16px;">
@@ -2483,3 +2501,4 @@
   <script type="module" src="/src/app.ts"></script>
 </body>
 </html>
+

@@ -22,13 +22,15 @@
 ---
 
 ## 🛠️ PASOS DE EJECUCIÓN INMEDIATA
-
-1. **Paso 1 (Sincronización de Documentación & SSoT):**
-   - Actualizar `docs/ronda-logica-negocio.md` para eliminar Euros (€), unificar tasa mutuo a 6.0% a 90 días (26.2% E.A.) e incluir tabla de caja real post-IVA (19%) y comisión Wompi.
-2. **Paso 2 (Blindaje de Landing Inversionista `/invest`):**
-   - Modificar `src/views/invest-view.ts` e `invest.html` para indicar que los simuladores son proyecciones ilustrativas del modelo de negocio y ajustar la tasa propuesta.
-3. **Paso 3 (Ajuste de Claims Técnicos y Legales):**
-   - Corregir el claim de "Algoritmo Patentable" por "Mecanismo Propietario de Rotación con Memoria".
-   - Añadir consentimiento expreso Ley 1581 para tratamiento biométrico en `src/verification.ts`.
-4. **Paso 4 (Delegación a Cline):**
-   - Asignar tareas secundarias de refactorización visual y actualización de textos en `task.md`.
+ 
+1. **Paso 1 (Sincronización de Documentación & SSoT):** ✅ *COMPLETADO*
+   - Tasa de mutuo unificada a 6.0% a 90 días (26.2% E.A., dentro del tope legal de usura) y repago a $8.480.000 COP en todo el kit documental (`CONTRATO_MUTUO_COMERCIAL_FFF.md`, `PAGARE_Y_CARTA_INSTRUCCIONES_FFF.md`, `GUIA_OPERATIVA_CIERRE_FFF.md`, `RONDA - Documento Maestro Ronda FFF`, `RONDA_MEMORANDUM_INVERSION_FFF.md`).
+   - Moneda unificada en COP sin euros, CAC SSoT en $35.000 COP.
+2. **Paso 2 (Blindaje de Landing Inversionista `/invest`):** ✅ *COMPLETADO*
+   - Modificado `invest.html`: simulador a 6.0% con ganancia $60k y retorno $1.060.000, Data Room One-Pager, Proyecciones Financieras, generador de pagaré, exportador CSV y mensaje de WhatsApp actualizados.
+   - Disclaimer explícito insertado señalando presentación privada a círculo FFF bajo Art. 1163 C.Co. y Ley 527/1999 (sin oferta pública ni captación masiva; modelos y slots como proyecciones ilustrativas de fase piloto).
+3. **Paso 3 (Ajuste de Claims Técnicos y Legales):** ✅ *COMPLETADO*
+   - Claims de desarrollo ajustados a "Fase Piloto / MVP Verificado en Testnet con Auditoría de Código en Desarrollo" en Memorando de Inversión y referencias de algoritmo a "Mecanismo Propietario con Memoria".
+   - Consentimiento expreso bajo Ley 1581 de 2012 implementado con checkboxes obligatorios y validación en tiempo de ejecución en registro (`index.html` + `src/views/auth-view.ts`) y en verificación biométrica facial (`index.html` + `src/verification.ts`).
+4. **Paso 4 (Delegación a Cline y Verificaciones):** ✅ *COMPLETADO*
+   - Pruebas superadas al 100%: TypeScript (`tsc`), Benchmark (`mem-rr-v2/bench.ts`), KYC (`test:face`), Integridad (`test-integrity-zero-functions.cjs`), B2B (`test:b2b`), Bundle (`npm run build`).

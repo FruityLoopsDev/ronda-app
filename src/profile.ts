@@ -70,6 +70,21 @@ export class ProfileService {
       }
     }
 
+    // Badge Club Fundador 100 (T-6.2)
+    const founderBadge = document.getElementById('profile-founder-badge');
+    const founderNumberEl = document.getElementById('profile-founder-number');
+    if (founderBadge) {
+      if (user.isFoundingMember) {
+        founderBadge.style.display = 'inline-flex';
+        founderBadge.style.background = 'rgba(240,168,48,0.18)';
+        founderBadge.style.color = 'var(--luz-brillo)';
+        founderBadge.style.border = '1px solid rgba(240,168,48,0.45)';
+        if (founderNumberEl) founderNumberEl.textContent = String(user.founderNumber || 1);
+      } else {
+        founderBadge.style.display = 'none';
+      }
+    }
+
     const rowLinkedin = document.getElementById('profile-row-linkedin');
     const linkLinkedin = document.getElementById('profile-linkedin-link') as HTMLAnchorElement | null;
     if (rowLinkedin && linkLinkedin) {

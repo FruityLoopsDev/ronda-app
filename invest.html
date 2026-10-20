@@ -3,28 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="theme-color" content="#16101B">
-<title>RONDA Invest — Oportunidad de Inversión (Micro-ronda FFF)</title>
-<meta name="description" content="Pitch deck y modelo de negocio Demand-First (Riesgo Cero). Financiamos colectivamente eventos de citas rápidas en ubicaciones secretas en Bogotá.">
+<title>RONDA — Acceso Confidencial (Pista Privada FFF)</title>
+<meta name="description" content="Portal privado y confidencial de RONDA. Acceso restringido exclusivamente para invitados autorizados.">
 <link rel="canonical" href="https://ronda.uno/invest">
 <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
 
-<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<!-- Open Graph / Previews Privadas -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ronda.uno/invest">
-<meta property="og:title" content="RONDA Invest — Oportunidad de Inversión (Micro-ronda FFF)">
-<meta property="og:description" content="Pitch deck y modelo de negocio Demand-First. Financiamos colectivamente eventos de citas rápidas en ubicaciones secretas en Bogotá.">
+<meta property="og:title" content="RONDA — Portal Privado &amp; Confidencial">
+<meta property="og:description" content="Acceso exclusivo con credenciales de invitación personal. Documentación privada.">
 <meta property="og:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
 <meta property="og:image:type" content="image/svg+xml">
-<meta property="og:image:alt" content="RONDA Invest — Pitch Deck">
-<meta property="og:site_name" content="RONDA Invest">
+<meta property="og:image:alt" content="RONDA — Acceso Confidencial">
+<meta property="og:site_name" content="RONDA">
 <meta property="og:locale" content="es_CO">
 
 <!-- Twitter / X -->
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:url" content="https://ronda.uno/invest">
-<meta name="twitter:title" content="RONDA Invest — Oportunidad de Inversión (Micro-ronda FFF)">
-<meta name="twitter:description" content="Pitch deck y modelo de negocio Demand-First. Financiamos colectivamente eventos de citas rápidas en ubicaciones secretas en Bogotá.">
+<meta name="twitter:title" content="RONDA — Portal Privado &amp; Confidencial">
+<meta name="twitter:description" content="Acceso exclusivo con credenciales de invitación personal. Documentación privada.">
 <meta name="twitter:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
 
 <!-- Google Analytics 4 (GA4) -->
@@ -1349,33 +1350,41 @@ iframe.skiptranslate { display: none !important; }
     <div class="cta-gold" id="cta-section">
       <span class="cta-badge"><span class="badge-dot"></span> RONDA ABIERTA</span>
       <h3>Únete a la Micro-Ronda FFF</h3>
-      <p class="cta-subtitle">Buscamos <b>$8.000.000 COP</b> para financiar los primeros 12 eventos piloto.<br>Préstamo a Corto Plazo (90 días) al <b>9% de interés</b>. Cero dilución de equity.</p>
+      <p class="cta-subtitle">Buscamos <b>$8.000.000 COP</b> para financiar los primeros 12 eventos piloto.<br>Préstamo a Corto Plazo (90 días) al <b>6.0% de interés fijo</b> (26.2% E.A., dentro del límite legal). Cero dilución de equity.</p>
       
-      <!-- Barra de Progreso y Contador de Tickets (Urgencia Social) -->
-      <div class="round-progress-box">
+      <div id="investor-welcome-badge" style="display:none; background:rgba(121,211,172,0.1); border:1px solid rgba(121,211,172,0.35); border-radius:8px; padding:8px 14px; margin:12px auto; max-width:460px; font-size:12px; color:#79D3AC; font-family:'JetBrains Mono',monospace; text-align:center;">
+        ✨ <b>Acceso Autorizado:</b> <span id="investor-welcome-name">Invitado</span> (<span id="investor-welcome-id"></span>)
+      </div>
+
+      <div style="background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.25); border-radius:10px; padding:10px 14px; margin:16px auto; max-width:460px; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; line-height:1.45; text-align:left;">
+        ⚖️ <b>Aviso Legal / Modelo Ilustrativo:</b> Presentación dirigida estrictamente a círculo privado (Friends, Family &amp; Founders) bajo contrato de mutuo mercantil (Código de Comercio Art. 1163 y Ley 527 de 1999). No constituye captación masiva ni oferta pública de valores. Cifras y slots representan modelos ilustrativos de la fase piloto.
+      </div>
+      
+      <!-- Barra de Progreso y Contador de Tickets (Transparente y Sincronizada) -->
+      <div class="round-progress-box" id="round-progress-container">
         <div class="round-progress-labels">
-          <span class="round-progress-status">🔥 <b>2 de 8 tickets confirmados</b> (25%)</span>
+          <span class="round-progress-status" id="round-progress-status">🌱 <b>0 de 8 tickets confirmados</b> (0%)</span>
           <span class="round-progress-goal">Meta: <b>$8M COP</b></span>
         </div>
 
         <!-- Ticket dots: visual indicator of each slot -->
-        <div class="ticket-dots">
-          <div class="ticket-dot filled" title="Ticket #1 — Confirmado">✓</div>
-          <div class="ticket-dot filled" title="Ticket #2 — Confirmado">✓</div>
-          <div class="ticket-dot next" title="Ticket #3 — ¡Tu turno!">3</div>
-          <div class="ticket-dot empty">4</div>
-          <div class="ticket-dot empty">5</div>
-          <div class="ticket-dot empty">6</div>
-          <div class="ticket-dot empty">7</div>
-          <div class="ticket-dot empty">8</div>
+        <div class="ticket-dots" id="round-ticket-dots">
+          <div class="ticket-dot next" title="Ticket #1 — ¡Sé el primero!">1</div>
+          <div class="ticket-dot empty" title="Ticket #2">2</div>
+          <div class="ticket-dot empty" title="Ticket #3">3</div>
+          <div class="ticket-dot empty" title="Ticket #4">4</div>
+          <div class="ticket-dot empty" title="Ticket #5">5</div>
+          <div class="ticket-dot empty" title="Ticket #6">6</div>
+          <div class="ticket-dot empty" title="Ticket #7">7</div>
+          <div class="ticket-dot empty" title="Ticket #8">8</div>
         </div>
 
         <div class="round-progress-track">
-          <div class="round-progress-fill" style="width: 25%;"></div>
+          <div class="round-progress-fill" id="round-progress-fill" style="width: 0%;"></div>
         </div>
         <div class="round-progress-sub">
-          <span>Recaudado: <b>$2.000.000 COP</b></span>
-          <span>Disponibles: <b>6 tickets</b></span>
+          <span id="round-progress-recaudado">Recaudado: <b>$0 COP</b></span>
+          <span id="round-progress-disponibles">Disponibles: <b>8 tickets (Ronda Abierta)</b></span>
         </div>
       </div>
 
@@ -1436,16 +1445,22 @@ iframe.skiptranslate { display: none !important; }
 
     <!-- Simulador Préstamo FFF -->
     <div class="simulador" id="simulador-section">
-      <h3 style="margin-top:0;font-family:'Bodoni Moda',serif;color:var(--luz);">🎛️ Simulador de Préstamo FFF</h3>
-      <div class="sim-row">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <h3 style="margin:0;font-family:'Bodoni Moda',serif;color:var(--luz);">🎛️ Simulador de Préstamo FFF</h3>
+        <span style="font-size:10px; font-family:'JetBrains Mono',monospace; color:var(--humo); background:rgba(255,255,255,0.05); padding:3px 8px; border-radius:4px; border:1px solid var(--linea);">Proyección Ilustrativa · Tasa Legal Máx. Respetada</span>
+      </div>
+      <div class="sim-row" style="margin-top:14px;">
         <label>Ticket Inversión (COP)</label>
         <input type="range" id="sim-ticket" min="1000000" max="8000000" step="500000" value="1000000" oninput="updateSim()">
         <span class="sim-val" id="val-ticket">$1,000,000</span>
       </div>
       <div class="sim-results">
-        <div class="sim-kpi"><span>Interés Fijo</span><b id="res-int">9%</b></div>
-        <div class="sim-kpi"><span>Ganancia Neta</span><b id="res-ganancia">$90,000</b></div>
-        <div class="sim-kpi"><span>Retorno Total</span><b id="res-val">$1,090,000</b></div>
+        <div class="sim-kpi"><span>Interés Fijo (90d)</span><b id="res-int">6.0%</b></div>
+        <div class="sim-kpi"><span>Ganancia Neta</span><b id="res-ganancia">$60,000</b></div>
+        <div class="sim-kpi"><span>Retorno Total</span><b id="res-val">$1,060,000</b></div>
+      </div>
+      <div style="font-size:10.5px; color:var(--humo); margin-top:10px; font-family:'JetBrains Mono',monospace; text-align:center;">
+        *Tasa de remuneración del 6.0% simple a 90 días (equivalente a 26.2% E.A., dentro del límite legal de usura de Colombia).
       </div>
     </div>
 
@@ -1554,7 +1569,7 @@ iframe.skiptranslate { display: none !important; }
                 <span>📊 2. Modelo Financiero & Unit Economics</span>
                 <span style="font-size:10px; background:rgba(121,211,172,0.12); color:#79D3AC; border:1px solid rgba(121,211,172,0.3); border-radius:4px; padding:1px 6px;">90 Días</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--humo); margin-top: 3px;">Uso de fondos ($8M COP), economía por evento y repago al 9%.</div>
+              <div style="font-size: 11.5px; color: var(--humo); margin-top: 3px;">Uso de fondos ($8M COP), economía por evento y repago al 6.0%.</div>
             </div>
             <button type="button" class="btn-mini pri" style="padding: 7px 14px; font-size: 11.5px; cursor: pointer; white-space: nowrap;">Ver & Descargar</button>
           </div>
@@ -1604,7 +1619,7 @@ iframe.skiptranslate { display: none !important; }
           </div>
           <div class="kpi-stat-box">
             <div class="kpi-label">Retorno Fijo</div>
-            <div class="kpi-num">9% en 90 Días</div>
+            <div class="kpi-num">6.0% en 90 Días</div>
           </div>
           <div class="kpi-stat-box">
             <div class="kpi-label">Piloto Inicial</div>
@@ -1672,8 +1687,8 @@ iframe.skiptranslate { display: none !important; }
         <h4 style="font-family:'Bodoni Moda',serif; color:var(--luz); font-size:16px; margin:14px 0 6px;">4. Condiciones de la Inversión FFF</h4>
         <p style="margin-bottom:6px; color:var(--humo); font-size:12.5px;">
           • <b>Instrumento:</b> Pagaré a 90 días con Contrato de Mutuo Comercial firmado digitalmente (Ley 527 de 1999 con plena validez notarial).<br>
-          • <b>Rendimiento:</b> 9.0% fijo a 90 días (equivalente a 36% E.A. anualizado).<br>
-          • <b>Fuente de Repago:</b> Flujo directo de boletería de los 12 eventos piloto (Ingresos brutos proyectados: $15.840.000 COP frente a un repago total de $8.720.000 COP).
+          • <b>Rendimiento:</b> 6.0% fijo a 90 días (equivalente a 26.2% E.A. anualizado, dentro del tope legal de usura).<br>
+          • <b>Fuente de Repago:</b> Flujo directo de boletería de los 12 eventos piloto (Ingresos brutos proyectados: $15.840.000 COP frente a un repago total de $8.480.000 COP).
         </p>
 
         <div style="border-top:1px dashed var(--linea); margin-top:14px; padding-top:10px; display:flex; justify-content:space-between; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace;">
@@ -1768,8 +1783,8 @@ iframe.skiptranslate { display: none !important; }
 
           <div style="background:rgba(255,255,255,0.03); border:1px solid var(--linea); border-radius:8px; padding:12px;">
             <div style="font-size:11px; color:var(--humo); text-transform:uppercase;">Repago Total FFF (90 Días)</div>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; color:var(--papel); margin-top:4px;">$8.720.000 COP</div>
-            <div style="font-size:11px; color:var(--humo); margin-top:2px;">Capital ($8M) + 9% interés ($720k)</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; color:var(--papel); margin-top:4px;">$8.480.000 COP</div>
+            <div style="font-size:11px; color:var(--humo); margin-top:2px;">Capital ($8M) + 6.0% interés ($480k)</div>
           </div>
         </div>
 
@@ -1849,7 +1864,7 @@ iframe.skiptranslate { display: none !important; }
         </div>
 
         <p style="margin-bottom:12px; text-align:justify;">
-          La suma cierta de: <b id="pagare-val-monto-letras" style="color:#D4AF37;">UN MILLÓN DE PESOS M/CTE</b> (<span id="pagare-val-monto-num2">$1,000,000 COP</span>), más el rendimiento pactado del <b>nueve por ciento (9.0%)</b> correspondiente a la suma de <b id="pagare-val-interes" style="color:#79D3AC;">$90,000 COP</b>, para un valor total a liquidar y pagar de <b id="pagare-val-total" style="color:#D4AF37; font-size:13px;">$1,090,000 COP</b>.
+          La suma cierta de: <b id="pagare-val-monto-letras" style="color:#D4AF37;">UN MILLÓN DE PESOS M/CTE</b> (<span id="pagare-val-monto-num2">$1,000,000 COP</span>), más el rendimiento pactado del <b>seis por ciento (6.0%)</b> correspondiente a la suma de <b id="pagare-val-interes" style="color:#79D3AC;">$60,000 COP</b>, para un valor total a liquidar y pagar de <b id="pagare-val-total" style="color:#D4AF37; font-size:13px;">$1,060,000 COP</b>.
         </p>
 
         <p style="margin-bottom:12px; text-align:justify;">
@@ -1889,22 +1904,125 @@ iframe.skiptranslate { display: none !important; }
   </div>
 
   <script>
+    /* =====================================================================
+       CONFIGURACIÓN MAESTRA DE LA MICRO-RONDA FFF & CONTROL DE ACCESO
+       ===================================================================== */
+    window.RONDA_INVEST_CONFIG = {
+      ticketsConfirmed: 0, // Cero tickets simulados; sincronizado con estado real de apertura
+      totalTickets: 8,
+      ticketValueCOP: 1000000,
+      goalCOP: 8000000
+    };
+
+    const AUTHORIZED_GUESTS = {
+      'rnd-a1-ces': { name: 'César (Fundador)', leadId: 'A1-000', role: 'founder' },
+      'rnd-a1-001': { name: 'Círculo Núcleo (A1)', leadId: 'A1-001', role: 'investor' },
+      'rnd-a2-002': { name: 'Amigos Cercanos (A2)', leadId: 'A2-002', role: 'investor' },
+      'rnd-a3-003': { name: 'Red Profesional (A3)', leadId: 'A3-003', role: 'investor' },
+      'rnd-a4-004': { name: 'Ecosistema & Mentores (A4)', leadId: 'A4-004', role: 'investor' },
+      '2026':       { name: 'Invitado Especial FFF', leadId: 'GEN-2026', role: 'guest' },
+      '7777':       { name: 'Inversor Calificado', leadId: 'GEN-7777', role: 'investor' },
+      '8888':       { name: 'Inversor Calificado', leadId: 'GEN-8888', role: 'investor' },
+      '1234':       { name: 'Invitado FFF', leadId: 'GEN-1234', role: 'guest' },
+      'ronda':      { name: 'Invitado RONDA', leadId: 'GEN-RONDA', role: 'guest' }
+    };
+
+    function syncTicketProgressUI(cfg = window.RONDA_INVEST_CONFIG) {
+      const statusEl = document.getElementById('round-progress-status');
+      const fillEl = document.getElementById('round-progress-fill');
+      const dotsEl = document.getElementById('round-ticket-dots');
+      const recEl = document.getElementById('round-progress-recaudado');
+      const dispEl = document.getElementById('round-progress-disponibles');
+
+      const confirmed = Math.max(0, Math.min(cfg.totalTickets, cfg.ticketsConfirmed));
+      const pct = Math.round((confirmed / cfg.totalTickets) * 100);
+      const recaudado = confirmed * cfg.ticketValueCOP;
+      const disponibles = cfg.totalTickets - confirmed;
+
+      if (statusEl) {
+        statusEl.innerHTML = (confirmed > 0 ? '🔥 ' : '🌱 ') + '<b>' + confirmed + ' de ' + cfg.totalTickets + ' tickets confirmados</b> (' + pct + '%)';
+      }
+      if (fillEl) {
+        fillEl.style.width = pct + '%';
+      }
+      if (recEl) {
+        recEl.innerHTML = 'Recaudado: <b>$' + recaudado.toLocaleString('es-CO') + ' COP</b>';
+      }
+      if (dispEl) {
+        dispEl.innerHTML = 'Disponibles: <b>' + disponibles + (disponibles === 1 ? ' ticket' : ' tickets') + (confirmed === 0 ? ' (Ronda Abierta)' : '') + '</b>';
+      }
+      if (dotsEl) {
+        let dotsHtml = '';
+        for (let i = 1; i <= cfg.totalTickets; i++) {
+          if (i <= confirmed) {
+            dotsHtml += '<div class="ticket-dot filled" title="Ticket #' + i + ' — Confirmado">✓</div>';
+          } else if (i === confirmed + 1) {
+            dotsHtml += '<div class="ticket-dot next" title="Ticket #' + i + ' — ¡Tu turno!">' + i + '</div>';
+          } else {
+            dotsHtml += '<div class="ticket-dot empty" title="Ticket #' + i + '">' + i + '</div>';
+          }
+        }
+        dotsEl.innerHTML = dotsHtml;
+      }
+    }
+
+    function applyUnlockedUI(guest) {
+      const badge = document.getElementById('investor-welcome-badge');
+      const nameEl = document.getElementById('investor-welcome-name');
+      const idEl = document.getElementById('investor-welcome-id');
+      if (badge) badge.style.display = 'block';
+      if (nameEl) nameEl.textContent = guest.name;
+      if (idEl) idEl.textContent = guest.leadId;
+
+      const commitName = document.getElementById('commit-name');
+      if (commitName && !commitName.value && guest.role !== 'founder') {
+        commitName.value = guest.name;
+      }
+
+      const pinScreen = document.getElementById('dataroom-pin-screen');
+      const contentScreen = document.getElementById('dataroom-content-screen');
+      if (pinScreen) pinScreen.style.display = 'none';
+      if (contentScreen) contentScreen.style.display = 'block';
+    }
+
+    function unlockWithGuest(code, guest) {
+      try {
+        sessionStorage.setItem('ronda_invest_guest', JSON.stringify({ ...guest, code }));
+      } catch(e) {}
+      applyUnlockedUI(guest);
+      if (typeof RondaTracker !== 'undefined') {
+        RondaTracker.track('investor_portal_unlocked', {
+          lead_id: guest.leadId,
+          guest_name: guest.name,
+          role: guest.role,
+          code_used: code
+        });
+      }
+    }
+
+    function checkUrlAuth() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = (params.get('token') || params.get('pin') || params.get('code') || '').trim().toLowerCase();
+        if (token && AUTHORIZED_GUESTS[token]) {
+          unlockWithGuest(token, AUTHORIZED_GUESTS[token]);
+          return;
+        }
+        const saved = JSON.parse(sessionStorage.getItem('ronda_invest_guest') || 'null');
+        if (saved && saved.leadId) {
+          applyUnlockedUI(saved);
+        }
+      } catch(e) {}
+    }
+
     function verifyDataRoomPin() {
       const pinInput = document.getElementById('dataroom-pin-input');
       const errorMsg = document.getElementById('dataroom-pin-error');
-      const pinScreen = document.getElementById('dataroom-pin-screen');
-      const contentScreen = document.getElementById('dataroom-content-screen');
-      
-      const validPins = ['2026', '7777', '8888', '1234', 'ronda'];
       const enteredPin = (pinInput ? pinInput.value.trim().toLowerCase() : '');
 
-      if (validPins.includes(enteredPin)) {
+      if (AUTHORIZED_GUESTS[enteredPin]) {
         if (errorMsg) errorMsg.style.display = 'none';
-        if (pinScreen) pinScreen.style.display = 'none';
-        if (contentScreen) contentScreen.style.display = 'block';
-        if (typeof RondaTracker !== 'undefined') {
-          RondaTracker.track('investor_dataroom_unlocked', { pin: enteredPin });
-        }
+        unlockWithGuest(enteredPin, AUTHORIZED_GUESTS[enteredPin]);
       } else {
         if (errorMsg) errorMsg.style.display = 'block';
         if (pinInput) {
@@ -1912,6 +2030,17 @@ iframe.skiptranslate { display: none !important; }
           pinInput.focus();
         }
       }
+    }
+
+    // Inicialización automática
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        syncTicketProgressUI();
+        checkUrlAuth();
+      });
+    } else {
+      syncTicketProgressUI();
+      checkUrlAuth();
     }
 
     /* ---- Data Room Sub-Documents Navigation & Interactive Flow ---- */
@@ -1984,7 +2113,7 @@ iframe.skiptranslate { display: none !important; }
       const name = document.getElementById('pagare-input-name')?.value.trim() || '[NOMBRE COMPLETO DEL ACREEDOR]';
       const cedula = document.getElementById('pagare-input-cedula')?.value.trim() || '[C.C. NO. XXXXXXXXX]';
       const monto = Number(document.getElementById('pagare-input-monto')?.value) || 1000000;
-      const interes = Math.round(monto * 0.09);
+      const interes = Math.round(monto * 0.06);
       const total = monto + interes;
 
       const hoy = new Date();
@@ -2038,7 +2167,7 @@ iframe.skiptranslate { display: none !important; }
 - Inversionista: ${name}
 - Cédula: ${cedula}
 - Ticket a Invertir: ${formatCOP(monto)} COP
-- Retorno Fijo (9% a 90 días): ${formatCOP(total)} COP
+- Retorno Fijo (6% a 90 días): ${formatCOP(total)} COP
 
 Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con la firma.`);
         waBtn.href = `https://wa.me/573026543854?text=${msg}`;
@@ -2119,9 +2248,9 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
 "Total Asistentes Piloto","288"
 "Ingresos Brutos Piloto (12 eventos)","15840000"
 "Margen Neto Generado (12 eventos)","5760000"
-"Total a Repagar Inversores FFF (Capital + 9% Interés)","8720000"
+"Total a Repagar Inversores FFF (Capital + 6.0% Interés)","8480000"
 "Plazo de Repago","90 Días"
-"Tasa de Rendimiento Fija","9.0%"
+"Tasa de Rendimiento Fija","6.0% (26.2% E.A.)"
 `;
 
       const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -2371,7 +2500,7 @@ RondaTracker.init();
       }
     })
     .catch(() => {
-      const local = parseInt(localStorage.getItem('ronda_invest_local_views') || '28', 10) + 1;
+      const local = parseInt(localStorage.getItem('ronda_invest_local_views') || '1', 10) + 1;
       localStorage.setItem('ronda_invest_local_views', local.toString());
       el.textContent = local.toLocaleString('es-CO');
     });
@@ -2383,7 +2512,7 @@ function updateSim() {
   const t = parseInt(document.getElementById('sim-ticket').value);
   document.getElementById('val-ticket').innerText = '$' + t.toLocaleString('es-CO');
   
-  const interestRate = 0.09;
+  const interestRate = 0.06;
   const ganancia = t * interestRate;
   const total = t + ganancia;
   

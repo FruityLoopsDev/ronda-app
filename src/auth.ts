@@ -114,7 +114,19 @@ export class AuthService {
         email: email,
         ...profileData
       };
-      
+
+      // ── Club Fundador 100 ──
+      // Los primeros 100 usuarios registrados reciben la insignia de fundador.
+      try {
+        const usersCount = await DB.countUsers();
+        if (usersCount < 100) {
+          newProfile.isFoundingMember = true;
+          newProfile.founderNumber = usersCount + 1;
+        }
+      } catch (e) {
+        console.warn('[Auth] No se pudo evaluar membresía fundadora:', e);
+      }
+
       // Guardar localmente ANTES de Firestore para ganarle a onAuthStateChanged
       this._pendingProfile = newProfile;
       this.currentUser = newProfile;

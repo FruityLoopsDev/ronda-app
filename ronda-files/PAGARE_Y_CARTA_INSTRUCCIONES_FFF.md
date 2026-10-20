@@ -10,7 +10,7 @@
 **FECHA DE EMISIÓN:** [_____ de ______________ de 2026]  
 **VALOR NOMINAL DEL CAPITAL:** **$[_______________________] COP**  
 **VALOR TOTAL AL VENCIMIENTO:** **$[_______________________] COP**  
-*(Capital mutuado más rendimiento fijo del 9.0% simple pactado)*  
+*(Capital mutuado más rendimiento fijo del 6.0% simple pactado / 26.2% E.A.)*  
 **FECHA DE VENCIMIENTO:** [_____ de ______________ de 2026] (90 días calendario posteriores al desembolso)
 
 ---
@@ -21,7 +21,7 @@ Yo, **[NOMBRE DEL FUNDADOR O RAZÓN SOCIAL]**, persona natural mayor de edad, do
 
 **[NOMBRE COMPLETO DEL INVERSIONISTA FFF]**, persona mayor de edad, identificado(a) con la Cédula de Ciudadanía [o C.E.] No. [________________], o a quien sus derechos legítimamente represente o a cuyo favor sea endosado legalmente este instrumento (en adelante el **"TENEDOR"** o **"ACREEDOR"**), en la ciudad de Bogotá D.C., o en la cuenta bancaria que para tal efecto se señale, la suma líquida de dinero descrita a continuación:
 
-1. **CAPITAL E INTERESES REMUNERATORIOS:** La suma de **[_____________________________________________________________ PESOS M/CTE.] ($[_________________] COP)**, pagadera en una única cuota al vencimiento de este pagaré, correspondiente al capital prestado más el nueve por ciento (9.0%) de interés fijo simple pactado.
+1. **CAPITAL E INTERESES REMUNERATORIOS:** La suma de **[_____________________________________________________________ PESOS M/CTE.] ($[_________________] COP)**, pagadera en una única cuota al vencimiento de este pagaré, correspondiente al capital prestado más el seis por ciento (6.0%) de interés fijo simple pactado (26.2% E.A.).
 2. **INTERESES DE MORA:** En caso de no efectuarse el pago oportuno en la fecha de vencimiento fijada, pagaré sobre el saldo de capital no cubierto intereses moratorios a la tasa máxima legal permitida por la Superintendencia Financiera de Colombia para el período correspondiente, desde el día siguiente al vencimiento hasta el día en que se verifique el pago total y definitivo de la obligación.
 3. **GASTOS DE COBRANZA:** En el evento de ser necesario el cobro judicial o extrajudicial de este pagaré, asumiré todos los gastos, costas procesales y honorarios profesionales de abogado legalmente tasados que ocasione la cobranza.
 
@@ -62,7 +62,7 @@ Yo, **[NOMBRE DEL FUNDADOR O REPRESENTANTE LEGAL]**, identificado(a) como aparec
 
 1. **FECHA DE EMISIÓN:** Será la fecha real en que **EL MUTUANTE / TENEDOR** haya efectuado la transferencia bancaria o desembolso efectivo de los recursos a favor de RONDA.
 2. **FECHA DE VENCIMIENTO:** Será el día nonagésimo (90) calendario contado a partir de la fecha de desembolso efectivo de los fondos. Si la fecha cayere en día no hábil bancario, se correrá al siguiente día hábil.
-3. **VALOR DEL PAGARÉ:** Corresponderá al importe exacto del capital prestado más los intereses remuneratorios pactados a la tasa del 9.0% simple, menos los abonos o pagos parciales que hubieren sido debidamente certificados y consignados a favor del TENEDOR con anterioridad al vencimiento.
+3. **VALOR DEL PAGARÉ:** Corresponderá al importe exacto del capital prestado más los intereses remuneratorios pactados a la tasa del 6.0% simple (26.2% E.A.), menos los abonos o pagos parciales que hubieren sido debidamente certificados y consignados a favor del TENEDOR con anterioridad al vencimiento.
 4. **INTERESES DE MORA:** Se calcularán exclusivamente sobre el saldo de capital no cubierto a la tasa más alta permitida por la ley colombiana para la fecha en que se inicie el retardo.
 5. **EVENTOS PARA EL DILIGENCIAMIENTO Y COBRO:** El TENEDOR queda facultado para hacer uso del pagaré y llenarlo únicamente cuando ocurra cualquiera de las siguientes circunstancias:
    - Que llegada la fecha de vencimiento (90 días calendario posteriores al desembolso) el OTORGANTE no haya cancelado la totalidad del capital mutuado y sus intereses correspondientes.
@@ -99,7 +99,7 @@ En la ciudad de Bogotá D.C., a los [_____] días del mes de [______________] de
 3. **INICIO FORMAL DEL TÉRMINO:** El plazo de noventa (90) días calendario inicia a partir de la fecha de este documento y vencerá de forma improrrogable el día **[_____ de ______________ de 2026]**.
 4. **MONTO A LIQUIDAR AL VENCIMIENTO:**
    - Capital Recibido: $[_________________] COP
-   - Interés 9% Fijo Simple: $[_________________] COP
+   - Interés 6.0% Fijo Simple: $[_________________] COP
    - **TOTAL A PAGAR AL INVERSIONISTA:** **$[_________________] COP**
 5. **BENEFICIOS VITALICIOS ASOCIADOS:** Se hace entrega digital simultánea de las credenciales como **Founding Backer** (Pase VIP y 2 pases de cortesía para eventos de RONDA).
 
@@ -109,3 +109,4 @@ Se firma en señal de mutua conformidad:
 ___________________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ___________________________________  
 **EL MUTUARIO** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **EL MUTUANTE**  
 C.C. No. [________________________] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; C.C. No. [________________________]  
+

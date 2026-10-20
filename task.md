@@ -49,15 +49,15 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 >    - **Rutas de modelos:** Confirmar que `src/face-verify.ts` intente `/models` y el CDN de respaldo sin lanzar excepciones no controladas.
 
 ### Tareas para Cline:
-- [ ] **T-1: Loop de Validación de Video Activo:**
+- [x] **T-1: Loop de Validación de Video Activo:**
   En `src/verification.ts` (`startVerification`), reemplazar el `setTimeout(600)` por un wait activo que verifique `videoEl.readyState >= 2 && videoEl.videoWidth > 0`.
-- [ ] **T-2: Timeout & Fallback en Tesseract OCR:**
+- [x] **T-2: Timeout & Fallback en Tesseract OCR:**
   En `src/verification.ts` (`scanDocumentOCR`), agregar un timeout de 8 segundos. Si expira o falla la red, retornar `{ success: false, rawText: '', hits: [], error: 'ocr_timeout' }` sin interrumpir la extracción del rostro del documento.
-- [ ] **T-3: Degradación Limpia a Revisión Manual:**
+- [x] **T-3: Degradación Limpia a Revisión Manual:**
   Asegurar que ante cualquier duda de coincidencia o falla leve de OCR, el usuario reciba el feedback de "Enviado a revisión manual" (`kycReviews`) y no un bloqueo con error rojo.
-- [ ] **T-4: Ejecución y Validación de Suite:**
+- [x] **T-4: Ejecución y Validación de Suite:**
   Ejecutar `npm run test:face` y verificar que pase 15/15.
-- [ ] **T-5: Comprobación de Build:**
+- [x] **T-5: Comprobación de Build:**
   Ejecutar `npm run build` para asegurar cero regresiones en TypeScript y en el bundle final.
 
 ## FASE 6: INCENTIVO Y BADGE "CLUB FUNDADOR 100" (PARA CLINE - EJECUTOR AUTÓNOMO)
@@ -65,15 +65,32 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 > Implementar el programa de captación de los primeros 100 usuarios ("Club Fundador 100") para incentivar el registro temprano, el balance 50/50 y la viralidad por referidos.
 
 ### Tareas para Cline:
-- [ ] **T-6.1: Asignación de Badge en Registro:**
+- [x] **T-6.1: Asignación de Badge en Registro:**
   En `src/auth.ts` (al crear perfil de usuario), contar los usuarios existentes o verificar `usersCount < 100`. Si cumple, asignar en el perfil del usuario: `isFoundingMember: true` y `founderNumber: count + 1`.
-- [ ] **T-6.2: Insignia Dorada en Modal de Perfil:**
+- [x] **T-6.2: Insignia Dorada en Modal de Perfil:**
   En `src/views/profile-modal.ts` y `src/profile.ts`, si `user.isFoundingMember` es `true`, renderizar en la parte superior del perfil el badge visual:
   `<span class="badge-founder">⭐ Miembro Fundador #${user.founderNumber || 1}</span>` con estilo dorado (`var(--luz)` / `#F0A830`).
-- [ ] **T-6.3: Banner / Contador en Landing:**
+- [x] **T-6.3: Banner / Contador en Landing:**
   En `landing.html`, añadir un chip/banner informativo en la cabecera del héroe o formulario:
   `🏆 Beneficios del Club Fundador 100: Insignia Dorada + Prioridad de Cupo + 1er Cóctel de Cortesía`.
-- [ ] **T-6.4: Validación de Build:**
+- [x] **T-6.4: Validación de Build:**
   Ejecutar `npm run build` para garantizar cero errores de TypeScript o empaquetado.
+
+## FASE 7: BLINDAJE LEGAL, DESINDEXACIÓN Y PRIVATIZACIÓN DE /invest (P0-2, P0-3, P0-4)
+> **Especificación detallada completa en:** `task-invest-hardening.md`  
+> **Objetivo:** Cumplir guardarraíles legales (prevención de captación masiva) y proteger la Pista B (Founders Circle).
+
+### Tareas para Cline:
+- [x] **T-7.1: Sincerar Barra de Tickets en `invest.html` (P0-2):**
+  Ajustar estado inicial a 0/8 tickets ($0 recaudados) y agregar inicializador reactivo `RONDA_INVEST_CONFIG` + `syncTicketProgressUI()`.
+- [x] **T-7.2: Desindexación SEO de `/invest` (P0-3):**
+  Crear `public/robots.txt` bloqueando `/invest` y paneles. Inyectar `<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">` en `invest.html`. Anonimizar Open Graph / Twitter previews.
+- [x] **T-7.3: Cabeceras de Seguridad en `firebase.json` (P0-3):**
+  Agregar regla en `hosting.headers` para `"/invest*"` con `X-Robots-Tag: noindex, nofollow, noarchive`.
+- [x] **T-7.4: Gate de Acceso Nominal y Token por URL (P0-4):**
+  Implementar soporte de tokens nominativos (`?token=...`), catálogo `AUTHORIZED_GUESTS` y telemetría de auditoría (`leadId`) en `RondaTracker.track('investor_portal_unlocked')`.
+- [x] **T-7.5: Build Check:**
+  Ejecutar `npm run build` para verificar cero regresiones. (Completado con éxito, build en 2m 2s).
+
 
 

@@ -41,15 +41,15 @@ RONDA llena esos espacios vacíos con 24 personas verificadas por noche bajo un 
 * **Estructura:** Deuda Privada / Préstamo Comercial a Corto Plazo.  
 * **Dilución:** 0.0% (Sin cesión de acciones ni derechos societarios).  
 * **Plazo:** 90 días calendario desde el desembolso.  
-* **Rendimiento Financiero:** **9.0% de interés simple en 90 días** (tasa fija preferencial muy superior a vehículos bancarios tradicionales).  
+* **Rendimiento Financiero:** **6.0% de interés simple en 90 días** (26.2% E.A. equivalente, en pleno cumplimiento de la tasa máxima de usura).  
 * **Tickets de Inversión:** 4 tickets de $2.000.000 COP (admitiendo fracciones desde $1.000.000 COP).  
-* **Total a Pagar al Vencimiento:** $8.720.000 COP ($8.000.000 COP principal \+ $720.000 COP intereses).
+* **Total a Pagar al Vencimiento:** $8.480.000 COP ($8.000.000 COP principal \+ $480.000 COP intereses).
 
 ## **4\. PRESUPUESTO Y DESTINO DE LOS FONDOS**
 
 | Rubro | Monto (COP) | % | Descripción |
 | :---- | :---- | :---- | :---- |
-| **Pauta Digital (Meta & TikTok Ads)** | $3.500.000 | 43.75% | Adquisición de usuarios para 12 eventos piloto (CAC meta: $30.000–$40.000 COP). |
+| **Pauta Digital (Meta & TikTok Ads)** | $3.500.000 | 43.75% | Adquisición de usuarios para 12 eventos piloto (CAC SSoT: $35.000 COP ponderado). |
 | **Fondo de Reserva y Liquidez** | $2.200.000 | 27.50% | Colchón operativo para garantías de aforo a locales y contingencias. |
 | **Honorarios Anfitrión Piloto** | $1.000.000 | 12.50% | Anticipo y respaldo para anfitriones en sala durante fase inicial. |
 | **Kit Físico y Branding de Mesa** | $700.000 | 8.75% | Comandas retro impresas, numeradores de madera/acrílico, QR stands y timbre. |
@@ -62,7 +62,7 @@ RONDA llena esos espacios vacíos con 24 personas verificadas por noche bajo un 
 * **Recaudo bruto en taquilla:** $15.840.000 COP.  
 * **Margen neto de contribución acumulado:** **$5.760.000 COP**.  
 * **Flujo de caja rotativo:** Debido a que el capital de pauta y reserva rota evento a evento, la empresa mantiene intacto el principal prestado más el excedente de caja generado por las entradas.  
-* **Ratio de Cobertura:** El flujo de caja bruto generado ($15.840.000 COP) cubre 1.8x el monto total adeudado ($8.720.000 COP).
+* **Ratio de Cobertura:** El flujo de caja bruto generado ($15.840.000 COP) cubre 1.86x el monto total adeudado ($8.480.000 COP).
 
 ## **6\. MARCO LEGAL Y PROTECCIÓN DEL INVERSIONISTA**
 
@@ -93,6 +93,7 @@ La operación se formaliza bajo la legislación mercantil de la República de Co
 * Mutuario (Fundador/Empresa): \[Nombre del Fundador / C.C. / NIT\]  
 * **Monto del Préstamo:** $\[Monto en COP\]  
 * **Plazo de Pago:** 90 días calendario a partir de la firma.  
-* **Interés Pactado:** 9.0% simple sobre el capital desembolsado.  
+* **Interés Pactado:** 6.0% simple sobre el capital desembolsado (26.2% E.A.).  
 * **Garantía:** Pagaré No. \[001\] con Carta de Instrucciones anexa.
+
 

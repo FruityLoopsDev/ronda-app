@@ -366,6 +366,8 @@ function initApp() {
   const btnStartKyc = document.getElementById('btn-start-kyc');
   if (btnStartKyc) {
     btnStartKyc.addEventListener('click', async () => {
+      const kycWrapper = document.getElementById('kyc-camera-wrapper');
+      if (kycWrapper) kycWrapper.style.display = 'flex';
       const kycVideo = document.getElementById('kyc-video');
       const kycCanvas = document.getElementById('kyc-canvas');
       if (kycVideo) kycVideo.style.display = 'block';

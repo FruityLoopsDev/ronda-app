@@ -33,7 +33,7 @@
 
 ## 3. Ventajas Competitivas y Blindaje Tecnológico
 
-A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **100% del desarrollo de software concluido y auditado**:
+A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda en **Fase Piloto con MVP Funcional Verificado y Auditoría de Código en Desarrollo**:
 
 1. **Algoritmo Propietario MEM-RR v2 (Memoria y Optimización Combinatoria):**
    - Resuelve el problema matemático de rotación en grafo bipartito y general.
@@ -70,7 +70,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
 * **Total Asistentes:** 288 profesionales verificados en Bogotá.
 * **Ingresos Brutos:** $15.840.000 COP.
 * **Margen Neto Generado:** **$5.760.000 COP**.
-* **Retorno del Préstamo FFF:** Los $8.000.000 COP + 9% de interés ($720.000 COP) se pagan con los ingresos netos acumulados de las semanas 6 a 12 de operación comercial continua.
+* **Retorno del Préstamo FFF:** Los $8.000.000 COP + 6.0% de interés ($480.000 COP, total $8.480.000 COP) se pagan con los ingresos netos acumulados de las semanas 6 a 12 de operación comercial continua.
 
 ---
 
@@ -87,7 +87,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
 └─────────────────────────────────────────────────────────────┘
 ```
 
-1. **Adquisición Segmentada de Usuarios ($3.500.000 COP):** Campañas hiper-localizadas en Instagram y LinkedIn enfocadas en mujeres y hombres profesionales de 25 a 42 años en Chapinero Alto, Zona G y Parque de la 93. Costo de Adquisición de Cliente (CAC) estimado: ~$12.000 COP por usuario verificado.
+1. **Adquisición Segmentada de Usuarios ($3.500.000 COP):** Campañas hiper-localizadas en Instagram y LinkedIn enfocadas en mujeres y hombres profesionales de 25 a 42 años en Chapinero Alto, Zona G y Parque de la 93. Costo de Adquisición de Cliente (CAC) SSoT: $35.000 COP ponderado ($45k hombres / $25k mujeres).
 2. **Kits de Identidad y Merchandising Físico ($1.800.000 COP):** Acrílicos con números de mesa para los 4 bares piloto, sellos de cera, tarjetas de comanda física con diseño editorial de RONDA y stands QR de check-in.
 3. **Fondo de Garantía de Sala ($2.000.000 COP):** Depósito rotativo de anticipo para garantizar la exclusividad del salón reservado en los gastrobares aliados.
 4. **Formalización Legal ($700.000 COP):** Registro de contratos de mutuo con pagaré autenticado ante notaría digital para total tranquilidad del inversionista.
@@ -103,7 +103,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
   - 2 eventos por semana (Miércoles y Jueves, 20:00 hrs).
   - 288 asistentes únicos. Generación de base de datos propia de solteros de alta renta.
 * **Día 61 – 90 (Liquidación y Expansión):**
-  - Repago total del capital FFF ($8M COP + 9% de interés) a los inversionistas.
+  - Repago total del capital FFF ($8M COP + 6.0% de interés, $8.480.000 COP total) a los inversionistas.
   - Apertura de la ronda Pre-Seed formal (USD $75.000 a USD $150.000) con métricas reales de retención (>35% recompra de boletas para segundas citas) y expansión a Medellín y Cali.
 
 ---

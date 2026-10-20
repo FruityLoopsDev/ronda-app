@@ -38,6 +38,7 @@ export interface User {
   preferredZones?: string[];
   ageRangePreference?: { min: number; max: number };
   isVerified?: boolean;
+  faceVerified?: boolean;
   trustTier?: 0 | 1 | 2 | 3;
   verifications?: {
     identity?: {
@@ -130,6 +131,9 @@ export interface User {
   nfts?: any[];
   matches?: string[];
   satisfactionFeedback?: any;
+  /** Club Fundador 100 - insignia de los primeros 100 usuarios */
+  isFoundingMember?: boolean;
+  founderNumber?: number;
 }
 
 export interface Match {
@@ -403,6 +407,16 @@ export class DatabaseInterface {
     const sanitized = cleanFirestoreData(user);
     await setDoc(docRef, sanitized, { merge: true });
     return user;
+  }
+
+  async countUsers(): Promise<number> {
+    try {
+      const snap = await getDocs(collection(this._getFirestore(), 'users'));
+      return snap.docs.length;
+    } catch (err) {
+      console.error('[DB] Error contando usuarios:', err);
+      return 0;
+    }
   }
 
   // --- Eventos / Salas ---

@@ -50,14 +50,14 @@ El plazo total pactado para la restitución del capital y el pago de los interes
 ---
 
 ### CLÁUSULA QUINTA. — INTERESES REMUNERATORIOS
-Durante la vigencia de los noventa (90) días del crédito, **EL MUTUARIO** reconocerá y pagará a favor de **EL MUTUANTE** un interés remuneratorio fijo correspondiente al **nueve por ciento simple (9.0%)** sobre el valor nominal del capital desembolsado.
+Durante la vigencia de los noventa (90) días del crédito, **EL MUTUARIO** reconocerá y pagará a favor de **EL MUTUANTE** un interés remuneratorio fijo correspondiente al **seis por ciento simple (6.0%)** sobre el valor nominal del capital desembolsado (equivalente al 26.2% Efectivo Anual, en estricto cumplimiento del tope legal de usura certificado por la Superintendencia Financiera de Colombia).
 
 * **Liquidación del Rendimiento:**
   - Capital Mutuado: **$[_________________] COP**
-  - Rendimiento Fijo (9.0% simple a 90 días): **$[_________________] COP**
+  - Rendimiento Fijo (6.0% simple a 90 días / 26.2% E.A.): **$[_________________] COP**
   - **Monto Total a Restituir al Vencimiento:** **$[_________________] COP**
 
-*(Ejemplo referencia por ticket de $2.000.000 COP: Capital $2.000.000 + Interés $180.000 = Total $2.180.000 COP).*
+*(Ejemplo referencia por ticket de $2.000.000 COP: Capital $2.000.000 + Interés $120.000 = Total $2.120.000 COP).*
 
 ---
 
@@ -87,7 +87,7 @@ Para garantizar el cumplimiento oportuno de las obligaciones de crédito consagr
 **EL MUTUARIO** garantiza que el flujo de caja para el cumplimiento del presente compromiso proviene directamente de:
 1. El recaudo de taquilla por venta de entradas a los eventos organizados en la plataforma web de RONDA (`https://ronda.uno`).
 2. El margen neto de contribución proyectado de $480.000 COP por evento (36.4% de margen neto sobre boleta de $55.000 COP x 24 asistentes).
-3. Con un recaudo bruto acumulado proyectado de $15.840.000 COP para los 12 eventos piloto, existe un ratio de cobertura de caja de 1.8x frente al total de la ronda FFF ($8.720.000 COP incluidos intereses).
+3. Con un recaudo bruto acumulado proyectado de $15.840.000 COP para los 12 eventos piloto, existe un ratio de cobertura de caja de 1.86x frente al total de la ronda FFF ($8.480.000 COP incluidos intereses).
 
 **EL MUTUARIO** asume como obligación prioritaria destinar los fondos recaudados en boletería a la amortización y saldo del presente mutuo frente a cualquier otro gasto operativo no esencial.
 

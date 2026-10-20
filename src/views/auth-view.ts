@@ -227,6 +227,17 @@ export class AuthView {
         return;
       }
 
+      const termsConsent = (document.getElementById('reg-terms-consent') as HTMLInputElement | null)?.checked;
+      if (!termsConsent) {
+        await RondaDialog.alert({
+          title: 'Autorización Requerida',
+          message: 'Debes autorizar el tratamiento de datos personales conforme a la Ley 1581 de 2012 para crear tu cuenta.',
+          icon: '📋',
+          type: 'alert'
+        });
+        return;
+      }
+
       const age = calculateAge(birthDate);
       if (age < 18) {
         await RondaDialog.alert({
