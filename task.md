@@ -179,13 +179,46 @@
 ### 7.4 Reporte final
 - [x] Creado `AUDIT_REPORT.md` en la raíz del proyecto con hallazgos, archivos modificados/eliminados y deuda técnica.
 
----
+## FASE 15: PLAN DE SUBSANACIÓN INMEDIATA (HOTFIX EXPRESS PRE-PRODUCCIÓN) — PARA CLINE
 
-## ⚠️ RESTRICCIONES IMPORTANTES PARA CLINE
+> **Objetivo:** Resolver el 100% de las observaciones críticas de la auditoría técnica con modificaciones atómicas de alta velocidad y mínimo consumo de tokens, dejando `ronda.uno` blindada para salir a producción hoy.
 
-1. **NO modifiques `AGENTS.md` ni `docs/index.md`** (Prompt Caching).
-2. **NO modifiques `src/mem-rr-v2/`** — ese módulo es responsabilidad exclusiva de DeepSeek Harness.
-3. **NO modifiques `index.html` completo** — es un archivo XL (2479 líneas). Usa `grep -n` para localizar líneas específicas y edita solo los rangos necesarios.
-4. **NO modifiques `src/client.ts` completo** — es un archivo XL (1938 líneas). Misma regla.
-5. **Ejecuta `npx tsc --noEmit` después de CADA fase** para verificar que no introduces regresiones.
-6. **Si un flujo requiere datos de prueba en Firestore**, créalos via los emuladores, no hardcodees datos en el código.
+### 📋 Checklist de Ejecución Rápida para Cline:
+
+- [x] **T-15.1: Purgar credenciales y script de rotación de contraseña:**
+  - Eliminar permanentemente el archivo con la contraseña expuesta: `backups/staff-cesar-credentials.txt`.
+  - Eliminar cualquier script residual temporal como `fix-profile.js` si aún existe en la raíz.
+  - Crear `scripts/rotate-password.cjs` que use `https://identitytoolkit.googleapis.com/v1/accounts:update` con la API Key del proyecto para permitir rotar la clave de `cesar@ronda.uno` de forma segura por CLI sin dejar texto plano en el repo.
+
+- [ ] **T-15.2: Blindaje de Cabeceras y CSP en `firebase.json`:**
+  - En la directiva `Content-Security-Policy` de `firebase.json`:
+    - En `script-src`: agregar `https://translate.google.com https://translate.googleapis.com https://cdn.jsdelivr.net https://unpkg.com`.
+    - En `connect-src`: agregar `https://translate.googleapis.com https://cdn.jsdelivr.net https://unpkg.com`.
+  - Esto desbloquea el selector de idiomas en `/invest` y los modelos KYC sin arrojar bloqueos en consola.
+
+- [ ] **T-15.3: Fortalecimiento de Reglas en `firestore.rules`:**
+  - En `isSuperAdmin()`, añadir la condición estricta de verificación de correo:
+    ```cel
+    function isSuperAdmin() {
+      return request.auth != null && (
+        (request.auth.token.email == 'cesar@ronda.uno' && request.auth.token.email_verified == true) ||
+        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
+        userRole(request.auth.uid) == 'superadmin'
+      );
+    }
+    ```
+
+- [ ] **T-15.4: Sinceramiento de Métricas y Protección Legal (`superadmin.html` & `src/footer.ts`):**
+  - En `superadmin.html` (líneas 1400-1512): eliminar la variable `baseVisits = 145032` y el `setInterval` con picos aleatorios `Math.random()`. Conectar el display `#visit-count` estrictamente a visitas locales reales (`localStorage.getItem('ronda_visit_count') || 1`).
+  - En `src/footer.ts`: en `applyEngineeringMetrics()` y `getRondaFooterHtml()`, etiquetar las horas con transparencia: `⚡ +${hours}h dev (est.) · ${commits} deploys · Motor mem-rr-v2` para blindar legalmente el memorando FFF.
+
+- [ ] **T-15.5: Enlaces Reales en Redes Sociales:**
+  - En `landing.html`, `partners.html`, `invest.html` y `src/footer.ts`, reemplazar los `href="#"` de los iconos de redes sociales por las rutas canónicas oficiales:
+    - Instagram: `https://instagram.com/ronda.uno`
+    - LinkedIn: `https://linkedin.com/company/ronda-uno`
+    - GitHub: `https://github.com/FruityLoopsDev/ronda-app`
+
+- [ ] **T-15.6: Verificación Técnica Final:**
+  - Ejecutar `npx tsc --noEmit` (debe retornar 0 errores).
+  - Ejecutar `npm run build` (debe compilar limpiamente en `dist/`).
+  - Marcar las casillas `[x]` en este archivo e informar al usuario para el deploy final.
