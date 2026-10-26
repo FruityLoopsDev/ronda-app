@@ -32,7 +32,7 @@ function applyEngineeringMetrics(root: ParentNode, hours: number, commits: numbe
     el.textContent = `${days}`;
   });
   root.querySelectorAll('[data-ronda-engineering-badge]').forEach((el) => {
-    el.textContent = `⚡ +${hours}h (est.) · ${commits} deploys · Motor mem-rr-v2`;
+    el.textContent = `⚡ +${hours}h (est.) · ${commits} deploys · Tecnología Propia`;
   });
 }
 
@@ -105,13 +105,13 @@ export function getRondaFooterHtml(): string {
               R<em style="color: var(--luz, #F0A830); font-style: italic;">O</em>NDA
             </div>
             <div style="font-family: var(--font-mono, monospace); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--luz, #F0A830); margin-bottom: 8px; font-weight: 700;">
-              Citas Presenciales · Bogotá, Colombia
+              Citas Rápidas / Speed Dating · Bogotá, Colombia
             </div>
             <p style="font-size: 12px; line-height: 1.5; color: var(--humo, #8c8378); margin: 0 0 12px; max-width: 320px;">
-              Experiencias curadas de citas presenciales de alto valor en ubicaciones secretas. Sin pantallas ni pérdida de tiempo.
+              Citas rápidas curadas en ubicaciones secretas de Bogotá. 9 encuentros de 6 minutos en persona, con gente real y sin pantallas.
             </p>
             <span data-ronda-engineering-badge style="display: inline-block; font-size: 10px; font-family: var(--font-mono, monospace); color: var(--luz, #F0A830); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.22); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em;">
-              ⚡ <span data-ronda-hours>${APP_DEV_HOURS}</span>h de ingeniería · <span data-ronda-commits>${APP_COMMIT_COUNT}</span> deploys · Motor mem-rr-v2
+              ⚡ <span data-ronda-hours>${APP_DEV_HOURS}</span>h de ingeniería · <span data-ronda-commits>${APP_COMMIT_COUNT}</span> deploys · Tecnología Propia
             </span>
           </div>
 

@@ -30,7 +30,7 @@ El equipo fundador procesa la base de datos de `waitlist` aplicando 3 filtros de
 1. **Verificación Profesional (LinkedIn):**
    - Perfil activo en Bogotá, fotografía real y trayectoria profesional coherente.
 2. **Paridad Numérica (50% Mujeres / 50% Hombres):**
-   - Asegura la proporción matemática exacta para que el motor `mem-rr-v2` ejecute rotaciones sin tiempos muertos.
+   - Asegura el balance perfecto de la sala para que las conversaciones fluyan de forma continua sin tiempos muertos.
 3. **Agrupación por Cohortes Etarias:**
    - **Cohorte A:** 25 a 33 años.
    - **Cohorte B:** 34 a 42 años.
@@ -62,7 +62,7 @@ Para asegurar tu mesa en la Noche Inaugural en Chapinero Alto, tienes una ventan
 ```
 
 ### Mensaje 2: Lock-in de Ticket & Pago Preferencial (Día 2)
-- Se envía el enlace de cobro seguro nominal (Nequi / Wompi): **$45.000 COP** (Precio exclusivo Fundador, incluye 2 cócteles de autor + bono de retorno de -25%).
+- Se envía el enlace de cobro seguro nominal (Nequi / Wompi): **$45.000 COP** (Precio exclusivo Fundador, incluye 1 cóctel de autor + bono de retorno de -25%).
 - Una vez pagado, el estado del lead pasa a `confirmed_founder` en Firestore.
 
 ### Mensaje 3: Verificación Biométrica & Pasaporte Digital (Día 3)
@@ -107,7 +107,7 @@ Para mantener la atmósfera de exclusividad y misterio:
                                     │
                                     ▼
        [20:00] Suena la Campana de Bronce: Inicio de las 9 rondas de 6 min
-               (Algoritmo mem-rr-v2 rotando mesas sin colisiones)
+               (Dinámica inteligente de rotación sin repetir personas)
                                     │
                                     ▼
        [21:15] Votación Secreta en la App (Sí / No privado por cada persona)

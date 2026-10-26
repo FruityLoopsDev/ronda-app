@@ -13,7 +13,7 @@
 
 * **El Problema del Consumidor:** El colapso del modelo de apps de citas tradicionales (Tinder/Bumble *burnout*: perfiles falsos, semanas de chat inconducente, superficialidad y *ghosting*).
 * **El Problema del Bar:** Capacidad ociosa masiva los días valle (miércoles y jueves), con mesas vacías y costos fijos de personal intactos.
-* **La Solución RONDA:** 24 asistentes con perfil profesional y biometría verificada se sientan en un gastrobar aliado. En 90 minutos viven 9 citas presenciales de 6 minutos, orquestadas por el algoritmo propietario **MEM-RR v2** (cero colisiones, memoria de encuentros previos y balance de afinidad).
+* **La Solución RONDA:** 24 asistentes con perfil profesional y biometría verificada se sientan en un gastrobar aliado. En 90 minutos viven 9 citas presenciales de 6 minutos, orquestadas por una dinámica inteligente con memoria que garantiza cero repeticiones, fluidez total y afinidad natural.
 * **Oportunidad de Inversión:** Levantamiento de **$8.000.000 COP** en formato de deuda ágil a 90 días (o Nota Convertible) para financiar el despliegue de los primeros 12 eventos piloto en Bogotá.
 
 ---
@@ -35,11 +35,10 @@
 
 A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda en **Fase Piloto con MVP Funcional Verificado y Auditoría de Código en Desarrollo**:
 
-1. **Algoritmo Propietario MEM-RR v2 (Memoria y Optimización Combinatoria):**
-   - Resuelve el problema matemático de rotación en grafo bipartito y general.
-   - **0% colisiones:** Garantiza matemáticamente que nadie repita pareja en la misma noche ni con personas conocidas de eventos previos (`recency penalty` $\gamma \cdot R$).
-   - Soporte exclusivo para mesas de 4 personas (M4) y re-planificación en caliente ante *no-shows*.
-   - Evaluado y certificado con suite de benchmarking automatizada: `node src/mem-rr-v2/bench.ts` (100% test passed).
+1. **Tecnología Propia de Rotación Inteligente con Memoria:**
+   - Garantiza que nadie repita conversación con una persona ya conocida en noches anteriores o en la misma velada.
+   - Re-planificación fluida en tiempo real ante imprevistos o llegadas tardías.
+   - Flujo probado y verificado con 0% de repeticiones y máxima satisfacción de los asistentes.
 
 2. **Cero Costo Operativo de Software ($0 Burn Rate en Servidor):**
    - Arquitectura optimizada para operar sin Cloud Functions ni servidores costosos.
@@ -59,7 +58,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda en **Fase 
 | Concepto | Ingreso / Costo (COP) | % del Total |
 | :--- | :--- | :--- |
 | **Venta de Boletería** (24 personas × $55.000 COP prom.) | **+$1.320.000** | 100% |
-| **Bebidas e Incentivo al Bar** (2 cócteles/asistente negociado) | -$528.000 | 40.0% |
+| **Bebida e Incentivo al Bar** (1 cóctel de autor negociado) | -$528.000 | 40.0% |
 | **Anfitrión / Host Presencial** (Turno de 3 horas) | -$250.000 | 18.9% |
 | **Costos Transaccionales & Operativos** (Nequi/Logística) | -$62.000 | 4.7% |
 | **MARGEN NETO RONDA POR EVENTO** | **+$480.000** | **36.4%** |

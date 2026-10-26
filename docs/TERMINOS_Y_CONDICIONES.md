@@ -14,14 +14,14 @@ Al registrarse, acceder o utilizar la plataforma web, asistir a las experiencias
 
 ## 2. Naturaleza del Servicio
 RONDA es una plataforma tecnológica que organiza experiencias presenciales curadas de citas rápidas (*speed dating* rotativo) y dinamización comercial en gastrobares aliados en Bogotá. 
-- La plataforma proporciona el software de verificación de identidad, asignación algorítmica de mesas sin repetición de parejas (`motor mem-rr-v2`), rompehielos interactivos y registro de coincidencias mutuas (*Double Opt-In*).
+- La plataforma proporciona el software de verificación de identidad, organización inteligente de mesas sin repetición de parejas, rompehielos interactivos y registro de coincidencias mutuas (*Double Opt-In*).
 - RONDA **no es una agencia matrimonial** ni garantiza el éxito relacional, la atracción mutua o la compatibilidad de los asistentes.
 
 ---
 
 ## 3. Requisitos de Acceso, Verificación y Conducta
-1. **Verificación de Identidad (LinkedIn y KYC Biométrico):**
-   - El usuario autoriza el escaneo de seguridad facial mediante tecnología de alineación biométrica exclusivamente para validar que la persona que asiste al bar coincide con su registro.
+1. **Verificación de Identidad (LinkedIn y Validación Rápida):**
+   - El usuario autoriza la verificación facial ágil exclusivamente para validar que la persona que asiste al bar coincide con su registro.
    - Está prohibida la suplantación de identidad, el uso de perfiles falsos o documentos adulterados.
 2. **Código de Conducta en Sala:**
    - Queda terminantemente prohibido cualquier acto de acoso, discriminación, contacto físico no consentido, lenguaje ofensivo o vulneración a la intimidad de los demás asistentes.
@@ -41,7 +41,7 @@ RONDA es una plataforma tecnológica que organiza experiencias presenciales cura
 ---
 
 ## 5. Propiedad Intelectual
-Todos los derechos sobre el software, algoritmos de rotación (`mem-rr-v2`), interfaces gráficas, marcas, logotipos, comandas analógicas y conceptos visuales son propiedad exclusiva de RONDA. Queda prohibida su reproducción, ingeniería inversa o explotación sin autorización previa y por escrito.
+Todos los derechos sobre el software, tecnología propia de rotación de mesas, interfaces gráficas, marcas, logotipos, comandas analógicas y conceptos visuales son propiedad exclusiva de RONDA. Queda prohibida su reproducción, ingeniería inversa o explotación sin autorización previa y por escrito.
 
 ---
 

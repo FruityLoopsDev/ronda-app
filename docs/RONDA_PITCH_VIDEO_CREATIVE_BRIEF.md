@@ -14,7 +14,7 @@
 ### 1.1 ¿Qué es RONDA?
 RONDA no es una app de citas tradicional. Las apps tradicionales (Tinder, Bumble) monetizan la **retención en pantalla** (adictivas, superficiales, fatiga de swipe, <2% de conversión a citas reales). 
 
-RONDA monetiza la **experiencia presencial**: un algoritmo con memoria y optimización discreta (`mem-rr-v2`) empareja grupos de solteros compatibles para eventos dinámicos en bares seleccionados de Bogotá.
+RONDA monetiza la **experiencia presencial**: organizamos encuentros dinámicos en bares seleccionados de Bogotá, con una tecnología propia que asegura que cada conversación sea con alguien nuevo y afín.
 - Citas de **6 minutos** en mesas de 2 personas (encuentro 1 a 1 frente a frente).
 - Dinámica guiada por un **anfitrión capacitado** y check-in por web-app (cero descargas obligatorias).
 - Modelo **Demand-First (Riesgo Cero)**: El local no asume costo y el evento solo se confirma cuando el aforo de 12 hombres + 12 mujeres compatibles está 100% pre-pagado.
@@ -94,7 +94,7 @@ TIEMPO TOTAL: 01:30 | IDIOMA: Español (Neutro / Acento Bogotá suave, profesion
 |---|---|---|---|---|
 | **00:18 – 00:26** | **Plano medio:** Parejas sentadas frente a frente en mesas íntimas de 2 personas, conversando naturalmente con cócteles en mano. Iluminación lateral en 45°, bokeh profundo en el fondo. Gente real (25-38 años), vestimenta casual elegante. | *"Reunimos a solteros frente a frente en mesas íntimas de dos en los mejores bares de la ciudad. Sin presión: seis minutos de conversación real."* | Risa sutil de fondo; música toma cuerpo con percusión elegante. | `CITAS DE 6 MINUTOS`<br>`Mesa de 2 · Conexión 1 a 1` |
 | **00:26 – 00:32** | **Plano detalle:** El anfitrión toca una elegante campana de bronce en la barra. Todos sonríen, brindan y rotan de puesto con soltura. | *"Suena la campana, y rotas de mesa. En una sola noche conoces hasta doce personas cara a cara."* | **SFX:** Campanada de bronce dulce y resonante (*Dinggg*). | `12 ENCUENTROS POR NOCHE` |
-| **00:32 – 00:42** | **Insert UI tecnológico (Mockup 3D):** Transición fluida a pantalla de smartphone flotante con la app de RONDA: selección privada de "Match", verificación biométrica facial y notificación de match mutuo a las 10:00 PM. | *"Detrás de la experiencia hay un algoritmo propio con memoria que empareja por afinidad real. Cero descargas: todo funciona directo desde el navegador."* | Micro-bips tácticos de interfaz tecnológica limpia. | `ALGORITMO MEM-RR-V2`<br>`Web-App PWA · Cero Fricción` |
+| **00:32 – 00:42** | **Insert UI tecnológico (Mockup 3D):** Transición fluida a pantalla de smartphone flotante con la app de RONDA: selección privada de "Match", verificación rápida de identidad y notificación de match mutuo a las 10:00 PM. | *"Detrás de la experiencia hay una tecnología propia con memoria que organiza los encuentros de forma perfecta. Cero descargas: todo funciona directo desde el navegador."* | Micro-bips tácticos de interfaz limpia. | `ROTACIÓN INTELIGENTE`<br>`Web-App Ligera · Cero Descargas` |
 
 ---
 

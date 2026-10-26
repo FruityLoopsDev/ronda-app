@@ -18,7 +18,7 @@ En la industria global de encuentros presenciales curados, existe una asimetría
    - **Fricción al rechazo presencial:** Inseguridad sobre cómo interactuar sin un perfil digital de respaldo.
 
 ### 1.2 La Oportunidad: Eventos Especiales de Ticket Alto (Ediciones Gala)
-Para romper el escepticismo, RONDA necesita eventos «imán» de alta visibilidad que eleven el estatus social de asistir. En lugar de competir únicamente con el ticket recurrente de **$45.000 – $60.000 COP** (2 cócteles + 9 rondas), se plantea introducir **Ediciones Especiales de Gala con Tickets de $120.000 – $180.000 COP**, apalancados en dinámicas disruptivas de alto engagement.
+Para romper el escepticismo, RONDA necesita eventos «imán» de alta visibilidad que eleven el estatus social de asistir. En lugar de competir únicamente con el ticket recurrente de **$45.000 – $60.000 COP** (1 cóctel de autor + 9 rondas), se plantea introducir **Ediciones Especiales de Gala con Tickets de $120.000 – $180.000 COP**, apalancados en dinámicas disruptivas de alto engagement.
 
 ---
 

@@ -33,7 +33,7 @@ En RONDA aplicamos de manera rigurosa los principios legales de:
 
 ## 3. Finalidades Específicas del Tratamiento
 1. Gestionar el registro, verificación y emisión de pasaportes digitales para los eventos presenciales.
-2. Ejecutar el algoritmo matemático de emparejamiento y rotación (`mem-rr-v2`) evitando colisiones con personas ya conocidas.
+2. Coordinar la dinámica de rotación de mesas para que los asistentes conversen con personas nuevas sin repetir a quienes ya conocieron en eventos anteriores.
 3. Coordinar la logística de reserva, check-in en barra y entrega de consumos pactados en los locales aliados.
 4. Notificar a las 10:00 AM del día siguiente las coincidencias mutuas (*Double Opt-In*) exclusivamente a quienes hayan manifestado interés recíproco.
 5. Gestionar la facturación de tickets y comunicaciones operativas mediante WhatsApp y correo electrónico.

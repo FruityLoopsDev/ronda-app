@@ -416,6 +416,39 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
     - `npx tsc --noEmit` (0 errores).
     - `npm run build` (build sin errores).
 
+---
+
+## FASE 17: DEPURACIÓN INTEGRAL DE COPYWRITING HUMANO (CERO JERGA TÉCNICA) (PARA CLINE)
+
+> **Directriz de Marca del Fundador:**
+> Está estrictamente prohibido el lenguaje técnico o frío en interfaces de cara al usuario. No mencionar *"Motor mem-rr-v2"*, *"grafo bipartito"*, *"algoritmo combinatorio"*, *"WMM"* ni tecnicismos matemáticos. 
+> El tono debe ser **humano, cercano, empático, natural y premium**:
+> - En lugar de *"Motor mem-rr-v2"* ➔ *"Rotación inteligente con memoria"* o *"Sistema de encuentros sin repeticiones"*.
+> - En lugar de *"Citas Presenciales"* ➔ *"Citas Rápidas / Speed Dating"*.
+> - En lugar de *"KYC biométrico estricto"* ➔ *"Verificación rápida de identidad para tu seguridad"*.
+> - En lugar de *"Matching algorítmico"* ➔ *"Conexiones auténticas cara a cara"*.
+
+### 📋 Tareas de Implementación para Cline:
+
+- [ ] **T-17.1: Barrido de Restos de "mem-rr-v2" en Interfaces Públicas**
+  - **Archivos:** `index.html`, `landing.html`, `partners.html`, `invest.html`, `src/client.ts`, `src/views/`.
+  - **Acción:**
+    1. Asegurar que NINGÚN modal, banner o párrafo visible al usuario mencione *"mem-rr-v2"* o términos algorítmicos.
+    2. Mantener intacto el código del motor interno (`src/mem-rr-v2/`), cambiando únicamente cadenas de texto visibles (strings de UI, microcopy, alertas).
+
+- [ ] **T-17.2: Humanización de Textos en la Web App (`index.html`)**
+  - **Archivos:** `index.html` y vistas asociadas (`src/views/profile-modal.ts`, `src/satisfaction.ts`, `src/icebreakers.ts`).
+  - **Acción:**
+    1. Revisar los textos del onboarding, safeword y feedback post-cita.
+    2. Usar un tono conversacional de tú a tú: *"Cuéntanos cómo te sentiste"*, *"¿Hubo química?"*, *"Tu tranquilidad es lo primero"*.
+
+- [ ] **T-17.3: Verificación de Reglas y Compilación**
+  - **Comandos:**
+    - `node test/test-integrity-zero-functions.cjs`
+    - `npx tsc --noEmit`
+    - `npm run build`
+
+
 
 
 
