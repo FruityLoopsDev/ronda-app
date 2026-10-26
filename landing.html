@@ -314,6 +314,119 @@
       margin-bottom: 18px;
     }
 
+    /* Banner Rotativo de Hero (Pill Dinámica) */
+    .hero-rotator-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .hero-rotator-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 18px 7px 20px;
+      border-radius: var(--r-full);
+      background: rgba(240, 168, 48, 0.12);
+      border: 1px solid rgba(240, 168, 48, 0.42);
+      box-shadow: 0 0 24px rgba(240, 168, 48, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      max-width: 95vw;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .hero-rotator-badge:hover {
+      background: rgba(240, 168, 48, 0.2);
+      border-color: rgba(240, 168, 48, 0.65);
+      box-shadow: 0 0 32px rgba(240, 168, 48, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .rotator-track {
+      position: relative;
+      display: inline-grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      height: 22px;
+      overflow: hidden;
+    }
+
+    .rotator-slide {
+      grid-area: 1 / 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--luz-brillo);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(14px);
+      pointer-events: none;
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .rotator-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .rotator-slide.exit {
+      opacity: 0;
+      transform: translateY(-14px);
+    }
+
+    .rotator-sparkle {
+      display: inline-block;
+      color: var(--luz);
+      filter: drop-shadow(0 0 6px rgba(240, 168, 48, 0.6));
+      font-size: 12px;
+    }
+
+    .rotator-pips {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding-left: 6px;
+      border-left: 1px solid rgba(240, 168, 48, 0.3);
+    }
+
+    .rotator-pip {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(240, 168, 48, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .rotator-pip.active {
+      background: var(--luz);
+      box-shadow: 0 0 8px rgba(240, 168, 48, 0.85);
+      transform: scale(1.25);
+    }
+
+    @media (max-width: 640px) {
+      .hero-rotator-badge {
+        padding: 6px 14px;
+        gap: 8px;
+      }
+      .rotator-slide {
+        font-size: 9.5px;
+        letter-spacing: 0.05em;
+      }
+    }
+
     .hero-title {
       font-family: var(--font-serif);
       font-size: clamp(40px, 7vw, 76px);
@@ -902,23 +1015,294 @@
       border-color: var(--luz);
     }
 
-    /* Footer */
+    /* ==========================================================================
+       SECCIÓN COMUNIDAD Y REDES SOCIALES DESTACADAS
+       ========================================================================== */
+    .community-section {
+      padding: 96px 0;
+      position: relative;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(22, 16, 27, 0.4) 0%, rgba(34, 24, 38, 0.72) 40%, rgba(14, 10, 18, 0.96) 100%);
+      border-top: 1px solid var(--linea);
+      border-bottom: 1px solid var(--linea);
+    }
+    .community-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin-top: 46px;
+    }
+    @media (max-width: 900px) {
+      .community-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+    .community-card {
+      background: rgba(34, 24, 38, 0.78);
+      border: 1px solid var(--linea);
+      border-radius: var(--r-lg);
+      padding: 34px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+    }
+    .community-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      transition: all 0.35s ease;
+    }
+    .community-card.ig::before {
+      background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+    .community-card.li::before {
+      background: linear-gradient(90deg, #0077b5, #00a0dc, #0077b5);
+    }
+    .community-card.gh::before {
+      background: linear-gradient(90deg, var(--luz), #ffd580, var(--luz));
+    }
+    .community-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(243, 237, 226, 0.35);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.65), 0 0 32px rgba(240, 168, 48, 0.1);
+    }
+    .community-card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .community-card:hover .community-card-icon {
+      transform: scale(1.1) rotate(2deg);
+    }
+    .community-card-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+    .community-card-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--papel);
+      margin-bottom: 8px;
+    }
+    .community-card-desc {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--humo);
+      margin-bottom: 26px;
+      flex-grow: 1;
+    }
+    .community-card-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: var(--r-sm);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .community-card-action:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+
+    /* Footer B2B Luxury & Semántico (2 Niveles) */
     footer.site-footer {
       border-top: 1px solid var(--linea);
-      padding: 50px 0 70px;
-      font-size: 13px;
+      background: var(--noche-profunda, #0b080e);
       color: var(--humo);
-      background: var(--noche-profunda);
+      font-family: var(--font-sans);
+      padding: 56px 0 36px;
       position: relative;
       z-index: 10;
     }
 
-    .footer-wrap {
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.4fr 1.1fr 1.1fr;
+      gap: 36px;
+      align-items: flex-start;
+      padding-bottom: 36px;
+    }
+
+    .footer-brand .brand-logo {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--papel);
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .footer-brand .brand-logo em {
+      font-style: italic;
+      color: var(--luz);
+    }
+    .footer-brand-tagline {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--luz);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .footer-brand-desc {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--humo);
+      max-width: 320px;
+      margin: 0;
+    }
+
+    .footer-nav-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--papel);
+      margin: 0 0 14px;
+    }
+    .footer-nav-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-nav-links a {
+      color: var(--humo);
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer-nav-links a:hover {
+      color: var(--luz);
+      transform: translateX(3px);
+    }
+
+    .footer-contact-box {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .footer-scout-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: var(--r-sm);
+      background: rgba(46, 107, 84, 0.15);
+      border: 1px solid rgba(46, 107, 84, 0.4);
+      color: #8ce4be;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      width: fit-content;
+    }
+    .footer-scout-badge:hover {
+      background: rgba(46, 107, 84, 0.28);
+      border-color: #8ce4be;
+      transform: translateY(-2px);
+    }
+    .footer-social-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-social-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--linea);
+      color: var(--humo);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+    }
+    .footer-social-icon:hover {
+      background: rgba(240, 168, 48, 0.16);
+      border-color: var(--luz);
+      color: var(--luz);
+      transform: translateY(-2px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(243, 237, 226, 0.08);
+      padding-top: 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 24px;
+      gap: 16px;
+      font-size: 12px;
+    }
+    .footer-meta-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .footer-meta-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-right: 70px;
+    }
+
+    @media (max-width: 900px) {
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .footer-meta-right {
+        padding-right: 70px;
+        width: 100%;
+        justify-content: space-between;
+      }
     }
 
     /* Modal Checkout */
@@ -997,6 +1381,7 @@
         <li><a href="#historia" onclick="toggleMenu()">La Noche en 5 Actos</a></li>
         <li><a href="#proximas-noches" onclick="toggleMenu()">Próximas noches</a></li>
         <li><a href="#seguridad" onclick="toggleMenu()">Seguridad</a></li>
+        <li><a href="#comunidad" onclick="toggleMenu()">Comunidad</a></li>
         <li><a href="#faq" onclick="toggleMenu()">Preguntas</a></li>
         <li><a href="#para-bares" onclick="toggleMenu()">Para Bares</a></li>
       </ul>
@@ -1007,11 +1392,26 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <div class="hero-pre">
-        <span class="badge luz">✦ Solteros Profesionales de Alto Valor · Bogotá</span>
-      </div>
-      <div class="founder-banner" style="margin:10px auto 4px;display:inline-block;padding:7px 16px;border-radius:999px;background:rgba(240,168,48,0.16);color:var(--luz-brillo);border:1px solid rgba(240,168,48,0.45);font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 0 18px rgba(240,168,48,0.25);">
-        🏆 Club Fundador 100 · Insignia Dorada + Prioridad de Cupo + 1er Cóctel de Cortesía
+      <!-- Banner Rotativo: Solteros Alto Valor / Club Fundador 100 -->
+      <div class="hero-rotator-wrapper">
+        <div class="hero-rotator-badge" onclick="openWaitlist('Club Fundador 100', 'Inaugural Bogotá')" title="Click para asegurar tu cupo prioritario">
+          <div class="rotator-track" id="hero-rotator-track">
+            <!-- Slide 1 -->
+            <div class="rotator-slide active">
+              <span class="rotator-sparkle">✦</span>
+              <span class="rotator-text">Solteros Profesionales de Alto Valor · Bogotá</span>
+            </div>
+            <!-- Slide 2 -->
+            <div class="rotator-slide">
+              <span class="rotator-sparkle">🏆</span>
+              <span class="rotator-text">Club Fundador 100 · Insignia Dorada + Prioridad + 1er Cóctel</span>
+            </div>
+          </div>
+          <div class="rotator-pips" aria-hidden="true">
+            <span class="rotator-pip active" data-index="0"></span>
+            <span class="rotator-pip" data-index="1"></span>
+          </div>
+        </div>
       </div>
       <h1 class="hero-title" aria-label="Una copa, nueve historias, una noche.">Una copa, nueve historias, <span class="typewriter-wrap"><em id="typewriter-target"></em><span class="typewriter-cursor" aria-hidden="true"></span></span></h1>
       <p class="hero-sub">
@@ -1353,20 +1753,145 @@
     </div>
   </section>
 
+  <!-- ==========================================================================
+       SECCIÓN COMUNIDAD & CANALES OFICIALES DESTACADOS
+       ========================================================================== -->
+  <section class="community-section" id="comunidad">
+    <div class="container">
+      <div class="section-head" style="text-align: center; max-width: 680px; margin: 0 auto;">
+        <span class="badge luz" style="margin-bottom: 14px; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em;">✦ CANALES OFICIALES & COMUNIDAD</span>
+        <h2 class="section-title" style="font-size: clamp(30px, 4vw, 42px); line-height: 1.15; margin-bottom: 14px;">La Noche de Bogotá Ocurre Aquí</h2>
+        <p class="section-desc" style="font-size: 15px; color: var(--humo); line-height: 1.6;">
+          Sigue las historias de cada fecha, conoce las locaciones secretas en Chapinero y Zona G antes de la apertura y audita la ingeniería de nuestro motor de rotación.
+        </p>
+      </div>
+
+      <div class="community-grid">
+        <!-- Tarjeta Instagram -->
+        <div class="community-card ig">
+          <div>
+            <div class="community-card-icon" style="background: radial-gradient(circle at 30% 30%, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); box-shadow: 0 8px 24px rgba(220, 39, 67, 0.35);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </div>
+            <span class="community-card-badge" style="background: rgba(220, 39, 67, 0.16); color: #ff6b8b; border: 1px solid rgba(220, 39, 67, 0.35);">📸 Atmósfera & Fechas</span>
+            <h3 class="community-card-title">Instagram</h3>
+            <p style="font-family: var(--font-mono); font-size: 11px; color: var(--luz); margin-top: -4px; margin-bottom: 12px; opacity: 0.9;">@ronda.bogota</p>
+            <p class="community-card-desc">
+              Historias exclusivas de los eventos, ambientación de las barras, cócteles de bienvenida y anuncio de apertura de cupos para los próximos encuentros.
+            </p>
+          </div>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="community-card-action" style="background: linear-gradient(135deg, rgba(220,39,67,0.2) 0%, rgba(188,24,136,0.3) 100%); border: 1px solid rgba(220,39,67,0.45); color: #fff;">
+            Seguir en Instagram ➔
+          </a>
+        </div>
+
+        <!-- Tarjeta LinkedIn -->
+        <div class="community-card li">
+          <div>
+            <div class="community-card-icon" style="background: linear-gradient(135deg, #0077b5 0%, #004b7c 100%); box-shadow: 0 8px 24px rgba(0, 119, 181, 0.35);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </div>
+            <span class="community-card-badge" style="background: rgba(0, 119, 181, 0.16); color: #4db3ff; border: 1px solid rgba(0, 119, 181, 0.35);">💼 Red Profesional & B2B</span>
+            <h3 class="community-card-title">LinkedIn</h3>
+            <p style="font-family: var(--font-mono); font-size: 11px; color: #4db3ff; margin-top: -4px; margin-bottom: 12px; opacity: 0.9;">RONDA System</p>
+            <p class="community-card-desc">
+              Cultura corporativa, modelo de reactivación comercial de bares en noches valle y conexión con nuestra red de solteros profesionales verificados.
+            </p>
+          </div>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="community-card-action" style="background: linear-gradient(135deg, rgba(0,119,181,0.2) 0%, rgba(0,75,124,0.35) 100%); border: 1px solid rgba(0,119,181,0.45); color: #fff;">
+            Conectar en LinkedIn ➔
+          </a>
+        </div>
+
+        <!-- Tarjeta GitHub -->
+        <div class="community-card gh">
+          <div>
+            <div class="community-card-icon" style="background: linear-gradient(135deg, rgba(240,168,48,0.25) 0%, rgba(240,168,48,0.08) 100%); border: 1px solid rgba(240,168,48,0.4); box-shadow: 0 8px 24px rgba(240, 168, 48, 0.2);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--luz)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            </div>
+            <span class="community-card-badge" style="background: rgba(240, 168, 48, 0.14); color: var(--luz-brillo); border: 1px solid rgba(240, 168, 48, 0.35);">⚡ Motor mem-rr-v2 · 88 Deploys</span>
+            <h3 class="community-card-title">GitHub</h3>
+            <p style="font-family: var(--font-mono); font-size: 11px; color: var(--luz); margin-top: -4px; margin-bottom: 12px; opacity: 0.9;">FruityLoopsDev/ronda-app</p>
+            <p class="community-card-desc">
+              Arquitectura técnica transparente, algoritmo matemático de rotación sin colisiones, benchmarks de latencia (&lt;10ms) y suite de pruebas deterministas.
+            </p>
+          </div>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="community-card-action" style="background: linear-gradient(135deg, rgba(240,168,48,0.18) 0%, rgba(240,168,48,0.06) 100%); border: 1px solid rgba(240,168,48,0.45); color: var(--papel);">
+            Explorar Código ➔
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="site-footer">
-    <div class="container footer-wrap">
-      <div>
-        <span class="brand-logo" style="font-size: 24px;">R<em>O</em>NDA</span>
-        <p style="margin-top: 4px; font-family: var(--font-mono); font-size: 11px;">Citas Rápidas · Bogotá, Colombia</p>
+    <div class="container">
+      <!-- Nivel Superior: Marca, Navegación y Contacto Directo -->
+      <div class="footer-top">
+        
+        <!-- Columna 1: Marca & Misión -->
+        <div class="footer-brand">
+          <span class="brand-logo">R<em>O</em>NDA</span>
+          <div class="footer-brand-tagline">Citas Presenciales · Bogotá, Colombia</div>
+          <p class="footer-brand-desc">
+            9 citas de 6 minutos en los mejores bares de Bogotá. Conoce profesionales de alto valor cara a cara, sin pantallas ni <i>ghosting</i>.
+          </p>
+        </div>
+
+        <!-- Columna 2: Navegación & Marco Legal -->
+        <div class="footer-nav-col">
+          <div class="footer-nav-title">Explora & Marco Legal</div>
+          <ul class="footer-nav-links">
+            <li><a href="#historia">La Historia de la Noche</a></li>
+            <li><a href="/partners">Para Bares y Gastrobares Aliados</a></li>
+            <li><a href="/invest">Pista Privada Inversionistas FFF</a></li>
+            <li><a href="index.html#legal-terminos">Términos y Condiciones del Servicio</a></li>
+            <li><a href="index.html#legal-privacidad">Política de Tratamiento de Datos (Ley 1581)</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: Contacto & Canales Oficiales -->
+        <div class="footer-contact-box">
+          <div class="footer-nav-title">Comunidad & Soporte</div>
+          <a href="https://wa.me/573026543854?text=Hola%20RONDA,%20tengo%20una%20pregunta%20sobre%20los%20eventos" target="_blank" rel="noopener noreferrer" class="footer-scout-badge">
+            <span>💬</span>
+            <span>Escríbenos por WhatsApp (+57 302 654 3854)</span>
+          </a>
+          <div style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">
+            Redes Oficiales de RONDA:
+          </div>
+          <div class="footer-social-group">
+            <a href="#" target="_blank" rel="noopener noreferrer" title="Instagram de RONDA" aria-label="Instagram" class="footer-social-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" title="LinkedIn de RONDA" aria-label="LinkedIn" class="footer-social-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" title="GitHub de RONDA" aria-label="GitHub" class="footer-social-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            </a>
+          </div>
+        </div>
       </div>
-      <div>
-        <p style="font-size: 11px; font-family: var(--font-mono);">Cumplimiento Ley 1581 de Protección de Datos Personales</p>
-        <p style="font-size: 11px; margin-top: 2px;"><span data-ronda-copyright>RONDA System © 2026</span>. Todos los derechos reservados. <span style="opacity: 0.5; margin-left: 8px;" data-ronda-version>v2.3.0-prod</span></p>
-      </div>
-      <div style="text-align: right;">
-        <a href="https://wa.me/573000000000?text=Hola%20RONDA,%20tengo%20una%20pregunta%20sobre%20los%20eventos" target="_blank" class="btn outline sm" style="margin-bottom: 8px; display: inline-block;">Soporte WhatsApp 💬</a>
-        <p id="global-visit-counter" style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); margin-top: 4px; letter-spacing: 0.5px;">Visitas totales: <span style="color: var(--luz); font-weight: 700;">...</span></p>
+
+      <!-- Nivel Inferior: Copyright, Métricas de Ingeniería y Contador sin colisión -->
+      <div class="footer-bottom">
+        <div class="footer-meta-left">
+          <span data-ronda-copyright style="color: var(--papel); font-weight: 500;">RONDA System © 2026</span>
+          <span style="color: var(--linea-fuerte);">·</span>
+          <span data-ronda-engineering-badge style="font-size: 10.5px; font-family: var(--font-mono, monospace); color: var(--luz, #F0A830); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.22); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.04em;">
+            ⚡ +<span data-ronda-hours>223</span>h de ingeniería · <span data-ronda-commits>88</span> deploys
+          </span>
+          <span style="opacity: 0.5; font-family: var(--font-mono, monospace); font-size: 11px;" data-ronda-version>v2.3.0-prod</span>
+        </div>
+
+        <div class="footer-meta-right">
+          <span style="font-size: 11.5px; color: var(--humo-claro);">Bogotá D.C.</span>
+          <p id="global-visit-counter" style="margin: 0; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--humo); letter-spacing: 0.5px;">
+            Visitas totales: <span style="color: var(--luz); font-weight: 700;">...</span>
+          </p>
+        </div>
       </div>
     </div>
   </footer>
@@ -1418,9 +1943,101 @@
         </div>
       </div>
     </div>
+  <!-- ==========================================================================
+       MODAL BIENVENIDA: CLUB FUNDADOR 100
+       ========================================================================== -->
+  <div id="modal-founder-welcome" class="modal-backdrop" style="z-index: 10000; padding: 18px;">
+    <div class="modal-founder-card" style="max-width: 520px; width: 100%; background: var(--barra); border: 1px solid rgba(240,168,48,0.38); border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 32px 80px rgba(0,0,0,0.9), 0 0 45px rgba(240,168,48,0.18);">
+      
+      <!-- Banner con la Imagen Generada -->
+      <div style="position: relative; height: 185px; width: 100%; background: url('/assets/img/founder-welcome-bg.jpg') center/cover no-repeat; border-bottom: 1px solid rgba(240,168,48,0.25);">
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(22,16,27,0.25) 0%, rgba(22,16,27,0.85) 85%, var(--barra) 100%);"></div>
+        <button onclick="dismissFounderWelcome()" class="modal-close" aria-label="Cerrar modal" style="position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; background: rgba(14,10,18,0.75); border: 1px solid var(--linea); color: var(--papel); font-size: 14px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: all 0.2s;">✕</button>
+        <div style="position: absolute; bottom: 14px; left: 22px; right: 22px; z-index: 2;">
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(240,168,48,0.18); border: 1px solid rgba(240,168,48,0.45); color: var(--luz-brillo); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">
+            🏆 CLUB FUNDADOR 100 · BOGOTÁ
+          </span>
+          <h3 style="font-family: var(--font-serif); font-size: 24px; color: var(--papel); margin-top: 6px; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
+            Tu Moneda de Barra. Tu Lugar en la Noche.
+          </h3>
+        </div>
+      </div>
+
+      <!-- Cuerpo del Modal -->
+      <div style="padding: 22px 24px;">
+        <p style="font-size: 13px; line-height: 1.55; color: var(--humo); margin-bottom: 18px;">
+          Para los primeros <b>100 solteros profesionales verificados</b> en Bogotá, la noche inaugural no es un evento casual: es un pacto de honor analógico con privilegios vitalicios.
+        </p>
+
+        <!-- 3 Perks de Miembro Fundador -->
+        <div style="display: flex; flex-direction: column; gap: 9px; margin-bottom: 20px;">
+          <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(243,237,226,0.03); border: 1px solid var(--linea); border-radius: 10px; padding: 9px 12px;">
+            <span style="font-size: 18px; line-height: 1;">🪙</span>
+            <div>
+              <p style="font-size: 12px; font-weight: 700; color: var(--papel); margin-bottom: 2px;">La Moneda de Barra (45mm Latón Macizo)</p>
+              <p style="font-size: 11px; color: var(--humo); line-height: 1.35;">Troquelada con serial Nº 001/100. Al deslizarla en barra, reclamas tu Cóctel Cero de cortesía en cada evento.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(243,237,226,0.03); border: 1px solid var(--linea); border-radius: 10px; padding: 9px 12px;">
+            <span style="font-size: 18px; line-height: 1;">⭐</span>
+            <div>
+              <p style="font-size: 12px; font-weight: 700; color: var(--papel); margin-bottom: 2px;">Insignia Dorada Vitalicia</p>
+              <p style="font-size: 11px; color: var(--humo); line-height: 1.35;">Prioridad absoluta de cupo 48h antes de abrir reservas al público general.</p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(243,237,226,0.03); border: 1px solid var(--linea); border-radius: 10px; padding: 9px 12px;">
+            <span style="font-size: 18px; line-height: 1;">🥂</span>
+            <div>
+              <p style="font-size: 12px; font-weight: 700; color: var(--papel); margin-bottom: 2px;">Mesa de Honor en la Noche Cero</p>
+              <p style="font-size: 11px; color: var(--humo); line-height: 1.35;">Pase preferente en los gastrobares más cotizados de Chapinero Alto y Zona G.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indicador de Cupos Restantes -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(240,168,48,0.08); border: 1px dashed rgba(240,168,48,0.3); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px;">
+          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--luz);">🔥 Cupos Fundadores Restantes:</span>
+          <span style="font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; color: var(--luz-brillo);"><span id="founder-spots-left">27</span> / 100</span>
+        </div>
+
+        <!-- Botones de Acción -->
+        <button onclick="claimFounderSpot()" class="btn luz" style="width: 100%; padding: 12px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          Reclamar mi Cupo Fundador ➔
+        </button>
+        <button onclick="dismissFounderWelcome()" style="background: none; border: none; color: var(--humo); font-size: 11px; margin-top: 8px; width: 100%; cursor: pointer; text-decoration: underline; opacity: 0.8;">
+          Explorar la experiencia primero
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
+    function openFounderWelcome() {
+      const modal = document.getElementById('modal-founder-welcome');
+      if (modal) {
+        modal.classList.add('open');
+        modal.style.display = 'flex';
+      }
+    }
+
+    function dismissFounderWelcome() {
+      const modal = document.getElementById('modal-founder-welcome');
+      if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+        try {
+          localStorage.setItem('ronda_founder_welcome_seen', 'true');
+        } catch (e) {}
+      }
+    }
+
+    function claimFounderSpot() {
+      dismissFounderWelcome();
+      openWaitlist('Club Fundador 100', 'Inaugural Bogotá');
+    }
+
     function openWaitlist(venue, date) {
       const modal = document.getElementById('waitlist-modal');
       const desc = document.getElementById('wl-modal-desc');
@@ -1540,6 +2157,66 @@
           if (v) sessionStorage.setItem('ronda_' + k, v);
         });
       } catch (e) {}
+
+      // Autodisparo sutil del Modal Club Fundador 100 en primera visita
+      try {
+        const hasSeen = localStorage.getItem('ronda_founder_welcome_seen');
+        if (!hasSeen) {
+          setTimeout(() => {
+            openFounderWelcome();
+          }, 1800);
+        }
+      } catch (e) {}
+
+      // Rotador de Banner Hero (Solteros Alto Valor <-> Club Fundador 100)
+      (function initHeroRotator() {
+        const slides = document.querySelectorAll('.rotator-slide');
+        const pips = document.querySelectorAll('.rotator-pip');
+        if (slides.length < 2) return;
+        let currentIdx = 0;
+        let intervalId = null;
+
+        function goToSlide(nextIdx) {
+          if (nextIdx === currentIdx) return;
+          const prev = slides[currentIdx];
+          const next = slides[nextIdx];
+
+          prev.classList.remove('active');
+          prev.classList.add('exit');
+          pips[currentIdx]?.classList.remove('active');
+
+          setTimeout(() => {
+            prev.classList.remove('exit');
+          }, 600);
+
+          currentIdx = nextIdx;
+          next.classList.add('active');
+          pips[currentIdx]?.classList.add('active');
+        }
+
+        function nextSlide() {
+          const next = (currentIdx + 1) % slides.length;
+          goToSlide(next);
+        }
+
+        function startTimer() {
+          stopTimer();
+          intervalId = setInterval(nextSlide, 3800);
+        }
+
+        function stopTimer() {
+          if (intervalId) clearInterval(intervalId);
+        }
+
+        const badge = document.querySelector('.hero-rotator-badge');
+        if (badge) {
+          badge.addEventListener('mouseenter', stopTimer);
+          badge.addEventListener('mouseleave', startTimer);
+          badge.addEventListener('touchstart', stopTimer, { passive: true });
+        }
+
+        startTimer();
+      })();
 
       const beats = document.querySelectorAll('.story-beat');
       const bgSlides = document.querySelectorAll('.bg-slide');

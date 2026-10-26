@@ -113,8 +113,8 @@ Para levantar $8.000.000 COP en 7 días sin redes sociales, la regla es **alta p
 1. **Minutos 0–2 (Conexión genuina):** Saludo sincero, preguntar por su trabajo/familia.
 2. **Minutos 2–4 (El Problema y la Solución):**  
    *"La gente en Bogotá está harta de Tinder y Bumble; pasan meses deslizando pantallas sin conocer a nadie. RONDA crea noches presenciales exclusivas en bares aliados donde un algoritmo rota las mesas cada 7 minutos con personas verificadas."*
-3. **Minutos 4–6 (La Tecnología ya está construida):**  
-   *"A diferencia de una idea en servilleta, el software, la biometría y el algoritmo de matching ya están 100% programados y probados. No necesitamos capital para programar, sino para fondear la operación de los primeros 12 eventos (pauta local y garantía de salas)."*
+3. **Minutos 4–6 (La Tecnología ya está construida — +220h de Ingeniería):**  
+   *"A diferencia de una idea en servilleta, he invertido más de 220 horas de arquitectura y 88 versiones de software. Tenemos un motor de matching matemático propietario (0% de colisiones), biometría facial y pasaporte QR ya probados. Es un desarrollo que con una agencia costaría más de $40M COP y que ya está 100% terminado. Tu aporte no es para prototipar; entra directo a financiar la pauta, los kits de fundador y la garantía de salas de los primeros 12 eventos."*
 4. **Minutos 6–8 (La Oportunidad Financiera FFF):**  
    *"No estamos vendiendo acciones para no diluirnos. Diseñamos un mutuo comercial a 90 días: $1M o $2M COP, con interés fijo del 6.0% a 90 días, respaldado con pagaré formal y contrato comercial."*
 5. **Minutos 8–10 (Llamado a la Acción sin presión):**  
@@ -126,6 +126,7 @@ Para levantar $8.000.000 COP en 7 días sin redes sociales, la regla es **alta p
 
 | Pregunta / Objeción | Respuesta Exacta |
 | :--- | :--- |
+| **"¿Qué garantía tengo de que el proyecto no se quede a medias?"** | *"El riesgo de desarrollo ya está 100% eliminado: llevo más de 220 horas de ingeniería y 88 versiones verificadas (más de $40M COP en sweat equity propio). La plataforma ya corre en producción en ronda-uno.web.app y tu préstamo queda garantizado con pagaré notarial."* |
 | **"¿Por qué no me das acciones de la empresa en vez de un préstamo?"** | *"En esta etapa tan temprana vender equity nos castigaría con una valoración muy baja. Con este préstamo tú tienes una fecha fija de devolución (90 días) y un 6% garantizado con pagaré, sin depender de cuándo haya utilidades o dividendos."* |
 | **"¿Qué pasa si los eventos no se llenan en las primeras semanas?"** | *"El 25% del capital levantado ($2.000.000) queda congelado como fondo de reserva de garantía. Además, el pagaré a la orden es un título valor con mérito ejecutivo que te garantiza el pago independientemente del flujo de caja."* |
 | **"¿El 6% es legal en Colombia?"** | *"Sí, totalmente. Un 6.0% simple a 90 días equivale a una tasa efectiva anual del 26.2% E.A., la cual está por debajo del límite legal de usura certificado por la Superfinanciera (29.45% E.A.). Cumple al 100% la regulación."* |

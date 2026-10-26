@@ -185,6 +185,49 @@ body::before{
   color: var(--papel); border-color: rgba(243,237,226,0.3);
 }
 
+/* ---------- Modal de Bienvenida (primera visita) ---------- */
+.welcome-card { max-width: 480px; text-align: left; padding: 30px 26px 22px; overflow: hidden; }
+.welcome-card::before {
+  content: ""; position: absolute; inset: -40% -20% auto auto; width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(240,168,48,0.22), transparent 65%); pointer-events: none;
+}
+.welcome-card .pitch-modal-tag,
+.welcome-card .pitch-modal-title,
+.welcome-card .pitch-modal-desc { text-align: left; }
+.welcome-title em { font-style: italic; color: var(--luz); }
+.welcome-points { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 8px; }
+.welcome-point {
+  display: flex; align-items: flex-start; gap: 12px; padding: 11px 13px;
+  background: rgba(243,237,226,0.04); border: 1px solid var(--linea); border-radius: 12px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .45s ease, transform .45s cubic-bezier(0.16, 1, 0.3, 1), border-color .2s;
+}
+.welcome-point:hover { border-color: rgba(240,168,48,0.35); }
+.pitch-modal-overlay.active .welcome-point { opacity: 1; transform: none; }
+.pitch-modal-overlay.active .welcome-point:nth-child(1) { transition-delay: .12s; }
+.pitch-modal-overlay.active .welcome-point:nth-child(2) { transition-delay: .22s; }
+.pitch-modal-overlay.active .welcome-point:nth-child(3) { transition-delay: .32s; }
+.welcome-point-ico {
+  flex: 0 0 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+  background: rgba(240,168,48,0.12); border: 1px solid rgba(240,168,48,0.3); font-size: 16px;
+}
+.welcome-point-k {
+  font-family: "JetBrains Mono", monospace; font-size: 15px; font-weight: 700; color: var(--papel);
+  letter-spacing: -0.01em; line-height: 1.2;
+}
+.welcome-point-d { font-size: 12px; color: var(--humo); line-height: 1.35; margin-top: 2px; }
+.welcome-legal {
+  font-family: "JetBrains Mono", monospace; font-size: 9.5px; line-height: 1.5; letter-spacing: .03em;
+  color: var(--humo); margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed var(--linea);
+}
+@media (max-width: 480px) {
+  .welcome-card { padding: 26px 18px 18px; }
+  .welcome-card .pitch-modal-title { font-size: 23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .welcome-point { transition: none; opacity: 1; transform: none; }
+}
+
 /* ---------- Responsividad Mobile & Tablet ---------- */
 @media (max-width: 768px) {
   .wrap { padding: 0 16px 60px; }
@@ -192,6 +235,10 @@ body::before{
   .pitch-rotator { min-height: 110px; }
   .fila { justify-content: center; }
   .tel { width: 100%; max-width: 320px; flex: 1 1 auto; }
+
+  /* T-9.1/9.3: Kit Club Fundador — responsividad móvil (768px) */
+  .caja > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .caja > div[style*="grid-template-columns"] > div > div:first-child { font-size: 20px !important; }
 }
 
 @media (max-width: 480px) {
@@ -394,11 +441,175 @@ table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--linea)}
 th{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--humo);font-weight:400}
 td:last-child,th:last-child{text-align:right;font-family:"JetBrains Mono",monospace}
-tr.tot td{border-bottom:none;border-top:2px solid var(--linea);font-weight:700;color:var(--luz)}
+footer.site-footer {
+  margin-top: 48px;
+  border-top: 1px solid var(--linea);
+  background: var(--noche, #0d0a14);
+  color: var(--humo);
+  font-family: var(--font-sans, -apple-system, sans-serif);
+  padding: 48px 0 32px;
+  position: relative;
+  z-index: 10;
+}
 
-footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--linea);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--humo);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.4fr 1.1fr 1.1fr;
+  gap: 36px;
+  align-items: flex-start;
+  padding-bottom: 32px;
+}
 
-@media (max-width:860px){
+.footer-brand .brand-logo {
+  font-family: var(--font-display, "Playfair Display", serif);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--papel);
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.footer-brand .brand-logo em {
+  font-style: italic;
+  color: var(--luz);
+}
+.footer-brand-tagline {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--luz);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.footer-brand-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--humo);
+  max-width: 320px;
+  margin: 0;
+}
+
+.footer-nav-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--papel);
+  margin: 0 0 14px;
+}
+.footer-nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-nav-links a {
+  color: var(--humo);
+  text-decoration: none;
+  font-size: 12.5px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-nav-links a:hover {
+  color: var(--luz);
+  transform: translateX(3px);
+}
+
+.footer-contact-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.footer-founder-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(46, 107, 84, 0.15);
+  border: 1px solid rgba(46, 107, 84, 0.4);
+  color: #8ce4be;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  width: fit-content;
+}
+.footer-founder-badge:hover {
+  background: rgba(46, 107, 84, 0.28);
+  border-color: #8ce4be;
+  transform: translateY(-2px);
+}
+.footer-social-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-social-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--linea);
+  color: var(--humo);
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+.footer-social-icon:hover {
+  background: rgba(240, 168, 48, 0.16);
+  border-color: var(--luz);
+  color: var(--luz);
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(243, 237, 226, 0.08);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+}
+.footer-meta-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.footer-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-right: 70px;
+}
+
+@media (max-width: 900px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .footer-meta-right {
+    padding-right: 70px;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
   .pl-body{grid-template-columns:1fr}
   .pl-col+.pl-col{border-left:none;border-top:1px solid var(--linea)}
   .kpi{border-right:none;border-bottom:1px solid var(--linea)}
@@ -1125,6 +1336,35 @@ iframe.skiptranslate { display: none !important; }
             <li>Reporte en un toque; expulsión inmediata y sin reembolso.</li>
           </ul>
         </div>
+
+        <!-- ============ T-9.1: Kit Club Fundador 100 ============ -->
+        <div class="caja" style="background: linear-gradient(180deg, rgba(240,168,48,0.08), rgba(240,168,48,0.02)); border: 1px solid rgba(240,168,48,0.25); border-radius: 12px; padding: 16px; margin-top: 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span style="font-size:9.5px; font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:0.08em; color:#F0A830; background:rgba(240,168,48,0.12); border:1px solid rgba(240,168,48,0.35); padding:3px 8px; border-radius:4px; font-weight:700;">Experiencia Física & Branding Táctil</span>
+            <span style="font-family:'Bodoni Moda',serif; color:#79D3AC; font-size:10px; font-weight:700; border-left:1px solid rgba(240,168,48,0.35); padding-left:10px;">🏆 Insignia de Honor — Fundadores FFF</span>
+          </div>
+          <h4 style="font-family:'Bodoni Moda',serif; color:var(--papel); margin:0 0 10px; font-size:16px;">🪙 El Efecto Club Fundador: Lujo Analógico en la Noche de Bogotá</h4>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:12px;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid var(--linea); border-radius:8px; padding:10px; text-align:center;">
+              <div style="font-size:24px; margin-bottom:6px;">🪙</div>
+              <div style="font-weight:700; color:var(--papel); font-size:12px; margin-bottom:2px;">Moneda de Latón</div>
+              <div style="font-size:10px; color:var(--humo);">Challenge coin 45mm · latón macizo · nº serial 001–100</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid var(--linea); border-radius:8px; padding:10px; text-align:center;">
+              <div style="font-size:24px; margin-bottom:6px;">📜</div>
+              <div style="font-weight:700; color:var(--papel); font-size:12px; margin-bottom:2px;">Comanda Letterpress</div>
+              <div style="font-size:10px; color:var(--humo);">Papel algodón 300g · bajo relieve · sobre negro lino</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid var(--linea); border-radius:8px; padding:10px; text-align:center;">
+              <div style="font-size:24px; margin-bottom:6px;">🔴</div>
+              <div style="font-weight:700; color:var(--papel); font-size:12px; margin-bottom:2px;">Lacre Rojo Vino</div>
+              <div style="font-size:10px; color:var(--humo);">Cera flexible · sello RONDA · aplicación manual</div>
+            </div>
+          </div>
+          <div style="font-size:10.5px; color:var(--humo); line-height:1.5; border-top:1px solid var(--linea); padding-top:8px;">
+            Kit híbrido recomendado para los 8 inversionistas FFF. <b>$18.000 COP/kit</b> (Moneda $12.500 + Letterpress $2.800 + Sobre lino $1.200 + Lacre $1.500). Unboxing inevitable en redes, asistencia &gt;95% y ~24.000 impresiones orgánicas a $0 de pauta.
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1642,6 +1882,7 @@ iframe.skiptranslate { display: none !important; }
           <li><b>Arquitectura Serverless-Free:</b> Costo de servidores en nube de $0 USD/mes sobre stack moderno con PWA web (cero descargas obligatorias).</li>
           <li><b>Verificación Biométrica Facial (KYC):</b> Validación en navegador para asegurar perfiles reales y entorno seguro para asistentes femeninas.</li>
           <li><b>Modelo Demand-First:</b> El evento solo se confirma si la boletería (12 mujeres + 12 hombres) está 100% pre-pagada a 48 horas. Cero riesgo de salones vacíos.</li>
+          <li><b>Sweat Equity & Ejecución Previa:</b> +220 horas de ingeniería y 88 versiones completadas (valor de desarrollo técnico estimado ~$45.000.000 COP ya absorbido por el fundador). El capital FFF entra 100% a tracción y pilotos, cero gasto en prototipado.</li>
         </ul>
 
         <h4 style="font-family:'Bodoni Moda',serif; color:var(--luz); font-size:16px; margin:14px 0 6px;">3. Unit Economics por Evento (24 Personas)</h4>
@@ -1752,6 +1993,11 @@ iframe.skiptranslate { display: none !important; }
               <div style="background:#F0A830; height:100%; width:22.5%; border-radius:4px;"></div>
             </div>
             <div style="font-size:11px; color:var(--humo); margin-top:2px;">Acrílicos de mesa, sellos de cera lacrada, campanas de bronce y material táctico para anfitriones.</div>
+          </div>
+
+          <!-- ============ T-9.2: Unit Economics Kit Fundador ============ -->
+          <div style="background: rgba(240,168,48,0.06); border: 1px dashed rgba(240,168,48,0.3); border-radius: 8px; padding: 10px 14px; margin-top: 8px; font-size: 11.5px; line-height: 1.5; color: var(--humo);">
+            💡 <b>Economía del Kit Fundador:</b> Costo unitario de <b>$18.000 COP</b> (Moneda latón $12.500 + Letterpress $2.800 + Sobre lino $1.200 + Lacre $1.500). El lote inicial de 50 kits para los primeros 2 pilotos absorbe solo $900.000 COP, dejando $900.000 COP para campanas de bronce y props de sala. Blinda la asistencia (&gt;95% no-show prevention) y genera ~24.000 impresiones orgánicas.
           </div>
 
           <div>
@@ -2000,13 +2246,40 @@ iframe.skiptranslate { display: none !important; }
       }
     }
 
-    function checkUrlAuth() {
+    async function checkUrlAuth() {
       try {
         const params = new URLSearchParams(window.location.search);
         const token = (params.get('token') || params.get('pin') || params.get('code') || '').trim().toLowerCase();
         if (token && AUTHORIZED_GUESTS[token]) {
           unlockWithGuest(token, AUTHORIZED_GUESTS[token]);
           return;
+        }
+        // --- T-8.3: Validación dinámica vía REST (invest_tokens en Firestore) ---
+        // Fallback cuando el token no está en el mapa estático AUTHORIZED_GUESTS.
+        if (token) {
+          try {
+            const res = await fetch(
+              'https://firestore.googleapis.com/v1/projects/ronda-uno/databases/(default)/documents/invest_tokens/' +
+              encodeURIComponent(token)
+            );
+            if (res.ok) {
+              const data = await res.json();
+              const f = (data.fields || {});
+              const active = f.active ? f.active.booleanValue !== false : true;
+              if (active) {
+                unlockWithGuest(token, {
+                  name: f.name ? String(f.name.stringValue || '') : 'Invitado FFF',
+                  leadId: f.leadId ? String(f.leadId.stringValue || '') : token,
+                  role: f.role ? String(f.role.stringValue || '') : 'investor',
+                  ring: f.ring ? String(f.ring.stringValue || '') : '',
+                  phone: f.phone ? String(f.phone.stringValue || '') : ''
+                });
+                return;
+              }
+            }
+          } catch (e) {
+            console.warn('[Invest] Validación dinámica de token no disponible:', e);
+          }
         }
         const saved = JSON.parse(sessionStorage.getItem('ronda_invest_guest') || 'null');
         if (saved && saved.leadId) {
@@ -2015,7 +2288,7 @@ iframe.skiptranslate { display: none !important; }
       } catch(e) {}
     }
 
-    function verifyDataRoomPin() {
+    async function verifyDataRoomPin() {
       const pinInput = document.getElementById('dataroom-pin-input');
       const errorMsg = document.getElementById('dataroom-pin-error');
       const enteredPin = (pinInput ? pinInput.value.trim().toLowerCase() : '');
@@ -2023,12 +2296,38 @@ iframe.skiptranslate { display: none !important; }
       if (AUTHORIZED_GUESTS[enteredPin]) {
         if (errorMsg) errorMsg.style.display = 'none';
         unlockWithGuest(enteredPin, AUTHORIZED_GUESTS[enteredPin]);
-      } else {
-        if (errorMsg) errorMsg.style.display = 'block';
-        if (pinInput) {
-          pinInput.style.borderColor = '#ff5252';
-          pinInput.focus();
+        return;
+      }
+      // --- T-8.3: Validación dinámica vía REST (invest_tokens en Firestore) ---
+      if (enteredPin) {
+        try {
+          const res = await fetch(
+            'https://firestore.googleapis.com/v1/projects/ronda-uno/databases/(default)/documents/invest_tokens/' +
+            encodeURIComponent(enteredPin)
+          );
+          if (res.ok) {
+            const data = await res.json();
+            const f = (data.fields || {});
+            const active = f.active ? f.active.booleanValue !== false : true;
+            if (active) {
+              if (errorMsg) errorMsg.style.display = 'none';
+              unlockWithGuest(enteredPin, {
+                name: f.name ? String(f.name.stringValue || '') : 'Invitado FFF',
+                leadId: f.leadId ? String(f.leadId.stringValue || '') : enteredPin,
+                role: f.role ? String(f.role.stringValue || '') : 'investor',
+                ring: f.ring ? String(f.ring.stringValue || '') : ''
+              });
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('[Invest] Validación dinámica de PIN no disponible:', e);
         }
+      }
+      if (errorMsg) errorMsg.style.display = 'block';
+      if (pinInput) {
+        pinInput.style.borderColor = '#ff5252';
+        pinInput.focus();
       }
     }
 
@@ -2389,15 +2688,81 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
     </div>
   </section>
 
-  <footer>
-    <span><span translate="no" class="notranslate">RONDA</span> · maqueta de producto y modelo · <span data-ronda-copyright>RONDA System © 2026</span> · Bogotá</span>
-    <span>Días valle: martes · miércoles · jueves</span>
-    <span id="footer-counter" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--humo); letter-spacing:0.04em;">
-      <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
-      <span>Visitas:</span>
-      <b style="color:var(--luz); font-weight:700;" id="visit-count-num">--</b>
-    </span>
-    <span style="opacity: 0.6; font-family: var(--font-mono, monospace); font-size: 11px;" data-ronda-version>v2.3.0-prod</span>
+  <!-- Footer Luxury Semántico (2 Niveles) -->
+  <footer class="site-footer">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 20px;">
+      <!-- Nivel Superior: Pista FFF, Marco Legal y Canal Fundadores -->
+      <div class="footer-top">
+        
+        <!-- Columna 1: Sala Privada & Tesis FFF -->
+        <div class="footer-brand">
+          <span class="brand-logo">R<em>O</em>NDA</span>
+          <div class="footer-brand-tagline">Pista Privada Inversionistas FFF · Bogotá</div>
+          <p class="footer-brand-desc">
+            Presentación privada dirigida exclusivamente a Friends, Family & Founders (C. de Co. Art. 1163 – Ley 527 de 1999). Respaldo en pagaré comercial y motor algorítmico propio.
+          </p>
+        </div>
+
+        <!-- Columna 2: Navegación & Marco Legal -->
+        <div class="footer-nav-col">
+          <div class="footer-nav-title">Ecosistema & Legal</div>
+          <ul class="footer-nav-links">
+            <li><a href="/">✦ Portal Principal (Solteros)</a></li>
+            <li><a href="/partners">Para Bares Aliados (Partners)</a></li>
+            <li><a href="index.html#legal-terminos">Términos y Condiciones del Servicio</a></li>
+            <li><a href="index.html#legal-privacidad">Privacidad & Datos (Ley 1581 de 2012)</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: Contacto Directo Fundadores -->
+        <div class="footer-contact-box">
+          <div class="footer-nav-title">Mesa Directa Fundadores</div>
+          <a href="https://wa.me/573169749677?text=Hola%20C%C3%A9sar,%20revis%C3%A9%20la%20propuesta%20de%20inversi%C3%B3n%20FFF%20de%20RONDA" target="_blank" rel="noopener noreferrer" class="footer-founder-badge">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#25d366; box-shadow:0 0 6px #25d366;"></span>
+            <span>WhatsApp Fundadores (+57 316 974 9677)</span>
+          </a>
+          <div style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">
+            Canales Oficiales RONDA:
+          </div>
+          <div class="footer-social-group">
+            <a href="#" target="_blank" rel="noopener noreferrer" title="Instagram de RONDA" aria-label="Instagram" class="footer-social-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" title="LinkedIn de RONDA" aria-label="LinkedIn" class="footer-social-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" title="GitHub de RONDA" aria-label="GitHub" class="footer-social-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nivel Inferior: Copyright, Métricas de Ingeniería y Contador anti-colisión -->
+      <div class="footer-bottom">
+        <div class="footer-meta-left">
+          <span data-ronda-copyright style="color: var(--papel); font-weight: 500;">RONDA System © 2026</span>
+          <span style="color: rgba(243,237,226,0.2);">·</span>
+          <span data-ronda-madein style="display:inline-flex; align-items:center; gap:5px; color:var(--humo);">
+            Hecho por amor ❤️ a Colombia <img src="https://flagcdn.com/16x12/co.png" alt="Colombia" style="height: 10px; width: 14px; object-fit: cover; border-radius: 2px; vertical-align: middle;">
+          </span>
+          <span style="color: rgba(243,237,226,0.2);">·</span>
+          <span data-ronda-engineering-badge style="font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--luz); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.25); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.04em;">
+            ⚡ +<span data-ronda-hours>223</span>h de ingeniería · <span data-ronda-commits>88</span> deploys · Motor mem-rr-v2
+          </span>
+          <span style="opacity: 0.6; font-family: 'JetBrains Mono', monospace; font-size: 11px;" data-ronda-version>v2.3.0-prod</span>
+        </div>
+
+        <div class="footer-meta-right">
+          <span style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">Bogotá D.C.</span>
+          <span id="footer-counter" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--humo); letter-spacing:0.04em;">
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
+            <span>Visitas:</span>
+            <b style="color:var(--luz); font-weight:700;" id="visit-count-num">--</b>
+          </span>
+        </div>
+      </div>
+    </div>
   </footer>
 </div>
 
@@ -2704,7 +3069,7 @@ setInterval(()=>{if(seg>0){seg--;reloj()}else{avanza('auto')}},1000);
 pinta();reloj();
 
 /* ---- Modal Sugerencia Pantalla Completa / Orientación ---- */
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   const modal = document.getElementById('modal-pitch-suggestion');
   if (!modal) return;
 
@@ -2749,15 +3114,123 @@ pinta();reloj();
     modal.classList.remove('active');
   }
 
-  setTimeout(openModal, 400);
+  // Expuesto para encadenarse después del modal de bienvenida
+  window.openPitchSuggestion = openModal;
 
   document.getElementById('pitch-modal-close')?.addEventListener('click', closeModal);
   document.getElementById('pitch-btn-dismiss')?.addEventListener('click', closeModal);
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
-})();
+});
+
+/* ---- Modal de Bienvenida (solo primera visita) → luego Sugerencia Pantalla Completa ---- */
+document.addEventListener('DOMContentLoaded', function() {
+  const WELCOME_KEY = 'ronda_invest_welcome_seen';
+  const modal = document.getElementById('modal-welcome');
+  const openPitch = () => { if (typeof window.openPitchSuggestion === 'function') window.openPitchSuggestion(); };
+
+  let seen = false;
+  try { seen = localStorage.getItem(WELCOME_KEY) === '1'; } catch(e) {}
+
+  if (!modal || seen) {
+    setTimeout(openPitch, 400);
+    return;
+  }
+
+  function resolveGuest() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('ronda_invest_guest') || 'null');
+      if (saved && saved.name) return saved;
+      const p = new URLSearchParams(window.location.search);
+      const token = (p.get('token') || p.get('pin') || p.get('code') || '').trim().toLowerCase();
+      if (token && typeof AUTHORIZED_GUESTS !== 'undefined' && AUTHORIZED_GUESTS[token]) return AUTHORIZED_GUESTS[token];
+    } catch(e) {}
+    return null;
+  }
+
+  let closed = false;
+  function onKey(e) { if (e.key === 'Escape') closeWelcome('escape'); }
+
+  function openWelcome() {
+    const guest = resolveGuest();
+    const nameEl = document.getElementById('welcome-guest-name');
+    if (nameEl) nameEl.textContent = guest && guest.name ? guest.name : 'Bienvenido';
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.addEventListener('keydown', onKey);
+    setTimeout(() => document.getElementById('welcome-btn-continue')?.focus(), 350);
+    if (typeof RondaTracker !== 'undefined') {
+      RondaTracker.track('investor_welcome_view', {
+        lead_id: guest ? guest.leadId : 'anon',
+        role: guest ? guest.role : 'anon'
+      });
+    }
+  }
+
+  function closeWelcome(via) {
+    if (closed) return;
+    closed = true;
+    try { localStorage.setItem(WELCOME_KEY, '1'); } catch(e) {}
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.removeEventListener('keydown', onKey);
+    if (typeof RondaTracker !== 'undefined') {
+      RondaTracker.track('investor_welcome_dismiss', { via: via });
+    }
+    setTimeout(openPitch, 380);
+  }
+
+  setTimeout(openWelcome, 400);
+
+  document.getElementById('welcome-modal-close')?.addEventListener('click', () => closeWelcome('close'));
+  document.getElementById('welcome-btn-continue')?.addEventListener('click', () => closeWelcome('cta'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeWelcome('backdrop'); });
+});
 </script>
+
+<!-- Modal de Bienvenida (primera visita) -->
+<div id="modal-welcome" class="pitch-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" aria-hidden="true">
+  <div class="pitch-modal-card welcome-card">
+    <button id="welcome-modal-close" class="pitch-modal-close" title="Cerrar" aria-label="Cerrar bienvenida">✕</button>
+    <div class="pitch-modal-tag">Founders Circle · Acceso privado</div>
+    <h3 id="welcome-modal-title" class="pitch-modal-title welcome-title">
+      <span id="welcome-guest-name">Bienvenido</span>, <em>gracias por estar aquí.</em>
+    </h3>
+    <p class="pitch-modal-desc">
+      Esta es la sala privada de <b translate="no" class="notranslate">RONDA</b>. En 3 minutos conoces el producto, el modelo y las condiciones de la micro-ronda.
+    </p>
+    <ul class="welcome-points">
+      <li class="welcome-point">
+        <span class="welcome-point-ico" aria-hidden="true">🎟️</span>
+        <div>
+          <div class="welcome-point-k">8 tickets × $1.000.000 COP</div>
+          <div class="welcome-point-d">Meta total de $8.000.000 COP. Cupos limitados.</div>
+        </div>
+      </li>
+      <li class="welcome-point">
+        <span class="welcome-point-ico" aria-hidden="true">📈</span>
+        <div>
+          <div class="welcome-point-k">6,0% simple a 90 días</div>
+          <div class="welcome-point-d">Equivale a 26,2% E.A. Mutuo comercial respaldado con pagaré.</div>
+        </div>
+      </li>
+      <li class="welcome-point">
+        <span class="welcome-point-ico" aria-hidden="true">🤝</span>
+        <div>
+          <div class="welcome-point-k">Círculo privado FFF</div>
+          <div class="welcome-point-d">Solo Friends, Family &amp; Founders con relación previa.</div>
+        </div>
+      </li>
+    </ul>
+    <div class="pitch-modal-actions">
+      <button id="welcome-btn-continue" class="pitch-btn-primary">Explorar la propuesta →</button>
+    </div>
+    <p class="welcome-legal">
+      Presentación privada dirigida exclusivamente a Friends, Family &amp; Founders (C. de Co. Art. 1163 · Ley 527 de 1999). No constituye oferta pública de valores ni captación masiva. Cifras y simuladores ilustrativos de la fase piloto.
+    </p>
+  </div>
+</div>
 
 <!-- Modal Sugerencia de Pantalla Completa / Orientación -->
 <div id="modal-pitch-suggestion" class="pitch-modal-overlay">

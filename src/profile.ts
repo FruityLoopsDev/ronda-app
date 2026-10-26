@@ -351,6 +351,91 @@ export class ProfileService {
         status.style.color = 'var(--vino)';
       }
     });
+    // Botón de Baja y Supresión de Datos (T-11.2/11.3)
+    document.getElementById('btn-open-delete-account')?.addEventListener('click', async () => {
+      if (!this.currentUser) return;
+      const modal = document.getElementById('modal-delete-account');
+      if (modal) modal.style.display = 'flex';
+      const form = document.getElementById('churn-survey-form');
+      if (form) form.style.display = 'none';
+      const confirmBtn = document.getElementById('btn-delete-confirm') as HTMLButtonElement | null;
+      if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Sí, suprimir mi cuenta'; }
+    });
+    // Cerrar modal legal
+    document.getElementById('btn-legal-close')?.addEventListener('click', () => {
+      const modal = document.getElementById('modal-legal-viewer');
+      if (modal) modal.style.display = 'none';
+    });
+    // Pestañas del modal legal
+    document.getElementById('legal-tab-terminos')?.addEventListener('click', () => {
+      const ct = document.getElementById('legal-content-terminos');
+      const cp = document.getElementById('legal-content-privacidad');
+      const tt = document.getElementById('legal-tab-terminos');
+      const tp = document.getElementById('legal-tab-privacidad');
+      if (ct) ct.style.display = 'block';
+      if (cp) cp.style.display = 'none';
+      if (tt) tt.className = 'legal-tab active';
+      if (tp) tp.className = 'legal-tab';
+    });
+    document.getElementById('legal-tab-privacidad')?.addEventListener('click', () => {
+      const ct = document.getElementById('legal-content-terminos');
+      const cp = document.getElementById('legal-content-privacidad');
+      const tt = document.getElementById('legal-tab-terminos');
+      const tp = document.getElementById('legal-tab-privacidad');
+      if (ct) ct.style.display = 'none';
+      if (cp) cp.style.display = 'block';
+      if (tt) tt.className = 'legal-tab';
+      if (tp) tp.className = 'legal-tab active';
+    });
+    // Selección de motivo de salida (cuestionario opcional)
+    document.querySelectorAll('.churn-reason-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const reason = target.getAttribute('data-reason') || '';
+        const sel = document.getElementById('churn-selected-reason');
+        if (sel) sel.textContent = `Motivo seleccionado: ${reason}`;
+        document.querySelectorAll<HTMLElement>('.churn-reason-btn').forEach(b => {
+          b.style.borderColor = 'var(--linea)';
+          b.style.background = 'rgba(243,237,226,0.06)';
+        });
+        target.style.borderColor = 'var(--luz)';
+        target.style.background = 'rgba(240,168,48,0.12)';
+        const form = document.getElementById('churn-survey-form');
+        if (form) form.style.display = 'block';
+      });
+    });
+    // Confirmar baja y supresión de datos
+    document.getElementById('btn-delete-confirm')?.addEventListener('click', async () => {
+      if (!this.currentUser) return;
+      const btn = document.getElementById('btn-delete-confirm') as HTMLButtonElement;
+      const reasonBtn = document.querySelector('.churn-reason-btn[style*="var(--luz)"]') as HTMLElement | null;
+      const reason = reasonBtn?.getAttribute('data-reason') || '';
+      const feedback = (document.getElementById('churn-feedback') as HTMLTextAreaElement)?.value || '';
+      btn.disabled = true;
+      btn.textContent = 'Suprimiendo…';
+      try {
+        await DB.deleteUserAccount(this.currentUser.uid, { reason, feedback });
+        this.showToast('Cuenta y datos suprimidos exitosamente conforme a la Ley 1581.');
+        Auth.logout();
+        window.location.href = '/';
+      } catch (err: any) {
+        btn.disabled = false;
+        btn.textContent = 'Sí, suprimir mi cuenta';
+        await RondaDialog.alert({
+          title: 'Error al suprimir cuenta',
+          message: err.message || 'No se pudo completar la supresión de datos.',
+          icon: '⚠️',
+          type: 'danger'
+        });
+      }
+    });
+    // Cancelar baja
+    document.getElementById('btn-delete-cancel')?.addEventListener('click', () => {
+      const modal = document.getElementById('modal-delete-account');
+      if (modal) modal.style.display = 'none';
+      const form = document.getElementById('churn-survey-form');
+      if (form) form.style.display = 'none';
+    });
   }
 
   openEditModal() {

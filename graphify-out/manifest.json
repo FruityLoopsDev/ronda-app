@@ -438,9 +438,9 @@
     "semantic_hash": "c24e01ae79290fdf37f85379959e063b"
   },
   "src/superadmin.ts": {
-    "mtime": 1791242410.2121613,
-    "seen": 1792503130.8054743,
-    "ast_hash": "388271cbb8e107faf2c90386101dbbc4",
+    "mtime": 1793017938.5307417,
+    "seen": 1793020422.5855284,
+    "ast_hash": "8d624ae52a38a761eac7776c5b130319",
     "semantic_hash": ""
   },
   "src/utils.ts": {
@@ -630,9 +630,9 @@
     "semantic_hash": ""
   },
   "docs/index.md": {
-    "mtime": 1791333794.5602233,
-    "seen": 1792503130.8054743,
-    "ast_hash": "3fd0a5745c38fb0155abe870290b182b",
+    "mtime": 1793020341.2427928,
+    "seen": 1793020422.5855284,
+    "ast_hash": "5b0a9c6cb410fab2153e8e9f095f14c9",
     "semantic_hash": ""
   },
   "docs/invention-disclosure-mem-rr-v2.md": {
@@ -696,9 +696,9 @@
     "semantic_hash": ""
   },
   "invest.html": {
-    "mtime": 1792506468.1155884,
-    "seen": 1792506721.3630123,
-    "ast_hash": "b562257a32924f3f412d7217eddf7379",
+    "mtime": 1793017766.0435953,
+    "seen": 1793020422.5855284,
+    "ast_hash": "d26f41b43568ca884a8033bdcd55822a",
     "semantic_hash": ""
   },
   "landing.html": {
@@ -924,9 +924,9 @@
     "semantic_hash": ""
   },
   "task.md": {
-    "mtime": 1792509240.0519516,
-    "seen": 1792539164.8983579,
-    "ast_hash": "ca23dc954a2db32740ac7db8a84beb21",
+    "mtime": 1793018909.0518987,
+    "seen": 1793020422.5855284,
+    "ast_hash": "519f14bd598914b789943bc78c658871",
     "semantic_hash": ""
   },
   "test/face-verify.html": {
@@ -1224,8 +1224,8 @@
     "semantic_hash": ""
   },
   "src/version.ts": {
-    "mtime": 1792538948.135803,
-    "seen": 1792539164.8983579,
+    "mtime": 1793018434.8035147,
+    "seen": 1793020422.5855284,
     "ast_hash": "7047eee853ad4d752d19262dc9af520b",
     "semantic_hash": ""
   },
@@ -1260,9 +1260,9 @@
     "semantic_hash": ""
   },
   "docs/HISTORIAL_INTERACCIONES.md": {
-    "mtime": 1792539128.6550598,
-    "seen": 1792539164.8983579,
-    "ast_hash": "21bc0902af44962dfc30a1df29df1ff7",
+    "mtime": 1793020365.301572,
+    "seen": 1793020422.5855284,
+    "ast_hash": "2ac6dc7b8d6728fd61b52a5dd1b2c0b3",
     "semantic_hash": ""
   },
   "docs/KYC_MULTIAGENT_EXECUTION_PLAN.md": {
@@ -1341,6 +1341,18 @@
     "mtime": 1792508466.6922028,
     "seen": 1792539164.8983579,
     "ast_hash": "b3adaca2e66786a1502289d694af7c39",
+    "semantic_hash": ""
+  },
+  "docs/GEM_RONDA_VOICE_STORYTELLER.md": {
+    "mtime": 1792876940.8855412,
+    "seen": 1793015956.227843,
+    "ast_hash": "64103d940e213feabd2d19f01cc7dca5",
+    "semantic_hash": ""
+  },
+  "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md": {
+    "mtime": 1793020320.6366448,
+    "seen": 1793020422.5855284,
+    "ast_hash": "24e679bbb96d7db2cedea8494e39dac2",
     "semantic_hash": ""
   }
 }

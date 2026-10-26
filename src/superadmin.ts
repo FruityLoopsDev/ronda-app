@@ -1,7 +1,7 @@
 import { DB, User, LedgerEntry, Payout, Scout, Host, MilestoneState } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc, deleteDoc, limit, startAfter, getCountFromServer, QueryDocumentSnapshot } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, limit, startAfter, getCountFromServer, QueryDocumentSnapshot } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { RondaB2BEngine } from './b2b-engine.ts';
 
@@ -21,6 +21,18 @@ export interface KycReviewCase {
   adminNotes?: string;
 }
 
+export interface InvestToken {
+  token: string;
+  name: string;
+  leadId: string;
+  role: 'founder' | 'investor' | 'guest';
+  ring: 'A1' | 'A2' | 'A3' | 'A4' | 'GEN';
+  phone?: string;
+  notes?: string;
+  active: boolean;
+  createdAt: string;
+}
+
 export class SuperAdminController {
   // --- Estado de paginación de la cola KYC (cursor de Firestore) ---
   private kycLastDoc: QueryDocumentSnapshot | null = null;
@@ -29,6 +41,9 @@ export class SuperAdminController {
   private kycLastPageSize = 0;
   private kycLoading = false;
   private readonly kycPageSize = 10;
+  // --- T-8.2: Tokens de inversión Pista Privada FFF ---
+  private tokens: InvestToken[] = [];
+  private tokensLoading = false;
   // Fotos Base64 fuera del DOM: se sirven solo bajo demanda (Tarea 2).
   private readonly kycPhotos = new Map<string, { selfie: string; docFront: string; docBack?: string }>();
 
@@ -225,6 +240,30 @@ export class SuperAdminController {
               <p style="font-size:12px; color:var(--humo);">Cargando…</p>
             </div>
           </div>
+
+          <!-- T-8.2: Tokens de inversión Pista Privada FFF (/invest) -->
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--linea); border-radius: 16px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel);">🎟️ Pista Privada FFF: Tokens & Enlaces de Inversión (/invest)</b>
+              <span id="sa-tokens-count" style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);"></span>
+            </div>
+            <form id="sa-token-form" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px; margin-bottom:14px; align-items:end;">
+              <input id="sa-token-name" class="ronda-input" placeholder="Nombre Completo" required>
+              <select id="sa-token-ring" class="ronda-input">
+                <option value="A1">A1: Núcleo</option>
+                <option value="A2">A2: Amigos</option>
+                <option value="A3">A3: Red Prof.</option>
+                <option value="A4">A4: Mentores</option>
+                <option value="GEN">GEN: General</option>
+              </select>
+              <input id="sa-token-token" class="ronda-input" placeholder="Slug/Token (rnd-…)" required>
+              <input id="sa-token-phone" class="ronda-input" placeholder="WhatsApp (opcional)">
+              <input id="sa-token-notes" class="ronda-input" placeholder="Notas (opcional)">
+              <button type="submit" class="btn ambar" style="font-size:11px; padding:10px 16px; font-weight:700;">➕ Emitir Token</button>
+            </form>
+            <p id="sa-tokens-empty" style="font-size:12px; color:var(--humo); display:none;">Sin tokens emitidos.</p>
+            <div id="sa-tokens-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
         </div>
 
         <!-- T1: Modal "Aprobar desembolso" -->
@@ -273,6 +312,7 @@ export class SuperAdminController {
     this.attachListeners();
     void this.loadLiquidaciones();
     void this.loadPeople();
+    void this.loadTokens();
   }
 
   private escapeKyc(s: unknown): string {
@@ -572,6 +612,10 @@ export class SuperAdminController {
     document.getElementById('sa-people-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
       void this.savePerson();
+    });
+    document.getElementById('sa-token-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      void this.emitToken();
     });
   }
 
@@ -1031,6 +1075,196 @@ export class SuperAdminController {
     if (!digits) return 0;
     const n = Number(digits);
     return Number.isFinite(n) ? n : 0;
+  }
+
+  // =========================================================================
+  // T-8.2: Tokens de inversión Pista Privada FFF (colección invest_tokens)
+  // =========================================================================
+
+  private async loadTokens(): Promise<void> {
+    const list = document.getElementById('sa-tokens-list');
+    const empty = document.getElementById('sa-tokens-empty');
+    const count = document.getElementById('sa-tokens-count');
+    if (!list) return;
+    this.tokensLoading = true;
+    try {
+      const q = query(collection(RondaServices.db, 'invest_tokens'), limit(200));
+      const snap = await getDocs(q);
+      this.tokens = [];
+      snap.forEach((d) => {
+        const data = d.data() as Partial<InvestToken>;
+        this.tokens.push({
+          token: d.id,
+          name: data.name || '',
+          leadId: data.leadId || '',
+          role: (data.role || 'investor') as InvestToken['role'],
+          ring: (data.ring || 'GEN') as InvestToken['ring'],
+          active: data.active ?? true,
+          createdAt: data.createdAt || new Date().toISOString(),
+          phone: data.phone || undefined,
+          notes: data.notes || undefined,
+        });
+      });
+      this.tokens.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+      if (count) count.textContent = `${this.tokens.length} token${this.tokens.length === 1 ? '' : 's'} emitido${this.tokens.length === 1 ? '' : 's'}`;
+      if (this.tokens.length === 0) {
+        list.style.display = 'none';
+        if (empty) empty.style.display = '';
+      } else {
+        list.style.display = '';
+        if (empty) empty.style.display = 'none';
+        list.innerHTML = this.renderTokens();
+        this.bindTokenListeners();
+      }
+    } catch (err) {
+      console.error('[SuperAdmin] Error cargando tokens de inversión:', err);
+      if (list) list.innerHTML = `<p style="font-size:12px;color:var(--vino);">⚠️ No se pudo cargar los tokens.</p>`;
+    } finally {
+      this.tokensLoading = false;
+    }
+  }
+
+  private renderTokens(): string {
+    return this.tokens.map((t) => {
+      const active = t.active !== false;
+      const badge = active
+        ? '<span style="display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:700;color:#79D3AC;border:1px solid rgba(121,211,172,0.45);border-radius:6px;padding:2px 8px;background:rgba(46,107,84,0.12);">✅ Activo</span>'
+        : '<span style="display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:700;color:#ff5252;border:1px solid rgba(255,82,82,0.45);border-radius:6px;padding:2px 8px;background:rgba(155,39,72,0.12);">🚫 Revocado</span>';
+      return `
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--linea);border-radius:10px;padding:10px 12px;background:rgba(243,237,226,0.03);font-size:12.5px;color:var(--papel);flex-wrap:wrap;">
+          <div style="min-width:170px;">
+            <div style="display:flex;align-items:center;gap:8px;"><b style="color:var(--papel);">${this.escapeKyc(t.name)}</b> <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--humo);">${this.escapeKyc(t.token)}</span></div>
+            <div style="font-size:10px;color:var(--humo);margin-top:2px;">${this.escapeKyc(t.leadId || t.token)} · ${this.escapeKyc(t.ring)}${t.phone ? ` · ${this.escapeKyc(t.phone)}` : ''}</div>
+            ${t.notes ? `<div style="font-size:10px;color:var(--humo);margin-top:2px;">${this.escapeKyc(t.notes)}</div>` : ''}
+          </div>
+          ${badge}
+          <div style="display:flex;gap:6px;">
+            <button class="btn-mini" data-action="copy" data-token="${this.escapeKyc(t.token)}" title="Copiar enlace de inversión">📋 Link</button>
+            <button class="btn-mini" data-action="wa" data-token="${this.escapeKyc(t.token)}" data-name="${this.escapeKyc(t.name)}" title="Enviar por WhatsApp">💬 WhatsApp</button>
+            <button class="btn-mini" data-action="toggle" data-token="${this.escapeKyc(t.token)}" data-active="${active}" title="${active ? 'Revocar token' : 'Activar token'}">${active ? '🚫 Revocar' : '✅ Activar'}</button>
+            <button class="btn-mini" data-action="delete" data-token="${this.escapeKyc(t.token)}" title="Eliminar token">🗑️ Eliminar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  private bindTokenListeners(): void {
+    const list = document.getElementById('sa-tokens-list');
+    if (!list || list.dataset.bound === '1') return;
+    list.dataset.bound = '1';
+    list.addEventListener('click', async (e) => {
+      const target = (e.target as HTMLElement).closest('[data-action]') as HTMLElement | null;
+      if (!target || !list.contains(target)) return;
+      const action = target.getAttribute('data-action');
+      const token = target.getAttribute('data-token') || '';
+      if (!token) return;
+      try {
+        if (action === 'copy') {
+          await navigator.clipboard.writeText(`https://ronda-uno.web.app/invest.html?token=${token}`);
+          const prev = target.textContent;
+          target.textContent = '✅ Copiado';
+          setTimeout(() => { target.textContent = prev; }, 1500);
+        } else if (action === 'wa') {
+          const name = target.getAttribute('data-name') || '';
+          const text = `Hola ${name}, este es tu enlace de acceso privado a la Pista Privada FFF de RONDA:\nhttps://ronda-uno.web.app/invest.html?token=${token}`;
+          await navigator.clipboard.writeText(text);
+          const prev = target.textContent;
+          target.textContent = '✅ Copiado';
+          setTimeout(() => { target.textContent = prev; }, 1500);
+        } else if (action === 'toggle') {
+          const active = target.getAttribute('data-active') === 'true';
+          await this.toggleToken(token, !active);
+        } else if (action === 'delete') {
+          const confirmed = await RondaDialog.confirm({
+            title: 'Eliminar token',
+            message: `¿Seguro que deseas revocar y eliminar el token <b>${this.escapeKyc(token)}</b>? Esta acción no se puede deshacer.`,
+            icon: '🗑️',
+            type: 'danger',
+            confirmText: '✓ Eliminar',
+            cancelText: '✕ Cancelar',
+          });
+          if (confirmed) await this.deleteToken(token);
+        }
+      } catch (err) {
+        console.error('[SuperAdmin] Error en acción de token:', err);
+        await RondaDialog.alert({ title: 'Error', message: err instanceof Error ? err.message : String(err), icon: '⚠️', type: 'danger' });
+      }
+    });
+  }
+
+  private async emitToken(): Promise<void> {
+    const nameEl = document.getElementById('sa-token-name') as HTMLInputElement | null;
+    const ringEl = document.getElementById('sa-token-ring') as HTMLSelectElement | null;
+    const tokenEl = document.getElementById('sa-token-token') as HTMLInputElement | null;
+    const phoneEl = document.getElementById('sa-token-phone') as HTMLInputElement | null;
+    const notesEl = document.getElementById('sa-token-notes') as HTMLInputElement | null;
+    if (!nameEl || !ringEl || !tokenEl) return;
+    const name = nameEl.value.trim();
+    const ring = ringEl.value || 'GEN';
+    let token = tokenEl.value.trim().toLowerCase();
+    const phone = phoneEl ? phoneEl.value.trim() || undefined : undefined;
+    const notes = notesEl ? notesEl.value.trim() || undefined : undefined;
+    if (!name) {
+      await RondaDialog.alert({ title: 'Nombre requerido', message: 'Ingresa el Nombre Completo del invitado.', icon: '⚠️', type: 'danger' });
+      nameEl.focus();
+      return;
+    }
+    if (!token) token = `rnd-${ring.toLowerCase()}-${this.slugify(name)}`;
+    if (!/^[a-z0-9-]+$/.test(token)) {
+      await RondaDialog.alert({ title: 'Token inválido', message: 'Usa solo minúsculas, números y guiones (ej. rnd-a1-cesar-perez).', icon: '⚠️', type: 'danger' });
+      tokenEl.focus();
+      return;
+    }
+    if (!token.startsWith('rnd-')) token = `rnd-${token}`;
+    const by = Auth.currentUser?.uid || 'superadmin';
+    const now = new Date().toISOString();
+    const entry: InvestToken = { token, name, leadId: '', role: 'investor', ring: ring as InvestToken['ring'], active: true, createdAt: now, phone, notes };
+    try {
+      await setDoc(doc(RondaServices.db, 'invest_tokens', token), entry);
+      try {
+        await DB.logAudit({
+          actor_uid: by, actor_type: 'superadmin', entity_type: 'invest_token', entity_id: token,
+          action: 'invest_token_issued', new_state: { token, name, ring, active: true }, timestamp: now,
+          reason: 'Emisión de token Pista Privada FFF desde SuperAdmin',
+        });
+      } catch {}
+      tokenEl.value = '';
+      await this.loadTokens();
+    } catch (err: any) {
+      console.error('[SuperAdmin] Error emitiendo token:', err);
+      await RondaDialog.alert({ title: 'No se pudo emitir', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
+    }
+  }
+
+  private async toggleToken(tokenId: string, active: boolean): Promise<void> {
+    try {
+      await updateDoc(doc(RondaServices.db, 'invest_tokens', tokenId), { active, updatedAt: new Date().toISOString(), updated_by: Auth.currentUser?.uid || 'superadmin' });
+      await this.loadTokens();
+    } catch (err: any) {
+      console.error('[SuperAdmin] Error toggle token:', err);
+      await RondaDialog.alert({ title: 'No se pudo actualizar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
+    }
+  }
+
+  private async deleteToken(tokenId: string): Promise<void> {
+    try {
+      await deleteDoc(doc(RondaServices.db, 'invest_tokens', tokenId));
+      await this.loadTokens();
+    } catch (err: any) {
+      console.error('[SuperAdmin] Error eliminando token:', err);
+      await RondaDialog.alert({ title: 'No se pudo eliminar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
+    }
+  }
+
+  private slugify(name: string): string {
+    return String(name)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60);
   }
 }
 

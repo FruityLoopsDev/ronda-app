@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe, serverTimestamp } from "firebase/firestore";
 import { RondaServices } from "./firebase-config.js";
 import { Matches } from "./matches.js";
 
@@ -245,7 +245,7 @@ export interface AuditLog {
   id?: string;
   actor_uid: string;
   actor_type: 'superadmin' | 'sales' | 'host' | 'scout' | 'system';
-  entity_type: 'lead' | 'venue' | 'event' | 'ledger' | 'payout' | 'policy' | 'scout' | 'host';
+  entity_type: 'lead' | 'venue' | 'event' | 'ledger' | 'payout' | 'policy' | 'scout' | 'host' | 'invest_token';
   entity_id: string;
   action: string;
   previous_state?: any;
@@ -750,6 +750,79 @@ export class DatabaseInterface {
   async saveHostOffer(offer: HostOffer): Promise<void> {
     const docRef = doc(this._getFirestore(), 'host_offers', offer.id);
     await setDoc(docRef, cleanFirestoreData(offer), { merge: true });
+  }
+
+  // =========================================================================
+  // T-11.4: Supresión de cuenta y datos personales (Ley 1581 de 2012)
+  // =========================================================================
+  async deleteUserAccount(userId: string, surveyData?: { reason?: string; feedback?: string }): Promise<void> {
+    // 1. Guardar encuesta de salida anonimizada (sin ID de usuario ni correo)
+    if (surveyData?.reason || surveyData?.feedback) {
+      try {
+        const surveyRef = doc(collection(this._getFirestore(), 'churn_surveys'));
+        await setDoc(surveyRef, {
+          reason: surveyData.reason || null,
+          feedback: surveyData.feedback || null,
+          createdAt: serverTimestamp()
+        });
+        console.log('[DB] Encuesta de salida guardada (anonimizada) en churn_surveys');
+      } catch (err) {
+        console.warn('[DB] No se pudo guardar encuesta de salida:', err);
+      }
+    }
+
+    // 2. Eliminar el documento del usuario en Firestore
+    try {
+      await deleteDoc(doc(this._getFirestore(), 'users', userId));
+      console.log('[DB] Documento de usuario eliminado de Firestore:', userId);
+    } catch (err) {
+      console.error('[DB] Error eliminando documento de usuario:', err);
+      throw err;
+    }
+
+    // 3. Purgar credenciales y cachés locales
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+      // localforage puede estar disponible globalmente o vía import dinámica
+      try {
+        const lf = await import('localforage');
+        if (lf && typeof lf.clear === 'function') {
+          await lf.clear();
+          console.log('[DB] Caché localforage purgada');
+        }
+      } catch (e) {
+        console.warn('[DB] localforage no disponible para purga:', e);
+      }
+    } catch (err) {
+      console.warn('[DB] Error purgando cachés locales:', err);
+    }
+
+    // 4. Eliminar el usuario en Firebase Authentication
+    try {
+      const { Auth } = await import('./auth.js');
+      const fbUser = Auth['currentUser'] as any;
+      if (fbUser && typeof fbUser.delete === 'function') {
+        await fbUser.delete();
+        console.log('[DB] Usuario eliminado de Firebase Auth');
+      } else {
+        // Si no se puede eliminar el token (requiere re-autenticación), cerrar sesión
+        await Auth.logout();
+        console.warn('[DB] No se pudo eliminar usuario de Auth (token expirado), sesión cerrada');
+      }
+    } catch (err: any) {
+      if (err?.code === 'auth/requires-recent-login') {
+        try {
+          const { Auth } = await import('./auth.js');
+          await Auth.logout();
+        } catch {}
+        console.warn('[DB] Token expirado, sesión cerrada. Usuario debe re-autenticar para completar la baja.');
+      } else {
+        console.error('[DB] Error eliminando usuario de Firebase Auth:', err);
+      }
+    }
   }
 }
 

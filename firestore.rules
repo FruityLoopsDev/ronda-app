@@ -56,7 +56,8 @@ service cloud.firestore {
         || isAdmin()
       );
 
-      allow delete: if isSuperAdmin();
+      // Baja / Supresión de datos (Ley 1581): el propio usuario puede eliminar su documento o el superadmin.
+      allow delete: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
 
       // Historial de encuentros (mem-rr): el usuario gestiona sus propios registros.
       match /encounters/{otherUid} {
@@ -73,6 +74,12 @@ service cloud.firestore {
       match /pushTokens/{tokenId} {
         allow read, write: if request.auth != null && (request.auth.uid == userId || isStaff());
       }
+    }
+
+    // --- Encuestas de Salida / Churn Anonimizadas (Ley 1581) ---
+    match /churn_surveys/{surveyId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if isSuperAdmin();
     }
 
     // --- Eventos / Salas ---
@@ -224,6 +231,14 @@ service cloud.firestore {
     // --- Estadísticas Públicas ---
     match /stats/{statId} {
       allow read, write: if true;
+    }
+
+    // --- Tokens de inversión Pista Privada FFF (/invest) ---
+    // Lectura pública: la landing /invest valida tokens sin autenticación.
+    // Escritura (emisión/revocación/eliminación): solo superadmin.
+    match /invest_tokens/{tokenId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
     }
 
     // --- Cola de Revisión Manual KYC (Fotos Base64, $0 Plan Spark) ---

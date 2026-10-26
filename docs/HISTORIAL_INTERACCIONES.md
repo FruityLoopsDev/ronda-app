@@ -17,6 +17,85 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
+### [2026-10-26] — Especificación FASE 12: Rediseño y Elevación del Footer B2B en `/partners.html`
+- **Solicitud del Usuario:** Mejorar el footer de la landing `/partners` para corregir desorden visual y solapamiento con el botón flotante de WhatsApp, y crear la tarea para delegar a Cline.
+- **Acciones Realizadas:**
+  - **Diagnóstico UI/UX:** Se identificó salto de línea antiestético en los enlaces legales ("Privacidad" en línea huérfana), falta de jerarquía B2B y colisión entre `#global-visit-counter` y el botón flotante de WhatsApp `.wa-float`.
+  - **Plan de Arquitectura (FASE 12 en `task.md`):** Desglosadas 3 tareas atómicas (`T-12.1` a `T-12.3`) con arquitectura en 2 niveles (Nivel 1: Marca B2B + Enlaces clave + Contacto de Scout; Nivel 2: Copyright, métricas de ingeniería hidratables y contador con margen seguro anti-WhatsApp).
+
+### [2026-10-26] — Banner Rotativo Dinámico en Hero de Landing Principal
+- **Solicitud del Usuario:** Integrar los dos badges estáticos del hero (`✦ Solteros Profesionales de Alto Valor · Bogotá` y `🏆 Club Fundador 100 · Insignia Dorada + Prioridad + 1er Cóctel`) en un único banner rotativo de diseño premium.
+- **Acciones Realizadas:**
+  - **Componente `.hero-rotator-badge`:** Creada una píldora con micro-interacciones de lujo (borde ámbar luminoso, backdrop-filter de 10px, resplandor al hover y micro-puntos indicadores).
+  - **Rotación Fluida y Segura:** Implementada rotación automática cada 3.8s con transiciones suaves verticales de entrada/salida (`transform: translateY` + `opacity`), pausa inteligente al pasar el cursor o tocar en móviles (`mouseenter`/`touchstart`), y apertura directa del modal de waitlist (`openWaitlist`) al hacer clic.
+  - **Optimización de Espacio:** Reduce el peso visual y la altura del Hero en `landing.html`, permitiendo que el titular principal y los CTAs ganen prominencia inmediata sobre la línea de flotación.
+
+### [2026-10-26] — Protocolo de Cierre de Waitlist & Onboarding Club Fundador 100
+- **Solicitud del Usuario:** Definir con precisión qué sucede una vez que se cierra la lista de espera (flujo de producto, comunicación, experiencia física y conversión).
+- **Acciones Realizadas:**
+  - **Protocolo Operativo Maestro Creado:** [docs/PROTOCOLO_CIERRE_WAITLIST_Y_ONBOARDING_FUNDADORES.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/PROTOCOLO_CIERRE_WAITLIST_Y_ONBOARDING_FUNDADORES.md).
+  - **Fase 1 (Trigger en Landing):** Al llegar a 100 inscritos o fecha de corte, `landing.html` conmuta a *«LISTA CERRADA (100/100)»* y activa la lista de reserva para la *Cohorte 2* (efecto psicológico de escasez y validación social).
+  - **Fase 2 (Triage & Asignación):** Validación en 24h de perfiles de LinkedIn, balance de género 50/50, segmentación etaria y asignación del serial nominal (`Nº 001/100` a `Nº 100/100`).
+  - **Fase 3 (Secuencia WhatsApp 1:1):** 3 mensajes estructurados (Admisión y asignación de serial → Lock-in de pago $45k en 48h → Verificación biométrica Face-ID de 40s y emisión de Pasaporte Digital QR).
+  - **Fase 4 (Revelación Clandestina):** Anuncio del gastrobar aliado (Chapinero Alto/Zona G) en T-48 horas con dress code nocturno.
+  - **Fase 5 (Experiencia en Sala):** Check-in en 2s por QR, entrega de sobre lino con lacre y Moneda de Barra física (45mm latón), canje del Cóctel Cero en barra, 9 rondas de 6 min con campana de bronce y votación secreta.
+  - **Fase 6 (Bucle de Retención):** Matches a las 10:00 AM, cupón -25% para segunda cita en el bar aliado y 2 Golden Passes para invitar amigos a la Cohorte 2.
+  - **Indexación:** Registrado en [docs/index.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/index.md).
+
+### [2026-10-26] — Arquitectura de Privacidad, Términos & Condiciones y Flujo de Baja (Ley 1581)
+- **Solicitud del Usuario:** Trabajar en un plan para garantizar privacidad y términos y condiciones, política clara para darse de baja de la app con botón ágil y cuestionario opcional de motivos de salida, listo para delegar a Cline.
+- **Acciones Realizadas:**
+  - **Documentos Jurídico-Técnicos:** Creados [docs/TERMINOS_Y_CONDICIONES.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/TERMINOS_Y_CONDICIONES.md) y [docs/POLITICA_TRATAMIENTO_DATOS_LEY_1581.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/POLITICA_TRATAMIENTO_DATOS_LEY_1581.md) adaptados a la Ley 1581 de 2012 (Habeas Data), Decreto 1377 de 2013 y Estatuto del Consumidor.
+  - **Especificación de Plan para Cline (`task.md` - FASE 11):** Desglosadas 6 tareas atómicas (`T-11.1` a `T-11.6`) cubriendo: visor modal legal `#modal-legal-viewer`, tarjeta en perfil con botón de baja, modal de confirmación con cuestionario opcional de salida (7 opciones rápidas + feedback libre + disociación estadística), método `DB.deleteUserAccount()` y supresión irreversible en Firebase Auth/Firestore/Storage.
+  - **Reglas de Seguridad Firestore (`firestore.rules`):** Actualizado permiso de eliminación en `/users/{userId}` para permitir autoservicio del titular (`request.auth.uid == userId`) y agregada regla para registrar encuestas de salida anonimizadas en `/churn_surveys/{surveyId}`.
+  - **Pruebas:** Validadas 4/4 pruebas de seguridad automatizadas (`node test/test-integrity-zero-functions.cjs` exitoso).
+
+### [2026-10-26] — Eventos Especiales de Ticket Alto & Dossier «Subasta de Citas» para Perplexity
+- **Solicitud del Usuario:** Explorar la viabilidad de eventos especiales de ticket alto ($120.000 – $180.000 COP) para calentar el segmento frío (hombres solteros), evaluar el impacto real y engagement en redes de una dinámica disruptiva tipo "Subasta de Solteros", y preparar un documento estructurado para elevar la discusión a Perplexity.
+- **Acciones Realizadas:**
+  - **Dossier Maestro Creado:** [docs/DEBATE_EVENTOS_ESPECIALES_SUBASTA_SOLTEROS.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/DEBATE_EVENTOS_ESPECIALES_SUBASTA_SOLTEROS.md).
+  - **Giro de Producto Anti-Cosificación:** Transformación de la "subasta de personas" en la **«Subasta de la Cita Soñada»** (experiencias gastronómicas/culturales de autor diseñadas por 8 solteros de honor) con 50% a causa social y 50% consumo bar, blindando la marca de críticas.
+  - **Modelado de Engagement:** CTR estimado de 4.5%–7.2% (~3.5x regular), Engagement Rate de 8.4%–12.6% y share rate en WhatsApp de 3.8% (~9.5x regular), proyectando reducción de CAC a $4.500–$7.800 COP.
+  - **Unit Economics de Gala:** $7.2M COP en taquilla (60 pax @ $120k) + $2M COP en pujas benéficas, con 56% de margen bruto ($4.03M COP/noche).
+  - **Prompt Maestro para Perplexity:** Bloque de research avanzado con 5 ejes analíticos (benchmarks globales, psicología masculina de alto valor, virabilidad de reels, brand safety y viabilidad de precios en Bogotá).
+  - **Indexación:** Registrado en [docs/index.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/index.md).
+
+### [2026-10-26] — Integración Narrativa: +220h de Ingeniería & Badges de Confianza
+- **Solicitud del Usuario:** Integrar las métricas de desarrollo (+220 horas, 88 versiones, motor matemático propietario y ~$45M COP en sweat equity) en toda la narrativa y los pies de página (footers). Añadir iconos de redes sociales (Instagram, LinkedIn, GitHub) en las landings principales.
+- **Acciones Realizadas:**
+  - **Footer Unificado (`src/footer.ts` y portales):** Inyectada la cápsula discreta `⚡ +220h de ingeniería · Motor mem-rr-v2 propietario` y los iconos SVG de redes sociales (Instagram, LinkedIn, GitHub).
+  - **Landings Principales (`invest.html`, `landing.html`, `partners.html`):** Integrados los iconos SVG interactivos de Instagram, LinkedIn y GitHub en los pies de página listos para recibir enlaces finales.
+  - **Portal de Inversores (`invest.html`):**
+    - Footer enriquecido con el badge de confianza: `⚡ +220h de ingeniería · 88 deploys · Motor mem-rr-v2`.
+    - Executive One-Pager (`#modal-doc-onepager`): Incorporada la viñeta de *Sweat Equity & Ejecución Previa* bajo la sección de blindaje de software.
+  - **Guion de WhatsApp & Manejo de Objeciones (`docs/PLAN_LANZAMIENTO_FFF_WHATSAPP_EXPRESS.md`):** Actualizados los minutos 4–6 y tabla de respuestas a objeciones para utilizar el respaldo de las 220h como disipador total del riesgo tecnológico.
+  - **Verificación Técnica:** `npx tsc --noEmit` completado con 0 errores y compilación `npm run build` exitosa en 2m 44s.
+
+### [2026-10-26] — Diseño & Viabilidad Financiera: Kit de Bienvenida «Club Fundador 100»
+- **Solicitud del Usuario:** Diseñar un kit de bienvenida fuera de serie para los miembros fundadores (combinando La Moneda de Barra + La Comanda Negra con Lacre) y evaluar su inclusión en el presupuesto de la micro-ronda FFF ($8M COP).
+- **Acciones Realizadas:**
+  - Creación del documento maestro [docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md):
+    - *Componente A:* Moneda de latón macizo envejecido (45mm · 35g) con monograma y número serial troquelado (`Nº 001/100`), usada como llave de barra para reclamar el «Cóctel Cero».
+    - *Componente B:* Comanda de iniciación en papel algodón 300g con tipografía letterpress bajo relieve y caligrafía personalizada.
+    - *Componente C:* Sobre negro mate (180g lino) sellado con cera de lacre flexible rojo vino (`#9B2748`).
+  - **Evaluación Financiera & Calce de Presupuesto:**
+    - Costo unitario estimado: ~$18.000 COP por kit completo (talleres en Ricaurte / San Victorino, Bogotá).
+    - **Calce 100% dentro del presupuesto existente:** Se absorbe directamente dentro de la partida presupuestal ya aprobada de *"Kits de Branding, Props Físicos y Merch"* de **$1.800.000 COP (22.5% de la ronda de $8M COP)**.
+    - Estrategia en 2 fases: Lote inicial de 50 kits para los 2 primeros pilotos ($900.000 COP) dejando $900.000 COP para campanas de bronce y acrílicos de mesa; los 50 kits restantes se financian con el flujo positivo de boletería.
+    - No requiere alterar el monto de la ronda ($8M COP) ni la tasa de retorno a inversores (6.0% a 90 días).
+
+### [2026-10-26] — Modal de Bienvenida en `/invest` & Despliegue a Producción
+- **Solicitud del Usuario:** Agregar modal de bienvenida a la landing `/invest` y desplegar a producción.
+- **Acciones Realizadas (`invest.html`):**
+  - Modal `#modal-welcome` (reutiliza `.pitch-modal-*`): saludo personalizado por `?token=` (`AUTHORIZED_GUESTS` / `sessionStorage`), 3 puntos clave (8 × $1M COP · 6,0% a 90 días / 26,2% E.A. · círculo privado FFF) y aviso legal corto (Art. 1163 C.Co. · Ley 527/1999).
+  - Solo primera visita (`localStorage: ronda_invest_welcome_seen`); al cerrar, se encadena el modal de pantalla completa (`window.openPitchSuggestion`).
+  - Telemetría: `investor_welcome_view`, `investor_welcome_dismiss` (`via`).
+  - **Bug corregido:** el modal de pantalla completa nunca se abría (su script corría antes de existir el nodo en el DOM). Ambos inicializadores ahora corren en `DOMContentLoaded`.
+  - Verificado en navegador (Vite local) y compilado sin errores (`dist/invest.html` 167 kB).
+- **Despliegue a Producción:**
+  - Firebase Hosting actualizado exitosamente a `ronda-uno` (69 archivos, 0 errores).
+  - **URL en Producción Activa:** https://ronda-uno.web.app/invest.html
+
 ### [2026-10-20] — Despliegue Exitoso a Producción (Firebase Hosting)
 - **Solicitud del Usuario:** Ejecutar despliegue a producción (Tarea 2 de la hoja de ruta).
 - **Acciones Realizadas:**
@@ -70,6 +149,20 @@
     - Tests de Seguridad e Integridad $0: `node test/test-integrity-zero-functions.cjs` (4/4 OK).
     - Tests de Aceptación B2B: `npm run test:b2b` (56/56 OK).
     - Bundle de Producción: `npm run build` (Exitoso en 34s).
+
+### [2026-10-26] — Automatización de Métricas Git, Kit Fundador y Blindaje FFF
+- **Solicitud del Usuario:**
+  - Diseñar Kit de Bienvenida para el «Club Fundador 100» fuera de serie, documentar 4 conceptos y evaluar unit economics ($18.000 COP/kit) dentro de la partida existente de $1.8M COP (22.5%) de la ronda FFF.
+  - Implementar generador nominal de tokens FFF en SuperAdmin con persistencia Firestore y fallback local.
+  - Diseñar modal de bienvenida personalizado en `/invest.html` con token nominal y encadenado a pantalla completa.
+  - Contabilizar horas de ingeniería (+220h, 88 commits, 15 días activos) y automatizar el contador día a día de forma continua cruzando el control de versiones (Git).
+- **Acciones y Resultados:**
+  - **Kit de Bienvenida:** Documentado en `docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md` (Moneda de barra en latón 45mm troquelada + Comanda letterpress en sobre negro lino sellado con lacre). Integrado visualmente en `#noche` y desglosado en `#modal-doc-financial` de `invest.html`.
+  - **Sincronización Git en Build (`scripts/sync-version.cjs`):** Lee `git rev-list --count HEAD`, calcula días únicos de sprint y días calendario, exportando a `src/version.ts`.
+  - **Hidratación Dinámica en Vivo (`src/footer.ts`):** En tiempo de ejecución calcula la progresión diaria (`daysSinceLast * 2h`), actualiza los selectores `[data-ronda-*]` e implementa consulta asíncrona no invasiva a la GitHub API (`FruityLoopsDev/ronda-app`) con cache de 4h en `localStorage` y ticker automático cada 30 min.
+  - **Blindaje GitHub Actions:** Actualizado `.github/workflows/firebase-hosting-merge.yml` con `fetch-depth: 0` para asegurar que los runners de CI dispongan de todo el historial de Git para métricas exactas.
+  - **Iconos de Redes Sociales:** Añadidos SVG limpios para Instagram, LinkedIn y GitHub en `landing.html`, `invest.html`, `partners.html` y el footer estándar inyectado.
+  - **Verificación Técnica:** `npx tsc --noEmit` (0 errores) y `npm run build` (151 módulos transformados con éxito).
 
 ### [2026-10-06] — Auditoría, Verificación Completa y Reparación de Bugs en App Cliente
 - **Solicitud del Usuario:** Probar todo el flujo de la aplicación del cliente y reparar bugs detectados.

@@ -17,13 +17,39 @@
       "source_location": "L13"
     },
     {
+      "id": "src_client_drinkoption",
+      "label": "DrinkOption",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "drinkoption",
+      "source_file": "src/client.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_client_rondaevent",
+      "label": "RondaEvent",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "rondaevent",
+      "source_file": "src/client.ts",
+      "source_location": "L21"
+    },
+    {
       "id": "src_dialog_dialogoptions",
       "label": "DialogOptions",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "dialogoptions",
       "source_file": "src/dialog.ts",
@@ -36,24 +62,37 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "rondadialog",
       "source_file": "src/dialog.ts",
       "source_location": "L17"
     },
     {
-      "id": "src_payment_paymentcheckoutoptions",
-      "label": "PaymentCheckoutOptions",
+      "id": "src_privacy_policy_contactviolationresult",
+      "label": "ContactViolationResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "paymentcheckoutoptions",
-      "source_file": "src/payment.ts",
-      "source_location": "L4"
+      "norm_label": "contactviolationresult",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_privacy_policy_privacypolicy",
+      "label": "PrivacyPolicy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "privacypolicy",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L14"
     },
     {
       "id": "src_client_clientappservice",
@@ -69,13 +108,39 @@
       "source_location": "L55"
     },
     {
+      "id": "src_payment_paymentservice",
+      "label": "PaymentService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 112,
+      "community_name": "ClientAppService",
+      "file_type": "code",
+      "norm_label": "paymentservice",
+      "source_file": "src/payment.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_api_client_apiclient",
+      "label": "ApiClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 129,
+      "community_name": "api-client.ts",
+      "file_type": "code",
+      "norm_label": "apiclient",
+      "source_file": "src/api-client.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "src_nft_utils_nftutilsservice",
       "label": "NFTUtilsService",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": "nftutilsservice",
       "source_file": "src/nft-utils.ts",
@@ -173,17 +238,30 @@
       "source_location": "L159"
     },
     {
-      "id": "src_satisfaction_satisfactiondata",
-      "label": "SatisfactionData",
+      "id": "src_notifications_appnotification",
+      "label": "AppNotification",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 13,
       "community_name": "db.ts",
       "file_type": "code",
-      "norm_label": "satisfactiondata",
-      "source_file": "src/satisfaction.ts",
+      "norm_label": "appnotification",
+      "source_file": "src/notifications.ts",
       "source_location": "L5"
+    },
+    {
+      "id": "src_superadmin_investtoken",
+      "label": "InvestToken",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "investtoken",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L24"
     },
     {
       "id": "src_superadmin_kycreviewcase",
@@ -197,19 +275,6 @@
       "norm_label": "kycreviewcase",
       "source_file": "src/superadmin.ts",
       "source_location": "L8"
-    },
-    {
-      "id": "src_views_profile_modal_profilemodalcallbacks",
-      "label": "ProfileModalCallbacks",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "profilemodalcallbacks",
-      "source_file": "src/views/profile-modal.ts",
-      "source_location": "L11"
     },
     {
       "id": "src_db_databaseinterface",
@@ -602,32 +667,6 @@
       "source_location": "L21"
     },
     {
-      "id": "src_client_drinkoption",
-      "label": "DrinkOption",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "drinkoption",
-      "source_file": "src/client.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_client_rondaevent",
-      "label": "RondaEvent",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "rondaevent",
-      "source_file": "src/client.ts",
-      "source_location": "L21"
-    },
-    {
       "id": "src_icebreakers_icebreakerquestion",
       "label": "IcebreakerQuestion",
       "_callable": true,
@@ -641,43 +680,17 @@
       "source_location": "L5"
     },
     {
-      "id": "src_notifications_appnotification",
-      "label": "AppNotification",
+      "id": "src_satisfaction_satisfactiondata",
+      "label": "SatisfactionData",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
       "community_name": "app.ts",
       "file_type": "code",
-      "norm_label": "appnotification",
-      "source_file": "src/notifications.ts",
+      "norm_label": "satisfactiondata",
+      "source_file": "src/satisfaction.ts",
       "source_location": "L5"
-    },
-    {
-      "id": "src_privacy_policy_contactviolationresult",
-      "label": "ContactViolationResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "contactviolationresult",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_privacy_policy_privacypolicy",
-      "label": "PrivacyPolicy",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "privacypolicy",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L14"
     },
     {
       "id": "src_views_auth_view_authviewcallbacks",
@@ -691,6 +704,19 @@
       "norm_label": "authviewcallbacks",
       "source_file": "src/views/auth-view.ts",
       "source_location": "L12"
+    },
+    {
+      "id": "src_views_profile_modal_profilemodalcallbacks",
+      "label": "ProfileModalCallbacks",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "app.ts",
+      "file_type": "code",
+      "norm_label": "profilemodalcallbacks",
+      "source_file": "src/views/profile-modal.ts",
+      "source_location": "L11"
     },
     {
       "id": "src_notifications_notificationsystem",
@@ -758,6 +784,19 @@
       "source_location": "L24"
     },
     {
+      "id": "src_payment_paymentcheckoutoptions",
+      "label": "PaymentCheckoutOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 388,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "paymentcheckoutoptions",
+      "source_file": "src/payment.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "src_mem_rr_v2_flow_bipartitematchingresult",
       "label": "BipartiteMatchingResult",
       "_callable": true,
@@ -823,19 +862,6 @@
       "source_location": "L16"
     },
     {
-      "id": "src_api_client_apiclient",
-      "label": "ApiClient",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 64,
-      "community_name": "ApiClient",
-      "file_type": "code",
-      "norm_label": "apiclient",
-      "source_file": "src/api-client.ts",
-      "source_location": "L4"
-    },
-    {
       "id": "src_superadmin_superadmincontroller",
       "label": "SuperAdminController",
       "_callable": true,
@@ -846,7 +872,7 @@
       "file_type": "code",
       "norm_label": "superadmincontroller",
       "source_file": "src/superadmin.ts",
-      "source_location": "L24"
+      "source_location": "L36"
     },
     {
       "id": "src_mem_rr_history_recordedpair",
@@ -992,17 +1018,17 @@
       "source_location": "L4"
     },
     {
-      "id": "src_payment_paymentservice",
-      "label": "PaymentService",
+      "id": "src_network_networkcontroller",
+      "label": "NetworkController",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 76,
       "community_name": ".alert",
       "file_type": "code",
-      "norm_label": "paymentservice",
-      "source_file": "src/payment.ts",
-      "source_location": "L18"
+      "norm_label": "networkcontroller",
+      "source_file": "src/network.ts",
+      "source_location": "L4"
     },
     {
       "id": "src_profile_profileservice",
@@ -1278,19 +1304,6 @@
       "source_location": "L480"
     },
     {
-      "id": "src_network_networkcontroller",
-      "label": "NetworkController",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": "networkcontroller",
-      "source_file": "src/network.ts",
-      "source_location": "L4"
-    },
-    {
       "id": "test_test_b2b_scouts_hosters_processreversal",
       "label": "processReversal()",
       "_callable": true,
@@ -1464,7 +1477,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "escapehtml()",
       "source_file": "src/dialog.ts",
@@ -1476,7 +1489,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": ".close()",
       "source_file": "src/dialog.ts",
@@ -1488,7 +1501,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": ".init()",
       "source_file": "src/dialog.ts",
@@ -1500,7 +1513,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": ".show()",
       "source_file": "src/dialog.ts",
@@ -1867,6 +1880,54 @@
       "source_location": "L873"
     },
     {
+      "id": "src_dialog_rondadialog_confirm",
+      "label": ".confirm()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 112,
+      "community_name": "ClientAppService",
+      "file_type": "code",
+      "norm_label": ".confirm()",
+      "source_file": "src/dialog.ts",
+      "source_location": "L69"
+    },
+    {
+      "id": "src_payment_paymentservice_loadwompiwidget",
+      "label": ".loadWompiWidget()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 112,
+      "community_name": "ClientAppService",
+      "file_type": "code",
+      "norm_label": ".loadwompiwidget()",
+      "source_file": "src/payment.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_payment_paymentservice_opencheckout",
+      "label": ".openCheckout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 112,
+      "community_name": "ClientAppService",
+      "file_type": "code",
+      "norm_label": ".opencheckout()",
+      "source_file": "src/payment.ts",
+      "source_location": "L42"
+    },
+    {
+      "id": "src_payment_paymentservice_wompipublickey",
+      "label": ".wompiPublicKey()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 112,
+      "community_name": "ClientAppService",
+      "file_type": "code",
+      "norm_label": ".wompipublickey()",
+      "source_file": "src/payment.ts",
+      "source_location": "L25"
+    },
+    {
       "id": "src_utils_downloadicsfile",
       "label": "downloadICSFile()",
       "_callable": true,
@@ -1879,12 +1940,48 @@
       "source_location": "L48"
     },
     {
+      "id": "src_api_client_apiclient_baseurl",
+      "label": ".baseUrl()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 129,
+      "community_name": "api-client.ts",
+      "file_type": "code",
+      "norm_label": ".baseurl()",
+      "source_file": "src/api-client.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_api_client_apiclient_isconfigured",
+      "label": ".isConfigured()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 129,
+      "community_name": "api-client.ts",
+      "file_type": "code",
+      "norm_label": ".isconfigured()",
+      "source_file": "src/api-client.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_api_client_apiclient_post",
+      "label": ".post()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 129,
+      "community_name": "api-client.ts",
+      "file_type": "code",
+      "norm_label": ".post()",
+      "source_file": "src/api-client.ts",
+      "source_location": "L13"
+    },
+    {
       "id": "src_nft_utils_nftutilsservice_mintnft",
       "label": ".mintNFT()",
       "_callable": true,
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": ".mintnft()",
       "source_file": "src/nft-utils.ts",
@@ -1896,7 +1993,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": ".uploadmetadatatopinata()",
       "source_file": "src/nft-utils.ts",
@@ -5455,42 +5552,6 @@
       "source_location": "L17"
     },
     {
-      "id": "src_api_client_apiclient_baseurl",
-      "label": ".baseUrl()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 64,
-      "community_name": "ApiClient",
-      "file_type": "code",
-      "norm_label": ".baseurl()",
-      "source_file": "src/api-client.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_api_client_apiclient_isconfigured",
-      "label": ".isConfigured()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 64,
-      "community_name": "ApiClient",
-      "file_type": "code",
-      "norm_label": ".isconfigured()",
-      "source_file": "src/api-client.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_api_client_apiclient_post",
-      "label": ".post()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 64,
-      "community_name": "ApiClient",
-      "file_type": "code",
-      "norm_label": ".post()",
-      "source_file": "src/api-client.ts",
-      "source_location": "L13"
-    },
-    {
       "id": "test_test_b2b_scouts_hosters_approvemanualpayout",
       "label": "approveManualPayout()",
       "_callable": true,
@@ -5752,7 +5813,7 @@
       "file_type": "code",
       "norm_label": ".approvekyccase()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L472"
+      "source_location": "L512"
     },
     {
       "id": "src_superadmin_superadmincontroller_attachlisteners",
@@ -5764,7 +5825,7 @@
       "file_type": "code",
       "norm_label": ".attachlisteners()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L522"
+      "source_location": "L562"
     },
     {
       "id": "src_superadmin_superadmincontroller_bindkyccardactions",
@@ -5776,7 +5837,19 @@
       "file_type": "code",
       "norm_label": ".bindkyccardactions()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L369"
+      "source_location": "L409"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "label": ".bindTokenListeners()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".bindtokenlisteners()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1152"
     },
     {
       "id": "src_superadmin_superadmincontroller_closepayoutmodal",
@@ -5788,7 +5861,7 @@
       "file_type": "code",
       "norm_label": ".closepayoutmodal()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L800"
+      "source_location": "L844"
     },
     {
       "id": "src_superadmin_superadmincontroller_closereversemodal",
@@ -5800,7 +5873,7 @@
       "file_type": "code",
       "norm_label": ".closereversemodal()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L894"
+      "source_location": "L938"
     },
     {
       "id": "src_superadmin_superadmincontroller_confirmpayout",
@@ -5812,7 +5885,7 @@
       "file_type": "code",
       "norm_label": ".confirmpayout()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L821"
+      "source_location": "L865"
     },
     {
       "id": "src_superadmin_superadmincontroller_confirmreverse",
@@ -5824,7 +5897,7 @@
       "file_type": "code",
       "norm_label": ".confirmreverse()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L911"
+      "source_location": "L955"
     },
     {
       "id": "src_superadmin_superadmincontroller_constructor",
@@ -5836,7 +5909,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L44"
+      "source_location": "L59"
     },
     {
       "id": "src_superadmin_superadmincontroller_currentbogotamonth",
@@ -5848,7 +5921,31 @@
       "file_type": "code",
       "norm_label": ".currentbogotamonth()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L651"
+      "source_location": "L695"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_deletetoken",
+      "label": ".deleteToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".deletetoken()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1250"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_emittoken",
+      "label": ".emitToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".emittoken()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1196"
     },
     {
       "id": "src_superadmin_superadmincontroller_escapekyc",
@@ -5860,7 +5957,7 @@
       "file_type": "code",
       "norm_label": ".escapekyc()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L278"
+      "source_location": "L318"
     },
     {
       "id": "src_superadmin_superadmincontroller_formatcop",
@@ -5872,7 +5969,7 @@
       "file_type": "code",
       "norm_label": ".formatcop()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L647"
+      "source_location": "L691"
     },
     {
       "id": "src_superadmin_superadmincontroller_init",
@@ -5884,7 +5981,7 @@
       "file_type": "code",
       "norm_label": ".init()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L46"
+      "source_location": "L61"
     },
     {
       "id": "src_superadmin_superadmincontroller_ispilacurrent",
@@ -5896,7 +5993,7 @@
       "file_type": "code",
       "norm_label": ".ispilacurrent()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L661"
+      "source_location": "L705"
     },
     {
       "id": "src_superadmin_superadmincontroller_liqcountdown",
@@ -5908,7 +6005,7 @@
       "file_type": "code",
       "norm_label": ".liqcountdown()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L665"
+      "source_location": "L709"
     },
     {
       "id": "src_superadmin_superadmincontroller_loadkycqueue",
@@ -5920,7 +6017,7 @@
       "file_type": "code",
       "norm_label": ".loadkycqueue()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L282"
+      "source_location": "L322"
     },
     {
       "id": "src_superadmin_superadmincontroller_loadliquidaciones",
@@ -5932,7 +6029,7 @@
       "file_type": "code",
       "norm_label": ".loadliquidaciones()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L675"
+      "source_location": "L719"
     },
     {
       "id": "src_superadmin_superadmincontroller_loadpeople",
@@ -5944,7 +6041,7 @@
       "file_type": "code",
       "norm_label": ".loadpeople()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L948"
+      "source_location": "L992"
     },
     {
       "id": "src_superadmin_superadmincontroller_loadrealmetrics",
@@ -5956,7 +6053,19 @@
       "file_type": "code",
       "norm_label": ".loadrealmetrics()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L579"
+      "source_location": "L623"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_loadtokens",
+      "label": ".loadTokens()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".loadtokens()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1084"
     },
     {
       "id": "src_superadmin_superadmincontroller_openpayoutmodal",
@@ -5968,7 +6077,7 @@
       "file_type": "code",
       "norm_label": ".openpayoutmodal()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L777"
+      "source_location": "L821"
     },
     {
       "id": "src_superadmin_superadmincontroller_openreversemodal",
@@ -5980,7 +6089,7 @@
       "file_type": "code",
       "norm_label": ".openreversemodal()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L881"
+      "source_location": "L925"
     },
     {
       "id": "src_superadmin_superadmincontroller_parsecopamount",
@@ -5992,7 +6101,7 @@
       "file_type": "code",
       "norm_label": ".parsecopamount()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L1028"
+      "source_location": "L1072"
     },
     {
       "id": "src_superadmin_superadmincontroller_rejectkyccase",
@@ -6004,7 +6113,7 @@
       "file_type": "code",
       "norm_label": ".rejectkyccase()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L496"
+      "source_location": "L536"
     },
     {
       "id": "src_superadmin_superadmincontroller_releasekyccard",
@@ -6016,7 +6125,7 @@
       "file_type": "code",
       "norm_label": ".releasekyccard()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L406"
+      "source_location": "L446"
     },
     {
       "id": "src_superadmin_superadmincontroller_render",
@@ -6028,7 +6137,7 @@
       "file_type": "code",
       "norm_label": ".render()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L52"
+      "source_location": "L67"
     },
     {
       "id": "src_superadmin_superadmincontroller_renderkyccard",
@@ -6040,7 +6149,7 @@
       "file_type": "code",
       "norm_label": ".renderkyccard()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L451"
+      "source_location": "L491"
     },
     {
       "id": "src_superadmin_superadmincontroller_renderliquidations",
@@ -6052,7 +6161,19 @@
       "file_type": "code",
       "norm_label": ".renderliquidations()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L701"
+      "source_location": "L745"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_rendertokens",
+      "label": ".renderTokens()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".rendertokens()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1127"
     },
     {
       "id": "src_superadmin_superadmincontroller_resolvetaxprofile",
@@ -6064,7 +6185,7 @@
       "file_type": "code",
       "norm_label": ".resolvetaxprofile()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L869"
+      "source_location": "L913"
     },
     {
       "id": "src_superadmin_superadmincontroller_saveperson",
@@ -6076,7 +6197,7 @@
       "file_type": "code",
       "norm_label": ".saveperson()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L980"
+      "source_location": "L1024"
     },
     {
       "id": "src_superadmin_superadmincontroller_setrefreshstate",
@@ -6088,7 +6209,7 @@
       "file_type": "code",
       "norm_label": ".setrefreshstate()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L359"
+      "source_location": "L399"
     },
     {
       "id": "src_superadmin_superadmincontroller_setuplisteners",
@@ -6100,7 +6221,19 @@
       "file_type": "code",
       "norm_label": ".setuplisteners()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L520"
+      "source_location": "L560"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_slugify",
+      "label": ".slugify()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".slugify()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1260"
     },
     {
       "id": "src_superadmin_superadmincontroller_togglekycphotos",
@@ -6112,7 +6245,19 @@
       "file_type": "code",
       "norm_label": ".togglekycphotos()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L422"
+      "source_location": "L462"
+    },
+    {
+      "id": "src_superadmin_superadmincontroller_toggletoken",
+      "label": ".toggleToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "SuperAdminController",
+      "file_type": "code",
+      "norm_label": ".toggletoken()",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1240"
     },
     {
       "id": "src_superadmin_superadmincontroller_updatekycfooter",
@@ -6124,7 +6269,7 @@
       "file_type": "code",
       "norm_label": ".updatekycfooter()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L341"
+      "source_location": "L381"
     },
     {
       "id": "src_superadmin_superadmincontroller_validatepayoutform",
@@ -6136,7 +6281,7 @@
       "file_type": "code",
       "norm_label": ".validatepayoutform()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L807"
+      "source_location": "L851"
     },
     {
       "id": "src_superadmin_superadmincontroller_validatereverseform",
@@ -6148,7 +6293,7 @@
       "file_type": "code",
       "norm_label": ".validatereverseform()",
       "source_file": "src/superadmin.ts",
-      "source_location": "L900"
+      "source_location": "L944"
     },
     {
       "id": "src_mem_rr_history_mulberry32",
@@ -7255,52 +7400,76 @@
       "source_location": "L81"
     },
     {
-      "id": "src_dialog_rondadialog_confirm",
-      "label": ".confirm()",
+      "id": "src_network_networkcontroller_attachdynamiclisteners",
+      "label": ".attachDynamicListeners()",
       "_callable": true,
       "_origin": "ast",
       "community": 76,
       "community_name": ".alert",
       "file_type": "code",
-      "norm_label": ".confirm()",
-      "source_file": "src/dialog.ts",
-      "source_location": "L69"
+      "norm_label": ".attachdynamiclisteners()",
+      "source_file": "src/network.ts",
+      "source_location": "L134"
     },
     {
-      "id": "src_payment_paymentservice_loadwompiwidget",
-      "label": ".loadWompiWidget()",
+      "id": "src_network_networkcontroller_constructor",
+      "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
       "community": 76,
       "community_name": ".alert",
       "file_type": "code",
-      "norm_label": ".loadwompiwidget()",
-      "source_file": "src/payment.ts",
-      "source_location": "L29"
+      "norm_label": ".constructor()",
+      "source_file": "src/network.ts",
+      "source_location": "L8"
     },
     {
-      "id": "src_payment_paymentservice_opencheckout",
-      "label": ".openCheckout()",
+      "id": "src_network_networkcontroller_getdistance",
+      "label": ".getDistance()",
       "_callable": true,
       "_origin": "ast",
       "community": 76,
       "community_name": ".alert",
       "file_type": "code",
-      "norm_label": ".opencheckout()",
-      "source_file": "src/payment.ts",
-      "source_location": "L42"
+      "norm_label": ".getdistance()",
+      "source_file": "src/network.ts",
+      "source_location": "L17"
     },
     {
-      "id": "src_payment_paymentservice_wompipublickey",
-      "label": ".wompiPublicKey()",
+      "id": "src_network_networkcontroller_init",
+      "label": ".init()",
       "_callable": true,
       "_origin": "ast",
       "community": 76,
       "community_name": ".alert",
       "file_type": "code",
-      "norm_label": ".wompipublickey()",
-      "source_file": "src/payment.ts",
-      "source_location": "L25"
+      "norm_label": ".init()",
+      "source_file": "src/network.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_network_networkcontroller_render",
+      "label": ".render()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 76,
+      "community_name": ".alert",
+      "file_type": "code",
+      "norm_label": ".render()",
+      "source_file": "src/network.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_network_networkcontroller_setupeventlisteners",
+      "label": ".setupEventListeners()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 76,
+      "community_name": ".alert",
+      "file_type": "code",
+      "norm_label": ".setupeventlisteners()",
+      "source_file": "src/network.ts",
+      "source_location": "L130"
     },
     {
       "id": "src_privacy_policy_privacypolicy_detectprohibitedcontact",
@@ -8153,78 +8322,6 @@
       "norm_label": "main()",
       "source_file": "scripts/migrate-users-to-t0.cjs",
       "source_location": "L52"
-    },
-    {
-      "id": "src_network_networkcontroller_attachdynamiclisteners",
-      "label": ".attachDynamicListeners()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": ".attachdynamiclisteners()",
-      "source_file": "src/network.ts",
-      "source_location": "L134"
-    },
-    {
-      "id": "src_network_networkcontroller_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/network.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_network_networkcontroller_getdistance",
-      "label": ".getDistance()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": ".getdistance()",
-      "source_file": "src/network.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_network_networkcontroller_init",
-      "label": ".init()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": ".init()",
-      "source_file": "src/network.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_network_networkcontroller_render",
-      "label": ".render()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": ".render()",
-      "source_file": "src/network.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_network_networkcontroller_setupeventlisteners",
-      "label": ".setupEventListeners()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 89,
-      "community_name": "NetworkController",
-      "file_type": "code",
-      "norm_label": ".setupeventlisteners()",
-      "source_file": "src/network.ts",
-      "source_location": "L130"
     },
     {
       "id": "vite_config_manualchunks",
@@ -9959,11 +10056,33 @@
       "source_location": "L1"
     },
     {
+      "id": "src_client",
+      "label": "client.ts",
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "client.ts",
+      "source_file": "src/client.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_client_ronda_events",
+      "label": "RONDA_EVENTS",
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "ronda_events",
+      "source_file": "src/client.ts",
+      "source_location": "L53"
+    },
+    {
       "id": "src_dialog",
       "label": "dialog.ts",
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "dialog.ts",
       "source_file": "src/dialog.ts",
@@ -9974,7 +10093,7 @@
       "label": "payment.ts",
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "payment.ts",
       "source_file": "src/payment.ts",
@@ -9985,11 +10104,33 @@
       "label": "Payment",
       "_origin": "ast",
       "community": 108,
-      "community_name": "RondaDialog",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "payment",
       "source_file": "src/payment.ts",
       "source_location": "L133"
+    },
+    {
+      "id": "src_privacy_policy",
+      "label": "privacy-policy.ts",
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "privacy-policy.ts",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_privacy_policy_number_words_map",
+      "label": "NUMBER_WORDS_MAP",
+      "_origin": "ast",
+      "community": 108,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "number_words_map",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L9"
     },
     {
       "id": "ronda_files_ronda_documentos_completos_ronda_index",
@@ -10244,6 +10385,102 @@
       "source_location": "L165"
     },
     {
+      "id": "docs_gem_ronda_voice_storyteller",
+      "label": "GEM_RONDA_VOICE_STORYTELLER.md",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "gem_ronda_voice_storyteller.md",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_1_ficha_t\u00e9cnica_para_configurar_el_gem",
+      "label": "\ud83d\udccb 1. Ficha T\u00e9cnica para Configurar el Gem",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udccb 1. ficha tecnica para configurar el gem",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_2_instrucciones_del_gem_system_prompt_copiar_y_pegar",
+      "label": "\ud83e\udde0 2. Instrucciones del Gem (System Prompt / Copiar y Pegar)",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83e\udde0 2. instrucciones del gem (system prompt / copiar y pegar)",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_3_el_loop_de_trabajo_iterativo_c\u00f3mo_usarlo_en_el_d\u00eda_a_d\u00eda",
+      "label": "\ud83d\udd04 3. El Loop de Trabajo Iterativo (C\u00f3mo usarlo en el d\u00eda a d\u00eda)",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udd04 3. el loop de trabajo iterativo (como usarlo en el dia a dia)",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_especificaci\u00f3n_de_gem_en_google_gemini",
+      "label": "\ud83d\udc8e ESPECIFICACI\u00d3N DE GEM EN GOOGLE GEMINI",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udc8e especificacion de gem en google gemini",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_nombre_del_gem_ronda_voice_storytelling_coach",
+      "label": "Nombre del Gem: RONDA \u00b7 Voice & Storytelling Coach",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "nombre del gem: ronda \u00b7 voice & storytelling coach",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L2"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_plantilla_de_entrada_para_escribirle_al_gem_prompt_para_el_usuario",
+      "label": "Plantilla de Entrada para escribirle al Gem (Prompt para el usuario):",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "plantilla de entrada para escribirle al gem (prompt para el usuario):",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "docs_gem_ronda_voice_storyteller_rol_director_creativo_de_narrativa_oral_y_coach_de_locuci\u00f3n_para_fundadores",
+      "label": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "_origin": "ast",
+      "community": 110,
+      "community_name": "Rol: Director Creativo de Narrativa Oral y Coach de Locuci\u00f3n para Fundadores",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "rol: director creativo de narrativa oral y coach de locucion para fundadores",
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L3"
+    },
+    {
       "id": "docs_algorithm_v2_spec",
       "label": "algorithm-v2-spec.md",
       "_origin": "ast",
@@ -10472,11 +10709,33 @@
       "source_location": "L1"
     },
     {
+      "id": "src_api_client",
+      "label": "api-client.ts",
+      "_origin": "ast",
+      "community": 129,
+      "community_name": "api-client.ts",
+      "file_type": "code",
+      "norm_label": "api-client.ts",
+      "source_file": "src/api-client.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_api_client_api",
+      "label": "API",
+      "_origin": "ast",
+      "community": 129,
+      "community_name": "api-client.ts",
+      "file_type": "code",
+      "norm_label": "api",
+      "source_file": "src/api-client.ts",
+      "source_location": "L59"
+    },
+    {
       "id": "src_nft_config",
       "label": "nft-config.ts",
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": "nft-config.ts",
       "source_file": "src/nft-config.ts",
@@ -10487,7 +10746,7 @@
       "label": "NFT_CONFIG",
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": "nft_config",
       "source_file": "src/nft-config.ts",
@@ -10498,7 +10757,7 @@
       "label": "nft-utils.ts",
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": "nft-utils.ts",
       "source_file": "src/nft-utils.ts",
@@ -10509,7 +10768,7 @@
       "label": "NFTUtils",
       "_origin": "ast",
       "community": 129,
-      "community_name": "nft-utils.ts",
+      "community_name": "api-client.ts",
       "file_type": "code",
       "norm_label": "nftutils",
       "source_file": "src/nft-utils.ts",
@@ -10525,61 +10784,6 @@
       "file_type": "code",
       "norm_label": "html5-qrcode",
       "source_file": "html5-qrcode"
-    },
-    {
-      "id": "src_api_client",
-      "label": "api-client.ts",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "api-client.ts",
-      "source_file": "src/api-client.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_api_client_api",
-      "label": "API",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "api",
-      "source_file": "src/api-client.ts",
-      "source_location": "L59"
-    },
-    {
-      "id": "src_auth",
-      "label": "auth.ts",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "auth.ts",
-      "source_file": "src/auth.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_auth_auth",
-      "label": "Auth",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "auth",
-      "source_file": "src/auth.ts",
-      "source_location": "L203"
-    },
-    {
-      "id": "src_auth_ui",
-      "label": "auth-ui.ts",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "auth-ui.ts",
-      "source_file": "src/auth-ui.ts",
-      "source_location": "L1"
     },
     {
       "id": "src_bar",
@@ -10604,6 +10808,28 @@
       "source_location": "L692"
     },
     {
+      "id": "src_crm",
+      "label": "crm.ts",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "crm.ts",
+      "source_file": "src/crm.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_crm_crm",
+      "label": "CRM",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "crm",
+      "source_file": "src/crm.ts",
+      "source_location": "L768"
+    },
+    {
       "id": "src_db",
       "label": "db.ts",
       "_origin": "ast",
@@ -10615,15 +10841,15 @@
       "source_location": "L1"
     },
     {
-      "id": "src_db_db",
-      "label": "DB",
+      "id": "src_entry_crm",
+      "label": "entry-crm.ts",
       "_origin": "ast",
       "community": 13,
       "community_name": "db.ts",
       "file_type": "code",
-      "norm_label": "db",
-      "source_file": "src/db.ts",
-      "source_location": "L756"
+      "norm_label": "entry-crm.ts",
+      "source_file": "src/entry-crm.ts",
+      "source_location": "L1"
     },
     {
       "id": "src_firebase_config",
@@ -10681,14 +10907,14 @@
       "source_location": "L52"
     },
     {
-      "id": "src_satisfaction",
-      "label": "satisfaction.ts",
+      "id": "src_notifications",
+      "label": "notifications.ts",
       "_origin": "ast",
       "community": 13,
       "community_name": "db.ts",
       "file_type": "code",
-      "norm_label": "satisfaction.ts",
-      "source_file": "src/satisfaction.ts",
+      "norm_label": "notifications.ts",
+      "source_file": "src/notifications.ts",
       "source_location": "L1"
     },
     {
@@ -10700,17 +10926,6 @@
       "file_type": "code",
       "norm_label": "superadmin.ts",
       "source_file": "src/superadmin.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_views_profile_modal",
-      "label": "profile-modal.ts",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "profile-modal.ts",
-      "source_file": "src/views/profile-modal.ts",
       "source_location": "L1"
     },
     {
@@ -13606,6 +13821,18 @@
       "source_location": "L1"
     },
     {
+      "id": "task_bucle_de_ejecuci\u00f3n_para_cline",
+      "label": "\ud83d\udd04 Bucle de Ejecuci\u00f3n para Cline:",
+      "_origin": "ast",
+      "community": 240,
+      "community_name": "\ud83d\ude80 TAREAS DE DESPLIEGUE FINAL Y LIQUIDACIONES B2B (PARA CLINE)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udd04 bucle de ejecucion para cline:",
+      "source_file": "task.md",
+      "source_location": "L99"
+    },
+    {
       "id": "task_fase_1_limpieza_para_producci\u00f3n_vite",
       "label": "FASE 1: LIMPIEZA PARA PRODUCCI\u00d3N (Vite)",
       "_origin": "ast",
@@ -13688,6 +13915,18 @@
       "norm_label": "fase 7: blindaje legal, desindexacion y privatizacion de /invest (p0-2, p0-3, p0-4)",
       "source_file": "task.md",
       "source_location": "L79"
+    },
+    {
+      "id": "task_fase_8_generador_y_gestor_de_tokens_fff_en_panel_master_superadmin_para_cline_ejecutor_aut\u00f3nomo",
+      "label": "FASE 8: GENERADOR Y GESTOR DE TOKENS FFF EN PANEL MASTER / SUPERADMIN (PARA CLINE - EJECUTOR AUT\u00d3NOMO)",
+      "_origin": "ast",
+      "community": 240,
+      "community_name": "\ud83d\ude80 TAREAS DE DESPLIEGUE FINAL Y LIQUIDACIONES B2B (PARA CLINE)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "fase 8: generador y gestor de tokens fff en panel master / superadmin (para cline - ejecutor autonomo)",
+      "source_file": "task.md",
+      "source_location": "L95"
     },
     {
       "id": "task_tareas_de_despliegue_final_y_liquidaciones_b2b_para_cline",
@@ -14570,14 +14809,36 @@
       "source_location": "L1"
     },
     {
-      "id": "src_client",
-      "label": "client.ts",
+      "id": "src_auth",
+      "label": "auth.ts",
       "_origin": "ast",
       "community": 29,
       "community_name": "app.ts",
       "file_type": "code",
-      "norm_label": "client.ts",
-      "source_file": "src/client.ts",
+      "norm_label": "auth.ts",
+      "source_file": "src/auth.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_auth_auth",
+      "label": "Auth",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "app.ts",
+      "file_type": "code",
+      "norm_label": "auth",
+      "source_file": "src/auth.ts",
+      "source_location": "L203"
+    },
+    {
+      "id": "src_auth_ui",
+      "label": "auth-ui.ts",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "app.ts",
+      "file_type": "code",
+      "norm_label": "auth-ui.ts",
+      "source_file": "src/auth-ui.ts",
       "source_location": "L1"
     },
     {
@@ -14592,15 +14853,15 @@
       "source_location": "L1627"
     },
     {
-      "id": "src_client_ronda_events",
-      "label": "RONDA_EVENTS",
+      "id": "src_db_db",
+      "label": "DB",
       "_origin": "ast",
       "community": 29,
       "community_name": "app.ts",
       "file_type": "code",
-      "norm_label": "ronda_events",
-      "source_file": "src/client.ts",
-      "source_location": "L53"
+      "norm_label": "db",
+      "source_file": "src/db.ts",
+      "source_location": "L756"
     },
     {
       "id": "src_icebreakers",
@@ -14625,17 +14886,6 @@
       "source_location": "L11"
     },
     {
-      "id": "src_notifications",
-      "label": "notifications.ts",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "notifications.ts",
-      "source_file": "src/notifications.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_notifications_notifications",
       "label": "notifications",
       "_origin": "ast",
@@ -14645,28 +14895,6 @@
       "norm_label": "notifications",
       "source_file": "src/notifications.ts",
       "source_location": "L223"
-    },
-    {
-      "id": "src_privacy_policy",
-      "label": "privacy-policy.ts",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "privacy-policy.ts",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_privacy_policy_number_words_map",
-      "label": "NUMBER_WORDS_MAP",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "number_words_map",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L9"
     },
     {
       "id": "src_profile",
@@ -14689,6 +14917,17 @@
       "norm_label": "profile",
       "source_file": "src/profile.ts",
       "source_location": "L723"
+    },
+    {
+      "id": "src_satisfaction",
+      "label": "satisfaction.ts",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "app.ts",
+      "file_type": "code",
+      "norm_label": "satisfaction.ts",
+      "source_file": "src/satisfaction.ts",
+      "source_location": "L1"
     },
     {
       "id": "src_utils",
@@ -14721,6 +14960,17 @@
       "file_type": "code",
       "norm_label": "auth-view.ts",
       "source_file": "src/views/auth-view.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_views_profile_modal",
+      "label": "profile-modal.ts",
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "app.ts",
+      "file_type": "code",
+      "norm_label": "profile-modal.ts",
+      "source_file": "src/views/profile-modal.ts",
       "source_location": "L1"
     },
     {
@@ -20446,6 +20696,186 @@
       "source_location": "L7"
     },
     {
+      "id": "docs_kit_bienvenida_club_fundador_100",
+      "label": "KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "kit_bienvenida_club_fundador_100.md",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_1_filosof\u00eda_del_objeto_la_llave_de_una_sociedad_secreta",
+      "label": "\ud83d\udda4 1. Filosof\u00eda del Objeto: La Llave de una Sociedad Secreta",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udda4 1. filosofia del objeto: la llave de una sociedad secreta",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_2_especificaci\u00f3n_t\u00e9cnica_de_los_componentes",
+      "label": "\ud83e\ude99 2. Especificaci\u00f3n T\u00e9cnica de los Componentes",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83e\ude99 2. especificacion tecnica de los componentes",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_3_evaluaci\u00f3n_presupuestal_y_an\u00e1lisis_de_costos_bogot\u00e1",
+      "label": "\ud83d\udcb0 3. Evaluaci\u00f3n Presupuestal y An\u00e1lisis de Costos (Bogot\u00e1)",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcb0 3. evaluacion presupuestal y analisis de costos (bogota)",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_4_calce_financiero_en_la_micro_ronda_fff_8_000_000_cop",
+      "label": "\ud83d\udcc8 4. Calce Financiero en la Micro-Ronda FFF ($8.000.000 COP)",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc8 4. calce financiero en la micro-ronda fff ($8.000.000 cop)",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_5_el_retorno_de_inversi\u00f3n_roi_en_adquisici\u00f3n_org\u00e1nica",
+      "label": "\ud83d\ude80 5. El Retorno de Inversi\u00f3n (ROI) en Adquisici\u00f3n Org\u00e1nica",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\ude80 5. el retorno de inversion (roi) en adquisicion organica",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_6_hoja_de_ruta_de_producci\u00f3n",
+      "label": "\ud83d\udee0\ufe0f 6. Hoja de Ruta de Producci\u00f3n",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udee0\ufe0f 6. hoja de ruta de produccion",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L132"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_a_costo_unitario_estimado_por_kit_completo",
+      "label": "A. Costo Unitario Estimado por Kit Completo",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "a. costo unitario estimado por kit completo",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_componente_a_la_moneda_de_la_barra_founder_s_challenge_coin",
+      "label": "Componente A: \u00abLa Moneda de la Barra\u00bb *(Founder's Challenge Coin)*",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "componente a: \u00abla moneda de la barra\u00bb *(founder's challenge coin)*",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_componente_b_la_comanda_de_iniciaci\u00f3n_letterpress_paper",
+      "label": "Componente B: \u00abLa Comanda de Iniciaci\u00f3n\u00bb *(Letterpress Paper)*",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "componente b: \u00abla comanda de iniciacion\u00bb *(letterpress paper)*",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_componente_c_el_sobre_negro_sello_de_lacre",
+      "label": "Componente C: \u00abEl Sobre Negro & Sello de Lacre\u00bb",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "componente c: \u00abel sobre negro & sello de lacre\u00bb",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_escenario_\u00f3ptimo_2_fases",
+      "label": "Escenario \u00d3ptimo (2 Fases):",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "escenario optimo (2 fases):",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_escenarios_de_ejecuci\u00f3n_para_la_partida_de_1_800_000_cop",
+      "label": "Escenarios de Ejecuci\u00f3n para la Partida de $1.800.000 COP:",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "escenarios de ejecucion para la partida de $1.800.000 cop:",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L98"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_especificaci\u00f3n_de_dise\u00f1o_f\u00edsico_experiencia_sensorial_y_evaluaci\u00f3n_presupuestal_fff",
+      "label": "*Especificaci\u00f3n de Dise\u00f1o F\u00edsico, Experiencia Sensorial y Evaluaci\u00f3n Presupuestal FFF*",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "*especificacion de diseno fisico, experiencia sensorial y evaluacion presupuestal fff*",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L2"
+    },
+    {
+      "id": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "label": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "_origin": "ast",
+      "community": 64,
+      "community_name": "\ud83c\udf78 KIT DE BIENVENIDA \u00abCLUB FUNDADOR 100\u00bb \u2014 RONDA",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udf78 kit de bienvenida \u00abclub fundador 100\u00bb \u2014 ronda",
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L1"
+    },
+    {
       "id": "public_firebase_messaging_sw",
       "label": "firebase-messaging-sw.js",
       "_origin": "ast",
@@ -22180,28 +22610,6 @@
       "source_location": "L693"
     },
     {
-      "id": "src_crm",
-      "label": "crm.ts",
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "portal-auth.ts",
-      "file_type": "code",
-      "norm_label": "crm.ts",
-      "source_file": "src/crm.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_crm_crm",
-      "label": "CRM",
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "portal-auth.ts",
-      "file_type": "code",
-      "norm_label": "crm",
-      "source_file": "src/crm.ts",
-      "source_location": "L768"
-    },
-    {
       "id": "src_entry_admin",
       "label": "entry-admin.ts",
       "_origin": "ast",
@@ -22210,17 +22618,6 @@
       "file_type": "code",
       "norm_label": "entry-admin.ts",
       "source_file": "src/entry-admin.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_entry_crm",
-      "label": "entry-crm.ts",
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "portal-auth.ts",
-      "file_type": "code",
-      "norm_label": "entry-crm.ts",
-      "source_file": "src/entry-crm.ts",
       "source_location": "L1"
     },
     {
@@ -22320,7 +22717,7 @@
       "file_type": "code",
       "norm_label": "superadmin",
       "source_file": "src/superadmin.ts",
-      "source_location": "L1037"
+      "source_location": "L1271"
     },
     {
       "id": "src_version",
@@ -23036,7 +23433,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-08-27] \u2014 consolidacion de evidencia tecnica del motor `mem-rr-v2` (patente/bench)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L113"
+      "source_location": "L138"
     },
     {
       "id": "docs_historial_interacciones_2026_10_06_auditor\u00eda_verificaci\u00f3n_completa_y_reparaci\u00f3n_de_bugs_en_app_cliente",
@@ -23048,7 +23445,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-06] \u2014 auditoria, verificacion completa y reparacion de bugs en app cliente",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L74"
+      "source_location": "L99"
     },
     {
       "id": "docs_historial_interacciones_2026_10_06_creaci\u00f3n_del_historial_persistente_inicio_de_remedici\u00f3n_due_diligence",
@@ -23060,7 +23457,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-06] \u2014 creacion del historial persistente & inicio de remedicion due diligence",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L87"
+      "source_location": "L112"
     },
     {
       "id": "docs_historial_interacciones_2026_10_07_optimizaci\u00f3n_y_aceleraci\u00f3n_webgl_del_motor_kyc_biom\u00e9trico",
@@ -23072,7 +23469,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-07] \u2014 optimizacion y aceleracion webgl del motor kyc biometrico",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L94"
+      "source_location": "L119"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_blindaje_due_diligence_tasa_mutuo_6_0_26_2_e_a_disclaimer_legal_invest_y_ley_1581",
@@ -23084,7 +23481,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 blindaje due diligence: tasa mutuo 6.0% (26.2% e.a.), disclaimer legal /invest y ley 1581",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L50"
+      "source_location": "L75"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_despliegue_exitoso_a_producci\u00f3n_firebase_hosting",
@@ -23096,7 +23493,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 despliegue exitoso a produccion (firebase hosting)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L20"
+      "source_location": "L45"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_ejecuci\u00f3n_fase_5_kyc_biom\u00e9trico_y_fase_6_club_fundador_100",
@@ -23108,7 +23505,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 ejecucion fase 5 (kyc biometrico) y fase 6 (club fundador 100)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L127"
+      "source_location": "L152"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_pivot_estrat\u00e9gico_lanzamiento_expr\u00e9s_fff_100_whatsapp_descarte_de_linkedin",
@@ -23120,7 +23517,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 pivot estrategico: lanzamiento expres fff 100% whatsapp (descarte de linkedin)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L28"
+      "source_location": "L53"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_plan_maestro_de_lanzamiento_fff_growth_marketing_y_especificaci\u00f3n_de_blindaje",
@@ -23132,7 +23529,31 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 plan maestro de lanzamiento fff (growth marketing) y especificacion de blindaje",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L36"
+      "source_location": "L61"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_26_dise\u00f1o_viabilidad_financiera_kit_de_bienvenida_club_fundador_100",
+      "label": "[2026-10-26] \u2014 Dise\u00f1o & Viabilidad Financiera: Kit de Bienvenida \u00abClub Fundador 100\u00bb",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-26] \u2014 diseno & viabilidad financiera: kit de bienvenida \u00abclub fundador 100\u00bb",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_26_modal_de_bienvenida_en_invest_despliegue_a_producci\u00f3n",
+      "label": "[2026-10-26] \u2014 Modal de Bienvenida en `/invest` & Despliegue a Producci\u00f3n",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-26] \u2014 modal de bienvenida en `/invest` & despliegue a produccion",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L33"
     },
     {
       "id": "docs_historial_interacciones_estado_actual_del_proyecto_resumen_ejecutivo",
@@ -23168,7 +23589,7 @@
       "node_kind": "heading",
       "norm_label": "[previo] \u2014 arquitectura de modulos y servidor vercel",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L121"
+      "source_location": "L146"
     },
     {
       "id": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
@@ -23192,7 +23613,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udca1 reglas contextuales recordatorias para los agentes",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L143"
+      "source_location": "L168"
     },
     {
       "id": "docs_historial_interacciones_tareas_pendientes_y_pr\u00f3ximos_pasos_hoja_de_ruta_inmediata",
@@ -23204,7 +23625,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83c\udfaf tareas pendientes y proximos pasos (hoja de ruta inmediata)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L131"
+      "source_location": "L156"
     },
     {
       "id": "package_scripts",
@@ -31237,7 +31658,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L473",
+      "source_location": "L513",
       "weight": 1.0
     },
     {
@@ -31249,7 +31670,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L487",
+      "source_location": "L527",
       "weight": 1.0
     },
     {
@@ -31261,7 +31682,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L488",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -31273,7 +31694,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L538",
+      "source_location": "L578",
       "weight": 1.0
     },
     {
@@ -31285,7 +31706,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L546",
+      "source_location": "L586",
       "weight": 1.0
     },
     {
@@ -31297,7 +31718,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L549",
+      "source_location": "L589",
       "weight": 1.0
     },
     {
@@ -31309,7 +31730,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L552",
+      "source_location": "L592",
       "weight": 1.0
     },
     {
@@ -31321,7 +31742,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L555",
+      "source_location": "L595",
       "weight": 1.0
     },
     {
@@ -31333,7 +31754,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L557",
+      "source_location": "L597",
       "weight": 1.0
     },
     {
@@ -31345,7 +31766,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L559",
+      "source_location": "L599",
       "weight": 1.0
     },
     {
@@ -31357,7 +31778,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L562",
+      "source_location": "L602",
       "weight": 1.0
     },
     {
@@ -31369,7 +31790,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L564",
+      "source_location": "L604",
       "weight": 1.0
     },
     {
@@ -31381,7 +31802,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L565",
+      "source_location": "L605",
       "weight": 1.0
     },
     {
@@ -31393,7 +31814,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L574",
+      "source_location": "L614",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_attachlisteners",
+      "target": "src_superadmin_superadmincontroller_emittoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L618",
       "weight": 1.0
     },
     {
@@ -31405,7 +31838,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L378",
+      "source_location": "L418",
       "weight": 1.0
     },
     {
@@ -31417,7 +31850,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L398",
+      "source_location": "L438",
       "weight": 1.0
     },
     {
@@ -31429,7 +31862,67 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L400",
+      "source_location": "L440",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "target": "src_superadmin_superadmincontroller_toggletoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1177",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "target": "src_dialog_rondadialog_confirm",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1179",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1181",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "target": "src_superadmin_superadmincontroller_deletetoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1187",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "target": "src_dialog_rondadialog_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1191",
       "weight": 1.0
     },
     {
@@ -31441,7 +31934,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L830",
+      "source_location": "L874",
       "weight": 1.0
     },
     {
@@ -31453,7 +31946,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L832",
+      "source_location": "L876",
       "weight": 1.0
     },
     {
@@ -31465,7 +31958,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L837",
+      "source_location": "L881",
       "weight": 1.0
     },
     {
@@ -31477,7 +31970,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L843",
+      "source_location": "L887",
       "weight": 1.0
     },
     {
@@ -31489,7 +31982,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L844",
+      "source_location": "L888",
       "weight": 1.0
     },
     {
@@ -31501,7 +31994,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L860",
+      "source_location": "L904",
       "weight": 1.0
     },
     {
@@ -31513,7 +32006,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L860",
+      "source_location": "L904",
       "weight": 1.0
     },
     {
@@ -31525,7 +32018,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L865",
+      "source_location": "L909",
       "weight": 1.0
     },
     {
@@ -31537,7 +32030,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L936",
+      "source_location": "L980",
       "weight": 1.0
     },
     {
@@ -31549,7 +32042,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L937",
+      "source_location": "L981",
       "weight": 1.0
     },
     {
@@ -31561,7 +32054,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L938",
+      "source_location": "L982",
       "weight": 1.0
     },
     {
@@ -31573,7 +32066,67 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L943",
+      "source_location": "L987",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_deletetoken",
+      "target": "src_superadmin_superadmincontroller_loadtokens",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1253",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_deletetoken",
+      "target": "src_dialog_rondadialog_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1256",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_emittoken",
+      "target": "src_dialog_rondadialog_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1209",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_emittoken",
+      "target": "src_superadmin_superadmincontroller_slugify",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1213",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_emittoken",
+      "target": "src_superadmin_superadmincontroller_loadtokens",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1233",
       "weight": 1.0
     },
     {
@@ -31585,7 +32138,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L48",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -31597,7 +32150,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L49",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -31609,7 +32162,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L662",
+      "source_location": "L706",
       "weight": 1.0
     },
     {
@@ -31621,7 +32174,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L289",
+      "source_location": "L329",
       "weight": 1.0
     },
     {
@@ -31633,7 +32186,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L324",
+      "source_location": "L364",
       "weight": 1.0
     },
     {
@@ -31645,7 +32198,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L327",
+      "source_location": "L367",
       "weight": 1.0
     },
     {
@@ -31657,7 +32210,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L331",
+      "source_location": "L371",
       "weight": 1.0
     },
     {
@@ -31669,275 +32222,11 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L691",
+      "source_location": "L735",
       "weight": 1.0
     },
     {
       "source": "src_superadmin_superadmincontroller_loadpeople",
-      "target": "src_superadmin_superadmincontroller_currentbogotamonth",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L957",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_loadpeople",
-      "target": "src_superadmin_superadmincontroller_ispilacurrent",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L959",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_loadpeople",
-      "target": "src_superadmin_superadmincontroller_escapekyc",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L963",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_loadrealmetrics",
-      "target": "src_superadmin_superadmincontroller_parsecopamount",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L622",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_openpayoutmodal",
-      "target": "src_superadmin_superadmincontroller_escapekyc",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L786",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_openpayoutmodal",
-      "target": "src_superadmin_superadmincontroller_formatcop",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L787",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_openpayoutmodal",
-      "target": "src_superadmin_superadmincontroller_validatepayoutform",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L795",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_openreversemodal",
-      "target": "src_superadmin_superadmincontroller_escapekyc",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L888",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_openreversemodal",
-      "target": "src_superadmin_superadmincontroller_formatcop",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L888",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_openreversemodal",
-      "target": "src_superadmin_superadmincontroller_validatereverseform",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L891",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_rejectkyccase",
-      "target": "src_superadmin_superadmincontroller_releasekyccard",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L497",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_rejectkyccase",
-      "target": "src_dialog_rondadialog_alert",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L511",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_rejectkyccase",
-      "target": "src_superadmin_superadmincontroller_loadkycqueue",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L512",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_render",
-      "target": "src_superadmin_superadmincontroller_attachlisteners",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L273",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_render",
-      "target": "src_superadmin_superadmincontroller_loadliquidaciones",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L274",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_render",
-      "target": "src_superadmin_superadmincontroller_loadpeople",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L275",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_renderkyccard",
-      "target": "src_superadmin_superadmincontroller_escapekyc",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L454",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_renderliquidations",
-      "target": "src_superadmin_superadmincontroller_formatcop",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L712",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_renderliquidations",
-      "target": "src_superadmin_superadmincontroller_escapekyc",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L726",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_renderliquidations",
-      "target": "src_superadmin_superadmincontroller_liqcountdown",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L733",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_renderliquidations",
-      "target": "src_superadmin_superadmincontroller_openpayoutmodal",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L745",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_renderliquidations",
-      "target": "src_superadmin_superadmincontroller_openreversemodal",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L773",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_saveperson",
       "target": "src_superadmin_superadmincontroller_currentbogotamonth",
       "relation": "calls",
       "_origin": "ast",
@@ -31949,31 +32238,19 @@
       "weight": 1.0
     },
     {
-      "source": "src_superadmin_superadmincontroller_saveperson",
-      "target": "src_superadmin_superadmincontroller_loadpeople",
+      "source": "src_superadmin_superadmincontroller_loadpeople",
+      "target": "src_superadmin_superadmincontroller_ispilacurrent",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L1019",
+      "source_location": "L1003",
       "weight": 1.0
     },
     {
-      "source": "src_superadmin_superadmincontroller_saveperson",
-      "target": "src_superadmin_superadmincontroller_loadliquidaciones",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L1020",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller_saveperson",
+      "source": "src_superadmin_superadmincontroller_loadpeople",
       "target": "src_superadmin_superadmincontroller_escapekyc",
       "relation": "calls",
       "_origin": "ast",
@@ -31981,7 +32258,283 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L1021",
+      "source_location": "L1007",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_loadrealmetrics",
+      "target": "src_superadmin_superadmincontroller_parsecopamount",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L666",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_loadtokens",
+      "target": "src_superadmin_superadmincontroller_rendertokens",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1116",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_loadtokens",
+      "target": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1117",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_openpayoutmodal",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L830",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_openpayoutmodal",
+      "target": "src_superadmin_superadmincontroller_formatcop",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L831",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_openpayoutmodal",
+      "target": "src_superadmin_superadmincontroller_validatepayoutform",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L839",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_openreversemodal",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L932",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_openreversemodal",
+      "target": "src_superadmin_superadmincontroller_formatcop",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L932",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_openreversemodal",
+      "target": "src_superadmin_superadmincontroller_validatereverseform",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L935",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_rejectkyccase",
+      "target": "src_superadmin_superadmincontroller_releasekyccard",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L537",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_rejectkyccase",
+      "target": "src_dialog_rondadialog_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_rejectkyccase",
+      "target": "src_superadmin_superadmincontroller_loadkycqueue",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L552",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_render",
+      "target": "src_superadmin_superadmincontroller_attachlisteners",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L312",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_render",
+      "target": "src_superadmin_superadmincontroller_loadliquidaciones",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L313",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_render",
+      "target": "src_superadmin_superadmincontroller_loadpeople",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L314",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_render",
+      "target": "src_superadmin_superadmincontroller_loadtokens",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L315",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_renderkyccard",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L494",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_renderliquidations",
+      "target": "src_superadmin_superadmincontroller_formatcop",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L756",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_renderliquidations",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L770",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_renderliquidations",
+      "target": "src_superadmin_superadmincontroller_liqcountdown",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L777",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_renderliquidations",
+      "target": "src_superadmin_superadmincontroller_openpayoutmodal",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L789",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_renderliquidations",
+      "target": "src_superadmin_superadmincontroller_openreversemodal",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L817",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_rendertokens",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1136",
       "weight": 1.0
     },
     {
@@ -31993,7 +32546,55 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L990",
+      "source_location": "L1034",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_saveperson",
+      "target": "src_superadmin_superadmincontroller_currentbogotamonth",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1045",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_saveperson",
+      "target": "src_superadmin_superadmincontroller_loadpeople",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1063",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_saveperson",
+      "target": "src_superadmin_superadmincontroller_loadliquidaciones",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1064",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_saveperson",
+      "target": "src_superadmin_superadmincontroller_escapekyc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1065",
       "weight": 1.0
     },
     {
@@ -32005,7 +32606,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/superadmin.ts",
-      "source_location": "L443",
+      "source_location": "L483",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_toggletoken",
+      "target": "src_superadmin_superadmincontroller_loadtokens",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1243",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller_toggletoken",
+      "target": "src_dialog_rondadialog_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1246",
       "weight": 1.0
     },
     {
@@ -33229,7 +33854,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/superadmin.ts",
-      "source_location": "L37",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -33241,7 +33866,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/superadmin.ts",
-      "source_location": "L38",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -39600,6 +40225,83 @@
       "weight": 1.0
     },
     {
+      "source": "docs_gem_ronda_voice_storyteller",
+      "target": "docs_gem_ronda_voice_storyteller_especificaci\u00f3n_de_gem_en_google_gemini",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_gem_ronda_voice_storyteller",
+      "target": "docs_gem_ronda_voice_storyteller_nombre_del_gem_ronda_voice_storytelling_coach",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_gem_ronda_voice_storyteller",
+      "target": "docs_gem_ronda_voice_storyteller_rol_director_creativo_de_narrativa_oral_y_coach_de_locuci\u00f3n_para_fundadores",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_gem_ronda_voice_storyteller_3_el_loop_de_trabajo_iterativo_c\u00f3mo_usarlo_en_el_d\u00eda_a_d\u00eda",
+      "target": "docs_gem_ronda_voice_storyteller_plantilla_de_entrada_para_escribirle_al_gem_prompt_para_el_usuario",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_gem_ronda_voice_storyteller_rol_director_creativo_de_narrativa_oral_y_coach_de_locuci\u00f3n_para_fundadores",
+      "target": "docs_gem_ronda_voice_storyteller_2_instrucciones_del_gem_system_prompt_copiar_y_pegar",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_gem_ronda_voice_storyteller_rol_director_creativo_de_narrativa_oral_y_coach_de_locuci\u00f3n_para_fundadores",
+      "target": "docs_gem_ronda_voice_storyteller_3_el_loop_de_trabajo_iterativo_c\u00f3mo_usarlo_en_el_d\u00eda_a_d\u00eda",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_gem_ronda_voice_storyteller_rol_director_creativo_de_narrativa_oral_y_coach_de_locuci\u00f3n_para_fundadores",
+      "target": "docs_gem_ronda_voice_storyteller_1_ficha_t\u00e9cnica_para_configurar_el_gem",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/GEM_RONDA_VOICE_STORYTELLER.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "docs_historial_interacciones",
       "target": "docs_historial_interacciones_historial_de_interacciones_y_registro_de_decisiones_ronda",
       "relation": "contains",
@@ -39629,7 +40331,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L131",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -39640,7 +40342,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L143",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -39656,101 +40358,13 @@
     },
     {
       "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_08_27_consolidaci\u00f3n_de_evidencia_t\u00e9cnica_del_motor_mem_rr_v2_patente_bench",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L113",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_previo_arquitectura_de_m\u00f3dulos_y_servidor_vercel",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L121",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_ejecuci\u00f3n_fase_5_kyc_biom\u00e9trico_y_fase_6_club_fundador_100",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L127",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_despliegue_exitoso_a_producci\u00f3n_firebase_hosting",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_pivot_estrat\u00e9gico_lanzamiento_expr\u00e9s_fff_100_whatsapp_descarte_de_linkedin",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L28",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_plan_maestro_de_lanzamiento_fff_growth_marketing_y_especificaci\u00f3n_de_blindaje",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L36",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_blindaje_due_diligence_tasa_mutuo_6_0_26_2_e_a_disclaimer_legal_invest_y_ley_1581",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L50",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_06_auditor\u00eda_verificaci\u00f3n_completa_y_reparaci\u00f3n_de_bugs_en_app_cliente",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L74",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
       "target": "docs_historial_interacciones_2026_10_06_creaci\u00f3n_del_historial_persistente_inicio_de_remedici\u00f3n_due_diligence",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L87",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -39761,7 +40375,117 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L94",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_08_27_consolidaci\u00f3n_de_evidencia_t\u00e9cnica_del_motor_mem_rr_v2_patente_bench",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_previo_arquitectura_de_m\u00f3dulos_y_servidor_vercel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_ejecuci\u00f3n_fase_5_kyc_biom\u00e9trico_y_fase_6_club_fundador_100",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_dise\u00f1o_viabilidad_financiera_kit_de_bienvenida_club_fundador_100",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_modal_de_bienvenida_en_invest_despliegue_a_producci\u00f3n",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_despliegue_exitoso_a_producci\u00f3n_firebase_hosting",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_pivot_estrat\u00e9gico_lanzamiento_expr\u00e9s_fff_100_whatsapp_descarte_de_linkedin",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_plan_maestro_de_lanzamiento_fff_growth_marketing_y_especificaci\u00f3n_de_blindaje",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_blindaje_due_diligence_tasa_mutuo_6_0_26_2_e_a_disclaimer_legal_invest_y_ley_1581",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_06_auditor\u00eda_verificaci\u00f3n_completa_y_reparaci\u00f3n_de_bugs_en_app_cliente",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -40114,6 +40838,160 @@
       "confidence_score": 1.0,
       "source_file": "docs/ip-patent-strategy.md",
       "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100",
+      "target": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_2_especificaci\u00f3n_t\u00e9cnica_de_los_componentes",
+      "target": "docs_kit_bienvenida_club_fundador_100_componente_a_la_moneda_de_la_barra_founder_s_challenge_coin",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_2_especificaci\u00f3n_t\u00e9cnica_de_los_componentes",
+      "target": "docs_kit_bienvenida_club_fundador_100_componente_b_la_comanda_de_iniciaci\u00f3n_letterpress_paper",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_2_especificaci\u00f3n_t\u00e9cnica_de_los_componentes",
+      "target": "docs_kit_bienvenida_club_fundador_100_componente_c_el_sobre_negro_sello_de_lacre",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_3_evaluaci\u00f3n_presupuestal_y_an\u00e1lisis_de_costos_bogot\u00e1",
+      "target": "docs_kit_bienvenida_club_fundador_100_a_costo_unitario_estimado_por_kit_completo",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_4_calce_financiero_en_la_micro_ronda_fff_8_000_000_cop",
+      "target": "docs_kit_bienvenida_club_fundador_100_escenarios_de_ejecuci\u00f3n_para_la_partida_de_1_800_000_cop",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_escenarios_de_ejecuci\u00f3n_para_la_partida_de_1_800_000_cop",
+      "target": "docs_kit_bienvenida_club_fundador_100_escenario_\u00f3ptimo_2_fases",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_1_filosof\u00eda_del_objeto_la_llave_de_una_sociedad_secreta",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_5_el_retorno_de_inversi\u00f3n_roi_en_adquisici\u00f3n_org\u00e1nica",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_6_hoja_de_ruta_de_producci\u00f3n",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_especificaci\u00f3n_de_dise\u00f1o_f\u00edsico_experiencia_sensorial_y_evaluaci\u00f3n_presupuestal_fff",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_2_especificaci\u00f3n_t\u00e9cnica_de_los_componentes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_3_evaluaci\u00f3n_presupuestal_y_an\u00e1lisis_de_costos_bogot\u00e1",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_kit_bienvenida_club_fundador_100_kit_de_bienvenida_club_fundador_100_ronda",
+      "target": "docs_kit_bienvenida_club_fundador_100_4_calce_financiero_en_la_micro_ronda_fff_8_000_000_cop",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -53489,7 +54367,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L1037",
+      "source_location": "L1271",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin",
+      "target": "src_superadmin_investtoken",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -53500,7 +54389,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L24",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -53845,6 +54734,17 @@
       "weight": 1.0
     },
     {
+      "source": "task_fase_8_generador_y_gestor_de_tokens_fff_en_panel_master_superadmin_para_cline_ejecutor_aut\u00f3nomo",
+      "target": "task_bucle_de_ejecuci\u00f3n_para_cline",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "task.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
       "source": "task_invest_hardening",
       "target": "task_invest_hardening_task_blindaje_legal_desindexaci\u00f3n_y_acceso_privado_a_invest_p0_2_p0_3_p0_4",
       "relation": "contains",
@@ -54073,6 +54973,17 @@
       "confidence_score": 1.0,
       "source_file": "task.md",
       "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "task_tareas_de_despliegue_final_y_liquidaciones_b2b_para_cline",
+      "target": "task_fase_8_generador_y_gestor_de_tokens_fff_en_panel_master_superadmin_para_cline_ejecutor_aut\u00f3nomo",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "task.md",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -57908,13 +58819,101 @@
     },
     {
       "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_saveperson",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1024",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
       "target": "src_superadmin_superadmincontroller_parsecopamount",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L1028",
+      "source_location": "L1072",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_loadtokens",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1084",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_rendertokens",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1127",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_bindtokenlisteners",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1152",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_emittoken",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1196",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_toggletoken",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1240",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_deletetoken",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1250",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_slugify",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1260",
       "weight": 1.0
     },
     {
@@ -57925,7 +58924,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L278",
+      "source_location": "L318",
       "weight": 1.0
     },
     {
@@ -57936,7 +58935,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L282",
+      "source_location": "L322",
       "weight": 1.0
     },
     {
@@ -57947,7 +58946,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L341",
+      "source_location": "L381",
       "weight": 1.0
     },
     {
@@ -57958,7 +58957,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L359",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -57969,7 +58968,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L369",
+      "source_location": "L409",
       "weight": 1.0
     },
     {
@@ -57980,7 +58979,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L406",
+      "source_location": "L446",
       "weight": 1.0
     },
     {
@@ -57991,18 +58990,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L422",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller",
-      "target": "src_superadmin_superadmincontroller_constructor",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/superadmin.ts",
-      "source_location": "L44",
+      "source_location": "L462",
       "weight": 1.0
     },
     {
@@ -58013,18 +59001,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L451",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller",
-      "target": "src_superadmin_superadmincontroller_init",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/superadmin.ts",
-      "source_location": "L46",
+      "source_location": "L491",
       "weight": 1.0
     },
     {
@@ -58035,7 +59012,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L472",
+      "source_location": "L512",
       "weight": 1.0
     },
     {
@@ -58046,18 +59023,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L496",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller",
-      "target": "src_superadmin_superadmincontroller_render",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/superadmin.ts",
-      "source_location": "L52",
+      "source_location": "L536",
       "weight": 1.0
     },
     {
@@ -58068,7 +59034,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L520",
+      "source_location": "L560",
       "weight": 1.0
     },
     {
@@ -58079,7 +59045,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L522",
+      "source_location": "L562",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_constructor",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_init",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -58090,7 +59078,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L579",
+      "source_location": "L623",
+      "weight": 1.0
+    },
+    {
+      "source": "src_superadmin_superadmincontroller",
+      "target": "src_superadmin_superadmincontroller_render",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/superadmin.ts",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -58101,7 +59100,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L647",
+      "source_location": "L691",
       "weight": 1.0
     },
     {
@@ -58112,7 +59111,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L651",
+      "source_location": "L695",
       "weight": 1.0
     },
     {
@@ -58123,7 +59122,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L661",
+      "source_location": "L705",
       "weight": 1.0
     },
     {
@@ -58134,7 +59133,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L665",
+      "source_location": "L709",
       "weight": 1.0
     },
     {
@@ -58145,7 +59144,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L675",
+      "source_location": "L719",
       "weight": 1.0
     },
     {
@@ -58156,7 +59155,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L701",
+      "source_location": "L745",
       "weight": 1.0
     },
     {
@@ -58167,7 +59166,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L777",
+      "source_location": "L821",
       "weight": 1.0
     },
     {
@@ -58178,7 +59177,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L800",
+      "source_location": "L844",
       "weight": 1.0
     },
     {
@@ -58189,7 +59188,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L807",
+      "source_location": "L851",
       "weight": 1.0
     },
     {
@@ -58200,7 +59199,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L821",
+      "source_location": "L865",
       "weight": 1.0
     },
     {
@@ -58211,7 +59210,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L869",
+      "source_location": "L913",
       "weight": 1.0
     },
     {
@@ -58222,7 +59221,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L881",
+      "source_location": "L925",
       "weight": 1.0
     },
     {
@@ -58233,7 +59232,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L894",
+      "source_location": "L938",
       "weight": 1.0
     },
     {
@@ -58244,7 +59243,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L900",
+      "source_location": "L944",
       "weight": 1.0
     },
     {
@@ -58255,7 +59254,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L911",
+      "source_location": "L955",
       "weight": 1.0
     },
     {
@@ -58266,18 +59265,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/superadmin.ts",
-      "source_location": "L948",
-      "weight": 1.0
-    },
-    {
-      "source": "src_superadmin_superadmincontroller",
-      "target": "src_superadmin_superadmincontroller_saveperson",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/superadmin.ts",
-      "source_location": "L980",
+      "source_location": "L992",
       "weight": 1.0
     },
     {
@@ -59278,5 +60266,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "79969dbd6cf2a6c4ea9435872e663d4a56cabd56"
+  "built_at_commit": "3d9f98bf968df0007919417af873ef58f5cc060c"
 }

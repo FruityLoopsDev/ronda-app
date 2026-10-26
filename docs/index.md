@@ -42,4 +42,9 @@ Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
 - `docs/algorithm-v2-spec.md` (Teoría del motor mem-rr-v2).
 - `docs/RONDA_MEMORANDUM_INVERSION_FFF.md` (Deck para inversores).
 - `docs/RONDA_PITCH_VIDEO_CREATIVE_BRIEF.md` (Brief y guion técnico para el video de inversión).
+- `docs/KIT_BIENVENIDA_CLUB_FUNDADOR_100.md` (Especificación y costeo del Kit Club Fundador 100).
+- `docs/DEBATE_EVENTOS_ESPECIALES_SUBASTA_SOLTEROS.md` (Dossier y prompt de research para Perplexity sobre eventos VIP de ticket alto y dinámica de Subasta de Citas).
+- `docs/TERMINOS_Y_CONDICIONES.md` (Términos y Condiciones de Uso del Servicio y Eventos en Colombia).
+- `docs/POLITICA_TRATAMIENTO_DATOS_LEY_1581.md` (Política de Privacidad y Habeas Data Ley 1581 / Procedimiento de Supresión).
+- `docs/PROTOCOLO_CIERRE_WAITLIST_Y_ONBOARDING_FUNDADORES.md` (Protocolo operativo de cierre de waitlist, triage, secuencias de activación WhatsApp y noche inaugural).
 - `docs/ip-patent-strategy.md` (Estrategia de Propiedad Intelectual).
