@@ -349,6 +349,74 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 - [x] **T-15.7: Compilación Limpia de Producción:**
   - `npm run build` ejecutado exitosamente generando la carpeta `dist/` actualizada.
 
+---
+
+## FASE 16: PLAN DE REPARACIÓN Y BLINDAJE DE LA CONSOLA DE ANFITRIÓN (/admin) (PARA CLINE)
+
+> **Diagnóstico del Arquitecto (Antigravity):**
+> Tras auditar `admin.html`, `src/entry-admin.ts` y `src/bar.ts` (`HostConsoleService`), se identificaron varios fallos críticos en la experiencia del anfitrión de sala:
+> 1. **Botones Huérfanos sin ID ni Handler:** En `admin.html` (líneas 1693-1694), los botones *"Cambiar aforo"* y *"Proponer carta de la noche"* carecen de ID y de cualquier listener en JS. Al hacer clic no ejecutan ninguna acción.
+> 2. **Desincronización de ID en "Finalizar Noche":** En `admin.html` el botón tiene `id="btn-admin-end-event"`, pero en `src/bar.ts:271` el código busca `document.getElementById('btn-end-e')`, por lo que el botón nunca muestra el feedback visual de procesamiento ni de finalizado.
+> 3. **Bloqueo Arcaico con `prompt()`:** `src/bar.ts:74` ejecuta `let eventId = prompt(...)` al cargar. Si el usuario cancela, está en móvil o el navegador bloquea diálogos, el dashboard queda congelado sin cargar datos.
+> 4. **Falta de Cierre de Sesión:** En el header de `/admin` no existe un botón de "Cerrar Sesión", dejando al anfitrión atrapado sin poder cambiar de cuenta.
+> 5. **Ausencia de Lista Visual de Asistentes:** El anfitrión puede escanear QR, pero no tiene una vista en tiempo real de la lista de asistentes esperados, su estado de check-in, pago en puerta o acreditación LinkedIn.
+
+### 📋 Tareas de Implementación para Cline:
+
+- [ ] **T-16.1: Conectar el Botón "Cambiar Aforo" (`btn-admin-change-capacity`)**
+  - **Archivos:** `admin.html` (línea ~1693) y `src/bar.ts`.
+  - **Acción:**
+    1. En `admin.html`, asignar `id="btn-admin-change-capacity"` al botón de aforo.
+    2. En `src/bar.ts` (`renderDashboard`), vincular el botón para que invoque `this.promptChangeCapacity()`.
+    3. Usar `RondaDialog.confirm` o un modal interactivo para solicitar la nueva cantidad de mesas (ej. 8, 10, 12).
+    4. Guardar en Firestore con `DB.saveEvent(this.currentEvent)`, actualizar `#nn-tables` y recalcular `#nn-confirmed`.
+
+- [ ] **T-16.2: Conectar el Botón "Proponer Carta de la Noche" (`btn-admin-menu`)**
+  - **Archivos:** `admin.html` (línea ~1694) y `src/bar.ts`.
+  - **Acción:**
+    1. En `admin.html`, asignar `id="btn-admin-menu"` al botón de carta.
+    2. En `src/bar.ts` (`renderDashboard`), vincular el listener para desplegar un modal (`RondaDialog.alert` o modal luxury) con los 4 cócteles sugeridos de la alianza y permitir al bar ajustar el precio acordado de consumición (`#nn-price`), guardando la actualización en Firestore.
+
+- [ ] **T-16.3: Corregir ID del Botón "Finalizar y Emitir NFTs"**
+  - **Archivos:** `src/bar.ts` (línea ~271).
+  - **Acción:**
+    1. Reemplazar `document.getElementById('btn-end-e')` por `document.getElementById('btn-admin-end-event')`.
+    2. Asegurar que al confirmar el cierre, cambie a `"Procesando..."` (deshabilitado) y luego a `"✓ Evento Finalizado"`, notificando con `RondaDialog.alert`.
+
+- [ ] **T-16.4: Sustituir `prompt()` / `confirm()` Nativos por Carga Autónoma & RondaDialog**
+  - **Archivos:** `src/bar.ts` (`initAdminDashboard`, líneas 70-105).
+  - **Acción:**
+    1. Eliminar `prompt("Ingresa el ID del evento que vas a gestionar...")`.
+    2. Si `adminUser.venueId` existe, buscar el evento activo de la sede en Firestore. Si no se especifica, usar por defecto el evento predeterminado `rnd-caronte-mar-25` o cargar el evento activo más reciente.
+    3. Si el evento no existe, en vez de `confirm()` / `prompt()` nativos, usar `RondaDialog.confirm` para crearlo limpiamente con los datos por defecto de la sede.
+
+- [ ] **T-16.5: Agregar Botón "Cerrar Sesión" en la Consola `/admin`**
+  - **Archivos:** `admin.html` (dentro de `.admin-header`) y `src/entry-admin.ts` / `src/bar.ts`.
+  - **Acción:**
+    1. Agregar un botón de cierre de sesión en `.admin-header`:
+       ```html
+       <button id="btn-admin-logout" class="btn" style="background: rgba(234,67,53,0.12); border: 1px solid rgba(234,67,53,0.35); color: #EA4335; font-size: 11px; padding: 6px 14px; border-radius: 8px;">
+         🚪 Cerrar Sesión
+       </button>
+       ```
+    2. Conectar el evento click con `Auth.logout()` para redirigir a `/admin` (mostrando el formulario de login del portal).
+
+- [ ] **T-16.6: Renderizar la Lista en Vivo de Participantes y Check-in**
+  - **Archivos:** `src/bar.ts` (`renderDashboard` / `renderAttendeesList`).
+  - **Acción:**
+    1. Añadir una tarjeta en el dashboard debajo de `admin-qr-tools` con la lista de asistentes (`this.currentEvent.participants`):
+       - Nombre del asistente (`p.name || uid`).
+       - Badge de Check-in: `"✅ En sala"` si `user.checkedIn`, `"⏳ Esperando"` si no.
+       - Badge de Verificación: `"LinkedIn"` o `"Face ID"`.
+       - Botón rápido `"✓ Check-in"` para registrar manualmente sin escanear.
+
+- [ ] **T-16.7: Verificación con TypeScript y Compilación Vite**
+  - **Comandos:**
+    - `node test/test-integrity-zero-functions.cjs` (las 5 pruebas deben pasar).
+    - `npx tsc --noEmit` (0 errores).
+    - `npm run build` (build sin errores).
+
+
 
 
 
