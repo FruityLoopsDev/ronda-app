@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, deleteField, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe, serverTimestamp } from "firebase/firestore";
 import { RondaServices } from "./firebase-config.js";
 import { Matches } from "./matches.js";
 
@@ -79,7 +79,7 @@ export interface User {
     shareDrinkStats?: boolean;
     marketingConsent?: boolean;
   };
-  activeEventId?: string;
+  activeEventId?: string | null;
   activeWaitlist?: {
     eventId: string;
     venueName: string;
@@ -87,8 +87,8 @@ export interface User {
     position: number;
     joinedAt: string;
     status: 'waiting' | 'spot_available';
-  };
-  activeReservation?: Reservation;
+  } | null;
+  activeReservation?: Reservation | null;
   reservationsHistory?: Reservation[];
   postEventState?: {
     eventId: string;
@@ -121,7 +121,8 @@ export interface User {
       cocktail: string;
       icebreakerSummary: string;
     }[];
-  };
+  } | null;
+  icebreakers?: Record<string, any> | any[];
   serviceRequests?: {
     serviceName: string;
     requestedAt: string;
@@ -386,6 +387,42 @@ function cleanFirestoreData(obj: any): any {
   return obj;
 }
 
+/**
+ * Campos de perfil y estado operativo que el propio cliente tiene permitido
+ * modificar sin tocar atributos sensibles (nfts, wallet_address, matches, trustTier, role, hasTicket).
+ */
+export const CLIENT_ALLOWED_USER_FIELDS: (keyof User)[] = [
+  'name',
+  'username',
+  'age',
+  'birthDate',
+  'zodiacSign',
+  'bio',
+  'gender',
+  'orientation',
+  'favoriteCocktail',
+  'preferredZones',
+  'ageRangePreference',
+  'linkedinUrl',
+  'linkedinSlug',
+  'linkedinHeadline',
+  'linkedinVerified',
+  'linkedinVerifiedAt',
+  'safeword',
+  'privacySettings',
+  'photoURL',
+  'serviceRequests',
+  'icebreakers',
+  'satisfactionFeedback',
+  'activeEventId',
+  'activeWaitlist',
+  'activeReservation',
+  'reservationsHistory',
+  'postEventState',
+  'paymentPending',
+  'paymentMethod'
+];
+
 export class DatabaseInterface {
   memoryDb?: any;
 
@@ -413,24 +450,34 @@ export class DatabaseInterface {
   // Evita `updateDoc` si el documento aún no existe (usa `setDoc` con `merge: true`).
   // Filtra campos según whitelist para no tocar datos sensibles desde el cliente.
   async updateUserProfile(uid: string, fields: Partial<User>): Promise<void> {
-    const allowed: (keyof User)[] = [
-      'name', 'username', 'age', 'bio', 'gender', 'orientation',
-      'favoriteCocktail', 'preferredZones', 'linkedinUrl', 'linkedinSlug',
-      'safeword', 'privacySettings', 'photoURL', 'role'
-    ];
-
+    if (!uid || uid === 'guest') return;
+    const docRef = doc(this._getFirestore(), 'users', uid);
     const rawPatch: Record<string, any> = {};
-    for (const k of allowed) {
-      if (fields[k] !== undefined) {
-        rawPatch[k] = fields[k];
+
+    for (const k of CLIENT_ALLOWED_USER_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(fields, k)) {
+        const val = fields[k];
+        if (val === null) {
+          rawPatch[k] = deleteField();
+        } else if (val !== undefined) {
+          rawPatch[k] = cleanFirestoreData(val);
+        }
       }
     }
 
-    const patch = cleanFirestoreData(rawPatch);
-    if (Object.keys(patch).length === 0) return;
+    if (Object.keys(rawPatch).length === 0) return;
 
-    const docRef = doc(this._getFirestore(), 'users', uid);
-    await setDoc(docRef, patch, { merge: true });
+    try {
+      await updateDoc(docRef, rawPatch);
+    } catch (err: any) {
+      // Fallback en caso de que el documento aún no exista en Firestore (NOT_FOUND)
+      if (err?.code === 'not-found' || String(err?.message || '').includes('No document to update')) {
+        const fallbackData = cleanFirestoreData({ uid, role: 'client', ...fields });
+        await setDoc(docRef, fallbackData, { merge: true });
+      } else {
+        throw err;
+      }
+    }
   }
 
   async countUsers(): Promise<number> {

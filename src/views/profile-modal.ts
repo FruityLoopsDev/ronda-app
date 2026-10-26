@@ -4,7 +4,7 @@
 // en modal, guardado de perfil, y KYC biométrico.
 
 import { Auth } from '../auth.js';
-import { DB } from '../db.js';
+import { DB, User } from '../db.js';
 import { Verification } from '../verification.js';
 import { Router } from '../router.js';
 
@@ -67,22 +67,9 @@ export class ProfileModal {
         if (orientationInput) orientationInput.value = user.orientation || '';
         if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
-        // Badge Club Fundador 100 en modal (T-6.2)
-        if (user.isFoundingMember) {
-          const pant = document.querySelector('#modal-profile .pant');
-          if (pant && !document.getElementById('modal-profile-founder-badge')) {
-            const badge = document.createElement('span');
-            badge.id = 'modal-profile-founder-badge';
-            badge.textContent = `⭐ Miembro Fundador #${user.founderNumber || 1}`;
-            badge.style.cssText =
-              'display:inline-flex;align-items:center;gap:6px;background:rgba(240,168,48,0.18);color:var(--luz-brillo);border:1px solid rgba(240,168,48,0.45);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;margin:8px auto 0 auto;';
-            pant.insertAdjacentElement('afterend', badge);
-          }
-        }
-
-        // El perfil de LinkedIn es opcional en esta etapa
+        // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
         const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-        if (saveBtn) saveBtn.disabled = false;
+        if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
       }
     });
   }
@@ -117,14 +104,17 @@ export class ProfileModal {
       if (result.success && result.data) {
         linkedinInput.value = result.data.url;
         if (linkedinStatus) {
-          linkedinStatus.textContent = `✓ ${result.data.badge}`;
+          linkedinStatus.textContent = `✓ ${result.data.badge} · ${result.data.headline}`;
           linkedinStatus.style.color = 'var(--botella)';
         }
         const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
         if (saveBtn) saveBtn.disabled = false;
         if (user) {
           user.linkedinUrl = result.data.url;
+          user.linkedinVerified = true;
           user.linkedinSlug = result.data.slug;
+          user.linkedinHeadline = result.data.headline;
+          user.isVerified = true;
         }
       } else {
         if (linkedinStatus) {
@@ -158,20 +148,34 @@ export class ProfileModal {
 
       try {
         const user = Auth.currentUser || { uid: 'guest', role: 'client' };
-        user.name = name || 'Usuario RONDA';
-        user.age = age;
-        user.gender = gender;
-        user.orientation = orientation;
+        const patch: Partial<User> = {
+          name: name || 'Usuario RONDA',
+          age,
+          gender,
+          orientation
+        };
+
         if (linkedinUrl) {
           const val = Verification.validateLinkedInUrl(linkedinUrl);
-          user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+          patch.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
           if (val.valid) {
-            user.linkedinSlug = val.slug;
+            patch.linkedinVerified = true;
+            patch.linkedinSlug = val.slug;
+            patch.isVerified = true;
+            if (user.linkedinHeadline) patch.linkedinHeadline = user.linkedinHeadline;
           }
         }
 
+        // Persistir el estado de verificación de identidad en el perfil.
+        if (Verification.isVerified || user.linkedinVerified || patch.linkedinVerified) {
+          patch.isVerified = true;
+        }
+
+        Object.assign(user, patch);
+
         if (Auth.currentUser) {
-          await DB.saveUser(user);
+          await DB.updateUserProfile(user.uid, patch);
+          Object.assign(Auth.currentUser, patch);
         }
         if (this.modal) this.modal.classList.remove('active');
 
@@ -193,8 +197,6 @@ export class ProfileModal {
     if (!btnStartKyc) return;
 
     btnStartKyc.addEventListener('click', async () => {
-      const kycWrapper = document.getElementById('kyc-camera-wrapper');
-      if (kycWrapper) kycWrapper.style.display = 'flex';
       const kycVideo = document.getElementById('kyc-video');
       const kycCanvas = document.getElementById('kyc-canvas');
       if (kycVideo) kycVideo.style.display = 'block';

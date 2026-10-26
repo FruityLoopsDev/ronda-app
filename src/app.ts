@@ -1,4 +1,4 @@
-import { DB } from './db.js';
+import { DB, User } from './db.js';
 import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
@@ -148,6 +148,11 @@ function initApp() {
     updateNavbar();
   });
 
+  // Refrescar avatar/iniciales en navbar cuando el perfil se edita sin cambiar la vista activa
+  window.addEventListener('profile:updated', () => {
+    renderNavbarBadgeOnly();
+  });
+
   // Inicializar servicio de perfil
   Profile.init();
   Icebreakers.init();
@@ -159,7 +164,7 @@ function initApp() {
     ClientApp.renderDiscoveryFeed();
   });
 
-  function updateNavbar() {
+  function renderNavbarBadgeOnly() {
     const user = Auth.currentUser;
     if (user && userMenu) {
       const displayName = user.name ? user.name.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'Usuario');
@@ -188,6 +193,13 @@ function initApp() {
           switchView('view-profile');
         }
       });
+    }
+  }
+
+  function updateNavbar() {
+    const user = Auth.currentUser;
+    if (user && userMenu) {
+      renderNavbarBadgeOnly();
       
       // Sincronizar datos del perfil
       Profile.setCurrentUser(user);
@@ -263,9 +275,9 @@ function initApp() {
       if (orientationInput) orientationInput.value = user.orientation || '';
       if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
-      // El perfil de LinkedIn es opcional
+      // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
       const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-      if (saveBtn) saveBtn.disabled = false;
+      if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
     }
   });
 
@@ -296,14 +308,17 @@ function initApp() {
     if (result.success && result.data) {
       linkedinInput.value = result.data.url;
       if (linkedinStatus) {
-        linkedinStatus.textContent = `✓ ${result.data.badge}`;
+        linkedinStatus.textContent = `✓ ${result.data.badge} · ${result.data.headline}`;
         linkedinStatus.style.color = 'var(--botella)';
       }
       const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
       if (saveBtn) saveBtn.disabled = false;
       if (user) {
         user.linkedinUrl = result.data.url;
+        user.linkedinVerified = true;
         user.linkedinSlug = result.data.slug;
+        user.linkedinHeadline = result.data.headline;
+        user.isVerified = true;
       }
     } else {
       if (linkedinStatus) {
@@ -332,22 +347,34 @@ function initApp() {
 
       try {
         const user = Auth.currentUser || { uid: 'guest', role: 'client' };
-        user.name = name || 'Usuario RONDA';
-        user.age = age;
-        user.gender = gender;
-        user.orientation = orientation;
+        const patch: Partial<User> = {
+          name: name || 'Usuario RONDA',
+          age,
+          gender,
+          orientation
+        };
+
         if (linkedinUrl) {
           const val = Verification.validateLinkedInUrl(linkedinUrl);
-          user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+          patch.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
           if (val.valid) {
-            user.linkedinSlug = val.slug;
+            patch.linkedinVerified = true;
+            patch.linkedinSlug = val.slug;
+            patch.isVerified = true;
+            if (user.linkedinHeadline) patch.linkedinHeadline = user.linkedinHeadline;
           }
         }
 
-        // Se remueve la modificación de isVerified desde el cliente (ahora es tarea del backend/staff)
+        // Persistir el estado de verificación de identidad en el perfil.
+        if (Verification.isVerified || user.linkedinVerified || patch.linkedinVerified) {
+          patch.isVerified = true;
+        }
+
+        Object.assign(user, patch);
 
         if (Auth.currentUser) {
-          await DB.saveUser(user);
+          await DB.updateUserProfile(user.uid, patch);
+          Object.assign(Auth.currentUser, patch);
         }
         if (modalProfile) modalProfile.classList.remove('active');
         
@@ -364,8 +391,6 @@ function initApp() {
   const btnStartKyc = document.getElementById('btn-start-kyc');
   if (btnStartKyc) {
     btnStartKyc.addEventListener('click', async () => {
-      const kycWrapper = document.getElementById('kyc-camera-wrapper');
-      if (kycWrapper) kycWrapper.style.display = 'flex';
       const kycVideo = document.getElementById('kyc-video');
       const kycCanvas = document.getElementById('kyc-canvas');
       if (kycVideo) kycVideo.style.display = 'block';
@@ -433,7 +458,7 @@ function initApp() {
         }
 
         user.activeEventId = code;
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { activeEventId: code });
 
         updateNavbar();
         
@@ -635,11 +660,11 @@ function initApp() {
     const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
     const linkedinUrl = ((document.getElementById('reg-linkedin') as HTMLInputElement)?.value || '').trim();
 
-    if (!name || !birthDate || !gender || !orientation) {
+    if (!name || !birthDate || !gender || !orientation || !linkedinUrl) {
       await RondaDialog.alert({
-        title: 'Datos Incompletos',
-        message: 'Por favor completa todos tus datos personales. (Opcional: añade tu LinkedIn para recibir una bebida de cortesía 🍺)',
-        icon: '⚠️'
+        title: 'Verificación Profesional Requerida',
+        message: 'RONDA es una comunidad para solteros profesionales de alto valor. Ingresa todos tus datos y tu perfil de LinkedIn actualizado para validar tu membresía.',
+        icon: '💼'
       });
       return;
     }
@@ -655,32 +680,24 @@ function initApp() {
       return;
     }
 
-    let normalizedUrl = '';
-    let slug = '';
-    if (linkedinUrl) {
-      const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
-      if (!linkedinValidation.valid) {
-        await RondaDialog.alert({
-          title: 'Perfil de LinkedIn No Válido',
-          message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
-          icon: '💼',
-          type: 'alert'
-        });
-        return;
-      }
-      normalizedUrl = linkedinValidation.normalizedUrl;
-      slug = linkedinValidation.slug;
+    const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
+    if (!linkedinValidation.valid) {
+      await RondaDialog.alert({
+        title: 'Perfil de LinkedIn No Válido',
+        message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
+        icon: '💼',
+        type: 'alert'
+      });
+      return;
     }
 
     const zodiac = getZodiacSign(birthDate);
 
     const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-    btn.textContent = linkedinUrl ? 'Enlazando perfil y creando cuenta...' : 'Creando cuenta...';
+    btn.textContent = 'Verificando LinkedIn y creando cuenta...';
     btn.disabled = true;
 
-    if (linkedinUrl) {
-      await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
-    }
+    const linkedinResult = await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
 
     Auth.registerWithEmail(email, password, { 
       name, 
@@ -689,9 +706,11 @@ function initApp() {
       age, 
       gender, 
       orientation,
-      linkedinUrl: normalizedUrl,
-      linkedinSlug: slug,
-      // isVerified, trustTier, and verifications are managed by the server/staff
+      linkedinUrl: linkedinValidation.normalizedUrl,
+      linkedinVerified: true,
+      linkedinSlug: linkedinValidation.slug,
+      linkedinHeadline: linkedinResult.data?.headline,
+      isVerified: true
     }).then(() => {
       // Successfully registered.
       triggerLoginAnimation();

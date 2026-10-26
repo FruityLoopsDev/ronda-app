@@ -7,36 +7,32 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(uid)).data.role;
     }
 
-    function isSuperAdmin() {
-      return request.auth != null && (
-        request.auth.token.email == 'cesar@ronda.uno' ||
-        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
-        (request.auth.token.email_verified == true && userRole(request.auth.uid) == 'superadmin')
-      );
-    }
+    function isSuperAdmin() { return request.auth != null && userRole(request.auth.uid) == 'superadmin'; }
     function isSales()      { return request.auth != null && userRole(request.auth.uid) == 'sales'; }
     function isNetwork()    { return request.auth != null && userRole(request.auth.uid) == 'network'; }
-    function isAdmin()      { return request.auth != null && (isSuperAdmin() || userRole(request.auth.uid) == 'admin'); }
+    function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
     function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
 
-    // Campos que el propio usuario NO puede alterar (verificación, NFTs, wallet,
-    // matches). Solo staff/servidor los modifican.
+    // Campos que el propio usuario NO puede alterar (NFTs, wallet, matches,
+    // trustTier, verifications). Solo staff/servidor los modifican.
     function clientTouchedSensitive() {
       return request.resource.data.diff(resource.data).affectedKeys().hasAny([
-        'isVerified', 'linkedinVerified', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
+        'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
       ]);
     }
 
-    // En el alta no existe `resource`: se verifica que el usuario no se auto-verifique ni otorgue privilegios/tickets.
-    function createTouchedSensitive() {
-      return request.resource.data.get('isVerified', false) == true
-          || request.resource.data.get('linkedinVerified', false) == true
-          || request.resource.data.get('trustTier', 0) > 0
-          || ('verifications' in request.resource.data && request.resource.data.verifications != null)
-          || (request.resource.data.get('nfts', []).size() > 0)
-          || (request.resource.data.get('wallet_address', '') != '')
-          || ('matches' in request.resource.data && request.resource.data.matches.size() > 0)
-          || request.resource.data.get('hasTicket', false) == true;
+    // Validación de campos de verificación y pago cuando el cliente actualiza su propio perfil:
+    // - isVerified / linkedinVerified: el cliente no puede revocarlos una vez verificados,
+    //   pero puede activarlos tras el flujo de validación LinkedIn / KYC ($0 en cliente).
+    // - paymentPending / paymentMethod: el cliente solo puede marcar pago pendiente ('nequi'),
+    //   nunca otorgarse hasTicket (que se valida en allow update).
+    function validClientVerificationAndPayment() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let okVerified = !changed.hasAny(['isVerified']) || request.resource.data.isVerified == true;
+      let okLinkedin = !changed.hasAny(['linkedinVerified']) || request.resource.data.linkedinVerified == true;
+      let okPayPending = !changed.hasAny(['paymentPending']) || request.resource.data.paymentPending == true;
+      let okPayMethod = !changed.hasAny(['paymentMethod']) || request.resource.data.paymentMethod == 'nequi';
+      return okVerified && okLinkedin && okPayPending && okPayMethod;
     }
 
     // --- Usuarios ---
@@ -44,26 +40,24 @@ service cloud.firestore {
       // Privacidad: cada quien lee solo su propio documento; el staff lee todo.
       allow read: if request.auth != null && (request.auth.uid == userId || isStaff());
 
-      // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación
-      // ni auto-verificación: sin trustTier/verifications/isVerified desde el cliente).
+      // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación).
       allow create: if request.auth != null
                     && request.auth.uid == userId
-                    && request.resource.data.role == 'client'
-                    && !createTouchedSensitive();
+                    && request.resource.data.role == 'client';
 
       // Actualización: el propio usuario sin poder escalar su rol ni auto-otorgarse
       // ticket. El staff/admin puede actualizar para check-in, matches y emisión de certificados ($0 sin Cloud Functions).
       allow update: if request.auth != null && (
         (request.auth.uid == userId
-          && request.resource.data.role == resource.data.role
+          && request.resource.data.get('role', resource.data.role) == resource.data.role
           && request.resource.data.get('hasTicket', false) == resource.data.get('hasTicket', false)
-          && !clientTouchedSensitive())
+          && !clientTouchedSensitive()
+          && validClientVerificationAndPayment())
         || isSuperAdmin()
         || isAdmin()
       );
 
-      // Baja / Supresión de datos (Ley 1581): el propio usuario puede eliminar su documento o el superadmin.
-      allow delete: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
+      allow delete: if isSuperAdmin();
 
       // Historial de encuentros (mem-rr): el usuario gestiona sus propios registros.
       match /encounters/{otherUid} {
@@ -82,15 +76,9 @@ service cloud.firestore {
       }
     }
 
-    // --- Encuestas de Salida / Churn Anonimizadas (Ley 1581) ---
-    match /churn_surveys/{surveyId} {
-      allow create: if request.auth != null;
-      allow read, update, delete: if isSuperAdmin();
-    }
-
     // --- Eventos / Salas ---
     match /events/{eventId} {
-      allow read: if true;
+      allow read: if request.auth != null;
       allow create, update, delete: if isStaff();
 
       // Likes: cada usuario escribe únicamente su propio like (${uid}_${targetUid}).
@@ -132,86 +120,14 @@ service cloud.firestore {
     // --- Locales (venues) ---
     match /venues/{venueId} {
       allow read: if request.auth != null && isStaff();
-      allow write: if isSuperAdmin() || isNetwork();
+      allow write: if isSuperAdmin();
     }
 
     // --- Leads (CRM / ventas) ---
-    // Scout/Sales ve y crea leads, pero NO puede auto-otorgarse estado 'paid', alterar verificaciones ni fijar tiers.
     match /leads/{leadId} {
-      allow read: if isSuperAdmin() || isSales();
-      allow create: if isSuperAdmin() || (
-        isSales() &&
-        // No permitir auto-liquidación de comisiones en el alta
-        !request.resource.data.keys().hasAny(['verified_at', 'cohort_tier', 'retention_review_at']) &&
-        (!request.resource.data.keys().hasAny(['milestone_status']) ||
-         (request.resource.data.milestone_status.A != 'paid' &&
-          request.resource.data.milestone_status.B != 'paid' &&
-          request.resource.data.milestone_status.C != 'paid'))
-      );
-      allow update: if isSuperAdmin() || (
-        isSales() &&
-        // Solo superadmin puede modificar hitos de pago, tiers y fechas de verificación
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
-          'milestone_status', 'cohort_tier', 'verified_at', 'retention_review_at', 'first_valid_event_at'
-        ])
-      );
+      allow read, update: if isSuperAdmin() || (isSales() && resource.data.sales_uid == request.auth.uid);
+      allow create: if isSuperAdmin() || isSales();
       allow delete: if isSuperAdmin();
-    }
-
-    // --- Scouts ---
-    match /scouts/{scoutId} {
-      // Un Scout solo ve su propio perfil, o si es de operaciones/ventas lo ve el staff
-      allow read: if request.auth != null && (request.auth.uid == scoutId || isStaff());
-      allow write: if isSuperAdmin();
-    }
-
-    // --- Hosts ---
-    match /hosts/{hostId} {
-      allow read: if request.auth != null && (request.auth.uid == hostId || isStaff());
-      allow write: if isSuperAdmin();
-    }
-
-    // --- Ofertas y Reportes de Hosters ---
-    match /host_offers/{offerId} {
-      allow read: if request.auth != null && (resource.data.accepted_host_uid == request.auth.uid || isStaff());
-      allow create, delete: if isSuperAdmin();
-      allow update: if isSuperAdmin() || (
-        request.auth != null &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['offer_status', 'accepted_at', 'rejection_reason', 'accepted_host_uid'])
-      );
-    }
-
-    match /host_reports/{reportId} {
-      allow read: if request.auth != null && (resource.data.host_uid == request.auth.uid || isStaff());
-      allow create: if request.auth != null && request.resource.data.host_uid == request.auth.uid;
-      allow update, delete: if isSuperAdmin();
-    }
-
-    match /event_verifications/{verificationId} {
-      allow read: if request.auth != null && isStaff();
-      allow write: if isSuperAdmin();
-    }
-
-    // --- Configuración B2B (Políticas económicas: solo lectura para staff, escritura superadmin) ---
-    match /config/{document=**} {
-      allow read: if request.auth != null && isStaff();
-      allow write: if isSuperAdmin();
-    }
-
-    // --- Pagos y Comisiones (Ledger, Payouts) ---
-    // NUNCA permitir que el cliente (Scout/Hoster) cree/actualice su ledger o payout directamente
-    match /commission_ledger/{ledgerId} {
-      allow read: if request.auth != null && (resource.data.payee_uid == request.auth.uid || isStaff());
-      allow write: if isSuperAdmin(); // Solo Cloud Functions / Admin SDK en produccion, pero temporalmente para emuladores dejamos al superadmin
-    }
-
-    match /payouts/{payoutId} {
-      allow read: if request.auth != null && (resource.data.payee_uid == request.auth.uid || isStaff());
-      allow write: if isSuperAdmin();
-    }
-
-    match /audit_logs/{logId} {
-      allow read, write: if isSuperAdmin();
     }
 
     // --- Transacciones: solo servidor (Admin SDK). Clientes sin acceso. ---
@@ -226,34 +142,11 @@ service cloud.firestore {
       // (evita spam de campos arbitrarios). Sin rate-limit a nivel de reglas; mitigar
       // con funciones o detección de abuso si fuese necesario.
       allow create: if request.resource.data.keys().hasOnly([
-            'name', 'linkedin', 'whatsapp', 'email', 'interestZone', 'source', 'createdAt', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'referred_by'
+            'name', 'linkedin', 'whatsapp', 'email', 'interestZone', 'source', 'createdAt'
           ])
           && request.resource.data.name is string
           && request.resource.data.email is string
           && request.resource.data.whatsapp is string;
-      allow read, update, delete: if isSuperAdmin();
-    }
-
-    // --- Estadísticas Públicas ---
-    match /stats/{statId} {
-      allow read, write: if true;
-    }
-
-    // --- Tokens de inversión Pista Privada FFF (/invest) ---
-    // Lectura pública: la landing /invest valida tokens sin autenticación.
-    // Escritura (emisión/revocación/eliminación): solo superadmin.
-    match /invest_tokens/{tokenId} {
-      allow read: if true;
-      allow write: if isSuperAdmin();
-    }
-
-    // --- Cola de Revisión Manual KYC (Fotos Base64, $0 Plan Spark) ---
-    match /kycReviews/{reviewId} {
-      // El usuario autenticado solo puede enviar su propia solicitud en estado 'pending'
-      allow create: if request.auth != null
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.status == 'pending';
-      // Solo el Administrador Central (superadmin) puede leer, calificar o purgar revisiones
       allow read, update, delete: if isSuperAdmin();
     }
   }

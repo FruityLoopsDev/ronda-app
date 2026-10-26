@@ -18,6 +18,25 @@ export class ProfileService {
     this.render();
   }
 
+  /**
+   * Persiste únicamente los campos modificados del perfil en Firestore
+   * mediante `DB.updateUserProfile` y sincroniza atómicamente `this.currentUser`
+   * y `Auth.currentUser` en memoria para evitar que `app.ts` sobreescriba
+   * los cambios al reabrir la vista.
+   */
+  private async persistProfilePatch(fields: Partial<User>): Promise<void> {
+    if (!this.currentUser) return;
+
+    await DB.updateUserProfile(this.currentUser.uid, fields);
+
+    Object.assign(this.currentUser, fields);
+    if (Auth.currentUser && Auth.currentUser.uid === this.currentUser.uid) {
+      Object.assign(Auth.currentUser, fields);
+    }
+
+    window.dispatchEvent(new CustomEvent('profile:updated', { detail: this.currentUser }));
+  }
+
   render() {
     if (!this.currentUser) return;
     const user = this.currentUser;
@@ -36,9 +55,9 @@ export class ProfileService {
     const statVenues = document.getElementById('stat-venues');
     const statMatches = document.getElementById('stat-matches');
 
-    const rounds = user.stats?.roundsPlayed ?? 0;
-    const venues = user.stats?.venuesVisited ?? 0;
-    const matches = user.stats?.matchesCount ?? 0;
+    const rounds = user.stats?.roundsPlayed ?? 12;
+    const venues = user.stats?.venuesVisited ?? 3;
+    const matches = user.stats?.matchesCount ?? 5;
 
     if (statRounds) statRounds.textContent = rounds.toString();
     if (statVenues) statVenues.textContent = venues.toString();
@@ -67,21 +86,6 @@ export class ProfileService {
         linkedinBadge.style.display = 'inline-flex';
       } else {
         linkedinBadge.style.display = 'none';
-      }
-    }
-
-    // Badge Club Fundador 100 (T-6.2)
-    const founderBadge = document.getElementById('profile-founder-badge');
-    const founderNumberEl = document.getElementById('profile-founder-number');
-    if (founderBadge) {
-      if (user.isFoundingMember) {
-        founderBadge.style.display = 'inline-flex';
-        founderBadge.style.background = 'rgba(240,168,48,0.18)';
-        founderBadge.style.color = 'var(--luz-brillo)';
-        founderBadge.style.border = '1px solid rgba(240,168,48,0.45)';
-        if (founderNumberEl) founderNumberEl.textContent = String(user.founderNumber || 1);
-      } else {
-        founderBadge.style.display = 'none';
       }
     }
 
@@ -188,8 +192,7 @@ export class ProfileService {
       try {
         const compressedBase64 = await this.compressImage(file, 400, 400, 0.85);
         if (this.currentUser) {
-          this.currentUser.photoURL = compressedBase64;
-          await DB.saveUser(this.currentUser);
+          await this.persistProfilePatch({ photoURL: compressedBase64 });
           this.render();
           this.showToast('¡Foto de perfil actualizada!');
         }
@@ -293,11 +296,20 @@ export class ProfileService {
     document.getElementById('btn-save-badge-cocktail')?.addEventListener('click', async () => {
       const selected = document.querySelector('input[name="badge-cocktail-choice"]:checked') as HTMLInputElement;
       if (selected && this.currentUser) {
-        this.currentUser.favoriteCocktail = selected.value;
-        await DB.saveUser(this.currentUser);
-        this.render();
-        document.getElementById('modal-select-cocktail')?.classList.remove('active');
-        this.showToast('Cóctel actualizado');
+        try {
+          await this.persistProfilePatch({ favoriteCocktail: selected.value });
+          this.render();
+          document.getElementById('modal-select-cocktail')?.classList.remove('active');
+          this.showToast('Cóctel actualizado');
+        } catch (err: any) {
+          console.error('Error al actualizar cóctel:', err);
+          await RondaDialog.alert({
+            title: 'Error al Guardar',
+            message: 'No se pudo actualizar tu cóctel favorito: ' + err.message,
+            icon: '🍸',
+            type: 'danger'
+          });
+        }
       }
     });
 
@@ -308,11 +320,20 @@ export class ProfileService {
           selectedZones.push(chk.value);
         });
         if (selectedZones.length > 0) {
-          this.currentUser.preferredZones = selectedZones;
-          await DB.saveUser(this.currentUser);
-          this.render();
-          document.getElementById('modal-select-zone')?.classList.remove('active');
-          this.showToast('Zonas actualizadas');
+          try {
+            await this.persistProfilePatch({ preferredZones: selectedZones });
+            this.render();
+            document.getElementById('modal-select-zone')?.classList.remove('active');
+            this.showToast('Zonas actualizadas');
+          } catch (err: any) {
+            console.error('Error al actualizar zonas:', err);
+            await RondaDialog.alert({
+              title: 'Error al Guardar',
+              message: 'No se pudieron actualizar tus zonas preferidas: ' + err.message,
+              icon: '📍',
+              type: 'danger'
+            });
+          }
         }
       }
     });
@@ -340,101 +361,19 @@ export class ProfileService {
 
       if (result.success && result.data) {
         input.value = result.data.url;
-        status.textContent = `✓ ${result.data.badge}`;
+        status.textContent = `✓ ${result.data.badge} (${result.data.headline})`;
         status.style.color = 'var(--botella)';
         if (this.currentUser) {
           this.currentUser.linkedinUrl = result.data.url;
+          this.currentUser.linkedinVerified = true;
           this.currentUser.linkedinSlug = result.data.slug;
+          this.currentUser.linkedinHeadline = result.data.headline;
+          this.currentUser.isVerified = true;
         }
       } else {
         status.textContent = `✕ ${result.error || 'No se pudo verificar el perfil.'}`;
         status.style.color = 'var(--vino)';
       }
-    });
-    // Botón de Baja y Supresión de Datos (T-11.2/11.3)
-    document.getElementById('btn-open-delete-account')?.addEventListener('click', async () => {
-      if (!this.currentUser) return;
-      const modal = document.getElementById('modal-delete-account');
-      if (modal) modal.style.display = 'flex';
-      const form = document.getElementById('churn-survey-form');
-      if (form) form.style.display = 'none';
-      const confirmBtn = document.getElementById('btn-delete-confirm') as HTMLButtonElement | null;
-      if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Sí, suprimir mi cuenta'; }
-    });
-    // Cerrar modal legal
-    document.getElementById('btn-legal-close')?.addEventListener('click', () => {
-      const modal = document.getElementById('modal-legal-viewer');
-      if (modal) modal.style.display = 'none';
-    });
-    // Pestañas del modal legal
-    document.getElementById('legal-tab-terminos')?.addEventListener('click', () => {
-      const ct = document.getElementById('legal-content-terminos');
-      const cp = document.getElementById('legal-content-privacidad');
-      const tt = document.getElementById('legal-tab-terminos');
-      const tp = document.getElementById('legal-tab-privacidad');
-      if (ct) ct.style.display = 'block';
-      if (cp) cp.style.display = 'none';
-      if (tt) tt.className = 'legal-tab active';
-      if (tp) tp.className = 'legal-tab';
-    });
-    document.getElementById('legal-tab-privacidad')?.addEventListener('click', () => {
-      const ct = document.getElementById('legal-content-terminos');
-      const cp = document.getElementById('legal-content-privacidad');
-      const tt = document.getElementById('legal-tab-terminos');
-      const tp = document.getElementById('legal-tab-privacidad');
-      if (ct) ct.style.display = 'none';
-      if (cp) cp.style.display = 'block';
-      if (tt) tt.className = 'legal-tab';
-      if (tp) tp.className = 'legal-tab active';
-    });
-    // Selección de motivo de salida (cuestionario opcional)
-    document.querySelectorAll('.churn-reason-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget as HTMLElement;
-        const reason = target.getAttribute('data-reason') || '';
-        const sel = document.getElementById('churn-selected-reason');
-        if (sel) sel.textContent = `Motivo seleccionado: ${reason}`;
-        document.querySelectorAll<HTMLElement>('.churn-reason-btn').forEach(b => {
-          b.style.borderColor = 'var(--linea)';
-          b.style.background = 'rgba(243,237,226,0.06)';
-        });
-        target.style.borderColor = 'var(--luz)';
-        target.style.background = 'rgba(240,168,48,0.12)';
-        const form = document.getElementById('churn-survey-form');
-        if (form) form.style.display = 'block';
-      });
-    });
-    // Confirmar baja y supresión de datos
-    document.getElementById('btn-delete-confirm')?.addEventListener('click', async () => {
-      if (!this.currentUser) return;
-      const btn = document.getElementById('btn-delete-confirm') as HTMLButtonElement;
-      const reasonBtn = document.querySelector('.churn-reason-btn[style*="var(--luz)"]') as HTMLElement | null;
-      const reason = reasonBtn?.getAttribute('data-reason') || '';
-      const feedback = (document.getElementById('churn-feedback') as HTMLTextAreaElement)?.value || '';
-      btn.disabled = true;
-      btn.textContent = 'Suprimiendo…';
-      try {
-        await DB.deleteUserAccount(this.currentUser.uid, { reason, feedback });
-        this.showToast('Cuenta y datos suprimidos exitosamente conforme a la Ley 1581.');
-        Auth.logout();
-        window.location.href = '/';
-      } catch (err: any) {
-        btn.disabled = false;
-        btn.textContent = 'Sí, suprimir mi cuenta';
-        await RondaDialog.alert({
-          title: 'Error al suprimir cuenta',
-          message: err.message || 'No se pudo completar la supresión de datos.',
-          icon: '⚠️',
-          type: 'danger'
-        });
-      }
-    });
-    // Cancelar baja
-    document.getElementById('btn-delete-cancel')?.addEventListener('click', () => {
-      const modal = document.getElementById('modal-delete-account');
-      if (modal) modal.style.display = 'none';
-      const form = document.getElementById('churn-survey-form');
-      if (form) form.style.display = 'none';
     });
   }
 
@@ -538,28 +477,41 @@ export class ProfileService {
       const linkedinInput = document.getElementById('edit-linkedin') as HTMLInputElement | null;
       const linkedinUrl = linkedinInput ? linkedinInput.value.trim() : '';
 
-      this.currentUser.name = name || this.currentUser.name;
-      this.currentUser.username = username || this.currentUser.username;
-      this.currentUser.age = !isNaN(age) ? age : this.currentUser.age;
-      this.currentUser.bio = bio;
-      this.currentUser.favoriteCocktail = favoriteCocktail;
-      this.currentUser.gender = gender;
-      this.currentUser.orientation = orientation;
+      const patch: Partial<User> = {
+        name: name || this.currentUser.name,
+        username: username || this.currentUser.username,
+        age: !isNaN(age) ? age : this.currentUser.age,
+        bio,
+        favoriteCocktail,
+        gender,
+        orientation
+      };
+
       if (linkedinUrl) {
         const val = Verification.validateLinkedInUrl(linkedinUrl);
-        this.currentUser.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+        patch.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
         if (val.valid) {
-          this.currentUser.linkedinSlug = val.slug;
+          patch.linkedinVerified = true;
+          patch.linkedinSlug = val.slug;
+          patch.isVerified = true;
+          if (this.currentUser.linkedinHeadline) {
+            patch.linkedinHeadline = this.currentUser.linkedinHeadline;
+          }
         }
       }
 
-      await DB.saveUser(this.currentUser);
+      await this.persistProfilePatch(patch);
       this.render();
       this.closeEditModal();
       this.showToast('Perfil actualizado correctamente');
     } catch (err: any) {
       console.error('Error al guardar perfil:', err);
-      alert('Error: ' + err.message);
+      await RondaDialog.alert({
+        title: 'Error al Guardar Perfil',
+        message: 'No se pudieron guardar tus cambios: ' + err.message,
+        icon: '⚠️',
+        type: 'danger'
+      });
     } finally {
       if (btn) {
         btn.textContent = '✓';
@@ -583,35 +535,6 @@ export class ProfileService {
     if (inputSafeword) inputSafeword.value = user.safeword || 'Martini Azul';
     if (chkDrinkStats) chkDrinkStats.checked = user.privacySettings?.shareDrinkStats !== false;
     if (chkMarketing) chkMarketing.checked = user.privacySettings?.marketingConsent !== false;
-
-    const kycContainer = document.getElementById('kyc-settings-container');
-    if (kycContainer) {
-      if (user.faceVerified) {
-        kycContainer.innerHTML = `
-            <div>
-              <p style="font-size: 11px; color: #79D3AC; font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 3px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                🛡️ VERIFICACIÓN BIOMÉTRICA (KYC)
-              </p>
-              <span style="font-size: 11px; color: var(--humo);">Cédula de Colombia validada · Cero perfiles falsos</span>
-            </div>
-            <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px;">100% OK</span>
-        `;
-        kycContainer.style.background = 'rgba(46,107,84,.1)';
-        kycContainer.style.borderColor = 'rgba(46,107,84,.35)';
-      } else {
-        kycContainer.innerHTML = `
-            <div>
-              <p style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 3px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                🛡️ VERIFICACIÓN BIOMÉTRICA (KYC)
-              </p>
-              <span style="font-size: 11px; color: var(--humo);">Aún no has completado tu validación de identidad.</span>
-            </div>
-            <span class="chip ambar" style="font-size: 9.5px; padding: 3px 8px;">Pendiente</span>
-        `;
-        kycContainer.style.background = 'rgba(240,168,48,.06)';
-        kycContainer.style.borderColor = 'rgba(240,168,48,.35)';
-      }
-    }
 
     // Sincronizar zonas
     const zones = user.preferredZones || ['Zona G', 'Quinta Camacho'];
@@ -646,16 +569,19 @@ export class ProfileService {
         selectedZones.push(chk.value);
       });
 
-      this.currentUser.safeword = safeword || 'Martini Azul';
-      if (selectedZones.length > 0) {
-        this.currentUser.preferredZones = selectedZones;
-      }
-      this.currentUser.privacySettings = {
-        shareDrinkStats,
-        marketingConsent
+      const patch: Partial<User> = {
+        safeword: safeword || 'Martini Azul',
+        privacySettings: {
+          shareDrinkStats,
+          marketingConsent
+        }
       };
 
-      await DB.saveUser(this.currentUser);
+      if (selectedZones.length > 0) {
+        patch.preferredZones = selectedZones;
+      }
+
+      await this.persistProfilePatch(patch);
       this.render();
       this.closeSettingsModal();
       this.showToast('Ajustes y privacidad guardados');
@@ -687,15 +613,15 @@ export class ProfileService {
         const serviceName = (e.currentTarget as HTMLElement).getAttribute('data-service') || 'Servicio RONDA';
         this.closeServicesModal();
         if (this.currentUser) {
-          if (!this.currentUser.serviceRequests) {
-            this.currentUser.serviceRequests = [];
-          }
-          this.currentUser.serviceRequests.push({
-            serviceName,
-            requestedAt: new Date().toISOString(),
-            status: 'pending'
-          });
-          await DB.saveUser(this.currentUser);
+          const updatedRequests = [
+            ...(this.currentUser.serviceRequests || []),
+            {
+              serviceName,
+              requestedAt: new Date().toISOString(),
+              status: 'pending' as const
+            }
+          ];
+          await this.persistProfilePatch({ serviceRequests: updatedRequests });
         }
         await RondaDialog.alert({
           title: 'Solicitud Recibida',

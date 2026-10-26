@@ -64,20 +64,11 @@ export class Icebreakers {
     this.modal = document.getElementById('modal-icebreakers');
     this.container = document.getElementById('icebreaker-deck');
 
-    // Delegación global para asegurar que #btn-start-icebreakers funcione aunque se renderice dinámicamente
-    document.addEventListener('click', (e) => {
-      const btn = (e.target as HTMLElement).closest('#btn-start-icebreakers');
-      if (btn) {
-        this.open();
-      }
-    });
-
+    document.getElementById('btn-start-icebreakers')?.addEventListener('click', () => this.open());
     document.getElementById('btn-close-icebreakers')?.addEventListener('click', () => this.close());
   }
 
   static open() {
-    this.modal = document.getElementById('modal-icebreakers');
-    this.container = document.getElementById('icebreaker-deck');
     if (!this.modal || !this.container) return;
     this.answers = {};
     this.currentIdx = 0;
@@ -186,8 +177,8 @@ export class Icebreakers {
     const user = Auth.currentUser;
     if (user && user.uid !== 'guest') {
       try {
+        await DB.updateUserProfile(user.uid, { icebreakers: this.answers });
         const updatedUser = { ...user, icebreakers: this.answers };
-        await DB.saveUser(updatedUser);
         Auth.currentUser = updatedUser;
         Profile.setCurrentUser(updatedUser);
       } catch (err) {
