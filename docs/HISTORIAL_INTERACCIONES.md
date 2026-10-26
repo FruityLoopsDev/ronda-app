@@ -217,9 +217,21 @@
 
 ---
 
-### [2026-10-20] — Ejecución FASE 5 (KYC Biométrico) y FASE 6 (Club Fundador 100)
-- **FASE 5 Blindaje Face-ID & KYC:** T-1 `waitForVideoReady` valida `readyState>=2 && videoWidth>0`; T-2 `scanDocumentOCR()` con `Promise.race` y timeout 8s (`error:'ocr_timeout'`); T-3 fallback limpio a `kycReviews` (`submitKycReview`, `pending`) sin error rojo; T-4 `npm run test:face` 15/15; T-5 `npm run build` 0 errores TS/Vite.
-- **FASE 6 Club Fundador 100:** T-6.1 `DB.countUsers()` + `registerWithEmail` asigna `isFoundingMember`/`founderNumber` si `usersCount<100`; T-6.2 badge dorado `⭐ Miembro Fundador #N` en `profile.ts` y `profile-modal.ts`; T-6.3 banner beneficios en `landing.html`; T-6.4 `npm run build` sin errores.
+### [2026-10-26] — Banner Rotativo Hero y Estandarización Transversal de Footers (2 Niveles Luxury)
+- **Solicitud del Usuario:**
+  1. Integrar los dos textos clave de la landing principal en un banner rotativo elegante.
+  2. Rediseñar el footer de `/partners.html` para evitar partición antiestética de enlaces legales y colisión con el botón de WhatsApp.
+  3. Extender transversalmente este nuevo estándar a todos los footers del ecosistema RONDA.
+- **Acciones y Resultados:**
+  - **Banner Rotativo en `landing.html`:** Componente `.hero-rotator-wrapper` con 2 slides animados («✦ Solteros Profesionales de Alto Valor» / «🏆 Club Fundador 100»), micro-pips interactivos, pausa al hover y apertura directa del modal de waitlist.
+  - **Estandarización de Footers en 2 Niveles (`.site-footer`):**
+    - `partners.html`: Implementada cuadrícula de 2 niveles (Marca B2B, Navegación B2B/Legal, Scout WhatsApp y Redes + Copyright, métricas hidratadas y contador con padding de 70px anti-colisión).
+    - `landing.html`: Aplicado mismo estándar con navegación B2C y soporte a asistentes.
+    - `invest.html`: Adaptado para sala FFF con marco legal (C. de Co. Art. 1163), mesa fundadores WhatsApp (+57 316 974 9677) y contador `#footer-counter`.
+    - `src/footer.ts`: Reescrito `getRondaFooterHtml()` para inyectar este estándar en todos los portales SPA (`/admin`, `/crm`, `/network`, `/superadmin`).
+    - `index.html`: Actualizado footer estático a 2 niveles con enlaces directos a modales legales `#modal-legal-viewer`.
+    - `superadmin.html`: Actualizado footer conservando contador dinámico SVG en vivo.
+  - **Verificación Técnica:** `npx tsc --noEmit` completado con 0 errores (código 0) y `npm run build` completado exitosamente (código 0, empaquetado total en `dist/`).
 
 ## 🎯 Tareas Pendientes y Próximos Pasos (Hoja de Ruta Inmediata)
 

@@ -54,9 +54,9 @@ async function syncLiveGitMetrics(root: ParentNode): Promise<void> {
 
     const res = await fetch('https://api.github.com/repos/FruityLoopsDev/ronda-app/commits?per_page=1', {
       headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
+    }).catch(() => null);
 
-    if (res.ok) {
+    if (res && res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         const latestCommitDateStr = data[0]?.commit?.committer?.date || data[0]?.commit?.author?.date || APP_LAST_COMMIT;

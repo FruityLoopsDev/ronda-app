@@ -7,10 +7,16 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(uid)).data.role;
     }
 
-    function isSuperAdmin() { return request.auth != null && userRole(request.auth.uid) == 'superadmin'; }
+    function isSuperAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'cesar@ronda.uno' ||
+        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
+        userRole(request.auth.uid) == 'superadmin'
+      );
+    }
     function isSales()      { return request.auth != null && userRole(request.auth.uid) == 'sales'; }
     function isNetwork()    { return request.auth != null && userRole(request.auth.uid) == 'network'; }
-    function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
+    function isAdmin()      { return request.auth != null && (isSuperAdmin() || userRole(request.auth.uid) == 'admin'); }
     function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
 
     // Campos que el propio usuario NO puede alterar (verificación, NFTs, wallet,

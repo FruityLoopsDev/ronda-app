@@ -260,3 +260,50 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
   - Ejecutar `npm run build` para validar que `dist/partners.html` se empaquete sin fallos. (✅ VALIDADO: build exit 0).
   - Marcar con `[x]` las tareas completadas en `task.md`.
 
+---
+
+## FASE 13: ESTANDARIZACIÓN TRANSVERSAL DE TODOS LOS FOOTERS DEL ECOSISTEMA (COMPLETADO)
+
+> **Contexto:** Extensión del estándar Luxury & Semántico de 2 niveles a todas las páginas y portales de RONDA para unificar la identidad de marca, evitar colisiones con el botón flotante de WhatsApp y presentar un marco legal y de ingeniería impecable.
+
+### 🔄 Tareas Ejecutadas y Validadas:
+
+- [x] **T-13.1: Footer B2C en `landing.html`:**
+  - Cuadrícula de 2 niveles: Columna de Marca B2C + Columna de Navegación & Marco Legal (Historia, Partners, Inversionistas, Términos, Privacidad) + Soporte WhatsApp (+57 302 654 3854) y redes oficiales.
+  - Meta inferior con Copyright, insignias dinámicas de ingeniería (`data-ronda-*`) y contador `#global-visit-counter` con padding de seguridad de 70px.
+- [x] **T-13.2: Footer Inversionistas FFF en `invest.html`:**
+  - Estructura de 2 niveles adaptada a la tesis FFF: Pista Privada, Compliance (C. de Co. Art. 1163), Mesa Directa Fundadores WhatsApp (+57 316 974 9677), redes oficiales.
+  - Fila inferior con Copyright, bandera de Colombia, métricas de ingeniería, contador `#footer-counter` y padding anti-solapamiento.
+- [x] **T-13.3: Componente Central `src/footer.ts` (Portales / `footer-root`):**
+  - Actualizada la función `getRondaFooterHtml()` con la cuadrícula de 2 niveles inyectada en `/admin`, `/crm`, `/network`, y `/superadmin`, conservando todos los ganchos de hidratación en tiempo real.
+- [x] **T-13.4: Footer de Usuario / Portal en `index.html`:**
+  - Sustituido el footer plano por el diseño de 2 niveles con enlaces interactivos a los modales legales `#modal-legal-viewer`, soporte y protección de layout.
+- [x] **T-13.5: Footer de Operaciones en `superadmin.html`:**
+  - Estandarizado a 2 niveles integrando el contador de visitas SVG en vivo y los canales de auditoría.
+- [x] **T-13.6: Verificación de Tipos y Empaquetado:**
+  - `npx tsc --noEmit` completado con 0 errores (código 0).
+  - `npm run build` completado exitosamente (código 0) generando todos los artefactos en `dist/`.
+
+---
+
+## FASE 14: BLINDAJE PERMANENTE DE ACCESO SUPERADMIN Y CONTENT SECURITY POLICY (COMPLETADO)
+
+> **Contexto:** En la consola de `/superadmin`, se producían 8 errores de Content Security Policy (`connect-src` bloqueaba `https://api.github.com`) y el botón quedaba congelado en *"Verificando credenciales..."* debido a que `src/auth.ts` trataba la cuenta maestra como `role: "client"` incompleto, emitiendo `auth:needsProfile` en vez de `auth:login`.
+
+### 🔄 Correcciones Permanentes Aplicadas:
+
+- [x] **T-14.1: Permiso CSP en `firebase.json`:**
+  - Agregado `https://api.github.com` a la directiva `connect-src` del CSP institucional.
+- [x] **T-14.2: Catch no bloqueante en `src/footer.ts`:**
+  - Añadido `.catch(() => null)` en `syncLiveGitMetrics()` para asegurar degradación silenciosa sin errores en consola.
+- [x] **T-14.3: Regla de SuperAdmin Intrínseco en `firestore.rules`:**
+  - `isSuperAdmin()` ahora valida directamente `request.auth.token.email == 'cesar@ronda.uno' || request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53'`.
+- [x] **T-14.4: Auto-reparación y emisión de `auth:login` en `src/auth.ts`:**
+  - La cuenta staff es reconocida como `superadmin`, evitando caer en `auth:needsProfile` y notificando de inmediato a `portal-auth.ts`.
+- [x] **T-14.5: Bypass de rol y Watchdog de seguridad en `src/portal-auth.ts`:**
+  - Acceso garantizado y temporizador protector de 10s para evitar bloqueo visual del botón.
+- [x] **T-14.6: Verificación y Compilación:**
+  - `npx tsc --noEmit` (0 errores) y `npm run build` exitoso (`dist/` generado).
+
+
+
