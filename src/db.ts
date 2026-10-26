@@ -409,6 +409,30 @@ export class DatabaseInterface {
     return user;
   }
 
+  // --- Actualización de perfil con whitelist explícito ---
+  // Evita `updateDoc` si el documento aún no existe (usa `setDoc` con `merge: true`).
+  // Filtra campos según whitelist para no tocar datos sensibles desde el cliente.
+  async updateUserProfile(uid: string, fields: Partial<User>): Promise<void> {
+    const allowed: (keyof User)[] = [
+      'name', 'username', 'age', 'bio', 'gender', 'orientation',
+      'favoriteCocktail', 'preferredZones', 'linkedinUrl', 'linkedinSlug',
+      'safeword', 'privacySettings', 'photoURL', 'role'
+    ];
+
+    const rawPatch: Record<string, any> = {};
+    for (const k of allowed) {
+      if (fields[k] !== undefined) {
+        rawPatch[k] = fields[k];
+      }
+    }
+
+    const patch = cleanFirestoreData(rawPatch);
+    if (Object.keys(patch).length === 0) return;
+
+    const docRef = doc(this._getFirestore(), 'users', uid);
+    await setDoc(docRef, patch, { merge: true });
+  }
+
   async countUsers(): Promise<number> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'users'));

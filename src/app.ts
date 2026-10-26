@@ -8,7 +8,6 @@ import { RondaDialog } from './dialog.js';
 import { Icebreakers } from './icebreakers.js';
 import { Satisfaction } from './satisfaction.js';
 import notifications from './notifications.js';
-import { renderRondaFooter } from './footer.js';
 // app.js: Orquestador principal de la vista y eventos de RONDA
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
@@ -19,7 +18,6 @@ if (document.readyState === 'loading') {
 function initApp() {
   console.log("Inicializando App RONDA...");
   notifications.init();
-  renderRondaFooter();
   
   // Connection Indicator Logic
   const offlineInd = document.getElementById('offline-indicator');

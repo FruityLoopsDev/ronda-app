@@ -11,7 +11,7 @@ service cloud.firestore {
       return request.auth != null && (
         request.auth.token.email == 'cesar@ronda.uno' ||
         request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
-        userRole(request.auth.uid) == 'superadmin'
+        (request.auth.token.email_verified == true && userRole(request.auth.uid) == 'superadmin')
       );
     }
     function isSales()      { return request.auth != null && userRole(request.auth.uid) == 'sales'; }
