@@ -1116,6 +1116,69 @@ iframe.skiptranslate { display: none !important; }
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 121, 193, 0.45);
 }
+.btn-micro-crypto {
+  appearance: none;
+  background: linear-gradient(135deg, #181A20 0%, #2B313A 100%);
+  border: 1px solid #F0B90B;
+  color: #F0B90B !important;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 26px;
+  border-radius: 99px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(240, 185, 11, 0.2);
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+}
+.btn-micro-crypto:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(240, 185, 11, 0.45);
+  background: linear-gradient(135deg, #22262E 0%, #363D49 100%);
+  border-color: #FFD026;
+  color: #FFF !important;
+}
+.crypto-tab-btn.active {
+  background: #F0B90B !important;
+  color: #121418 !important;
+  box-shadow: 0 2px 10px rgba(240, 185, 11, 0.35);
+}
+.crypto-tab-btn:not(.active) {
+  background: transparent !important;
+  color: var(--humo) !important;
+}
+.crypto-tab-btn:not(.active):hover {
+  color: var(--papel) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+.net-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  color: var(--papel);
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+.net-btn:hover {
+  border-color: #26A17B;
+  background: rgba(38, 161, 123, 0.08);
+}
+.net-btn.active {
+  background: rgba(38, 161, 123, 0.16);
+  border-color: #26A17B;
+  color: #4EEDB2;
+  box-shadow: 0 0 12px rgba(38, 161, 123, 0.25);
+}
 </style>
 </head>
 <body>
@@ -2638,6 +2701,128 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
     </div>
   </div>
 
+  <!-- Modal Binance / USDT Micro-Aportes -->
+  <div class="modal-overlay" id="modal-crypto" role="dialog" aria-modal="true" aria-labelledby="crypto-modal-title">
+    <div class="modal-content" style="max-width: 480px; text-align: center; padding: 28px 24px;">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
+      
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; background: rgba(240, 185, 11, 0.12); border: 1px solid rgba(240, 185, 11, 0.35); margin-bottom: 12px;">
+        <span style="font-size: 26px;">🟡</span>
+      </div>
+      <h3 id="crypto-modal-title" style="font-size: 22px; margin-bottom: 6px; color: #F0B90B; font-family: 'Bodoni Moda', serif;">Aporte en Binance / USDT</h3>
+      <p style="margin-bottom: 18px; font-size: 13px; color: var(--humo); line-height: 1.45;">
+        Elige tu método preferido: transferencia directa sin comisión con <b>Binance Pay</b> o envío descentralizado a nuestra <b>billetera USDT multi-red</b>.
+      </p>
+
+      <!-- Selector de Modo: Binance Pay vs Billetera USDT -->
+      <div class="crypto-mode-switcher" style="display: flex; background: rgba(0,0,0,0.4); border: 1px solid var(--linea); border-radius: 12px; padding: 4px; margin-bottom: 20px; gap: 4px;">
+        <button type="button" id="tab-btn-binance" class="crypto-tab-btn active" onclick="switchCryptoTab('binance')" style="flex: 1; padding: 9px 12px; border-radius: 9px; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+          ⚡ Binance Pay (Directo)
+        </button>
+        <button type="button" id="tab-btn-wallet" class="crypto-tab-btn" onclick="switchCryptoTab('wallet')" style="flex: 1; padding: 9px 12px; border-radius: 9px; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+          💎 Billetera USDT (On-Chain)
+        </button>
+      </div>
+
+      <!-- PANEL 1: Binance Pay Directo -->
+      <div id="crypto-panel-binance" class="crypto-panel active">
+        <div style="background: rgba(240, 185, 11, 0.05); border: 1px solid rgba(240, 185, 11, 0.3); border-radius: 16px; padding: 20px; margin-bottom: 16px; text-align: center;">
+          <div style="display: inline-block; background: rgba(240, 185, 11, 0.15); color: #F0B90B; font-size: 10.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; padding: 3px 10px; border-radius: 99px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+            0% Comisión · Instantáneo entre usuarios Binance
+          </div>
+          
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--humo); margin-bottom: 4px;">
+            Binance Pay ID (UID)
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 0.06em; margin-bottom: 4px;" id="binance-pay-id-val">
+            573169749
+          </div>
+          <div style="font-size: 12px; color: var(--humo); margin-bottom: 16px;">
+            Cuenta Binance: <span style="color: var(--papel);">invest@ronda.uno</span> · Titular: RONDA Founders
+          </div>
+
+          <!-- QR Binance Pay -->
+          <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+            <div style="background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: inline-block;">
+              <img id="binance-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=573169749&amp;color=1e2026" alt="QR Binance Pay ID 573169749" width="130" height="130" style="display: block; border-radius: 6px;">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-direction: column;">
+            <button type="button" onclick="copyCryptoData('573169749', 'btn-copy-binance', '¡Binance Pay ID Copiado!')" id="btn-copy-binance" class="btn-micro-crypto" style="width: 100%; justify-content: center; padding: 11px; font-size: 13px;">
+              📋 Copiar Binance Pay ID
+            </button>
+            <a href="https://app.binance.com" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; font-size: 12px; color: var(--humo); text-decoration: none; border: 1px dashed rgba(240,185,11,0.3); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#F0B90B'; this.style.borderColor='#F0B90B';" onmouseout="this.style.color='var(--humo)'; this.style.borderColor='rgba(240,185,11,0.3)';">
+              ↗️ Abrir App / Web de Binance
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: Billetera USDT On-Chain -->
+      <div id="crypto-panel-wallet" class="crypto-panel" style="display: none;">
+        <!-- Selector de Red -->
+        <div style="margin-bottom: 14px; text-align: left;">
+          <label style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--humo); letter-spacing: 0.1em; display: block; margin-bottom: 6px;">
+            1. Selecciona la Red de Envío:
+          </label>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+            <button type="button" class="net-btn active" id="net-btn-trc20" onclick="selectCryptoNetwork('trc20')">
+              <span style="font-weight:700;">TRC-20</span>
+              <span style="font-size:10px; opacity:0.75;">Tron</span>
+            </button>
+            <button type="button" class="net-btn" id="net-btn-bep20" onclick="selectCryptoNetwork('bep20')">
+              <span style="font-weight:700;">BEP-20</span>
+              <span style="font-size:10px; opacity:0.75;">BNB Chain</span>
+            </button>
+            <button type="button" class="net-btn" id="net-btn-polygon" onclick="selectCryptoNetwork('polygon')">
+              <span style="font-weight:700;">Polygon</span>
+              <span style="font-size:10px; opacity:0.75;">PoS</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="background: rgba(38, 161, 123, 0.06); border: 1px solid rgba(38, 161, 123, 0.35); border-radius: 16px; padding: 18px 16px; margin-bottom: 16px; text-align: center;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <span id="wallet-network-tag" style="background: rgba(38, 161, 123, 0.18); color: #26A17B; font-size: 10.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; padding: 2px 8px; border-radius: 6px;">
+              USDT (TRC-20)
+            </span>
+            <span id="wallet-fee-estimate" style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">
+              Comisión estimada: ~1.0 USDT
+            </span>
+          </div>
+
+          <!-- QR Wallet Address -->
+          <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+            <div style="background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: inline-block;">
+              <img id="wallet-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=TYDnyPZ5yK8hK1c9D2fG5hJ7kL3mN4pQ5r&amp;color=1e2026" alt="QR Dirección USDT" width="130" height="130" style="display: block; border-radius: 6px;">
+            </div>
+          </div>
+
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--humo); margin-bottom: 4px;">
+            Dirección Pública de Depósito
+          </div>
+          <div id="wallet-address-display" style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; color: #fff; background: rgba(0,0,0,0.5); padding: 8px 10px; border-radius: 8px; word-break: break-all; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px; user-select: all;">
+            TYDnyPZ5yK8hK1c9D2fG5hJ7kL3mN4pQ5r
+          </div>
+
+          <button type="button" onclick="copyCurrentWalletAddress()" id="btn-copy-wallet" class="btn-micro-crypto" style="width: 100%; justify-content: center; padding: 11px; font-size: 13px; background: linear-gradient(135deg, #163628 0%, #1e4a37 100%); border-color: #26A17B; color: #4EEDB2 !important; box-shadow: 0 4px 15px rgba(38, 161, 123, 0.25);">
+            📋 Copiar Dirección USDT
+          </button>
+        </div>
+
+        <div style="background: rgba(240, 168, 48, 0.08); border-left: 3px solid var(--luz); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 11px; color: var(--humo); text-align: left; line-height: 1.45; margin-bottom: 14px;">
+          ⚠️ <b>Nota de seguridad:</b> Envía <b>únicamente USDT</b> a través de la red seleccionada (<span id="warn-network-name">TRC-20</span>). Los depósitos desde otras redes o tokens diferentes podrían no recuperarse.
+        </div>
+      </div>
+
+      <!-- Footer Común: WhatsApp confirmación -->
+      <a id="btn-crypto-whatsapp" href="https://wa.me/573169749677?text=Hola%20C%C3%A9sar,%20acabo%20de%20enviar%20un%20aporte%20por%20Binance/USDT%20para%20apoyar%20a%20RONDA%20%F0%9F%8D%B8" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border-radius: 12px; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.35); color: #25d366; text-decoration: none; font-size: 12.5px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.18)';" onmouseout="this.style.background='rgba(37,211,102,0.1)';">
+        💬 Notificar aporte o compartir TxID por WhatsApp
+      </a>
+    </div>
+  </div>
+
   <!-- Floating Action Button -->
   <button onclick="document.getElementById('modal-contact').classList.add('active')" class="fab-btn" id="fab-btn" style="border: none; font-family: inherit; font-size: inherit;">
     <span class="fab-icon">💬</span> Contactar Founders
@@ -2685,6 +2870,9 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
       <a href="https://paypal.me/kakaobit?locale.x=es_XC&amp;country.x=CO" target="_blank" rel="noopener noreferrer" class="btn-micro-paypal" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_paypal_click');}">
         🌐 Aportar por PayPal (Internacional)
       </a>
+      <button type="button" class="btn-micro-crypto" onclick="document.getElementById('modal-crypto').classList.add('active'); if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_crypto_open');}">
+        🟡 Aportar con Binance / USDT (Cripto)
+      </button>
     </div>
   </section>
 
@@ -2725,13 +2913,13 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
             Canales Oficiales RONDA:
           </div>
           <div class="footer-social-group">
-            <a href="#" target="_blank" rel="noopener noreferrer" title="Instagram de RONDA" aria-label="Instagram" class="footer-social-icon">
+            <a href="https://instagram.com/ronda.uno" target="_blank" rel="noopener noreferrer" title="Instagram de RONDA" aria-label="Instagram" class="footer-social-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" title="LinkedIn de RONDA" aria-label="LinkedIn" class="footer-social-icon">
+            <a href="https://www.linkedin.com/company/ronda-app" target="_blank" rel="noopener noreferrer" title="LinkedIn de RONDA" aria-label="LinkedIn" class="footer-social-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" title="GitHub de RONDA" aria-label="GitHub" class="footer-social-icon">
+            <a href="https://github.com/ronda-app" target="_blank" rel="noopener noreferrer" title="GitHub de RONDA" aria-label="GitHub" class="footer-social-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             </a>
           </div>
@@ -2968,6 +3156,100 @@ function copyNequiNumber() {
     }).catch(fallback);
   } else {
     fallback();
+  }
+}
+
+/* ---- micro-aportes cripto (binance & usdt) ---- */
+const RONDA_CRYPTO_NETWORKS = {
+  trc20: {
+    name: 'USDT (TRC-20)',
+    short: 'TRC-20',
+    fee: '~1.0 USDT',
+    address: 'TYDnyPZ5yK8hK1c9D2fG5hJ7kL3mN4pQ5r'
+  },
+  bep20: {
+    name: 'USDT (BEP-20 · BNB Chain)',
+    short: 'BEP-20',
+    fee: '< 0.30 USDT',
+    address: '0x71C94b8e2A9cD76d1e4344d9354Db925b33B18F9'
+  },
+  polygon: {
+    name: 'USDT (Polygon PoS)',
+    short: 'Polygon',
+    fee: '< 0.05 USDT',
+    address: '0x71C94b8e2A9cD76d1e4344d9354Db925b33B18F9'
+  }
+};
+let currentCryptoNet = 'trc20';
+
+function switchCryptoTab(mode) {
+  const isBinance = mode === 'binance';
+  const tabBinance = document.getElementById('tab-btn-binance');
+  const tabWallet = document.getElementById('tab-btn-wallet');
+  const panelBinance = document.getElementById('crypto-panel-binance');
+  const panelWallet = document.getElementById('crypto-panel-wallet');
+
+  if (tabBinance && tabWallet && panelBinance && panelWallet) {
+    tabBinance.classList.toggle('active', isBinance);
+    tabWallet.classList.toggle('active', !isBinance);
+    panelBinance.style.display = isBinance ? 'block' : 'none';
+    panelWallet.style.display = isBinance ? 'none' : 'block';
+  }
+  if (typeof RondaTracker !== 'undefined') {
+    RondaTracker.track('investor_crypto_tab_switch', { tab: mode });
+  }
+}
+
+function selectCryptoNetwork(netKey) {
+  const net = RONDA_CRYPTO_NETWORKS[netKey];
+  if (!net) return;
+  currentCryptoNet = netKey;
+
+  document.querySelectorAll('.net-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.id === `net-btn-${netKey}`);
+  });
+
+  const tagEl = document.getElementById('wallet-network-tag');
+  const feeEl = document.getElementById('wallet-fee-estimate');
+  const addrEl = document.getElementById('wallet-address-display');
+  const warnEl = document.getElementById('warn-network-name');
+  const qrEl = document.getElementById('wallet-qr-img');
+
+  if (tagEl) tagEl.textContent = net.name;
+  if (feeEl) feeEl.textContent = `Comisión estimada: ${net.fee}`;
+  if (addrEl) addrEl.textContent = net.address;
+  if (warnEl) warnEl.textContent = net.short;
+  if (qrEl) qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(net.address)}&color=1e2026`;
+
+  if (typeof RondaTracker !== 'undefined') {
+    RondaTracker.track('investor_crypto_net_change', { network: netKey });
+  }
+}
+
+function copyCryptoData(text, btnId, successLabel) {
+  const btn = document.getElementById(btnId);
+  const fallback = () => alert('Dirección copiada: ' + text);
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = `✅ ${successLabel || '¡Copiado con éxito!'}`;
+        setTimeout(() => { btn.innerHTML = orig; }, 2600);
+      }
+      if (typeof RondaTracker !== 'undefined') {
+        RondaTracker.track('investor_crypto_copy', { content: text });
+      }
+    }).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+function copyCurrentWalletAddress() {
+  const net = RONDA_CRYPTO_NETWORKS[currentCryptoNet];
+  if (net) {
+    copyCryptoData(net.address, 'btn-copy-wallet', `¡Dirección ${net.short} Copiada!`);
   }
 }
 

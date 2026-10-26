@@ -42,3 +42,10 @@ Archivos **prohibidos** de lectura completa (usa `grep` o lee por rangos):
 - Respuestas cortas, sin re-explicar el contexto ya establecido en la caché.
 - Usa tablas compactas; una línea por hallazgo, no párrafos extensos.
 - Deriva al usuario o al agente correspondiente si la tarea escapa a tu rol (ej. "Antigravity delega a Cline el refactor").
+
+## 6. Estándar Inmutable de Footers (Regla de 3 Categorías)
+- Seguir estrictamente `.agents/rules/ronda-footer-standard.md`.
+- **Landings (`landing`, `partners`, `invest`):** Footer Luxury Semántico 3 columnas.
+- **Web App (`index.html`):** ZERO FOOTER. Prohibido agregar footer comercial a la SPA móvil.
+- **Dashboards Staff (`network`, `crm`, `admin`, `superadmin`):** Dashboard Console Footer de 1 sola fila (`getRondaDashboardFooterHtml()`). PROHIBIDO texto de marketing de citas en paneles operativos.
+

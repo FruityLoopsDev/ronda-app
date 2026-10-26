@@ -69,3 +69,20 @@
 .ronda-footer p {
   margin: 0;
 }
+
+/* Cat. 3: Footer Consola de Operaciones / Dashboards Staff */
+.ronda-dashboard-footer {
+  background: rgba(10, 7, 14, 0.85) !important;
+  border-top: 1px solid var(--linea, rgba(243, 237, 226, 0.12)) !important;
+  padding: 12px 24px !important;
+  margin-top: auto !important;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace) !important;
+  font-size: 11px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ronda-dashboard-footer a:hover {
+  text-decoration: underline !important;
+  opacity: 0.9 !important;
+}

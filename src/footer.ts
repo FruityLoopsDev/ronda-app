@@ -32,7 +32,7 @@ function applyEngineeringMetrics(root: ParentNode, hours: number, commits: numbe
     el.textContent = `${days}`;
   });
   root.querySelectorAll('[data-ronda-engineering-badge]').forEach((el) => {
-    el.textContent = `⚡ +${hours}h de ingeniería · ${commits} deploys · Motor mem-rr-v2`;
+    el.textContent = `⚡ +${hours}h (est.) · ${commits} deploys · Motor mem-rr-v2`;
   });
 }
 
@@ -142,13 +142,13 @@ export function getRondaFooterHtml(): string {
               Redes Oficiales:
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <a href="#" target="_blank" rel="noopener noreferrer" title="Instagram de RONDA" aria-label="Instagram" style="color:var(--humo, #8c8378); display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.04); border:1px solid var(--linea, rgba(243,237,226,0.12));">
+              <a href="https://instagram.com/ronda.uno" target="_blank" rel="noopener noreferrer" title="Instagram de RONDA" aria-label="Instagram" style="color:var(--humo, #8c8378); display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.04); border:1px solid var(--linea, rgba(243,237,226,0.12));">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" title="LinkedIn de RONDA" aria-label="LinkedIn" style="color:var(--humo, #8c8378); display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.04); border:1px solid var(--linea, rgba(243,237,226,0.12));">
+              <a href="https://www.linkedin.com/company/ronda-app" target="_blank" rel="noopener noreferrer" title="LinkedIn de RONDA" aria-label="LinkedIn" style="color:var(--humo, #8c8378); display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.04); border:1px solid var(--linea, rgba(243,237,226,0.12));">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" title="GitHub de RONDA" aria-label="GitHub" style="color:var(--humo, #8c8378); display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.04); border:1px solid var(--linea, rgba(243,237,226,0.12));">
+              <a href="https://github.com/ronda-app" target="_blank" rel="noopener noreferrer" title="GitHub de RONDA" aria-label="GitHub" style="color:var(--humo, #8c8378); display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.04); border:1px solid var(--linea, rgba(243,237,226,0.12));">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
               </a>
             </div>
@@ -225,18 +225,71 @@ export function hydrateRondaFooter(root: ParentNode = document): void {
   });
 }
 
+export function getRondaDashboardFooterHtml(): string {
+  return `
+    <footer class="ronda-footer ronda-dashboard-footer" data-ronda-footer style="border-top: 1px solid var(--linea, rgba(243,237,226,0.12)); padding: 12px 24px; margin-top: auto; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--humo, #8c8378); background: rgba(10, 7, 14, 0.85); backdrop-filter: blur(12px); width: 100%; box-sizing: border-box;">
+      <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span style="font-weight: 700; color: var(--papel, #f3ede2); letter-spacing: 0.06em;">RONDA <span style="color: var(--luz, #F0A830);">Ops Console</span></span>
+          <span style="opacity: 0.3;">·</span>
+          <span data-ronda-copyright style="color: var(--humo, #8c8378);">${APP_COPYRIGHT}</span>
+          <span style="opacity: 0.3;">·</span>
+          <span data-ronda-version class="chip gris" style="font-size: 10px; padding: 1px 7px; border-radius: 999px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea, rgba(243,237,226,0.12)); color: var(--papel, #f3ede2);">${APP_VERSION}</span>
+          <span style="opacity: 0.3;">·</span>
+          <span style="display: inline-flex; align-items: center; gap: 5px; color: #8ce4be; font-size: 10.5px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #25d366; box-shadow: 0 0 6px #25d366; display: inline-block;"></span>
+            <span>Red Operativa</span>
+          </span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <span data-ronda-engineering-badge style="font-size: 10px; color: var(--luz, #F0A830); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.22); padding: 2px 7px; border-radius: 4px;">
+            ⚡ <span data-ronda-hours>${APP_DEV_HOURS}</span>h ops · <span data-ronda-commits>${APP_COMMIT_COUNT}</span> deploys
+          </span>
+          <span style="opacity: 0.3;">·</span>
+          <a href="https://wa.me/573026543854?text=Alerta%20Ops%20Consola%20RONDA" target="_blank" rel="noopener noreferrer" style="color: #8ce4be; text-decoration: none; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <span>WhatsApp Mesa Ops (+57 302 654 3854)</span>
+          </a>
+          <span style="opacity: 0.3;">·</span>
+          <span style="color: var(--humo, #8c8378); opacity: 0.7;">Bogotá D.C.</span>
+        </div>
+      </div>
+    </footer>
+  `;
+}
+
 export function renderRondaFooter(targetContainer?: HTMLElement | string | null): void {
-  // 1. Hidratar ganchos existentes primero (cubre footers custom con contadores).
+  // 1. Regla Inmutable Cat 2: index.html es la Web App SPA de clientes -> CERO FOOTER
+  if (typeof window !== 'undefined') {
+    const isApp = window.location.pathname === '/' || window.location.pathname.endsWith('index.html') || !!document.getElementById('view-lobby');
+    if (isApp && !window.location.pathname.includes('network') && !window.location.pathname.includes('admin') && !window.location.pathname.includes('crm') && !window.location.pathname.includes('superadmin')) {
+      return;
+    }
+  }
+
+  // 2. Hidratar ganchos existentes primero (cubre footers custom con contadores).
   hydrateRondaFooter(document);
 
-  // 2. Placeholder explícito tiene prioridad (portales sin footer propio).
+  // 3. Determinar si es Dashboard Staff (Cat 3) o Landing Pública (Cat 1)
+  const isDashboard = typeof window !== 'undefined' && (
+    window.location.pathname.includes('network') ||
+    window.location.pathname.includes('admin') ||
+    window.location.pathname.includes('crm') ||
+    window.location.pathname.includes('superadmin') ||
+    document.getElementById('view-network') !== null ||
+    document.getElementById('view-admin') !== null ||
+    document.getElementById('view-crm') !== null
+  );
+
+  const footerHtml = isDashboard ? getRondaDashboardFooterHtml() : getRondaFooterHtml();
+
+  // 4. Placeholder explícito tiene prioridad (#footer-root en portales)
   const placeholder = document.getElementById('footer-root') ?? document.querySelector('[data-ronda-footer-inject]');
   if (placeholder) {
     if (!placeholder.querySelector('footer.ronda-footer')) {
-      placeholder.innerHTML = getRondaFooterHtml();
-    } else {
-      hydrateRondaFooter(placeholder);
+      placeholder.innerHTML = footerHtml;
     }
+    hydrateRondaFooter(placeholder);
     return;
   }
 
@@ -247,23 +300,23 @@ export function renderRondaFooter(targetContainer?: HTMLElement | string | null)
     container = targetContainer;
   }
 
-  // Si no se pasó contenedor específico, buscar el contenedor de vista activa o body
   if (!container) {
     container = document.querySelector('section.panel.on') || document.querySelector('main') || document.body;
   }
 
   if (!container) return;
 
-  // 3. Si ya existe el footer estándar, solo hidratar (idempotente, preserva todo).
+  // 5. Si ya existe footer, hidratar y salir
   const existing = container.querySelector('footer.ronda-footer') || document.querySelector('footer.ronda-footer');
   if (existing) {
     hydrateRondaFooter(existing.parentElement ?? document);
     return;
   }
 
-  // 4. Si la página ya tiene un <footer> propio (con ganchos), NO duplicar: ya hidratado en paso 1.
+  // 6. Si ya tiene un <footer> propio, no duplicar
   if (document.querySelector('footer')) return;
 
-  // 5. Sin footer previo: inyectar el estándar al final del contenedor.
-  container.insertAdjacentHTML('beforeend', getRondaFooterHtml());
+  // 7. Inyectar según categoría
+  container.insertAdjacentHTML('beforeend', footerHtml);
+  hydrateRondaFooter(container);
 }
