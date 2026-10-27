@@ -7,7 +7,10 @@ const certKey = resolve(import.meta.dirname, 'certs/key.pem');
 const certPem = resolve(import.meta.dirname, 'certs/cert.pem');
 const hasCerts = existsSync(certKey) && existsSync(certPem);
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // FASE 1: Limpieza para producción — ver `build.minify` (terser) más abajo.
+  // Nota: en Vite 8 (Rolldown) `esbuild.drop` está deprecado/ignorado; la ruta
+  // efectiva es terser con drop_console + drop_debugger, solo en `vite build`.
   server: {
     host: true,
     port: 5000,
@@ -31,6 +34,17 @@ export default defineConfig({
     } : {}),
   },
   build: {
+    // FASE 1: Limpieza para producción.
+    // `command === 'build'` → aplica solo al build final (en dev se conservan logs).
+    // terser elimina TODOS los console.* y debugger del bundle (equivalente al
+    // `esbuild: { drop: ['console', 'debugger'] }` del brief, no soportado por Vite 8).
+    ...(command === 'build' ? {
+      minify: 'terser' as const,
+      terserOptions: {
+        compress: { drop_console: true, drop_debugger: true },
+        format: { comments: false },
+      },
+    } : {}),
     rollupOptions: {
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
@@ -59,4 +73,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))

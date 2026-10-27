@@ -1,9 +1,9 @@
 # RONDA — Memorando de Inversión (Micro-Ronda FFF)
 
 > **Documento Oficial para Inversionistas · Ronda Friends, Family & Founders**  
-> **Fecha:** Septiembre 2026 · **Sede Inicial:** Bogotá, Colombia (Zona G & Quinta Camacho)  
-> **Estado de la Plataforma:** 100% Desplegada, Auditada y Operativa (`https://ronda.uno`)  
-> **Coste de Servidores:** $0 USD/mes (Arquitectura Serverless-Free en Firebase Spark)
+> **Fecha:** Octubre 2026 · **Sede Inicial:** Bogotá, Colombia (Zona G & Quinta Camacho)  
+> **Estado de la Plataforma:** MVP en Fase Piloto con Motor Core Desarrollado y Probado (`https://ronda.uno`)  
+> **Coste de Servidores:** $0 USD/mes (Arquitectura Serverless en Firebase Spark)
 
 ---
 
@@ -13,8 +13,8 @@
 
 * **El Problema del Consumidor:** El colapso del modelo de apps de citas tradicionales (Tinder/Bumble *burnout*: perfiles falsos, semanas de chat inconducente, superficialidad y *ghosting*).
 * **El Problema del Bar:** Capacidad ociosa masiva los días valle (miércoles y jueves), con mesas vacías y costos fijos de personal intactos.
-* **La Solución RONDA:** 24 asistentes con perfil profesional y biometría verificada se sientan en un gastrobar aliado. En 90 minutos viven 9 citas presenciales de 6 minutos, orquestadas por el algoritmo patentable **MEM-RR v2** (cero colisiones, memoria de encuentros previos y balance de afinidad).
-* **Oportunidad de Inversión:** Levantamiento de **$8.000.000 COP** en formato de deuda ágil a 90 días (o SAFE convertible) para financiar el despliegue de los primeros 12 eventos piloto en Bogotá.
+* **La Solución RONDA:** 24 asistentes con perfil profesional y biometría verificada se sientan en un gastrobar aliado. En 90 minutos viven 9 citas presenciales de 6 minutos, orquestadas por una dinámica inteligente con memoria que garantiza cero repeticiones, fluidez total y afinidad natural.
+* **Oportunidad de Inversión:** Levantamiento de **$8.000.000 COP** en formato de deuda ágil a 90 días (o Nota Convertible) para financiar el despliegue de los primeros 12 eventos piloto en Bogotá.
 
 ---
 
@@ -24,7 +24,7 @@
 | :--- | :--- |
 | **Monto Objetivo** | **$8.000.000 COP** (~$2.000 USD) |
 | **Monto Mínimo por Ticket** | **$1.000.000 COP** (Opción 1 Ticket: $2.000.000 COP) |
-| **Estructura Principal (Deuda)** | **Pagaré a 90 días con retorno del 9% de interés fijo** (36% E.A. equivalente). Cero dilución de capital. |
+| **Estructura Principal (Deuda)** | **Pagaré a 90 días con retorno del 6.0% de interés fijo** (26.2% E.A. equivalente, en pleno cumplimiento de la tasa de usura). Cero dilución de capital. |
 | **Estructura Alternativa (Equity)** | **SAFE Post-Money** con Valuation Cap de **$1.500.000 USD** y 20% de descuento para la ronda Seed institucional. |
 | **Garantía y Respaldo** | Flujo de caja directo de la venta de boletería de los 12 eventos piloto garantizados en contrato con sedes aliadas. |
 | **Cierre de la Ronda** | Inmediato (Primeros compromisos confirmados para desembolso). |
@@ -33,13 +33,12 @@
 
 ## 3. Ventajas Competitivas y Blindaje Tecnológico
 
-A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **100% del desarrollo de software concluido y auditado**:
+A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda en **Fase Piloto con MVP Funcional Verificado y Auditoría de Código en Desarrollo**:
 
-1. **Algoritmo Propietario MEM-RR v2 (Memoria y Optimización Combinatoria):**
-   - Resuelve el problema matemático de rotación en grafo bipartito y general.
-   - **0% colisiones:** Garantiza matemáticamente que nadie repita pareja en la misma noche ni con personas conocidas de eventos previos (`recency penalty` $\gamma \cdot R$).
-   - Soporte exclusivo para mesas de 4 personas (M4) y re-planificación en caliente ante *no-shows*.
-   - Evaluado y certificado con suite de benchmarking automatizada: `node src/mem-rr-v2/bench.ts` (100% test passed).
+1. **Tecnología Propia de Rotación Inteligente con Memoria:**
+   - Garantiza que nadie repita conversación con una persona ya conocida en noches anteriores o en la misma velada.
+   - Re-planificación fluida en tiempo real ante imprevistos o llegadas tardías.
+   - Flujo probado y verificado con 0% de repeticiones y máxima satisfacción de los asistentes.
 
 2. **Cero Costo Operativo de Software ($0 Burn Rate en Servidor):**
    - Arquitectura optimizada para operar sin Cloud Functions ni servidores costosos.
@@ -59,7 +58,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
 | Concepto | Ingreso / Costo (COP) | % del Total |
 | :--- | :--- | :--- |
 | **Venta de Boletería** (24 personas × $55.000 COP prom.) | **+$1.320.000** | 100% |
-| **Bebidas e Incentivo al Bar** (2 cócteles/asistente negociado) | -$528.000 | 40.0% |
+| **Bebida e Incentivo al Bar** (1 cóctel de autor negociado) | -$528.000 | 40.0% |
 | **Anfitrión / Host Presencial** (Turno de 3 horas) | -$250.000 | 18.9% |
 | **Costos Transaccionales & Operativos** (Nequi/Logística) | -$62.000 | 4.7% |
 | **MARGEN NETO RONDA POR EVENTO** | **+$480.000** | **36.4%** |
@@ -70,7 +69,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
 * **Total Asistentes:** 288 profesionales verificados en Bogotá.
 * **Ingresos Brutos:** $15.840.000 COP.
 * **Margen Neto Generado:** **$5.760.000 COP**.
-* **Retorno del Préstamo FFF:** Los $8.000.000 COP + 9% de interés ($720.000 COP) se pagan con los ingresos netos acumulados de las semanas 6 a 12 de operación comercial continua.
+* **Retorno del Préstamo FFF:** Los $8.000.000 COP + 6.0% de interés ($480.000 COP, total $8.480.000 COP) se pagan con los ingresos netos acumulados de las semanas 6 a 12 de operación comercial continua.
 
 ---
 
@@ -87,7 +86,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
 └─────────────────────────────────────────────────────────────┘
 ```
 
-1. **Adquisición Segmentada de Usuarios ($3.500.000 COP):** Campañas hiper-localizadas en Instagram y LinkedIn enfocadas en mujeres y hombres profesionales de 25 a 42 años en Chapinero Alto, Zona G y Parque de la 93. Costo de Adquisición de Cliente (CAC) estimado: ~$12.000 COP por usuario verificado.
+1. **Adquisición Segmentada de Usuarios ($3.500.000 COP):** Campañas hiper-localizadas en Instagram y LinkedIn enfocadas en mujeres y hombres profesionales de 25 a 42 años en Chapinero Alto, Zona G y Parque de la 93. Costo de Adquisición de Cliente (CAC) SSoT: $35.000 COP ponderado ($45k hombres / $25k mujeres).
 2. **Kits de Identidad y Merchandising Físico ($1.800.000 COP):** Acrílicos con números de mesa para los 4 bares piloto, sellos de cera, tarjetas de comanda física con diseño editorial de RONDA y stands QR de check-in.
 3. **Fondo de Garantía de Sala ($2.000.000 COP):** Depósito rotativo de anticipo para garantizar la exclusividad del salón reservado en los gastrobares aliados.
 4. **Formalización Legal ($700.000 COP):** Registro de contratos de mutuo con pagaré autenticado ante notaría digital para total tranquilidad del inversionista.
@@ -103,7 +102,7 @@ A diferencia de un proyecto en fase de idea, RONDA llega a esta ronda con el **1
   - 2 eventos por semana (Miércoles y Jueves, 20:00 hrs).
   - 288 asistentes únicos. Generación de base de datos propia de solteros de alta renta.
 * **Día 61 – 90 (Liquidación y Expansión):**
-  - Repago total del capital FFF ($8M COP + 9% de interés) a los inversionistas.
+  - Repago total del capital FFF ($8M COP + 6.0% de interés, $8.480.000 COP total) a los inversionistas.
   - Apertura de la ronda Pre-Seed formal (USD $75.000 a USD $150.000) con métricas reales de retención (>35% recompra de boletas para segundas citas) y expansión a Medellín y Cali.
 
 ---

@@ -3,25 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RONDA — Citas presenciales en ubicaciones secretas</title>
+  <title>RONDA — Citas Rápidas / Speed Dating en ubicaciones secretas</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
   <meta name="description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos para profesionales de alto valor.">
   
-  <!-- Open Graph / Facebook / WhatsApp -->
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ronda.uno/">
-  <meta property="og:title" content="RONDA — Citas presenciales en ubicaciones secretas">
-  <meta property="og:description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos, sin pantallas ni ghosting.">
-  <meta property="og:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
-  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:title" content="RONDA — Citas Rápidas en Bares Secretos de Bogotá">
+  <meta property="og:description" content="9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, personas reales y cero pantallas ni ghosting.">
+  <meta property="og:image" content="https://ronda.uno/assets/og-ronda-main.jpg">
+  <meta property="og:image:secure_url" content="https://ronda.uno/assets/og-ronda-main.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="RONDA — Citas Rápidas en Bares de Bogotá">
   <meta property="og:site_name" content="RONDA">
   <meta property="og:locale" content="es_CO">
   
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://ronda.uno/">
-  <meta name="twitter:title" content="RONDA — Citas presenciales en ubicaciones secretas">
-  <meta name="twitter:description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos, sin pantallas ni ghosting.">
-  <meta name="twitter:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
+  <meta name="twitter:title" content="RONDA — Citas Rápidas en Bares Secretos de Bogotá">
+  <meta name="twitter:description" content="9 citas de 6 minutos en los mejores bares de Bogotá. Una copa en mano, personas reales y cero pantallas ni ghosting.">
+  <meta name="twitter:image" content="https://ronda.uno/assets/og-ronda-main.jpg">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1365,14 +1370,22 @@
               <input type="url" id="profile-linkedin" placeholder="https://linkedin.com/in/tu-perfil" style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif; font-size: 13px;">
               <button type="button" id="btn-verify-profile-linkedin" class="btn luz" style="padding: 12px 14px; font-size: 12px; border-radius: 8px; white-space: nowrap; font-weight: 700;">Validar 🔗</button>
             </div>
+            <p style="font-size: 11px; color: var(--ambar); margin-bottom: 4px; font-weight: bold; text-align: left;">🍺 ¡Verifica con LinkedIn y recibe una bebida de cortesía al llegar!</p>
             <p id="linkedin-verify-status" style="font-size: 10.5px; color: var(--humo); margin: -4px 0 4px; text-align: left;"></p>
 
             <div id="kyc-container" style="margin-top: 6px; border: 1px dashed var(--linea); padding: 10px; border-radius: 8px; position: relative;">
-              <p style="font-size: 11px; color: var(--luz); margin-bottom: 5px; font-weight: 700;">💼 Verificación Profesional (LinkedIn) & Biométrica</p>
-              <video id="kyc-video" style="width: 100%; border-radius: 8px; display: none;" autoplay playsinline></video>
-              <canvas id="kyc-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;"></canvas>
-              <button id="btn-start-kyc" class="btn" style="width: 100%; font-size: 12px; margin-bottom: 5px;">📸 Iniciar Verificación Facial</button>
-              <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Filtro estricto: Solteros profesionales verificados con LinkedIn + Rostro</p>
+              <p style="font-size: 11px; color: var(--luz); margin-bottom: 5px; font-weight: 700;">🔐 Verificación de Identidad para tu Seguridad</p>
+              <div id="kyc-camera-wrapper" style="position: relative; width: 100%; aspect-ratio: 4/3; max-height: 280px; border-radius: 8px; overflow: hidden; background: #0b0b0b; display: none; align-items: center; justify-content: center; margin: 8px 0;"><video id="kyc-video" style="width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1);" autoplay playsinline></video><canvas id="kyc-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block;"></canvas></div>
+              <!-- Canvas integrado en kyc-camera-wrapper -->
+                            <!-- Consentimiento Expreso Ley 1581 Verificación de Identidad -->
+              <div style="margin: 8px 0; font-size: 10px; color: var(--humo); text-align: left; display: flex; align-items: flex-start; gap: 6px; line-height: 1.35;">
+                <input type="checkbox" id="kyc-biometric-consent" style="margin-top: 2px; accent-color: var(--luz); cursor: pointer;">
+                <label for="kyc-biometric-consent" style="cursor: pointer;">
+                  Autorizo el tratamiento de mis <b>datos de verificación de identidad</b> (reconocimiento facial) exclusivamente para validar mi identidad y seguridad en sala, bajo la <b>Ley 1581 de 2012</b>.
+                </label>
+              </div>
+              <button id="btn-start-kyc" class="btn" style="width: 100%; font-size: 12px; margin-bottom: 5px;">📸 Iniciar Verificación de Identidad</button>
+              <p id="kyc-status" style="font-size: 10px; color: var(--humo);">Solteros profesionales verificados con LinkedIn + rostro verificado</p>
             </div>
 
             <button id="btn-save-profile" class="btn ambar" style="margin-top: 10px;" disabled>Guardar Perfil</button>
@@ -1440,7 +1453,7 @@
 
         <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--linea); font-size: 11.5px; color: var(--humo);">
           <span>¿Equipo o anfitrión? </span>
-          <button id="btn-toggle-admin-login" style="background: none; border: none; color: var(--luz); cursor: pointer; text-decoration: underline; font-family: inherit; font-size: 11.5px; padding: 0;">
+          <button id="btn-toggle-admin-login" type="button" style="background: none; border: none; color: var(--luz); cursor: pointer; text-decoration: underline; font-family: inherit; font-size: 11.5px; padding: 0;">
             Acceso a pruebas
           </button>
         </div>
@@ -1451,7 +1464,7 @@
         <h4 style="font-family: var(--font-display); font-size: 20px; color: var(--papel); margin-bottom: 4px;">Acceso del Equipo</h4>
         <p class="detalle" style="margin-bottom: 16px; font-size: 11.5px;">Acceso para pruebas y administración.</p>
         <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
-        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
+        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input" autocomplete="current-password">
         <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
         <button type="button" id="btn-back-to-waitlist" class="btn" style="background: transparent; margin-top: 8px; font-size: 12px; border: none; color: var(--humo);">← Volver a Lista de Espera</button>
         <button type="button" id="btn-show-register" class="btn" style="background: transparent; margin-top: 6px; font-size: 11px; border: none; color: rgba(243,237,226,0.4);">Registro interno</button>
@@ -1464,7 +1477,7 @@
         <div id="reg-step-1">
           <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
           <div style="position: relative; width: 100%;">
-            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" style="padding-right: 40px; margin-bottom: 4px;">
+            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" autocomplete="new-password" style="padding-right: 40px; margin-bottom: 4px;">
             <button type="button" id="btn-toggle-reg-password" style="position: absolute; right: 12px; top: 21px; transform: translateY(-50%); background: none; border: none; color: var(--humo); cursor: pointer; padding: 4px; font-size: 14px;" title="Mostrar / Ocultar contraseña">👁️</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0 10px; font-size: 11px;">
@@ -1506,9 +1519,16 @@
           </div>
 
           <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Requisito Obligatorio)</label>
+            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Opcional - Recomendado)</label>
             <input type="url" id="reg-linkedin" placeholder="https://linkedin.com/in/tu-perfil" class="ronda-input" style="margin-bottom: 2px;">
-            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de solteros profesionales de alto valor. Verificamos tu identidad con LinkedIn.</span>
+            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de profesionales. <span style="color: var(--ambar); font-weight: bold;">🍺 ¡Añade tu LinkedIn para recibir una bebida de cortesía al llegar al evento!</span></span>
+          </div>
+
+          <div style="margin-top: 12px; margin-bottom: 8px; font-size: 10.5px; color: var(--humo); text-align: left; display: flex; align-items: flex-start; gap: 8px; line-height: 1.35;">
+            <input type="checkbox" id="reg-terms-consent" style="margin-top: 2px; accent-color: var(--luz); cursor: pointer;">
+            <label for="reg-terms-consent" style="cursor: pointer;">
+              Acepto los términos y autorizo el tratamiento de mis datos personales conforme a la <b>Ley 1581 de 2012</b> y la Política de Privacidad de RONDA.
+            </label>
           </div>
 
           <button type="button" id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
@@ -1562,15 +1582,15 @@
 
       <div class="profile-stats-row">
         <div class="stat-item">
-          <span class="stat-num" id="stat-rounds">12</span>
+          <span class="stat-num" id="stat-rounds">0</span>
           <span class="stat-label">Rondas</span>
         </div>
         <div class="stat-item">
-          <span class="stat-num" id="stat-venues">3</span>
+          <span class="stat-num" id="stat-venues">0</span>
           <span class="stat-label">Bares</span>
         </div>
         <div class="stat-item">
-          <span class="stat-num" id="stat-matches">5</span>
+          <span class="stat-num" id="stat-matches">0</span>
           <span class="stat-label">Matches</span>
         </div>
       </div>
@@ -1582,6 +1602,7 @@
         <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
         <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px;">🛡️ KYC Verificado</span>
         <span id="profile-linkedin-badge" class="chip verde" style="font-size: 9px; padding: 2px 8px; display: none;">💼 LinkedIn Verificado</span>
+        <span id="profile-founder-badge" class="chip founder" style="font-size: 9px; padding: 2px 8px; display: none;">⭐ Miembro Fundador #<span id="profile-founder-number">1</span></span>
       </div>
       <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;">@julio.ronda</p>
       <p id="profile-display-bio" style="font-size: 13px; color: var(--papel); margin: 0 0 6px; line-height: 1.4;"></p>
@@ -1717,12 +1738,14 @@
         </p>
 
         <!-- Inputs de 4 dígitos -->
-        <div id="pin-inputs-container" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 14px;">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-1" autocomplete="off">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-2" autocomplete="off">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-3" autocomplete="off">
-          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-4" autocomplete="off">
-        </div>
+        <form id="pin-form" onsubmit="event.preventDefault();">
+          <div id="pin-inputs-container" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 14px;">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-1" autocomplete="off">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-2" autocomplete="off">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-3" autocomplete="off">
+            <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pin-digit-4" autocomplete="off">
+          </div>
+        </form>
 
         <!-- Mensaje de error -->
         <div id="pin-error-msg" style="display: none; color: #ff5252; font-size: 11.5px; font-family: var(--font-mono); margin-bottom: 16px;">
@@ -1777,7 +1800,7 @@
         <div class="pant" style="margin-top: 4px;">
           
           <!-- KYC Biometría & Cédula Verificada -->
-          <div style="background: rgba(46,107,84,.1); border: 1px solid rgba(46,107,84,.35); border-radius: var(--r); padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+          <div id="kyc-settings-container" style="background: rgba(46,107,84,.1); border: 1px solid rgba(46,107,84,.35); border-radius: var(--r); padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
             <div>
               <p style="font-size: 11px; color: #79D3AC; font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 3px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
                 🛡️ VERIFICACIÓN BIOMÉTRICA (KYC)
@@ -1848,6 +1871,10 @@
             🥂 ¿Cómo fue tu última noche? Dejar Veredicto
           </button>
 
+          <!-- Botón de Baja y Supresión de Datos (T-11.2) -->
+          <button id="btn-open-delete-account" class="btn" style="width: 100%; font-size: 12px; padding: 12px; border: 1px solid var(--vino); color: #f08ca8; background: rgba(155,39,72,.08); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+            🗑️ Darse de baja y suprimir mis datos
+          </button>
           <button id="btn-profile-logout" class="btn" style="width: 100%; font-size: 12px; padding: 12px; border-color: var(--vino); color: #f08ca8; background: rgba(155,39,72,.14); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
             🚪 Cerrar Sesión
           </button>
@@ -2473,6 +2500,111 @@
     <div id="client-content">Cargando reserva...</div>
   </section>
 
+  <!-- Modal: Visor Legal (T-11.1) -->
+  <div id="modal-legal-viewer" class="modal-overlay" style="display:none;">
+    <div class="tel" style="width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; scrollbar-width: none; background: var(--noche); border: 1px solid var(--linea); border-radius: var(--r); box-shadow: 0 30px 80px rgba(0,0,0,0.85);">
+      <div class="tel-in" style="padding: 24px 20px 28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 18px;">
+          <button id="btn-legal-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar">✕</button>
+          <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin:0;">📄 Documentos Legales</h3>
+          <div style="font-size: 10px; font-family: var(--font-mono); color: var(--humo);">Ley 1581 de 2012 · Habeas Data</div>
+        </div>
+        <div style="display:flex; gap:0; border-bottom: 1px solid var(--linea); margin-bottom: 16px;">
+          <button id="legal-tab-terminos" class="legal-tab active" style="flex:1; padding:10px 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: rgba(240,168,48,0.12); border: none; border-bottom: 2px solid var(--luz); color: var(--papel); cursor: pointer;">Términos y Condiciones</button>
+          <button id="legal-tab-privacidad" class="legal-tab" style="flex:1; padding:10px 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--humo); cursor: pointer;">Política de Privacidad</button>
+        </div>
+        <div id="legal-content-terminos" style="font-size: 12.5px; line-height: 1.6; color: var(--humo); display: block;">
+          <p><strong>Términos y Condiciones de Uso del Servicio (RONDA)</strong></p>
+          <p style="font-size: 10.5px; color: var(--humo); opacity: 0.8;">Última actualización: 26 de Octubre de 2026 · Jurisdicción: República de Colombia</p>
+          <hr style="border:0; border-top:1px solid var(--linea); margin: 14px 0;">
+          <p><strong>1. Aceptación de los Términos</strong><br>Al registrarse, acceder o utilizar la plataforma web, asistir a las experiencias presenciales o adquirir tickets de RONDA, el usuario declara ser mayor de 18 años, contar con plena capacidad civil y aceptar sin reservas los presentes Términos y Condiciones de Uso.</p>
+          <p><strong>2. Naturaleza del Servicio</strong><br>RONDA es una plataforma tecnológica que organiza experiencias presenciales curadas de citas rápidas y dinamización comercial en gastrobares aliados en Bogotá.</p>
+          <p><strong>3. Verificación de Identidad y Código de Conducta</strong><br>El usuario autoriza el escaneo biométrico exclusivamente para validar identidad. Está prohibida la suplantación, perfiles falsos o documentos adulterados. Queda prohibido cualquier acto de acoso, discriminación o contacto físico no consentido.</p>
+          <p><strong>4. Ticketing y Política Anti No-Show</strong><br>Las entradas se adquieren a través de canales oficiales (Nequi / Wompi). La inasistencia sin previo aviso de 24h ocasiona pérdida del ticket y una penalización (strike). Cancelaciones con más de 24h de antelación se pueden reprogramar sin costo.</p>
+          <p><strong>5. Propiedad Intelectual</strong><br>Todos los derechos sobre el software, tecnología propia de rotación de mesas, interfaces, marcas y conceptos visuales son propiedad exclusiva de RONDA.</p>
+          <p><strong>6. Darse de Baja y Derecho al Olvido</strong><br>El usuario tiene el derecho inalienable de darse de baja en cualquier momento y de forma inmediata a través del botón «Darse de baja y suprimir mis datos» en su panel de perfil. Al ejecutar la baja se revoca la autorización de tratamiento y se eliminan de forma permanente e irreversible los registros biométricos, fotos, historial de rondas y credenciales.</p>
+          <p><strong>7. Canales de Contacto y PQRS</strong><br>Correo: legal@ronda.uno / contacto@ronda.uno · WhatsApp: (+57) 302 654 3854 · Bogotá D.C., Colombia</p>
+        </div>
+        <div id="legal-content-privacidad" style="font-size: 12.5px; line-height: 1.6; color: var(--humo); display: none;">
+          <p><strong>Política de Tratamiento de Datos Personales (Habeas Data — Ley 1581 de 2012)</strong></p>
+          <p style="font-size: 10.5px; color: var(--humo); opacity: 0.8;">Responsable del Tratamiento: RONDA System · Bogotá D.C., Colombia</p>
+          <hr style="border:0; border-top:1px solid var(--linea); margin: 14px 0;">
+          <p><strong>1. Principios Rectores</strong><br>Legalidad y finalidad; libertad y consentimiento previo; veracidad y calidad; acceso y circulación restringida; seguridad y confidencialidad.</p>
+          <p><strong>2. Tipos de Datos Recopilados</strong><br>Datos generales: nombre, correo, teléfono (WhatsApp), perfil de LinkedIn, edad, género. Datos sensibles (biometría facial): captura y vectorización facial exclusivamente para prevención de suplantación de identidad y validación en puerta de gastrobares aliados. Nunca se venden, comparten ni transfieren a terceros.</p>
+          <p><strong>3. Finalidades del Tratamiento</strong><br>Gestión de registro y verificación; organización de las rondas de conversación y coincidencias mutuas; logística de reserva y check-in; notificación de coincidencias mutuas a las 10:00 AM del día siguiente; facturación y comunicaciones operativas.</p>
+          <p><strong>4. Derechos de los Titulares</strong><br>Conocer, actualizar y rectificar datos; solicitar prueba de autorización; ser informado del uso de los datos; presentar quejas ante la SIC; revocar la autorización y solicitar supresión de datos.</p>
+          <p><strong>5. Procedimiento Ágil de Supresión (Darse de Baja)</strong><br>Desde el perfil: presionar «Darse de baja y suprimir mis datos»; confirmar en modal de irreversibilidad; cuestionario opcional de salida. Al confirmar: se elimina documento de usuario, descriptores faciales y fotos en Firestore/Storage; se elimina el usuario en Firebase Auth; se borran cachés locales; se cierra la sesión inmediatamente.</p>
+          <p><strong>6. Vigencia de las Bases de Datos</strong><br>Los datos se conservan mientras la cuenta esté activa. Al eliminarse la cuenta, los datos son purgados de los servidores activos de producción.</p>
+          <p><strong>7. Canal de Protección de Datos</strong><br>legal@ronda.uno / soporte@ronda.uno</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== MODAL: BAJA DE CUENTA + CUESTIONARIO DE SALIDA (T-11.3) ==================== -->
+  <div id="modal-delete-account" class="modal-overlay" style="display:none;">
+    <div class="tel" style="width: 100%; max-width: 400px; max-height: 75vh; overflow-y: auto; scrollbar-width: none; background: var(--noche); border: 1px solid var(--linea); border-radius: var(--r); box-shadow: 0 30px 80px rgba(0,0,0,0.85);">
+      <div class="tel-in" style="padding: 24px 20px 28px; text-align: center;">
+        <div style="font-size: 40px; margin-bottom: 12px;">⚠️</div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0 0 10px;">Darse de baja y suprimir mis datos</h3>
+        <p style="font-size: 12.5px; color: var(--humo); line-height: 1.5; margin-bottom: 18px;">
+          Esta acción es <strong>irreversible</strong>. Se eliminarán permanentemente:
+        </p>
+        <ul style="text-align: left; font-size: 11.5px; color: var(--humo); line-height: 1.5; margin: 0 0 18px; padding-left: 16px;">
+          <li>Su documento de usuario en Firestore</li>
+          <li>Sus descriptores biométricos y fotos</li>
+          <li>Su historial de rondas y matches</li>
+          <li>Su usuario en Firebase Authentication</li>
+          <li>Todas las cachés locales del dispositivo</li>
+        </ul>
+        <p style="font-size: 10.5px; color: #f08ca8; font-style: italic; margin-bottom: 20px;">
+          Esta acción no se puede deshacer. Si desea continuar, elija un motivo a continuación.
+        </p>
+        <div id="churn-survey-form" style="display:none; text-align: left; margin-top: 10px;">
+          <p style="font-size: 11px; color: var(--luz); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">¿Cuál es el motivo principal de tu salida?</p>
+          <div id="churn-reasons" style="display:flex; flex-direction:column; gap:8px; margin-bottom: 14px;">
+            <button type="button" class="churn-reason-btn" data-reason="no_meet" style="width:100%; text-align:left; padding:8px 12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); border-radius:8px; color:var(--humo); font-size: 11.5px; cursor: pointer; font-family: var(--font-body);">💔 No encontré personas interesantes</button>
+            <button type="button" class="churn-reason-btn" data-reason="price" style="width:100%; text-align:left; padding:8px 12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); border-radius:8px; color:var(--humo); font-size: 11.5px; cursor: pointer; font-family: var(--font-body);">💸 El precio del ticket es elevado</button>
+            <button type="button" class="churn-reason-btn" data-reason="time" style="width:100%; text-align:left; padding:8px 12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); border-radius:8px; color:var(--humo); font-size: 11.5px; cursor: pointer; font-family: var(--font-body);">⏰ No tengo tiempo para asistir</button>
+            <button type="button" class="churn-reason-btn" data-reason="privacy" style="width:100%; text-align:left; padding:8px 12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); border-radius:8px; color:var(--humo); font-size: 11.5px; cursor: pointer; font-family: var(--font-body);">🔒 Preocupaciones de privacidad / biometría</button>
+            <button type="button" class="churn-reason-btn" data-reason="moved" style="width:100%; text-align:left; padding:8px 12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); border-radius:8px; color:var(--humo); font-size: 11.5px; cursor: pointer; font-family: var(--font-body);">🏙️ Me mudé de ciudad</button>
+            <button type="button" class="churn-reason-btn" data-reason="other" style="width:100%; text-align:left; padding:8px 12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); border-radius:8px; color:var(--humo); font-size: 11.5px; cursor: pointer; font-family: var(--font-body);">💬 Otro motivo</button>
+          </div>
+          <textarea id="churn-feedback" placeholder="¿Qué podríamos haber hecho mejor? (Opcional)" style="width:100%; min-height: 70px; background: rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:8px; color: var(--papel); font-family: var(--font-body); font-size: 11.5px; padding: 10px; resize: vertical; margin-bottom: 14px;"></textarea>
+          <div id="churn-selected-reason" style="font-size: 10px; color: var(--luz); margin-bottom: 8px;"></div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top: 16px;">
+          <button id="btn-delete-cancel" class="btn" style="flex:1; font-size: 11px; padding: 10px; border: 1px solid var(--linea); color: var(--humo); background: transparent; cursor: pointer; border-radius: var(--r); font-weight: 600;">Cancelar</button>
+          <button id="btn-delete-confirm" class="btn" style="flex:1; font-size: 11px; padding: 10px; background: var(--vino); color: #fff; border: none; cursor: pointer; border-radius: var(--r); font-weight: 700;">Sí, suprimir mi cuenta</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script type="module" src="/src/app.ts"></script>
+  <script>
+    // Abrir visor legal desde hash de URL (ej. desde landings: index.html#legal-terminos)
+    (function () {
+      const hash = window.location.hash || '';
+      if (hash === '#legal-terminos' || hash === '#legal-privacidad') {
+        const modal = document.getElementById('modal-legal-viewer');
+        const btnClose = document.getElementById('btn-legal-close');
+        const tabT = document.getElementById('legal-tab-terminos');
+        const tabP = document.getElementById('legal-tab-privacidad');
+        const contentT = document.getElementById('legal-content-terminos');
+        const contentP = document.getElementById('legal-content-privacidad');
+        if (modal) { modal.style.display = 'flex'; }
+        if (tabT) { tabT.className = hash === '#legal-terminos' ? 'legal-tab active' : 'legal-tab'; }
+        if (tabP) { tabP.className = hash === '#legal-privacidad' ? 'legal-tab active' : 'legal-tab'; }
+        if (contentT) { contentT.style.display = hash === '#legal-terminos' ? 'block' : 'none'; }
+        if (contentP) { contentP.style.display = hash === '#legal-privacidad' ? 'block' : 'none'; }
+        if (btnClose) {
+          btnClose.onclick = function () {
+            if (modal) modal.style.display = 'none';
+            history.replaceState(null, '', window.location.pathname);
+          };
+        }
+      }
+    })();
+  </script>
 </body>
 </html>
+

@@ -1,0 +1,21 @@
+# Reglas de indexación para RONDA
+# Portales confidenciales y paneles administrativos excluidos de motores de búsqueda
+
+User-agent: *
+Disallow: /invest
+Disallow: /invest.html
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /crm
+Disallow: /crm.html
+Disallow: /network
+Disallow: /network.html
+Disallow: /superadmin
+Disallow: /superadmin.html
+Allow: /
+Allow: /landing
+Allow: /landing.html
+Allow: /partners
+Allow: /partners.html
+
+Sitemap: https://ronda.uno/sitemap.xml

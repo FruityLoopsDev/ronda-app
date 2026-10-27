@@ -4,7 +4,7 @@
 // en modal, guardado de perfil, y KYC biométrico.
 
 import { Auth } from '../auth.js';
-import { DB } from '../db.js';
+import { DB, User } from '../db.js';
 import { Verification } from '../verification.js';
 import { Router } from '../router.js';
 
@@ -148,25 +148,34 @@ export class ProfileModal {
 
       try {
         const user = Auth.currentUser || { uid: 'guest', role: 'client' };
-        user.name = name || 'Usuario RONDA';
-        user.age = age;
-        user.gender = gender;
-        user.orientation = orientation;
+        const patch: Partial<User> = {
+          name: name || 'Usuario RONDA',
+          age,
+          gender,
+          orientation
+        };
+
         if (linkedinUrl) {
           const val = Verification.validateLinkedInUrl(linkedinUrl);
-          user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+          patch.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
           if (val.valid) {
-            user.linkedinVerified = true;
-            user.linkedinSlug = val.slug;
-            user.isVerified = true;
+            patch.linkedinVerified = true;
+            patch.linkedinSlug = val.slug;
+            patch.isVerified = true;
+            if (user.linkedinHeadline) patch.linkedinHeadline = user.linkedinHeadline;
           }
         }
 
         // Persistir el estado de verificación de identidad en el perfil.
-        if (Verification.isVerified || user.linkedinVerified) user.isVerified = true;
+        if (Verification.isVerified || user.linkedinVerified || patch.linkedinVerified) {
+          patch.isVerified = true;
+        }
+
+        Object.assign(user, patch);
 
         if (Auth.currentUser) {
-          await DB.saveUser(user);
+          await DB.updateUserProfile(user.uid, patch);
+          Object.assign(Auth.currentUser, patch);
         }
         if (this.modal) this.modal.classList.remove('active');
 

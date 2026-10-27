@@ -1,0 +1,20 @@
+ M .env.template
+ M AGENTS.md
+ M docs/index.md
+ D functions/index.js
+ D functions/package.json
+ M src/payment.ts
+?? .claw_status.txt
+?? .claw_tracked.txt
+?? docs/MASTER_REFERENCE.md
+?? scripts/generate-qr-html.cjs
+?? whatsapp-qr.html
+!! .agents/
+!! .env
+!! .firebase/
+!! .vscode/
+!! backups/
+!! certs/
+!! dist/
+!! firestore-debug.log
+!! node_modules/

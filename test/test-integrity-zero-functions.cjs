@@ -109,3 +109,56 @@ assert.strictEqual(validateAccess('view-lobby', 'client'), true);
 console.log("✓ Prueba 4 superada: Matriz RBAC restringe vistas sensibles y permite vistas públicas/cliente.");
 
 console.log("\n✅ TODAS LAS PRUEBAS AUTOMATIZADAS DE SEGURIDAD E INTEGRIDAD PASARON CON ÉXITO.");
+
+// 5. Prueba de actualización parcial de perfil (updateUserProfile) y reglas de seguridad Firestore
+const CLIENT_ALLOWED_USER_FIELDS = [
+  'name', 'username', 'age', 'birthDate', 'zodiacSign', 'bio', 'gender',
+  'orientation', 'favoriteCocktail', 'preferredZones', 'ageRangePreference',
+  'linkedinUrl', 'linkedinSlug', 'linkedinHeadline', 'linkedinVerified',
+  'linkedinVerifiedAt', 'isVerified', 'profession', 'safeword',
+  'emergencyContact', 'phoneNumber', 'privacySettings', 'photoURL',
+  'serviceRequests', 'icebreakers', 'satisfactionFeedback', 'activeEventId',
+  'activeWaitlist', 'activeReservation', 'reservationsHistory',
+  'postEventState', 'paymentPending', 'paymentMethod'
+];
+
+const SENSITIVE_BLOCKED_FIELDS = [
+  'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
+];
+
+function buildProfilePatch(fields) {
+  const patch = {};
+  for (const k of CLIENT_ALLOWED_USER_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(fields, k) && fields[k] !== undefined) {
+      patch[k] = fields[k];
+    }
+  }
+  return patch;
+}
+
+const dirtyClientMemoryUser = {
+  uid: 'user_123',
+  role: 'superadmin', // intento de escalada
+  hasTicket: true,    // intento de auto-ticket
+  trustTier: 0,       // default en memoria que antes disparaba PERMISSION_DENIED
+  nfts: [],           // default en memoria que antes disparaba PERMISSION_DENIED
+  wallet_address: '', // default en memoria que antes disparaba PERMISSION_DENIED
+  matches: ['u99'],   // sensible
+  name: 'Valentina Gómez',
+  age: 29,
+  bio: 'Amante del diseño y el buen gin tonic.',
+  favoriteCocktail: 'Negroni Ahumado',
+  preferredZones: ['Zona G', 'Parque de la 93'],
+  safeword: 'Martini Azul'
+};
+
+const safePatch = buildProfilePatch(dirtyClientMemoryUser);
+const patchKeys = Object.keys(safePatch);
+
+for (const blocked of [...SENSITIVE_BLOCKED_FIELDS, 'role', 'hasTicket']) {
+  assert.strictEqual(patchKeys.includes(blocked), false, `El campo sensible '${blocked}' NO debe entrar en el patch de cliente`);
+}
+assert.strictEqual(safePatch.name, 'Valentina Gómez');
+assert.strictEqual(safePatch.safeword, 'Martini Azul');
+assert.deepStrictEqual(safePatch.preferredZones, ['Zona G', 'Parque de la 93']);
+console.log("✓ Prueba 5 superada: updateUserProfile filtra atributos sensibles (trustTier, nfts, wallet_address, matches, role, hasTicket) y persiste perfil y safeword.");

@@ -45,6 +45,17 @@ export function generateCalendarEventUrl(title: string, description: string, loc
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}`;
 }
 
+export function escapeHtml(s: string | null | undefined): string {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c] as string));
+}
+
 export function downloadICSFile(title: string, description: string, location: string, startDate: Date, endDate: Date) {
   const formatDate = (date: Date) => {
     return date.toISOString().replace(/-|:|\.\d\d\d/g, "");

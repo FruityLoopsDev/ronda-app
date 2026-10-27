@@ -1,6 +1,7 @@
 import { db, auth, messaging } from './firebase-config';
 import { collection, query, orderBy, onSnapshot, updateDoc, doc, writeBatch, Timestamp, setDoc } from 'firebase/firestore';
 import { getToken } from 'firebase/messaging';
+import { escapeHtml } from './utils.js';
 
 export interface AppNotification {
   id: string;
@@ -122,8 +123,8 @@ class NotificationSystem {
       <div class="notif-item ${n.read ? '' : 'unread'}" onclick="window.Notifications.handleNotifClick('${n.id}', '${n.actionUrl || ''}')">
         <div class="notif-icon">${this.getIconForType(n.type)}</div>
         <div class="notif-content">
-          <h5>${n.title}</h5>
-          <p>${n.body}</p>
+          <h5>${escapeHtml(n.title)}</h5>
+          <p>${escapeHtml(n.body)}</p>
           <span class="notif-time">${this.formatTime(n.createdAt)}</span>
         </div>
       </div>

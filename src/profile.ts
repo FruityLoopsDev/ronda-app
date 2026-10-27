@@ -5,6 +5,7 @@ import notifications from './notifications.js';
 import { RondaDialog } from './dialog.js';
 import { Verification } from './verification.js';
 import { PrivacyPolicy } from './privacy-policy.js';
+import { escapeHtml } from './utils.js';
 
 export class ProfileService {
   private currentUser: User | null = null;
@@ -16,6 +17,25 @@ export class ProfileService {
   setCurrentUser(user: User) {
     this.currentUser = user;
     this.render();
+  }
+
+  /**
+   * Persiste únicamente los campos modificados del perfil en Firestore
+   * mediante `DB.updateUserProfile` y sincroniza atómicamente `this.currentUser`
+   * y `Auth.currentUser` en memoria para evitar que `app.ts` sobreescriba
+   * los cambios al reabrir la vista.
+   */
+  private async persistProfilePatch(fields: Partial<User>): Promise<void> {
+    if (!this.currentUser) return;
+
+    await DB.updateUserProfile(this.currentUser.uid, fields);
+
+    Object.assign(this.currentUser, fields);
+    if (Auth.currentUser && Auth.currentUser.uid === this.currentUser.uid) {
+      Object.assign(Auth.currentUser, fields);
+    }
+
+    window.dispatchEvent(new CustomEvent('profile:updated', { detail: this.currentUser }));
   }
 
   render() {
@@ -92,7 +112,7 @@ export class ProfileService {
     const zone = (user.preferredZones && user.preferredZones.length > 0) ? user.preferredZones.join(', ') : 'Zona G';
     const zodiac = user.zodiacSign || '♏ Escorpio';
     if (profileMeta) {
-      profileMeta.innerHTML = `🍸 <b>${cocktail}</b> · 📍 <b>${zone}</b> · <b>${zodiac}</b>`;
+      profileMeta.innerHTML = `🍸 <b>${escapeHtml(cocktail)}</b> · 📍 <b>${escapeHtml(zone)}</b> · <b>${escapeHtml(zodiac)}</b>`;
     }
 
     // Avatar image
@@ -173,8 +193,7 @@ export class ProfileService {
       try {
         const compressedBase64 = await this.compressImage(file, 400, 400, 0.85);
         if (this.currentUser) {
-          this.currentUser.photoURL = compressedBase64;
-          await DB.saveUser(this.currentUser);
+          await this.persistProfilePatch({ photoURL: compressedBase64 });
           this.render();
           this.showToast('¡Foto de perfil actualizada!');
         }
@@ -278,11 +297,20 @@ export class ProfileService {
     document.getElementById('btn-save-badge-cocktail')?.addEventListener('click', async () => {
       const selected = document.querySelector('input[name="badge-cocktail-choice"]:checked') as HTMLInputElement;
       if (selected && this.currentUser) {
-        this.currentUser.favoriteCocktail = selected.value;
-        await DB.saveUser(this.currentUser);
-        this.render();
-        document.getElementById('modal-select-cocktail')?.classList.remove('active');
-        this.showToast('Cóctel actualizado');
+        try {
+          await this.persistProfilePatch({ favoriteCocktail: selected.value });
+          this.render();
+          document.getElementById('modal-select-cocktail')?.classList.remove('active');
+          this.showToast('Cóctel actualizado');
+        } catch (err: any) {
+          console.error('Error al actualizar cóctel:', err);
+          await RondaDialog.alert({
+            title: 'Error al Guardar',
+            message: 'No se pudo actualizar tu cóctel favorito: ' + err.message,
+            icon: '🍸',
+            type: 'danger'
+          });
+        }
       }
     });
 
@@ -293,11 +321,20 @@ export class ProfileService {
           selectedZones.push(chk.value);
         });
         if (selectedZones.length > 0) {
-          this.currentUser.preferredZones = selectedZones;
-          await DB.saveUser(this.currentUser);
-          this.render();
-          document.getElementById('modal-select-zone')?.classList.remove('active');
-          this.showToast('Zonas actualizadas');
+          try {
+            await this.persistProfilePatch({ preferredZones: selectedZones });
+            this.render();
+            document.getElementById('modal-select-zone')?.classList.remove('active');
+            this.showToast('Zonas actualizadas');
+          } catch (err: any) {
+            console.error('Error al actualizar zonas:', err);
+            await RondaDialog.alert({
+              title: 'Error al Guardar',
+              message: 'No se pudieron actualizar tus zonas preferidas: ' + err.message,
+              icon: '📍',
+              type: 'danger'
+            });
+          }
         }
       }
     });
@@ -441,30 +478,41 @@ export class ProfileService {
       const linkedinInput = document.getElementById('edit-linkedin') as HTMLInputElement | null;
       const linkedinUrl = linkedinInput ? linkedinInput.value.trim() : '';
 
-      this.currentUser.name = name || this.currentUser.name;
-      this.currentUser.username = username || this.currentUser.username;
-      this.currentUser.age = !isNaN(age) ? age : this.currentUser.age;
-      this.currentUser.bio = bio;
-      this.currentUser.favoriteCocktail = favoriteCocktail;
-      this.currentUser.gender = gender;
-      this.currentUser.orientation = orientation;
+      const patch: Partial<User> = {
+        name: name || this.currentUser.name,
+        username: username || this.currentUser.username,
+        age: !isNaN(age) ? age : this.currentUser.age,
+        bio,
+        favoriteCocktail,
+        gender,
+        orientation
+      };
+
       if (linkedinUrl) {
         const val = Verification.validateLinkedInUrl(linkedinUrl);
-        this.currentUser.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+        patch.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
         if (val.valid) {
-          this.currentUser.linkedinVerified = true;
-          this.currentUser.linkedinSlug = val.slug;
-          this.currentUser.isVerified = true;
+          patch.linkedinVerified = true;
+          patch.linkedinSlug = val.slug;
+          patch.isVerified = true;
+          if (this.currentUser.linkedinHeadline) {
+            patch.linkedinHeadline = this.currentUser.linkedinHeadline;
+          }
         }
       }
 
-      await DB.saveUser(this.currentUser);
+      await this.persistProfilePatch(patch);
       this.render();
       this.closeEditModal();
       this.showToast('Perfil actualizado correctamente');
     } catch (err: any) {
       console.error('Error al guardar perfil:', err);
-      alert('Error: ' + err.message);
+      await RondaDialog.alert({
+        title: 'Error al Guardar Perfil',
+        message: 'No se pudieron guardar tus cambios: ' + err.message,
+        icon: '⚠️',
+        type: 'danger'
+      });
     } finally {
       if (btn) {
         btn.textContent = '✓';
@@ -522,16 +570,19 @@ export class ProfileService {
         selectedZones.push(chk.value);
       });
 
-      this.currentUser.safeword = safeword || 'Martini Azul';
-      if (selectedZones.length > 0) {
-        this.currentUser.preferredZones = selectedZones;
-      }
-      this.currentUser.privacySettings = {
-        shareDrinkStats,
-        marketingConsent
+      const patch: Partial<User> = {
+        safeword: safeword || 'Martini Azul',
+        privacySettings: {
+          shareDrinkStats,
+          marketingConsent
+        }
       };
 
-      await DB.saveUser(this.currentUser);
+      if (selectedZones.length > 0) {
+        patch.preferredZones = selectedZones;
+      }
+
+      await this.persistProfilePatch(patch);
       this.render();
       this.closeSettingsModal();
       this.showToast('Ajustes y privacidad guardados');
@@ -563,15 +614,15 @@ export class ProfileService {
         const serviceName = (e.currentTarget as HTMLElement).getAttribute('data-service') || 'Servicio RONDA';
         this.closeServicesModal();
         if (this.currentUser) {
-          if (!this.currentUser.serviceRequests) {
-            this.currentUser.serviceRequests = [];
-          }
-          this.currentUser.serviceRequests.push({
-            serviceName,
-            requestedAt: new Date().toISOString(),
-            status: 'pending'
-          });
-          await DB.saveUser(this.currentUser);
+          const updatedRequests = [
+            ...(this.currentUser.serviceRequests || []),
+            {
+              serviceName,
+              requestedAt: new Date().toISOString(),
+              status: 'pending' as const
+            }
+          ];
+          await this.persistProfilePatch({ serviceRequests: updatedRequests });
         }
         await RondaDialog.alert({
           title: 'Solicitud Recibida',

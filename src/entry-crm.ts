@@ -1,6 +1,5 @@
-import { Auth } from './auth.js';
 import { CRM } from './crm.js';
-import { RondaDialog } from './dialog.js';
+import { setupIndependentPortal, PORTALS } from './portal-auth.js';
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
@@ -9,26 +8,8 @@ if (document.readyState === 'loading') {
 }
 
 function init() {
-  console.log('Inicializando Panel CRM...');
-  
-  Auth.onAuthStateChanged((user) => {
-    if (!user) {
-      window.location.href = '/';
-      return;
-    }
-    
-    if (user.role !== 'sales' && user.role !== 'superadmin') {
-      RondaDialog.alert({
-        title: 'Acceso Denegado',
-        message: 'No tienes permisos para este panel.',
-        icon: '🔒'
-      }).then(() => {
-        window.location.href = '/';
-      });
-      return;
-    }
-    
+  console.log('[EntryCRM] Inicializando portal CRM Comercial...');
+  setupIndependentPortal(PORTALS.crm, (user) => {
     CRM.init(user.uid);
-    document.getElementById('view-crm')?.classList.add('on');
   });
 }

@@ -44,19 +44,29 @@ export class AuthService {
         
         let userProfile = await DB.getUser(firebaseUser.uid);
         
+        // Blindaje permanente para cuentas staff maestras (SuperAdmin)
+        const isMasterSuperAdmin = firebaseUser.email === 'cesar@ronda.uno' || firebaseUser.uid === 'hVX2RL2xJhRFurJJsAgdyVIaDT53';
+
         if (!userProfile) {
-          console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando uno básico...");
+          console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando perfil inicial...");
           userProfile = {
             uid: firebaseUser.uid,
-            name: '',
-            role: 'client',
-            gender: '',
-            orientation: '',
-            wallet_address: '',
-            nfts: []
+            name: isMasterSuperAdmin ? 'César Dela Croix' : '',
+            email: firebaseUser.email || '',
+            role: isMasterSuperAdmin ? 'superadmin' : 'client',
+            trustTier: isMasterSuperAdmin ? 3 : 0,
+            gender: isMasterSuperAdmin ? 'male' : '',
+            orientation: isMasterSuperAdmin ? 'straight' : ''
           } as User;
           
-          await DB.saveUser(userProfile);
+          await DB.saveUser(userProfile).catch(e => console.warn('[Auth] Error guardando perfil:', e));
+        } else if (isMasterSuperAdmin && userProfile.role !== 'superadmin') {
+          // Auto-reparación permanente: elevar cuenta staff maestra si su rol fue degradado
+          console.log("[Auth] Restaurando rol superadmin para cuenta maestra...");
+          userProfile.role = 'superadmin';
+          userProfile.email = 'cesar@ronda.uno';
+          if (!userProfile.name) userProfile.name = 'César Dela Croix';
+          await DB.saveUser(userProfile).catch(e => console.warn('[Auth] Error elevando superadmin:', e));
         }
         
         this.currentUser = userProfile;
@@ -114,11 +124,21 @@ export class AuthService {
         gender: profileData.gender || '',
         orientation: profileData.orientation || '',
         email: email,
-        wallet_address: '',
-        nfts: [],
         ...profileData
       };
-      
+
+      // ── Club Fundador 100 ──
+      // Los primeros 100 usuarios registrados reciben la insignia de fundador.
+      try {
+        const usersCount = await DB.countUsers();
+        if (usersCount < 100) {
+          newProfile.isFoundingMember = true;
+          newProfile.founderNumber = usersCount + 1;
+        }
+      } catch (e) {
+        console.warn('[Auth] No se pudo evaluar membresía fundadora:', e);
+      }
+
       // Guardar localmente ANTES de Firestore para ganarle a onAuthStateChanged
       this._pendingProfile = newProfile;
       this.currentUser = newProfile;

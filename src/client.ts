@@ -334,7 +334,7 @@ class ClientAppService {
 
         this.chatMessages.push(confirmationMsg);
         user.postEventState.chatHistory = this.chatMessages;
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
 
         this.renderChatStream();
         this.showToast('🍸 ¡Segunda cita agendada con éxito!');
@@ -528,7 +528,7 @@ class ClientAppService {
           hostTips: newEvt.hostTips,
           status: 'confirmed'
         };
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { activeEventId: user.activeEventId, activeReservation: user.activeReservation });
         this.showToast(`¡Reserva cambiada con éxito a ${newEvt.venueName}!`);
         this.renderManageReservationsModal();
         this.renderDiscoveryFeed();
@@ -548,7 +548,7 @@ class ClientAppService {
       if (confirmed) {
         delete user.activeReservation;
         delete user.activeEventId;
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { activeReservation: null, activeEventId: null });
         this.showToast('Reserva cancelada. Crédito disponible para tu siguiente cita.');
         this.renderManageReservationsModal();
         this.renderDiscoveryFeed();
@@ -557,7 +557,7 @@ class ClientAppService {
 
     document.getElementById('btn-mgr-leave-wl')?.addEventListener('click', async () => {
       delete user.activeWaitlist;
-      await DB.saveUser(user);
+      await DB.updateUserProfile(user.uid, { activeWaitlist: null });
       this.showToast('Has salido de la lista de espera.');
       this.renderManageReservationsModal();
       this.renderDiscoveryFeed();
@@ -914,7 +914,7 @@ class ClientAppService {
           joinedAt: new Date().toISOString(),
           status: 'waiting'
         };
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { activeWaitlist: user.activeWaitlist });
         this.closeEventModal();
         this.showToast(`¡Anotado en la lista de espera para ${evt.venueName}!`);
         window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-client' }));
@@ -974,7 +974,12 @@ class ClientAppService {
         status: 'confirmed'
       };
 
-      await DB.saveUser(user);
+      await DB.updateUserProfile(user.uid, {
+        activeEventId: user.activeEventId,
+        activeWaitlist: null,
+        activeReservation: user.activeReservation,
+        ...(user.paymentPending ? { paymentPending: true, paymentMethod: user.paymentMethod || 'nequi' } : {})
+      });
       this.closeEventModal();
       
       this.showToast(`¡Reserva confirmada en ${evt.venueName} con ${drink.name}!`);
@@ -1049,7 +1054,11 @@ class ClientAppService {
         hostTips: evt.hostTips,
         status: 'confirmed'
       };
-      await DB.saveUser(user);
+      await DB.updateUserProfile(user.uid, {
+        activeEventId: user.activeEventId,
+        activeWaitlist: null,
+        activeReservation: user.activeReservation
+      });
       this.showToast('🎉 ¡Cupo asignado en Patio Poca Prisa!');
       this.renderClientView();
       this.renderDiscoveryFeed();
@@ -1059,7 +1068,7 @@ class ClientAppService {
       const user = Auth.currentUser;
       if (!user) return;
       delete user.activeWaitlist;
-      await DB.saveUser(user);
+      await DB.updateUserProfile(user.uid, { activeWaitlist: null });
       this.showToast('Has salido de la lista de espera.');
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
       this.renderDiscoveryFeed();
@@ -1378,7 +1387,7 @@ class ClientAppService {
       delete user.postEventState;
       delete user.activeReservation;
       delete user.activeEventId;
-      await DB.saveUser(user);
+      await DB.updateUserProfile(user.uid, { postEventState: null, activeReservation: null, activeEventId: null });
       window.dispatchEvent(new CustomEvent('view:switch', { detail: 'view-lobby' }));
       this.renderDiscoveryFeed();
     });
@@ -1405,7 +1414,7 @@ class ClientAppService {
       const user = Auth.currentUser;
       if (user && user.postEventState) {
         user.postEventState.isRevealed = true;
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
       }
 
       this.showToast('💌 ¡Correspondencia abierta! Has tenido match mutuo ✨');
@@ -1426,7 +1435,7 @@ class ClientAppService {
       if (user && user.postEventState) {
         user.postEventState.isLetterBurned = true;
         user.postEventState.chatExpiresAtIso = new Date(Date.now() + 48 * 3600000).toISOString();
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
       }
       this.openTemporalChat(partnerName);
     }, 4500);
@@ -1456,7 +1465,7 @@ class ClientAppService {
       ];
       if (user?.postEventState) {
         user.postEventState.chatHistory = this.chatMessages;
-        DB.saveUser(user);
+        DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
       }
     }
 
@@ -1546,7 +1555,7 @@ class ClientAppService {
     const user = Auth.currentUser;
     if (user && user.postEventState) {
       user.postEventState.chatHistory = this.chatMessages;
-      DB.saveUser(user);
+      DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
     }
 
     // Respuesta simulada de la pareja al poco tiempo
@@ -1558,7 +1567,7 @@ class ClientAppService {
 
       if (user && user.postEventState) {
         user.postEventState.chatHistory = this.chatMessages;
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
       }
     }, 1800);
   }
@@ -1691,7 +1700,7 @@ class ClientAppService {
             }
           ]
         };
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
         this.showToast('🔔 ¡Evento concluido! Resultados sellados para las 10:00 AM.');
         this.renderClientView();
       });
@@ -1848,7 +1857,7 @@ class ClientAppService {
         if (!isCheckedIn) {
           res.status = 'checked_in';
           user.activeReservation = res;
-          await DB.saveUser(user);
+          await DB.updateUserProfile(user.uid, { activeReservation: res });
           this.showToast('🍸 ¡Trago canjeado en barra! Disfruta la previa.');
           this.renderClientView();
         } else {
@@ -1887,7 +1896,7 @@ class ClientAppService {
             }
           ]
         };
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
         this.showToast('⏳ ¡Correspondencia sellada! Abriendo cuenta atrás a las 10:00 AM.');
         this.renderClientView();
       });

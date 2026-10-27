@@ -123,12 +123,8 @@ export class Satisfaction {
     try {
       const user = Auth.currentUser;
       if (user && user.uid !== 'guest') {
-        const updatedUser = {
-          ...user,
-          satisfactionFeedback: feedbackData
-        };
-        await DB.saveUser(updatedUser);
-        Auth.currentUser = updatedUser;
+        await DB.updateUserProfile(user.uid, { satisfactionFeedback: feedbackData });
+        user.satisfactionFeedback = feedbackData;
       }
 
       this.close();

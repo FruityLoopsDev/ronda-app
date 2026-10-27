@@ -177,8 +177,8 @@ export class Icebreakers {
     const user = Auth.currentUser;
     if (user && user.uid !== 'guest') {
       try {
+        await DB.updateUserProfile(user.uid, { icebreakers: this.answers });
         const updatedUser = { ...user, icebreakers: this.answers };
-        await DB.saveUser(updatedUser);
         Auth.currentUser = updatedUser;
         Profile.setCurrentUser(updatedUser);
       } catch (err) {

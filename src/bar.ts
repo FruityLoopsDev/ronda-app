@@ -6,6 +6,7 @@ import { buildNightPlan } from './mem-rr-v2/engine.ts';
 import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
 import { pairKey } from './mem-rr-v2/weights.ts';
 import { RRHistory } from './mem-rr-history.js';
+import { escapeHtml } from './utils.js';
 
 // bar.js: Motor de Rotación y Consola del Anfitrión (Producción)
 
@@ -70,38 +71,34 @@ class HostConsoleService {
   async initAdminDashboard(adminUser: { venueId?: string; uid?: string; role?: string }) {
     console.log("Iniciando Dashboard de Anfitrión (Producción) para:", adminUser.venueId);
     
-    // Solicitar el ID del evento al anfitrión
-    let eventId = prompt("Ingresa el ID del evento que vas a gestionar:", "rnd-caronte-mar-25");
-    if (!eventId) {
-      console.warn("No se ingresó ID de evento. Cancelando inicialización del dashboard.");
-      return;
-    }
-    
+    // Carga autónoma del evento sin diálogos nativos bloqueantes
+    let eventId = adminUser?.venueId ?? 'rnd-caronte-mar-25';
+
     let eventData = await DB.getEvent(eventId);
     if (!eventData) {
-      const create = confirm(`El evento ${eventId} no existe. ¿Deseas crearlo ahora?`);
-      if (create) {
-        const venueName = prompt("Nombre del Bar / Local:", "Nuevo Evento");
-        const tablesStr = prompt("Número de mesas:", "8");
-        const tables = parseInt(tablesStr || '8', 10);
-        
-        eventData = {
-          id: eventId,
-          venueName: venueName || 'Bar',
-          status: 'waiting',
-          participants: [],
-          tables: tables,
-          currentRound: 0,
-          price: 45000,
-          priceFormatted: '$45.000',
-          dayDate: 'Hoy · 20:00'
-        } as RondaEvent;
-        
-        await DB.saveEvent(eventData);
-        console.log("Evento creado exitosamente:", eventData);
-      } else {
-        return;
-      }
+      const create = await RondaDialog.confirm({
+        title: 'Evento no encontrado',
+        message: `El evento <b>${eventId}</b> no existe. ¿Deseas crearlo ahora con los valores por defecto?`,
+        icon: '⚠️',
+        confirmText: '✓ Crear Evento',
+        cancelText: '✕ Cancelar'
+      });
+      if (!create) return;
+
+      eventData = {
+        id: eventId,
+        venueName: 'Bar Asociado',
+        status: 'waiting',
+        participants: [],
+        tables: 8,
+        currentRound: 0,
+        price: 45000,
+        priceFormatted: '$45.000',
+        dayDate: 'Hoy · 20:00'
+      } as RondaEvent;
+
+      await DB.saveEvent(eventData);
+      console.log("Evento creado exitosamente:", eventData);
     }
     
     if (this.unsubscribe) this.unsubscribe();
@@ -192,7 +189,7 @@ class HostConsoleService {
 
   async generateNextRound() {
     if (!this.currentEvent || !this.currentEvent.participants || this.currentEvent.participants.length < 2) {
-      alert("No hay suficientes participantes registrados aún. Por favor espera a que se unan.");
+      await RondaDialog.alert({ title: 'Participantes insuficientes', message: 'No hay suficientes participantes registrados aún. Por favor espera a que se unan.', icon: '👥' });
       return;
     }
 
@@ -268,7 +265,7 @@ class HostConsoleService {
     });
 
     if (confirmEnd) {
-      const btnEnd = document.getElementById('btn-end-e') as HTMLButtonElement;
+      const btnEnd = document.getElementById('btn-admin-end-event') as HTMLButtonElement;
       if (btnEnd) {
         btnEnd.textContent = "Procesando...";
         btnEnd.disabled = true;
@@ -436,20 +433,23 @@ class HostConsoleService {
 
     const elDrinks = document.getElementById('nn-drinks');
     if (elDrinks) {
-      elDrinks.textContent = `${totalParticipants * 2} mínimo`;
+      elDrinks.textContent = `${totalParticipants} cóctel de autor incluido`;
     }
 
     const elRevenue = document.getElementById('nn-revenue');
     if (elRevenue) {
-      // Assuming a base consumption of $22,000 COP per included drink * 2 = 44,000 per person
-      const totalRev = totalParticipants * 44000;
+      // 1 cóctel de autor incluido por persona a $22.000 COP
+      const totalRev = totalParticipants * 22000;
       elRevenue.textContent = `$${totalRev.toLocaleString('es-CO')}`;
     }
 
     // Botones de acción del evento
     const btnStart = document.getElementById('btn-admin-start-event');
     const btnEnd = document.getElementById('btn-admin-end-event');
-    
+    const btnCapacity = document.getElementById('btn-admin-change-capacity');
+    const btnMenu = document.getElementById('btn-admin-menu');
+    const btnLogout = document.getElementById('btn-admin-logout');
+
     if (btnStart) {
       if (this.currentEvent.currentRound === 0) {
         btnStart.textContent = 'Arrancar Noche (Motor)';
@@ -458,7 +458,6 @@ class HostConsoleService {
         btnStart.textContent = `Campana (Ronda ${this.currentEvent.currentRound} de 9)`;
         btnStart.className = 'btn si';
       }
-      // Limpiar listeners anteriores (clonando)
       const newBtnStart = btnStart.cloneNode(true);
       btnStart.parentNode?.replaceChild(newBtnStart, btnStart);
       newBtnStart.addEventListener('click', () => this.generateNextRound());
@@ -475,6 +474,30 @@ class HostConsoleService {
       }
     }
 
+    if (btnCapacity) {
+      const newBtnCapacity = btnCapacity.cloneNode(true);
+      btnCapacity.parentNode?.replaceChild(newBtnCapacity, btnCapacity);
+      newBtnCapacity.addEventListener('click', () => this.promptChangeCapacity());
+    }
+
+    if (btnMenu) {
+      const newBtnMenu = btnMenu.cloneNode(true);
+      btnMenu.parentNode?.replaceChild(newBtnMenu, btnMenu);
+      newBtnMenu.addEventListener('click', () => this.promptMenuNight());
+    }
+
+    if (btnLogout) {
+      const newBtnLogout = btnLogout.cloneNode(true);
+      btnLogout.parentNode?.replaceChild(newBtnLogout, btnLogout);
+      newBtnLogout.addEventListener('click', async () => {
+        await Auth.logout();
+        location.href = '/index.html';
+      });
+    }
+
+    // Lista en vivo de participantes y check-in
+    this.renderAttendeesList();
+
     // Chart mock con datos aleatorios pero estables
     this.renderChart(totalParticipants);
 
@@ -483,6 +506,112 @@ class HostConsoleService {
 
     // Herramientas de check-in por QR (M3)
     this.renderQrTools();
+  }
+
+  /** Solicita al anfitrión el nuevo número de mesas y lo guarda en Firestore. */
+  async promptChangeCapacity() {
+    if (!this.currentEvent) return;
+    const input = await RondaDialog.confirm({
+      title: 'Cambiar Aforo',
+      message: `Mesas actuales: <b>${this.currentEvent.tables ?? 0}</b>. ¿Deseas ajustar la cantidad de mesas para la próxima noche?`,
+      icon: '🪑',
+      confirmText: '✓ Ajustar Mesas',
+      cancelText: '✕ Cancelar'
+    });
+    if (!input) return;
+    const newTables = prompt('Número de mesas (ej. 8, 10, 12):', String(this.currentEvent.tables ?? 8));
+    const n = parseInt(newTables ?? '8', 10);
+    if (!n || n < 1) return;
+    this.currentEvent.tables = n;
+    await DB.saveEvent(this.currentEvent);
+    const elTables = document.getElementById('nn-tables');
+    if (elTables) elTables.textContent = `${Math.ceil((this.currentEvent.participants?.length ?? 0) / 2)} de ${n} plazas`;
+    await RondaDialog.alert({
+      title: 'Aforo Actualizado',
+      message: `Se configuraron <b>${n} mesas</b> para el evento.`,
+      icon: '✅'
+    });
+    this.renderDashboard();
+  }
+
+  /** Despliega el modal de carta de la noche con los cócteles sugeridos y permite ajustar el precio. */
+  async promptMenuNight() {
+    if (!this.currentEvent) return;
+    const msg = `
+      <div style="font-family:var(--font-sans); color:var(--papel); line-height:1.6;">
+        <div style="font-size:13px; margin-bottom:10px;"><b>Cócteles sugeridos de la alianza:</b></div>
+        <div style="margin-bottom:6px;">• Negroni Ahumado · Ginebra botánica, vermú rojo, campari, cáscara de naranja</div>
+        <div style="margin-bottom:6px;">• Gin Tonic de Frutos Rojos · Ginebra premium, tónica, infusión de frutos rojos</div>
+        <div style="margin-bottom:6px;">• Mezcal Mula · Mezcal joven, jugo de lima, cerveza de jengibre, angostura</div>
+        <div style="margin-bottom:6px;">• Old Fashioned RONDA · Bourbon, azúcar de caña, amarga de cacao, cáscara de naranja</div>
+        <hr style="border:none; border-top:1px solid var(--linea); margin:12px 0;">
+        <div style="font-size:13px;"><b>Precio de consumición acordado:</b> $<input type="number" id="menu-night-price" value="${this.currentEvent.price ?? 45000}" min="0" step="1000" style="width:80px;padding:2px;border-radius:4px;border:1px solid var(--linea);background:rgba(243,237,226,0.06);color:var(--papel);font-family:var(--font-mono);font-size:12px;" /> COP</div>
+      </div>
+    `;
+    const confirmed = await RondaDialog.confirm({
+      title: 'Carta de la Noche',
+      message: msg,
+      icon: '🍸',
+      confirmText: '✓ Guardar Carta',
+      cancelText: '✕ Cancelar'
+    });
+    if (!confirmed) return;
+    const priceInput = document.getElementById('menu-night-price') as HTMLInputElement | null;
+    const price = priceInput ? parseInt(priceInput.value ?? '45000', 10) : this.currentEvent.price;
+    if (price && price > 0) {
+      this.currentEvent.price = price;
+      this.currentEvent.priceFormatted = `$${price.toLocaleString('es-CO')}`;
+      await DB.saveEvent(this.currentEvent);
+      const elPrice = document.getElementById('nn-price');
+      if (elPrice) elPrice.textContent = `$${price.toLocaleString('es-CO')}`;
+      await RondaDialog.alert({
+        title: 'Carta Guardada',
+        message: `Se actualizó el precio de consumición a $${price.toLocaleString('es-CO')} COP.`,
+        icon: '✅'
+      });
+    }
+  }
+
+  /** Renderiza la lista en vivo de participantes con estado de check-in y verificación. */
+  renderAttendeesList() {
+    const container = document.getElementById('view-admin');
+    if (!container || !this.currentEvent) return;
+    let el = document.getElementById('admin-attendees-list');
+    if (!el) {
+      el = document.createElement('section');
+      el.id = 'admin-attendees-list';
+      el.style.cssText = 'background: rgba(34,24,38,.8); border: 1px solid rgba(243,237,226,.14); border-radius: 14px; padding: 14px 16px; margin-top: 16px;';
+      container.appendChild(el);
+    }
+    const participants = this.currentEvent.participants || [];
+    const rows = participants.map((uid: string) => {
+      const p = this.participantProfiles[uid] || {};
+      const checkedIn = p.checkedIn ? '✅ En sala' : '⏳ Esperando';
+      const verified = p.linkedinUrl || p.verifications?.professional?.method === 'linkedin_oauth' ? 'LinkedIn' : 'Face ID';
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(243,237,226,.06); font-size:12px;">
+          <span style="color:var(--papel);">${escapeHtml(p.name || uid)}</span>
+          <span style="display:flex; gap:8px; font-size:10px; font-family:var(--font-mono);">
+            <span style="color:${p.checkedIn ? 'var(--botella)' : 'var(--humo)'};">${checkedIn}</span>
+            <span style="color:var(--luz);">${verified}</span>
+            <button class="btn" style="font-size:10px; padding:4px 8px; border-radius:6px; background:rgba(240,168,48,.12); border:1px solid rgba(240,168,48,.3); color:var(--luz);" onclick="window.HostConsole.checkinAttendee('${uid}')">✓ Check-in</button>
+          </span>
+        </div>
+      `;
+    }).join('');
+    el.innerHTML = `
+      <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--luz); margin-bottom:8px;">Lista en Vivo · Participantes (${participants.length})</div>
+      <div style="max-height:260px; overflow-y:auto; font-size:12px; color:var(--humo);">${rows || '<div style="padding:8px;">Sin participantes registrados aún.</div>'}</div>
+    `;
+  }
+
+  async checkinAttendee(uid: string) {
+    const user = await DB.getUser(uid);
+    if (!user) return;
+    user.checkedIn = true;
+    await DB.saveUser(user);
+    this.showToastQR(`✅ ${user.name || uid} registrado`);
+    this.renderDashboard();
   }
 
   /* =====================================================================
@@ -560,6 +689,22 @@ class HostConsoleService {
       return;
     }
 
+    // [C-5] Gating Tier 2: advertencia visual si no está verificado (trustTier < 2).
+    if ((user.trustTier ?? 0) < 2) {
+      const proceed = await RondaDialog.confirm({
+        title: '🛡️ Verificación Tier 2 Requerida',
+        message: `El asistente <b>${user.name || uid}</b> tiene Tier ${user.trustTier ?? 0} (requiere Tier 2).<br><br>Su identidad aún no está verificada. ¿Autorizar ingreso excepcional?`,
+        icon: '🛡️',
+        confirmText: '✓ Autorizar Excepción',
+        cancelText: '✕ Denegar Ingreso',
+        type: 'confirm'
+      });
+      if (!proceed) {
+        this.showToastQR(`❌ Ingreso denegado para ${user.name || uid} (Tier < 2)`);
+        return;
+      }
+    }
+
     // Validación de pago en puerta si tiene pago pendiente o no tiene ticket confirmado
     if (user.paymentPending || !user.hasTicket) {
       const confirmed = await RondaDialog.confirm({
@@ -589,6 +734,14 @@ class HostConsoleService {
 
     user.checkedIn = true;
     await DB.saveUser(user);
+
+    if (user.linkedinUrl || user.verifications?.professional?.method === 'linkedin_oauth' || user.verifications?.identity?.method === 'linkedin_persona') {
+      await RondaDialog.alert({
+        title: '🎉 ¡Incentivo LinkedIn!',
+        message: `El asistente <b>${user.name || uid}</b> verificó su perfil con LinkedIn.<br><br><b>¡Entrégale una bebida de cortesía! 🍺</b>`,
+        icon: '🎉'
+      });
+    }
 
     this.showToastQR(`✅ ${user.name || uid} registrado`);
     this.renderDashboard();
@@ -628,6 +781,7 @@ class HostConsoleService {
       <div style="font-size:10px; color:var(--humo); margin-top:8px; font-family:var(--font-mono);">repet. máx/persona: ${m.historyRepeatsMax} · distancia: ${m.totalDistance.toFixed(2)}</div>
     `;
   }
+
 
   renderChart(totalParticipants: number) {
     const chart = document.getElementById('admin-chart');

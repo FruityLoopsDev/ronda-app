@@ -38,7 +38,8 @@ if (typeof window !== 'undefined') {
   try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
 }
 
-if (typeof window !== 'undefined' && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+const useEmulator = typeof window !== 'undefined' && ((import.meta as any).env?.VITE_USE_FIREBASE_EMULATOR === 'true' || window.location.search.includes('emulator=true'));
+if (useEmulator) {
   try {
     connectFirestoreEmulator(db, 'localhost', 8081);
     connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });

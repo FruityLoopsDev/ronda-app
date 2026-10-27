@@ -1,4 +1,4 @@
-import { DB } from './db.js';
+import { DB, User } from './db.js';
 import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
@@ -148,6 +148,11 @@ function initApp() {
     updateNavbar();
   });
 
+  // Refrescar avatar/iniciales en navbar cuando el perfil se edita sin cambiar la vista activa
+  window.addEventListener('profile:updated', () => {
+    renderNavbarBadgeOnly();
+  });
+
   // Inicializar servicio de perfil
   Profile.init();
   Icebreakers.init();
@@ -159,7 +164,7 @@ function initApp() {
     ClientApp.renderDiscoveryFeed();
   });
 
-  function updateNavbar() {
+  function renderNavbarBadgeOnly() {
     const user = Auth.currentUser;
     if (user && userMenu) {
       const displayName = user.name ? user.name.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'Usuario');
@@ -188,6 +193,13 @@ function initApp() {
           switchView('view-profile');
         }
       });
+    }
+  }
+
+  function updateNavbar() {
+    const user = Auth.currentUser;
+    if (user && userMenu) {
+      renderNavbarBadgeOnly();
       
       // Sincronizar datos del perfil
       Profile.setCurrentUser(user);
@@ -335,25 +347,34 @@ function initApp() {
 
       try {
         const user = Auth.currentUser || { uid: 'guest', role: 'client' };
-        user.name = name || 'Usuario RONDA';
-        user.age = age;
-        user.gender = gender;
-        user.orientation = orientation;
+        const patch: Partial<User> = {
+          name: name || 'Usuario RONDA',
+          age,
+          gender,
+          orientation
+        };
+
         if (linkedinUrl) {
           const val = Verification.validateLinkedInUrl(linkedinUrl);
-          user.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
+          patch.linkedinUrl = val.valid ? val.normalizedUrl : linkedinUrl;
           if (val.valid) {
-            user.linkedinVerified = true;
-            user.linkedinSlug = val.slug;
-            user.isVerified = true;
+            patch.linkedinVerified = true;
+            patch.linkedinSlug = val.slug;
+            patch.isVerified = true;
+            if (user.linkedinHeadline) patch.linkedinHeadline = user.linkedinHeadline;
           }
         }
 
         // Persistir el estado de verificación de identidad en el perfil.
-        if (Verification.isVerified || user.linkedinVerified) user.isVerified = true;
+        if (Verification.isVerified || user.linkedinVerified || patch.linkedinVerified) {
+          patch.isVerified = true;
+        }
+
+        Object.assign(user, patch);
 
         if (Auth.currentUser) {
-          await DB.saveUser(user);
+          await DB.updateUserProfile(user.uid, patch);
+          Object.assign(Auth.currentUser, patch);
         }
         if (modalProfile) modalProfile.classList.remove('active');
         
@@ -408,7 +429,7 @@ function initApp() {
       const codeInput = document.getElementById('event-code') as HTMLInputElement;
       const code = codeInput ? codeInput.value.trim().toLowerCase() : '';
       if (!code) {
-        alert("Por favor ingresa un código de evento.");
+        await RondaDialog.alert({ title: 'Código requerido', message: 'Por favor ingresa un código de evento.', icon: '🏷️' });
         return;
       }
 
@@ -418,12 +439,12 @@ function initApp() {
       try {
         const user = Auth.currentUser;
         if (!user) {
-          alert("Debes iniciar sesión para unirte a una ronda.");
+          await RondaDialog.alert({ title: 'Sesión requerida', message: 'Debes iniciar sesión para unirte a una ronda.', icon: '🔒' });
           return;
         }
         const eventDoc = await DB.getEvent(code);
         if (!eventDoc) {
-          alert(`El evento con código "${code}" no existe. Pídelo al anfitrión.`);
+          await RondaDialog.alert({ title: 'Evento no encontrado', message: `El evento con código "${code}" no existe. Pídelo al anfitrión.`, icon: '🔍' });
           return;
         }
 
@@ -432,12 +453,12 @@ function initApp() {
           btnJoinEvent.style.display = 'none';
           const codeInput = document.getElementById('event-code') as HTMLInputElement;
           if (codeInput) codeInput.disabled = true;
-          alert("Debes adquirir tu pase para ingresar a esta sala. Realiza el pago con Nequi desde la cartelera de eventos.");
+          await RondaDialog.alert({ title: 'Pase requerido', message: 'Debes adquirir tu pase para ingresar a esta sala. Realiza el pago con Nequi desde la cartelera de eventos.', icon: '🎟️' });
           return;
         }
 
         user.activeEventId = code;
-        await DB.saveUser(user);
+        await DB.updateUserProfile(user.uid, { activeEventId: code });
 
         updateNavbar();
         
@@ -446,7 +467,7 @@ function initApp() {
         }
       } catch (err) {
         console.error("Error uniéndose al evento:", err);
-        alert("Error al unirse: " + ((err as Error).message || String(err)));
+        await RondaDialog.alert({ title: 'Error al unirse', message: ((err as Error).message || String(err)), icon: '⚠️', type: 'danger' });
       } finally {
         btnJoinEvent.textContent = "Unirse a la Ronda";
         btnJoinEvent.disabled = false;
@@ -593,7 +614,7 @@ function initApp() {
         regStep2.style.display = 'block';
       }
     } else {
-      alert("Ingresa email y contraseña para continuar.");
+      RondaDialog.alert({ title: 'Credenciales incompletas', message: 'Ingresa email y contraseña para continuar con tu registro.', icon: '🔐' });
     }
   });
 

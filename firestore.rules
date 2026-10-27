@@ -13,13 +13,26 @@ service cloud.firestore {
     function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
     function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
 
-    // Campos que el propio usuario NO puede alterar (verificación, NFTs, wallet,
-    // matches, safeword). Solo staff/servidor los modifican.
+    // Campos que el propio usuario NO puede alterar (NFTs, wallet, matches,
+    // trustTier, verifications). Solo staff/servidor los modifican.
     function clientTouchedSensitive() {
       return request.resource.data.diff(resource.data).affectedKeys().hasAny([
-        'isVerified', 'linkedinVerified', 'nfts', 'wallet_address', 'matches', 'safeword',
-        'paymentPending', 'paymentMethod'
+        'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
       ]);
+    }
+
+    // Validación de campos de verificación y pago cuando el cliente actualiza su propio perfil:
+    // - isVerified / linkedinVerified: el cliente no puede revocarlos una vez verificados,
+    //   pero puede activarlos tras el flujo de validación LinkedIn / KYC ($0 en cliente).
+    // - paymentPending / paymentMethod: el cliente solo puede marcar pago pendiente ('nequi'),
+    //   nunca otorgarse hasTicket (que se valida en allow update).
+    function validClientVerificationAndPayment() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let okVerified = !changed.hasAny(['isVerified']) || request.resource.data.isVerified == true;
+      let okLinkedin = !changed.hasAny(['linkedinVerified']) || request.resource.data.linkedinVerified == true;
+      let okPayPending = !changed.hasAny(['paymentPending']) || request.resource.data.paymentPending == true;
+      let okPayMethod = !changed.hasAny(['paymentMethod']) || request.resource.data.paymentMethod == 'nequi';
+      return okVerified && okLinkedin && okPayPending && okPayMethod;
     }
 
     // --- Usuarios ---
@@ -36,9 +49,10 @@ service cloud.firestore {
       // ticket. El staff/admin puede actualizar para check-in, matches y emisión de certificados ($0 sin Cloud Functions).
       allow update: if request.auth != null && (
         (request.auth.uid == userId
-          && request.resource.data.role == resource.data.role
+          && request.resource.data.get('role', resource.data.role) == resource.data.role
           && request.resource.data.get('hasTicket', false) == resource.data.get('hasTicket', false)
-          && !clientTouchedSensitive())
+          && !clientTouchedSensitive()
+          && validClientVerificationAndPayment())
         || isSuperAdmin()
         || isAdmin()
       );
@@ -134,6 +148,56 @@ service cloud.firestore {
           && request.resource.data.email is string
           && request.resource.data.whatsapp is string;
       allow read, update, delete: if isSuperAdmin();
+    }
+
+    // --- KYC Reviews: solo staff (superadmin/admin) lee y escribe. ---
+    match /kycReviews/{reviewId} {
+      allow read, write: if isStaff();
+      allow create: if isStaff();
+      allow delete: if isSuperAdmin();
+    }
+
+    // --- B2B: Scouts (comerciales) y Hostes (bares aliados) ---
+    match /scouts/{scoutId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales();
+      allow delete: if isSuperAdmin();
+    }
+    match /hosts/{hostId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
+      allow delete: if isSuperAdmin();
+    }
+
+    // --- B2B: Ledger de comisiones, pagos y auditoría (solo servidor/superadmin) ---
+    match /commission_ledger/{entryId} {
+      allow read: if isStaff();
+      allow write: if isSuperAdmin();
+    }
+    match /payouts/{payoutId} {
+      allow read: if isStaff();
+      allow write: if isSuperAdmin();
+    }
+    match /audit_logs/{logId} {
+      allow read: if isStaff();
+      allow write: if isSuperAdmin();
+    }
+
+    // --- B2B: Ofertas de host, encuestas de churn y tokens de inversión ---
+    match /host_offers/{offerId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
+      allow delete: if isSuperAdmin();
+    }
+    match /churn_surveys/{surveyId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
+      allow delete: if isSuperAdmin();
+    }
+    match /invest_tokens/{tokenId} {
+      allow read: if isStaff();
+      allow create: if isSuperAdmin();
+      allow update, delete: if isSuperAdmin();
     }
   }
 }

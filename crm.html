@@ -3,25 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RONDA — Citas presenciales en ubicaciones secretas</title>
+  <title>RONDA — Citas Rápidas / Speed Dating en ubicaciones secretas</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
   <meta name="description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos para profesionales de alto valor.">
   
-  <!-- Open Graph / Facebook / WhatsApp -->
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ronda.uno/">
-  <meta property="og:title" content="RONDA — Citas presenciales en ubicaciones secretas">
-  <meta property="og:description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos, sin pantallas ni ghosting.">
-  <meta property="og:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
-  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:url" content="https://ronda.uno/crm">
+  <meta property="og:title" content="RONDA — Portal Comercial &amp; Scouts">
+  <meta property="og:description" content="Gestión comercial de alianzas para sedes y scouts de RONDA en Bogotá.">
+  <meta property="og:image" content="https://ronda.uno/assets/og-ronda-main.jpg">
+  <meta property="og:image:secure_url" content="https://ronda.uno/assets/og-ronda-main.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="RONDA">
   <meta property="og:locale" content="es_CO">
   
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://ronda.uno/">
-  <meta name="twitter:title" content="RONDA — Citas presenciales en ubicaciones secretas">
-  <meta name="twitter:description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos, sin pantallas ni ghosting.">
-  <meta name="twitter:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
+  <meta name="twitter:url" content="https://ronda.uno/crm">
+  <meta name="twitter:title" content="RONDA — Portal Comercial &amp; Scouts">
+  <meta name="twitter:description" content="Gestión comercial de alianzas para sedes y scouts de RONDA en Bogotá.">
+  <meta name="twitter:image" content="https://ronda.uno/assets/og-ronda-main.jpg">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,60 +34,7 @@
   <link rel="stylesheet" href="/assets/ronda-tokens.css">
   <link rel="stylesheet" href="/css/styles.css">
 
-  <!-- Firebase SDKs (Compat version for simplicity without bundlers, or Modular) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { 
-      getFirestore, 
-      connectFirestoreEmulator,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { 
-      getAuth, 
-      connectAuthEmulator,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { 
-      getFunctions, 
-      connectFunctionsEmulator,
-      httpsCallable 
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-functions.js";
-    
-    window.firebaseModules = { 
-      initializeApp, 
-      getFirestore, 
-      connectFirestoreEmulator, 
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp,
-      getAuth, 
-      connectAuthEmulator,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged,
-      getFunctions,
-      connectFunctionsEmulator,
-      httpsCallable
-    };
-  </script>
-
-    <style>
+  <style>
       .ronda-input {
         margin-bottom: 10px; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); 
         background: rgba(243,237,226,.06); color: var(--papel); outline: none; 
@@ -100,6 +51,52 @@
       .login-anim {
         animation: loginSuccess 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
+
+      /* CRM Avanzado: toolbar de búsqueda/filtros */
+      .crm-toolbar {
+        display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+        background: rgba(243,237,226,0.04); border: 1px solid var(--linea);
+        border-radius: 14px; padding: 12px 14px; margin-bottom: 18px;
+      }
+      .crm-toolbar input[type="search"] {
+        flex: 1 1 220px; min-width: 180px; margin-bottom: 0; padding: 10px 12px;
+        border-radius: 8px; border: 1px solid var(--linea);
+        background: rgba(243,237,226,.06); color: var(--papel); outline: none;
+        font-family: 'Space Grotesk', sans-serif; font-size: 13px;
+      }
+      .crm-toolbar input[type="search"]:focus { border-color: var(--luz); }
+      .crm-toolbar select {
+        flex: 0 1 auto; min-width: 170px; margin-bottom: 0; padding: 10px 12px;
+        border-radius: 8px; border: 1px solid var(--linea);
+        background: rgba(243,237,226,.06); color: var(--papel); outline: none;
+        font-family: 'Space Grotesk', sans-serif; font-size: 13px;
+      }
+      .crm-toolbar .crm-toolbar-hint {
+        font-family: var(--font-mono); font-size: 10.5px; color: var(--humo);
+        margin-left: auto;
+      }
+
+      /* CRM Avanzado: drawer de ficha técnica del local */
+      .crm-drawer-overlay {
+        display: none; position: fixed; inset: 0; z-index: 10000;
+        background: rgba(10, 7, 14, 0.85); backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px); padding: 16px;
+        align-items: center; justify-content: center;
+      }
+      .crm-drawer-overlay.active { display: flex; }
+      .crm-drawer {
+        background: rgba(22, 16, 27, 0.97); border: 1px solid var(--linea);
+        border-radius: 18px; width: 100%; max-width: 480px;
+        max-height: 88vh; overflow-y: auto; padding: 24px 22px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.8);
+      }
+
+      /* CRM Avanzado: variante verde del botón (conversión a venue) */
+      .btn.verde {
+        background: rgba(46,107,84,0.22); color: #79D3AC;
+        border: 1px solid rgba(46,107,84,0.55);
+      }
+      .btn.verde:hover { filter: brightness(1.15); }
       
       /* Modales Elegantes Mobile-First */
       .modal-overlay {
@@ -1340,7 +1337,7 @@
         <h4 style="font-family: var(--font-display); font-size: 20px; color: var(--papel); margin-bottom: 4px;">Acceso del Equipo</h4>
         <p class="detalle" style="margin-bottom: 16px; font-size: 11.5px;">Acceso para pruebas y administración.</p>
         <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
-        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input">
+        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input" autocomplete="current-password">
         <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
         <button type="button" id="btn-back-to-waitlist" class="btn" style="background: transparent; margin-top: 8px; font-size: 12px; border: none; color: var(--humo);">← Volver a Lista de Espera</button>
         <button type="button" id="btn-show-register" class="btn" style="background: transparent; margin-top: 6px; font-size: 11px; border: none; color: rgba(243,237,226,0.4);">Registro interno</button>
@@ -1353,7 +1350,7 @@
         <div id="reg-step-1">
           <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
           <div style="position: relative; width: 100%;">
-            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" style="padding-right: 40px; margin-bottom: 4px;">
+            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" autocomplete="new-password" style="padding-right: 40px; margin-bottom: 4px;">
             <button type="button" id="btn-toggle-reg-password" style="position: absolute; right: 12px; top: 21px; transform: translateY(-50%); background: none; border: none; color: var(--humo); cursor: pointer; padding: 4px; font-size: 14px;" title="Mostrar / Ocultar contraseña">👁️</button>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0 10px; font-size: 11px;">
@@ -1395,9 +1392,9 @@
           </div>
 
           <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Requisito Obligatorio)</label>
+            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Opcional - Recomendado)</label>
             <input type="url" id="reg-linkedin" placeholder="https://linkedin.com/in/tu-perfil" class="ronda-input" style="margin-bottom: 2px;">
-            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de solteros profesionales de alto valor. Verificamos tu identidad con LinkedIn.</span>
+            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA es una comunidad exclusiva de profesionales. <span style="color: var(--ambar); font-weight: bold;">🍺 ¡Añade tu LinkedIn para recibir una bebida de cortesía al llegar al evento!</span></span>
           </div>
 
           <button type="button" id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
@@ -1427,6 +1424,21 @@
         </div>
       </div>
 
+      <!-- Toolbar: Buscador y filtro por zonas en tiempo real -->
+      <div class="crm-toolbar">
+        <input type="search" id="crm-search-input" placeholder="🔍 Buscar bar o contacto...">
+        <select id="crm-zone-filter">
+          <option value="all">🌍 Todas las zonas</option>
+          <option value="Chapinero Alto">Chapinero Alto</option>
+          <option value="Quinta Camacho">Quinta Camacho</option>
+          <option value="Zona G">Zona G</option>
+          <option value="Usaquén">Usaquén</option>
+          <option value="Parque 93">Parque 93</option>
+          <option value="Teusaquillo">Teusaquillo</option>
+        </select>
+        <span class="crm-toolbar-hint" id="crm-filter-count"></span>
+      </div>
+
       <!-- Kanban Board -->
       <div id="crm-kanban-wrapper" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
         <!-- Columna 1: Lead -->
@@ -1441,7 +1453,7 @@
         <!-- Columna 2: Negociación -->
         <div class="kanban-column" style="background: rgba(240,168,48,0.04); border: 1px solid rgba(240,168,48,0.3); border-radius: 16px; padding: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(240,168,48,0.3); padding-bottom: 10px;">
-            <b style="font-family: var(--font-display); font-size: 15px; color: var(--luz);">🤝 2. En Negociación / Escandallo</b>
+            <b style="font-family: var(--font-display); font-size: 15px; color: var(--luz);">🤝 2. En Negociación / Precio de Barra</b>
             <span class="chip ambar" style="font-size: 9px;">En Curso</span>
           </div>
           <div id="kanban-negotiating" class="kanban-list" style="min-height: 280px;"></div>
@@ -1456,8 +1468,16 @@
           <div id="kanban-signed" class="kanban-list" style="min-height: 280px;"></div>
         </div>
       </div>
+
+      <!-- Drawer: Ficha Técnica del Local (Tarea 2) -->
+      <div id="crm-lead-drawer-overlay" class="crm-drawer-overlay">
+        <div id="crm-lead-drawer" class="crm-drawer"></div>
+      </div>
     </div>
   </section>
+
+  <!-- Footer global hidratado desde src/footer.ts (Single Source of Truth: src/version.ts) -->
+  <div id="footer-root"></div>
 
   <!-- Vista: Super Admin Dashboard -->
   <script type="module" src="/src/entry-crm.ts"></script>

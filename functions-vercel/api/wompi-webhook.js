@@ -106,6 +106,20 @@ module.exports = async function handler(req, res) {
 
           console.log(`✓ User ${uid} approved and activated for event ${eventId}`);
         }
+      } else if (status === 'DECLINED' || status === 'ERROR') {
+        // Transacción rechazada o con error: liberar el pago pendiente para que el
+        // usuario pueda reintentar sin quedar bloqueado con paymentPending: true.
+        if (reference) {
+          const parts = reference.split('-');
+          if (parts.length >= 2) {
+            const uid = parts[1];
+            await db.collection('users').doc(uid).update({
+              paymentPending: false,
+              paymentMethod: tx.payment_method_type || null
+            });
+            console.log(`✓ User ${uid} paymentPending reset due to status ${status}`);
+          }
+        }
       }
     }
 
