@@ -1,0 +1,24 @@
+.raw-wrap{max-width:1600px!important;width:100%!important}
+.ronda-admin-workspace{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;padding:24px;background:#110b16;color:#f3ede2;border:1px solid #403247;border-radius:16px;text-align:left;font-family:var(--font-body,sans-serif);min-height:65vh;box-sizing:border-box}
+.ronda-admin-workspace *{box-sizing:border-box}
+.ronda-admin-workspace [hidden]{display:none!important}
+.raw-sidebar{border-right:1px solid #403247;padding-right:20px}
+.raw-brand{font:700 26px var(--font-display,Georgia,serif);letter-spacing:.14em}
+.raw-sidebar p{font:11px var(--font-mono,monospace);color:#c3b6cd;margin:12px 0 25px}
+.ronda-admin-workspace button{cursor:pointer;font:inherit;min-height:44px;border-radius:9px;padding:11px 14px;color:#f3ede2;background:#302138;border:1px solid #65506e}
+.raw-sidebar button{display:block;width:100%;margin:6px 0;text-align:left;background:transparent;border-color:transparent;color:#c3b6cd;font-size:13px}
+.raw-sidebar button[aria-current=page]{background:#302138;border-color:#65506e;box-shadow:inset 3px 0 #e0bd82;color:#f3ede2}
+.ronda-admin-workspace button:focus-visible{outline:2px solid #e0bd82;outline-offset:4px}
+.raw-main{min-width:0}
+.raw-title{font:32px var(--font-display,Georgia,serif);margin:0 0 12px}
+.raw-main>p{color:#c3b6cd;font-size:13px;line-height:1.7;border-bottom:1px solid #403247;padding-bottom:20px;margin-bottom:24px}
+.raw-notice{background:#2b221b;color:#ead1aa;border:1px solid #5a4730;padding:15px;border-radius:10px;font-size:12px;line-height:1.7;margin-bottom:20px}
+.raw-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.raw-cards article{display:flex;flex-direction:column;align-items:flex-start;padding:23px;background:#1b1322;border:1px solid #403247;border-radius:13px}
+.raw-cards h3{font:23px var(--font-display,Georgia,serif);margin:0 0 12px}
+.raw-cards p{font-size:13px;line-height:1.7;color:#c3b6cd;margin:0 0 20px}
+.raw-cards button{margin-top:auto}
+.raw-panel{min-width:0;overflow-wrap:anywhere}
+.raw-panel input,.raw-panel select,.raw-panel textarea{max-width:100%}
+@media(max-width:1050px){.ronda-admin-workspace{grid-template-columns:190px minmax(0,1fr);gap:18px;padding:18px}.raw-cards{grid-template-columns:1fr}}
+@media(max-width:740px){.ronda-admin-workspace{grid-template-columns:minmax(0,1fr);padding:14px}.raw-sidebar{border-right:0;border-bottom:1px solid #403247;padding:0 0 12px}.raw-sidebar nav{display:flex;overflow-x:auto;gap:8px;padding:5px}.raw-sidebar button{flex:0 0 auto;width:auto;white-space:nowrap}.raw-sidebar p{margin-bottom:12px}.raw-title{font-size:27px}.raw-wrap{padding-left:10px!important;padding-right:10px!important}}
