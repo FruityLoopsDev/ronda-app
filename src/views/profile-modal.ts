@@ -67,9 +67,8 @@ export class ProfileModal {
         if (orientationInput) orientationInput.value = user.orientation || '';
         if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
-        // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
         const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-        if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
+        if (saveBtn) saveBtn.disabled = false;
       }
     });
   }

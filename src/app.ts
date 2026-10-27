@@ -277,9 +277,8 @@ function initApp() {
       if (orientationInput) orientationInput.value = user.orientation || '';
       if (linkedinInput) linkedinInput.value = user.linkedinUrl || '';
 
-      // Gating: guardar el perfil si el usuario ya está verificado por LinkedIn o KYC
       const saveBtn = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-      if (saveBtn) saveBtn.disabled = !(user.isVerified || user.linkedinVerified || !!user.linkedinUrl);
+      if (saveBtn) saveBtn.disabled = false;
     }
   });
 
@@ -660,11 +659,11 @@ function initApp() {
     const orientation = (document.getElementById('reg-interest') as HTMLSelectElement).value;
     const linkedinUrl = ((document.getElementById('reg-linkedin') as HTMLInputElement)?.value || '').trim();
 
-    if (!name || !birthDate || !gender || !orientation || !linkedinUrl) {
+    if (!name || !birthDate || !gender || !orientation) {
       await RondaDialog.alert({
-        title: 'Verificación Profesional Requerida',
-        message: 'RONDA es una comunidad para solteros profesionales de alto valor. Ingresa todos tus datos y tu perfil de LinkedIn actualizado para validar tu membresía.',
-        icon: '💼'
+        title: 'Datos Incompletos',
+        message: 'Por favor completa tu nombre, fecha de nacimiento, género y a quién buscas conocer para crear tu cuenta.',
+        icon: '📝'
       });
       return;
     }
@@ -680,37 +679,46 @@ function initApp() {
       return;
     }
 
-    const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
-    if (!linkedinValidation.valid) {
-      await RondaDialog.alert({
-        title: 'Perfil de LinkedIn No Válido',
-        message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil).',
-        icon: '💼',
-        type: 'alert'
-      });
-      return;
-    }
-
     const zodiac = getZodiacSign(birthDate);
 
     const btn = document.getElementById('btn-real-register') as HTMLButtonElement;
-    btn.textContent = 'Verificando LinkedIn y creando cuenta...';
+    btn.textContent = 'Creando cuenta...';
     btn.disabled = true;
 
-    const linkedinResult = await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
-
-    Auth.registerWithEmail(email, password, { 
-      name, 
+    let profilePayload: Partial<User> = {
+      name,
       birthDate,
       zodiacSign: zodiac.emoji,
-      age, 
-      gender, 
-      orientation,
-      linkedinUrl: linkedinValidation.normalizedUrl,
-      linkedinVerified: true,
-      linkedinSlug: linkedinValidation.slug,
-      linkedinHeadline: linkedinResult.data?.headline
-    }).then(() => {
+      age,
+      gender,
+      orientation
+    };
+
+    if (linkedinUrl) {
+      const linkedinValidation = Verification.validateLinkedInUrl(linkedinUrl);
+      if (!linkedinValidation.valid) {
+        btn.textContent = 'Crear Cuenta y Entrar';
+        btn.disabled = false;
+        await RondaDialog.alert({
+          title: 'Perfil de LinkedIn No Válido',
+          message: linkedinValidation.error || 'Ingresa una URL válida de LinkedIn (ej. https://linkedin.com/in/tu-perfil) o deja el campo vacío.',
+          icon: '💼',
+          type: 'alert'
+        });
+        return;
+      }
+      btn.textContent = 'Verificando LinkedIn y creando cuenta...';
+      const linkedinResult = await Verification.verifyLinkedInProfile(linkedinUrl, { name, email });
+      profilePayload = {
+        ...profilePayload,
+        linkedinUrl: linkedinValidation.normalizedUrl,
+        linkedinVerified: true,
+        linkedinSlug: linkedinValidation.slug,
+        linkedinHeadline: linkedinResult.data?.headline
+      };
+    }
+
+    Auth.registerWithEmail(email, password, profilePayload).then(() => {
       // Successfully registered.
       triggerLoginAnimation();
       updateNavbar();
