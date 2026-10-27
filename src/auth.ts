@@ -170,11 +170,19 @@ export class AuthService {
     }
   }
 
-  async logout() {
+  async logout(): Promise<void> {
     try {
       await signOut(this._getAuth());
+      // Cierre exitoso: notificar a la app para resetear navbar y vistas.
+      // Firebase también dispara onAuthStateChanged → 'auth:logout', pero lo
+      // emitimos explícitamente para evitar que un timing/lapse del callback
+      // deje la UI sin actualizar (efecto "no hace nada").
+      this.currentUser = null;
+      this._pendingProfile = null;
+      window.dispatchEvent(new Event('auth:logout'));
     } catch (error) {
       console.error("Error cerrando sesión en Firebase:", error);
+      throw error;
     }
   }
 

@@ -266,7 +266,18 @@ export class ProfileService {
         cancelText: '✕ Mantener Abierta'
       });
       if (confirmed) {
-        Auth.logout();
+        try {
+          await Auth.logout();
+          // La navegación a view-auth se gestiona desde el listener 'auth:logout'
+          // en app.ts (updateNavbar → switchView('view-auth')).
+        } catch (err) {
+          await RondaDialog.alert({
+            title: 'No se pudo cerrar sesión',
+            message: 'Hubo un problema al cerrar sesión. Verifica tu conexión a internet e intenta nuevamente.',
+            icon: '⚠️',
+            type: 'danger'
+          });
+        }
       }
     });
 

@@ -46,6 +46,6 @@ Archivos **prohibidos** de lectura completa (usa `grep` o lee por rangos):
 ## 6. Estándar Inmutable de Footers (Regla de 3 Categorías)
 - Seguir estrictamente `.agents/rules/ronda-footer-standard.md`.
 - **Landings (`landing`, `partners`, `invest`):** Footer Luxury Semántico 3 columnas.
-- **Web App (`index.html`):** ZERO FOOTER. Prohibido agregar footer comercial a la SPA móvil.
+- **Web App (`index.html`):** Footer Minimalista de Control de Versiones (`.ronda-app-footer`: versión `v2.3.0-prod`, ingeniería y legal) con padding inferior de 84px. Prohibido footer comercial de marketing.
 - **Dashboards Staff (`network`, `crm`, `admin`, `superadmin`):** Dashboard Console Footer de 1 sola fila (`getRondaDashboardFooterHtml()`). PROHIBIDO texto de marketing de citas en paneles operativos.
 

@@ -269,19 +269,36 @@ export function getRondaDashboardFooterHtml(): string {
   `;
 }
 
-export function renderRondaFooter(targetContainer?: HTMLElement | string | null): void {
-  // 1. Regla Inmutable Cat 2: index.html es la Web App SPA de clientes -> CERO FOOTER
-  if (typeof window !== 'undefined') {
-    const isApp = window.location.pathname === '/' || window.location.pathname.endsWith('index.html') || !!document.getElementById('view-lobby');
-    if (isApp && !window.location.pathname.includes('network') && !window.location.pathname.includes('admin') && !window.location.pathname.includes('crm') && !window.location.pathname.includes('superadmin')) {
-      return;
-    }
-  }
+export function getRondaAppFooterHtml(): string {
+  return `
+    <footer class="ronda-footer ronda-app-footer" data-ronda-footer style="margin-top: 36px; padding: 18px 20px 84px 20px; border-top: 1px solid var(--linea, rgba(243,237,226,0.12)); font-size: 11px; color: var(--humo, #8c8378); font-family: var(--font-mono, monospace); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-sizing: border-box; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span data-ronda-copyright style="font-weight: 600; color: var(--papel, #f3ede2);">${APP_COPYRIGHT}</span>
+        <span style="opacity: 0.3;">·</span>
+        <span data-ronda-madein style="display: inline-flex; align-items: center; gap: 5px; color: var(--humo, #8c8378);">
+          ${APP_MADE_IN} <img src="https://flagcdn.com/16x12/co.png" alt="Colombia" style="height: 10px; width: 14px; object-fit: cover; border-radius: 2px; vertical-align: middle;">
+        </span>
+        <span style="opacity: 0.3;">·</span>
+        <span data-ronda-version class="chip gris" style="font-size: 10px; padding: 1px 7px; border-radius: 999px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea, rgba(243,237,226,0.12)); color: var(--papel, #f3ede2);">${APP_VERSION}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span data-ronda-engineering-badge style="font-size: 10px; color: var(--luz, #F0A830); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.22); padding: 2px 7px; border-radius: 4px;">
+          ⚡ <span data-ronda-hours>${APP_DEV_HOURS}</span>h ops · <span data-ronda-commits>${APP_COMMIT_COUNT}</span> deploys
+        </span>
+        <span style="opacity: 0.3;">·</span>
+        <a href="#legal-terminos" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-terminos')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Términos</a>
+        <span style="opacity: 0.3;">·</span>
+        <a href="#legal-privacidad" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-privacidad')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Privacidad</a>
+      </div>
+    </footer>
+  `;
+}
 
-  // 2. Hidratar ganchos existentes primero (cubre footers custom con contadores).
+export function renderRondaFooter(targetContainer?: HTMLElement | string | null): void {
+  // 1. Hidratar ganchos existentes primero (cubre footers ya presentes o estáticos).
   hydrateRondaFooter(document);
 
-  // 3. Determinar si es Dashboard Staff (Cat 3) o Landing Pública (Cat 1)
+  // 2. Determinar si es Dashboard Staff (Cat 3), Web App SPA (Cat 2) o Landing Pública (Cat 1)
   const isDashboard = typeof window !== 'undefined' && (
     window.location.pathname.includes('network') ||
     window.location.pathname.includes('admin') ||
@@ -292,9 +309,18 @@ export function renderRondaFooter(targetContainer?: HTMLElement | string | null)
     document.getElementById('view-crm') !== null
   );
 
-  const footerHtml = isDashboard ? getRondaDashboardFooterHtml() : getRondaFooterHtml();
+  const isApp = typeof window !== 'undefined' && !isDashboard && (
+    window.location.pathname === '/' ||
+    window.location.pathname.endsWith('index.html') ||
+    !!document.getElementById('view-lobby') ||
+    !!document.getElementById('view-client')
+  );
 
-  // 4. Placeholder explícito tiene prioridad (#footer-root en portales)
+  const footerHtml = isDashboard
+    ? getRondaDashboardFooterHtml()
+    : (isApp ? getRondaAppFooterHtml() : getRondaFooterHtml());
+
+  // 3. Placeholder explícito tiene prioridad (#footer-root en portales o app)
   const placeholder = document.getElementById('footer-root') ?? document.querySelector('[data-ronda-footer-inject]');
   if (placeholder) {
     if (!placeholder.querySelector('footer.ronda-footer')) {
@@ -317,17 +343,21 @@ export function renderRondaFooter(targetContainer?: HTMLElement | string | null)
 
   if (!container) return;
 
-  // 5. Si ya existe footer, hidratar y salir
+  // 4. Si ya existe footer RONDA en el contenedor, hidratar y salir
   const existing = container.querySelector('footer.ronda-footer') || document.querySelector('footer.ronda-footer');
   if (existing) {
     hydrateRondaFooter(existing.parentElement ?? document);
     return;
   }
 
-  // 6. Si ya tiene un <footer> propio, no duplicar
-  if (document.querySelector('footer')) return;
+  // 5. Si ya tiene un <footer> genérico propio, hidratar ganchos y no duplicar
+  const existingGeneric = document.querySelector('footer');
+  if (existingGeneric) {
+    hydrateRondaFooter(existingGeneric);
+    return;
+  }
 
-  // 7. Inyectar según categoría
+  // 6. Inyectar según categoría
   container.insertAdjacentHTML('beforeend', footerHtml);
   hydrateRondaFooter(container);
 }
