@@ -222,9 +222,9 @@
     "semantic_hash": "c624722295ea19432950863658ef7c0d"
   },
   "src/app.ts": {
-    "mtime": 1793067529.4117777,
-    "seen": 1793067570.1704144,
-    "ast_hash": "fa39552ad59ad76dc51bbdb49fa204f7",
+    "mtime": 1793068328.3991156,
+    "seen": 1793113777.8626604,
+    "ast_hash": "4bf6063b9a119bc59b06947fbcaa3063",
     "semantic_hash": ""
   },
   "src/auth-ui.ts": {
@@ -456,15 +456,15 @@
     "semantic_hash": ""
   },
   "src/views/auth-view.ts": {
-    "mtime": 1793064034.442264,
-    "seen": 1793067570.1704144,
-    "ast_hash": "119555e0c2e7c5b28f33015acda5d068",
+    "mtime": 1793068328.4006264,
+    "seen": 1793113777.8626604,
+    "ast_hash": "a5c57dd5749735d8456333f9b93599b4",
     "semantic_hash": ""
   },
   "src/views/profile-modal.ts": {
-    "mtime": 1793067529.4256024,
-    "seen": 1793067570.1704144,
-    "ast_hash": "e3cd054e91edca8c559fe4de037ef255",
+    "mtime": 1793068328.4026408,
+    "seen": 1793113777.8626604,
+    "ast_hash": "a6e3dd8936b1e346da4b45726a9e676f",
     "semantic_hash": ""
   },
   "test/test-integrity-zero-functions.cjs": {
@@ -564,9 +564,9 @@
     "semantic_hash": ""
   },
   "admin.html": {
-    "mtime": 1793067529.3939192,
-    "seen": 1793067570.1704144,
-    "ast_hash": "132dde569ee4a07041bd8f1f6a566a89",
+    "mtime": 1793068328.347366,
+    "seen": 1793113777.8626604,
+    "ast_hash": "2b701594217a61187d48a0eed01249c7",
     "semantic_hash": ""
   },
   "assets/README.md": {
@@ -576,9 +576,9 @@
     "semantic_hash": ""
   },
   "crm.html": {
-    "mtime": 1793067529.3959308,
-    "seen": 1793067570.1704144,
-    "ast_hash": "5d090b1e9e4d44aca751ae4d1f6a1f48",
+    "mtime": 1793068328.349378,
+    "seen": 1793113777.8626604,
+    "ast_hash": "c8eb46290c582ac6116c4e112145d343",
     "semantic_hash": ""
   },
   "docs/MASTER_REFERENCE.md": {
@@ -690,9 +690,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1793067529.3997009,
-    "seen": 1793067570.1704144,
-    "ast_hash": "1233421446bd2f7a1fbb5435c6dc1e66",
+    "mtime": 1793068328.3930795,
+    "seen": 1793113777.8626604,
+    "ast_hash": "cfae2ba6f7a5123a62c5053459a0b2ea",
     "semantic_hash": ""
   },
   "invest.html": {
@@ -708,9 +708,9 @@
     "semantic_hash": ""
   },
   "network.html": {
-    "mtime": 1793067529.4077544,
-    "seen": 1793067570.1704144,
-    "ast_hash": "1de1a2b4893576813fd3a69f49488769",
+    "mtime": 1793068328.3971038,
+    "seen": 1793113777.8626604,
+    "ast_hash": "a43728bb76c5487fcb6717266c4d6d9f",
     "semantic_hash": ""
   },
   "partners.html": {
@@ -918,9 +918,9 @@
     "semantic_hash": ""
   },
   "superadmin.html": {
-    "mtime": 1793067529.4276135,
-    "seen": 1793067570.1704144,
-    "ast_hash": "9ffc556e136b2153d39034fb62ba5359",
+    "mtime": 1793068328.4046526,
+    "seen": 1793113777.8626604,
+    "ast_hash": "c20b1fc064c52606f75e865c229e2ab3",
     "semantic_hash": ""
   },
   "task.md": {
@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "src/version.ts": {
-    "mtime": 1793067529.423591,
-    "seen": 1793067570.1704144,
-    "ast_hash": "1e13c96aed3a9f9027d69e727c4a9383",
+    "mtime": 1793113503.215035,
+    "seen": 1793113777.8626604,
+    "ast_hash": "c17b63fa68255ee5749b10ed0d10c552",
     "semantic_hash": ""
   },
   "test/face-verify.test.ts": {
@@ -1425,6 +1425,60 @@
     "mtime": 1793062736.804646,
     "seen": 1793067570.1704144,
     "ast_hash": "bce98a234b01d000924935eb5f2f49e8",
+    "semantic_hash": ""
+  },
+  "scripts/audit-client-profile.cjs": {
+    "mtime": 1793113403.92492,
+    "seen": 1793113777.8626604,
+    "ast_hash": "87ce31cd543cd0c151396a268fa2f92f",
+    "semantic_hash": ""
+  },
+  "scripts/rotate-password.cjs": {
+    "mtime": 1793113404.3717103,
+    "seen": 1793113777.8626604,
+    "ast_hash": "dc97a1ed2aba889176d3ea0716def4e7",
+    "semantic_hash": ""
+  },
+  "docs/INFORME_CONFLICTO_GIT.md": {
+    "mtime": 1793110458.943496,
+    "seen": 1793113777.8626604,
+    "ast_hash": "94971a385d1068815f9aa8b24f751d1f",
+    "semantic_hash": ""
+  },
+  "assets/og-ronda-invest.jpg": {
+    "mtime": 1793113403.8905766,
+    "seen": 1793113777.8626604,
+    "ast_hash": "a9a2e3958208ab39055cc87580986b19",
+    "semantic_hash": ""
+  },
+  "assets/og-ronda-main.jpg": {
+    "mtime": 1793113403.8966033,
+    "seen": 1793113777.8626604,
+    "ast_hash": "72f352af311d029461d398b38b04f686",
+    "semantic_hash": ""
+  },
+  "assets/og-ronda-partners.jpg": {
+    "mtime": 1793113403.904206,
+    "seen": 1793113777.8626604,
+    "ast_hash": "d82f48bd0175c9e286dd079da9a80d0f",
+    "semantic_hash": ""
+  },
+  "public/assets/og-ronda-invest.jpg": {
+    "mtime": 1793113403.908597,
+    "seen": 1793113777.8626604,
+    "ast_hash": "a9a2e3958208ab39055cc87580986b19",
+    "semantic_hash": ""
+  },
+  "public/assets/og-ronda-main.jpg": {
+    "mtime": 1793113403.9126165,
+    "seen": 1793113777.8626604,
+    "ast_hash": "72f352af311d029461d398b38b04f686",
+    "semantic_hash": ""
+  },
+  "public/assets/og-ronda-partners.jpg": {
+    "mtime": 1793113403.9204,
+    "seen": 1793113777.8626604,
+    "ast_hash": "d82f48bd0175c9e286dd079da9a80d0f",
     "semantic_hash": ""
   }
 }
