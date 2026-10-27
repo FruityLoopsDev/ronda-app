@@ -159,3 +159,17 @@ export class RondaDialog {
     }
   }
 }
+
+if (typeof window !== 'undefined') {
+  (window as any).RondaDialog = RondaDialog;
+  // Fallback seguro: intercepta llamadas nativas alert() para mostrarlas con la estética Night & Amber
+  const nativeAlert = window.alert;
+  window.alert = (msg?: any) => {
+    if (document.body) {
+      RondaDialog.alert(String(msg ?? ''));
+    } else {
+      nativeAlert(msg);
+    }
+  };
+}
+

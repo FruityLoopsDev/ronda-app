@@ -17,6 +17,43 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
+### [2026-10-26] — Elevación Integral de Modales y Estandarización Global de Contadores de Visitas
+- **Solicitud del Usuario:** 
+  1. Eliminar el `alert()` nativo del navegador tras postular un gastrobar en `ronda.uno/partners#calculadora` y alinearlo a la estética global de RONDA.
+  2. Auditoría y elevación de todos los modales del proyecto para unificarlos bajo los tokens Night & Amber.
+  3. Verificación y estandarización de todos los contadores de visitas (`landing.html`, `invest.html`, `partners.html`, `superadmin.html`, y footers dinámicos) para que sean 100% idénticos visual y estructuralmente.
+- **Acciones y Mejoras Realizadas:**
+  - **Eliminación del alert nativo en `/partners`:** Se rediseñó `#lead-modal` para integrar una caja de confirmación de lujo (`#lead-success-box`) con ícono de cóctel brillante (`🍸`), tipografía Bodoni Moda, mensaje cálido de recepción, botón de contacto directo al Scout por WhatsApp con mensaje precargado (`https://wa.me/573026543854`) y botón para cerrar la ventana sin recargar ni romper el flujo.
+  - **Módulo Universal `ronda-dialog.js` y Override de `window.alert`:**
+    - Creado componente autónomo ultraligero (`assets/ronda-dialog.js`, `public/assets/`, `dist/assets/`) que renderiza tarjetas modales flotantes con estética Night & Amber (`background: #1a1120`, borde dorado translúcido `rgba(240,168,48,0.38)`, resplandor ambiental, `backdrop-filter: blur(12px)` y microanimación `rondaDialogPop`).
+    - Intercepción automática global de `window.alert()` para garantizar que ningún script de terceros o llamada residual vuelva a mostrar un popup blanco del navegador.
+    - Actualización de `src/dialog.ts` para portales TypeScript (`superadmin.ts`, `app.ts`, `bar.ts`, etc.) vinculando `RondaDialog` a `window` y reemplazando todos los `alert()` dispersos.
+  - **Elevación Global de Modales:**
+    - `partners.html`: `.modal-card` con radio 24px, borde ámbar y botón de cierre circular traslúcido.
+    - `landing.html`: `.modal-card` de waitlist y `.modal-founder-card` elevados con radio 24px, sombra ámbar y cierre circular con hover dorado.
+    - `invest.html`: `.modal-content` (Data Room, video, proyecciones, contratos, Nequi y Crypto) elevado con radio 24px, borde ámbar y cierre unificado.
+  - **Estandarización 100% Idéntica de Contadores de Visitas (`.ronda-visit-counter-pill`):**
+    - Añadida la clase `.ronda-visit-counter-pill`, el punto de pulso en vivo `.ronda-pulse-dot` con `@keyframes rondaPulseDot` verde esmeralda neón (`#79D3AC`) y el valor numérico `.ronda-visit-count-val` en dorado brillante (`#F0A830`).
+    - Unificado el markup en `landing.html`, `invest.html`, `partners.html`, `superadmin.html`, y en las funciones de inyección SSR/dinámica `getRondaFooterHtml()` y `getRondaDashboardFooterHtml()` de `src/footer.ts`.
+- **Validación Técnica:**
+  - `npx tsc --noEmit` superado sin advertencias (0 errores).
+  - Pruebas automatizadas `test/test-integrity-zero-functions.cjs` 5/5 pasadas exitosamente.
+  - `npm run build` ejecutado en 1m 8s con empaquetado `dist/` íntegro.
+
+### [2026-10-26] — Solución Integral de Previews para WhatsApp / Open Graph (`index`, `invest`, `landing`, `partners`)
+- **Solicitud del Usuario:** Corregir el envío de enlaces por WhatsApp para que aparezca una imagen enriquecida y representativa asociada a cada link (`/invest`, `index`/app, landing, partners).
+- **Causa Raíz Identificada:**
+  1. WhatsApp/Facebook crawlers NO soportan formato SVG: `index.html` e `invest.html` apuntaban a `ronda-logo-amber.svg` (`image/svg+xml`), resultando en tarjeta vacía sin imagen.
+  2. Tamaño excesivo en imágenes previas: `landing.html` apuntaba a `acto-1-llegada.jpg` (2.7 MB), superando el umbral estricto de 300 KB del scraper de WhatsApp.
+  3. URL relativa en `partners.html` (`/assets/img/acto-4-brindis.jpg`, 3.8 MB).
+- **Solución Implementada:**
+  - **Generación de Tarjetas OG Especializadas (1200x630 px, JPEG optimizado < 200 KB):**
+    - `og-ronda-main.jpg` (183 KB): Speed Dating en bares secretos de Bogotá, ambiente de barra con coctelería de autor, logo Bodoni `R O NDA` e insignia ámbar. Usada en `index.html`, `landing.html`, `admin.html`, `crm.html`, `network.html`, `superadmin.html`.
+    - `og-ronda-invest.jpg` (193 KB): Pista privada FFF & Inversionistas, Moneda de Barra Club Fundador 100 troquelada `Nº 001/100`, sobre negro con lacre flexible y copa en barra. Usada en `invest.html`.
+    - `og-ronda-partners.jpg` (210 KB): Brindis en mesa compartida de bar en Chapinero, alianzas B2B con gastrobares. Usada en `partners.html`.
+  - **Metadatos Open Graph Completos:** Inyectadas etiquetas `og:image:secure_url`, `og:image:type="image/jpeg"`, `og:image:width="1200"`, `og:image:height="630"` y `twitter:card="summary_large_image"` en todos los HTMLs.
+  - **Validación Técnica:** `npm run test` (5/5 pruebas aprobadas), `npx tsc --noEmit` (0 errores) y `npm run build` exitoso (`dist/` actualizado con los 3 assets).
+
 ### [2026-10-26] — Especificación FASE 12: Rediseño y Elevación del Footer B2B en `/partners.html`
 - **Solicitud del Usuario:** Mejorar el footer de la landing `/partners` para corregir desorden visual y solapamiento con el botón flotante de WhatsApp, y crear la tarea para delegar a Cline.
 - **Acciones Realizadas:**
@@ -232,6 +269,85 @@
     - `index.html`: Actualizado footer estático a 2 niveles con enlaces directos a modales legales `#modal-legal-viewer`.
     - `superadmin.html`: Actualizado footer conservando contador dinámico SVG en vivo.
   - **Verificación Técnica:** `npx tsc --noEmit` completado con 0 errores (código 0) y `npm run build` completado exitosamente (código 0, empaquetado total en `dist/`).
+
+### [2026-10-26] — Corrección de Narrativa de Entrada: 2 Cócteles → 1 Cóctel de Autor
+
+- **Solicitud del Usuario:** Corregir la narrativa del benefit de entrada que erróneamente anunciaba "2 Cócteles de Autor incluidos". La entrada solo cubre 1 cóctel de autor.
+- **Acciones Realizadas:**
+  - **`landing.html:1427`:** `🍸 2 Cócteles de Autor incluidos` → `🍸 1 Cóctel de Autor incluido`.
+  - **`landing.html:1493`:** Eliminada referencia al "segundo Cóctel de Autor" en el Acto 4 (brindis final).
+  - **`landing.html:1497`:** `🍸 2do Cóctel de Autor` → `🍸 Brindis de cierre`.
+  - **`invest.html:1968`:** `Bebidas / Cócteles Bar (2 cócteles negociados por asistente)` → `Bebida / Cóctel Bar (1 cóctel de autor, negociado por asistente)`.
+  - **`docs/RONDA_MEMORANDUM_INVERSION_FFF.md:62`:** `**Bebidas e Incentivo al Bar** (2 cócteles/asistente negociado)` → `**Bebida e Incentivo al Bar** (1 cóctel de autor negociado)`.
+  - **`docs/DEBATE_EVENTOS_ESPECIALES_SUBASTA_SOLTEROS.md:21`:** `(2 cócteles + 9 rondas)` → `(1 cóctel de autor + 9 rondas)`.
+  - **`docs/PROTOCOLO_CIERRE_WAITLIST_Y_ONBOARDING_FUNDADORES.md:65`:** `incluye 2 cócteles de autor` → `incluye 1 cóctel de autor` (previo).
+- **Coherencia Económica:** El pricing operativo se mantiene en `$528.000 COP` = 24 asistentes × `$22.000 COP` por 1 cóctel de autor. Sin ajuste monetario requerido.
+- **Validación:** Búsqueda de código confirmada sin rastros residuales de `2 cócteles` / `dos cócteles` en los 167 archivos indexados.
+- **Alineación task.md:** Corresponde a la FASE 17 "Depuración Integral de Copywriting Humano" (T-17.1 a T-17.3).
+
+
+### [2026-10-26] — FASE 16: Reparación y Blindaje de la Consola de Anfitrión (/admin) + FASE 17: Depuración de Copywriting Humano
+
+- **Solicitud del Usuario:** Implementar en bucle las tareas pendientes de FASE 16 y FASE 17 hasta que `node test/test-integrity-zero-functions.cjs`, `npx tsc --noEmit` y `npm run build` compilen sin errores.
+- **FASE 16 — Tareas implementadas (T-16.1 a T-16.6):**
+  - **T-16.1:** `admin.html:1696` + `src/bar.ts` — Botón "Cambiar Aforo" con `id="btn-admin-change-capacity"` conectado a `promptChangeCapacity()` (RondaDialog + `DB.saveEvent`).
+  - **T-16.2:** `admin.html:1697` + `src/bar.ts` — Botón "Proponer Carta de la Noche" con `id="btn-admin-menu"` conectado a `promptMenuNight()` (cócteles de alianza + ajuste de precio en Firestore).
+  - **T-16.3:** `src/bar.ts` — `document.getElementById('btn-end-e')` → `document.getElementById('btn-admin-end-event')`.
+  - **T-16.4:** `src/bar.ts` (`initAdminDashboard`) — Eliminados `prompt()`/`confirm()` nativos; carga autónoma usando `adminUser.venueId` + `RondaDialog.confirm`.
+  - **T-16.5:** `admin.html` (`.admin-header`) + `src/bar.ts` — Botón "🚪 Cerrar Sesión" conectado a `Auth.logout()` + redirección a `/admin.html`.
+  - **T-16.6:** `src/bar.ts` — Método `renderAttendeesList()` con lista en vivo de participantes (check-in, verificación LinkedIn/Face ID, botón check-in rápido).
+- **FASE 17 — Tareas implementadas (T-17.1 a T-17.2):**
+  - **T-17.1:** Barrido de "mem-rr-v2" en interfaces públicas — cero menciones visibles en `index.html`, `landing.html`, `partners.html`, `invest.html`, `src/client.ts`, `src/views/`.
+  - **T-17.2:** Humanización de copywriting — `index.html`: "Verificación de Identidad para tu Seguridad", "datos de verificación de identidad", "Iniciar Verificación de Identidad"; `invest.html`: "Sistema de encuentros sin repeticiones", "Rotación inteligente con memoria" (reemplaza "Round-robin con memoria").
+- **Validación técnica:**
+  - `node test/test-integrity-zero-functions.cjs`: 5/5 pruebas superadas (exit code 0).
+  - `npx tsc --noEmit`: 0 errores (exit code 0).
+  - `npm run build`: Build exitoso, carpeta `dist/` generada con todos los assets.
+- **Índice:** Registrado en `docs/index.md`.
+
+### [2026-10-26] — Estandarización Visual de Modales, Sistema Global RondaDialog y Contadores de Visitas
+- **Solicitud del Usuario:** Corregir modales no alineados con la estética global (revisar alerts nativos como el de partners.html) y estandarizar todos los contadores de visitas del ecosistema para que sean idénticos.
+- **Acciones y Resultados:**
+  - **Eliminación de `alert()` en `partners.html`:** Reemplazado por un contenedor in-modal `#lead-success-box` con feedback visual de confirmación y botón directo a WhatsApp del scout (+57 316 974 9677) con mensaje prellenado del venue.
+  - **Componente Global `RondaDialog`:** Implementado en `assets/ronda-dialog.js`, `public/assets/ronda-dialog.js` y `dist/assets/ronda-dialog.js`. Sobrescribe limpiamente `window.alert()` nativo con un modal dark luxury responsivo con borde ámbar, backdrop blur y botón dorado pulido.
+  - **Estandarización de Contadores de Visitas:** Unificados con clase `.ronda-visit-counter-pill`, punto pulsante neón esmeralda `.ronda-pulse-dot` y dígito ámbar brillante `.ronda-visit-count-val` en `landing.html`, `invest.html`, `partners.html`, `superadmin.html` y el generador transversal `src/footer.ts`.
+  - **Validación Técnica:** `node test/test-integrity-zero-functions.cjs` (5/5 OK), `npx tsc --noEmit` (0 errores) y `npm run build` (construcción limpia y rápida en `dist/`).
+
+### [2026-10-26] — Auditoría Forense y Blueprint de Solución para face-verify (Entrega a Argon / Gemini)
+- **Solicitud del Usuario:** Crear una revisión del módulo face-verify que sigue sin funcionar apropiadamente, para entregárselo a Argon de Gemini/Google.
+- **Diagnóstico y Resultados:**
+  - **Documento Maestro Elaborado:** `docs/REVISION_MODULO_FACE_VERIFY_ARGON.md`.
+  - **Desglose de los 7 Fallos Raíz en Producción Móvil:**
+    1. *Deformación de Aspect Ratio en Downscale (16:9 → 320x320):* Comprime horizontalmente 1.77x, inflando artificialmente el EAR en un 80% e imposibilitando matemáticamente la superación del reto de parpadeo (`BLINK`).
+    2. *TinyFaceDetector (320px) en Fotos de Cédula Completa:* El rostro en la tarjeta queda reducido a ~40x45px, por debajo del umbral de resolución de la red, devolviendo `null` ("No se detectó un rostro claro").
+    3. *Descarga de Tesseract OCR y Timeout de 8s:* Descarga dinámica de 15 MB de datos entrenados sobre redes móviles lentas; al expirar los 8s aborta la verificación facial antes de comparar vectores.
+    4. *Filtro de Luz Miope en `evaluateLighting`:* Muestreo central de 36x36px que cataloga como "muy oscuro" rostros en bares con iluminación cálida/tenue.
+    5. *Colisión de Eventos en Botón KYC (`src/app.ts` vs `src/verification.ts`):* Doble listener que reinicializa el orquestador y destruye el stream de video en plena captura.
+    6. *Fuga de Tensores WebGL en Móvil:* Bucle continuo de inferencia sin `tf.tidy()` ni desecho de tensores, provocando pérdida de contexto WebGL en iOS Safari.
+    7. *Desincronización del Óvalo Guía:* Video con `scaleX(-1)` contra detector no invertido y máscara CSS 3:4 evaluada en espacio 1:1.
+  - **Blueprint Arquitectónico Entregado:** Pipeline dual (Selfie en tiempo real con center-crop proporcional + Cédula con detector de alta resolución `inputSize: 608`), OCR desacoplado no bloqueante y Liveness relativo por Delta ($\Delta \text{EAR}$).
+  - **Prompt de Entrega Estructurado:** Formateado específicamente con contexto matemático y restricciones de proyecto para Argon (Google/Gemini).
+  - **Índice:** Registrado en `docs/index.md`.
+
+### [2026-10-26] — Auditoría Integral de Seguridad, Vulnerabilidades, Duplicación y Bugs (FASE 18 para Cline)
+- **Solicitud del Usuario:** Crear un control de seguridad amplio y exhaustivo que explore las vulnerabilidades de la app, busque código duplicado y bugs, para que Cline lo ejecute.
+- **Acciones y Hallazgos Principales:**
+  - **Documento Maestro Elaborado:** `docs/AUDITORIA_SEGURIDAD_BUGS_CLINE.md`.
+  - **Matriz de Seguridad:**
+    1. *🔴 CRÍTICO (Escalada en `allow create`):* `firestore.rules` permitía a un usuario auto-otorgarse `hasTicket: true`, `trustTier: 2`, `isVerified: true` y forzar matches durante el registro de cuenta, saltándose Wompi y el KYC.
+    2. *🔴 CRÍTICO (Bloqueo de `kycReviews`):* Colección no declarada en `firestore.rules`; cualquier fallback de contingencia fallaba por permisos denegados.
+    3. *🔴 CRÍTICO (Bloqueo B2B):* `scouts`, `hosts`, `commission_ledger`, `payouts`, `audit_logs`, `host_offers`, `churn_surveys` e `invest_tokens` bloqueadas por omisión en `firestore.rules`.
+    4. *🟠 ALTO (Stored XSS en CRM):* Inserción sin escapar de campos de leads (`lead.name`, `lead.contactName`, `lead.zone`, `lead.phone`) en `src/crm.ts` mediante `innerHTML`. Un atacante podía enviar un lead con `<img src=x onerror=...>` desde la landing pública y ejecutar código en el navegador del staff comercial.
+    5. *🟠 ALTO (Webhook WhatsApp Desprotegido):* `whatsapp-webhook.js` con fallback hardcodeado y sin validar cabecera `X-Hub-Signature-256` en peticiones POST.
+    6. *🟡 MEDIO (Bloqueo de Pago en Wompi):* Transacciones rechazadas (`DECLINED`/`ERROR`) no limpiaban `paymentPending: false`.
+  - **Código Duplicado Detectado:** Duplicación de `assets/` vs `public/assets/` (`ronda-tokens.css`, `ronda-dialog.js`) y evaluaciones redundantes de roles en `firestore.rules`.
+  - **Bugs Corregidos / Tareas Identificadas:**
+    1. Fuga de listeners en `src/bar.ts` (`btnLogout` acumulaba eventos tras cada snapshot de Firestore).
+    2. Objeto de error `[object Object]` en `src/api-client.ts:48`.
+    3. Inconsistencia narrativa en `src/bar.ts:435-442` (cálculo de 2 cócteles en vez de 1 cóctel de autor = $22.000 COP).
+    4. Precio no editable en `promptMenuNight()` (`#menu-night-price` era un `span` y no un `input`).
+  - **Plan de Ejecución:** Incorporada `FASE 18` en `task.md` con 5 tareas estructuradas (`T-18.1` a `T-18.5`) para ejecución autónoma por Cline.
+  - **Índice:** Registrado en `docs/index.md`.
 
 ## 🎯 Tareas Pendientes y Próximos Pasos (Hoja de Ruta Inmediata)
 

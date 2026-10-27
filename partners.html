@@ -8,16 +8,31 @@
 <link rel="canonical" href="https://ronda.uno/partners">
 <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
 
-<!-- Open Graph / Meta -->
+<!-- Open Graph / Meta / WhatsApp / LinkedIn -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ronda.uno/partners">
-<meta property="og:title" content="RONDA Partners — Llena tu bar en días valle">
-<meta property="og:description" content="24 clientes nuevos con consumo garantizado en días valle. Cero inversión en pauta.">
-<meta property="og:image" content="/assets/img/acto-4-brindis.jpg">
+<meta property="og:title" content="RONDA Partners — Reactivación de Gastrobares y Speakeasies · Bogotá">
+<meta property="og:description" content="24 clientes nuevos con consumo garantizado en días valle. Cero inversión en pauta. Alianzas B2B en Bogotá.">
+<meta property="og:image" content="https://ronda.uno/assets/og-ronda-partners.jpg">
+<meta property="og:image:secure_url" content="https://ronda.uno/assets/og-ronda-partners.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RONDA Partners — Gastrobares y Bares Aliados en Bogotá">
+<meta property="og:site_name" content="RONDA">
+<meta property="og:locale" content="es_CO">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://ronda.uno/partners">
+<meta name="twitter:title" content="RONDA Partners — Reactivación de Gastrobares y Speakeasies · Bogotá">
+<meta name="twitter:description" content="24 clientes nuevos con consumo garantizado en días valle. Cero inversión en pauta. Alianzas B2B en Bogotá.">
+<meta name="twitter:image" content="https://ronda.uno/assets/og-ronda-partners.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/ronda-tokens.css">
+<script src="/assets/ronda-dialog.js"></script>
 
 <style>
 :root {
@@ -733,24 +748,37 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 .modal-card {
-  background: var(--barra);
-  border: 1px solid var(--luz);
-  border-radius: var(--r-xl);
+  background: #1a1120;
+  border: 1px solid rgba(240, 168, 48, 0.38);
+  border-radius: 24px;
   max-width: 520px;
   width: 100%;
-  padding: 40px;
+  padding: 38px 32px;
   position: relative;
-  box-shadow: 0 0 50px rgba(0,0,0,0.8);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(240, 168, 48, 0.16);
+  animation: rondaDialogPop 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .modal-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: none;
-  border: none;
-  color: var(--humo);
-  font-size: 24px;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(243, 237, 226, 0.06);
+  border: 1px solid rgba(243, 237, 226, 0.14);
+  color: var(--humo, #8c8378);
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+.modal-close:hover {
+  background: rgba(240, 168, 48, 0.15);
+  color: var(--papel, #f3ede2);
+  border-color: rgba(240, 168, 48, 0.4);
 }
 .modal-title {
   font-family: var(--font-serif);
@@ -1873,36 +1901,61 @@ footer.site-footer {
 <div class="modal-overlay" id="lead-modal">
   <div class="modal-card">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <h3 class="modal-title">Postular mi Gastrobar</h3>
-    <p class="modal-sub">Déjanos los datos de tu local y nuestro Scout te contactará en menos de 24 horas.</p>
 
-    <form onsubmit="handleFormSubmit(event)">
-      <div class="form-group">
-        <label>Nombre del Bar / Gastrobar</label>
-        <input type="text" class="form-input" placeholder="Ej. Black Bear / Huerta Coctelería" required>
+    <div id="lead-form-container">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: rgba(240,168,48,0.12); border: 1px solid rgba(240,168,48,0.35); font-family: var(--font-mono, monospace); font-size: 10px; color: var(--luz, #F0A830); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">✦ Alianzas B2B Bogotá</span>
       </div>
+      <h3 class="modal-title" style="margin: 0 0 6px; font-family: var(--font-display, serif); font-size: 26px; color: var(--papel, #f3ede2);">Postular mi Gastrobar</h3>
+      <p class="modal-sub" style="margin: 0 0 20px; font-size: 13.5px; color: var(--humo, #8c8378); line-height: 1.45;">Déjanos los datos de tu local y nuestro Scout te contactará en menos de 24 horas.</p>
 
-      <div class="form-group">
-        <label>Zona en Bogotá</label>
-        <select class="form-input" required>
-          <option value="Zona G">Zona G</option>
-          <option value="Quinta Camacho">Quinta Camacho</option>
-          <option value="Chapinero Alto">Chapinero Alto</option>
-          <option value="Parque 93 / Virrey">Parque 93 / Virrey</option>
-          <option value="Usaquén">Usaquén</option>
-          <option value="Otra">Otra zona</option>
-        </select>
+      <form id="lead-form" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label>Nombre del Bar / Gastrobar</label>
+          <input type="text" id="lead-bar-name" class="form-input" placeholder="Ej. Black Bear / Huerta Coctelería" required>
+        </div>
+
+        <div class="form-group">
+          <label>Zona en Bogotá</label>
+          <select id="lead-bar-zone" class="form-input" required>
+            <option value="Zona G">Zona G</option>
+            <option value="Quinta Camacho">Quinta Camacho</option>
+            <option value="Chapinero Alto">Chapinero Alto</option>
+            <option value="Parque 93 / Virrey">Parque 93 / Virrey</option>
+            <option value="Usaquén">Usaquén</option>
+            <option value="Otra">Otra zona</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>WhatsApp del Administrador o Dueño</label>
+          <input type="tel" id="lead-bar-phone" class="form-input" placeholder="Ej. 310 123 4567" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 999px;">
+          Solicitar Visita del Scout →
+        </button>
+      </form>
+    </div>
+
+    <!-- Caja de Confirmación Luxury Night & Amber -->
+    <div id="lead-success-box" style="display: none; text-align: center; padding: 10px 0 6px;">
+      <div style="width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: rgba(240,168,48,0.12); border: 1.5px solid rgba(240,168,48,0.45); display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 0 25px rgba(240,168,48,0.25);">
+        🍸
       </div>
-
-      <div class="form-group">
-        <label>WhatsApp del Administrador o Dueño</label>
-        <input type="tel" class="form-input" placeholder="Ej. 310 123 4567" required>
+      <h3 style="font-family: var(--font-display, serif); font-size: 25px; color: var(--papel, #f3ede2); margin: 0 0 8px;">¡Postulación Recibida!</h3>
+      <p style="font-size: 13.5px; color: var(--humo, #8c8378); line-height: 1.55; margin: 0 auto 20px; max-width: 420px;">
+        Los datos de tu gastrobar han sido registrados con éxito. Nuestro Scout se pondrá en contacto contigo vía WhatsApp para coordinar la degustación y el layout de las mesas.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px; max-width: 320px; margin: 0 auto;">
+        <a id="lead-wa-direct-btn" href="https://wa.me/573026543854?text=Hola%20Scout%20RONDA,%20acabo%20de%20postular%20mi%20gastrobar" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 13.5px;">
+          <span>Hablar con el Scout ahora</span> →
+        </a>
+        <button type="button" class="btn" onclick="closeModal()" style="background: rgba(243,237,226,0.06); border: 1px solid rgba(243,237,226,0.14); color: var(--papel, #f3ede2); padding: 11px 20px; border-radius: 999px; cursor: pointer; font-size: 13px;">
+          ✕ Cerrar Ventana
+        </button>
       </div>
-
-      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;">
-        Solicitar Visita del Scout →
-      </button>
-    </form>
+    </div>
   </div>
 </div>
 
@@ -1973,9 +2026,11 @@ footer.site-footer {
 
       <div class="footer-meta-right">
         <span style="font-size: 11.5px; color: var(--humo-claro);">Bogotá D.C.</span>
-        <p id="global-visit-counter" style="margin: 0; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--humo); letter-spacing: 0.5px;">
-          Visitas totales: <span style="color: var(--luz); font-weight: 700;">...</span>
-        </p>
+        <span id="global-visit-counter" class="ronda-visit-counter-pill" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:var(--font-mono, 'JetBrains Mono', monospace); font-size:10.5px; color:var(--humo, #8c8378); letter-spacing:0.04em; white-space:nowrap;">
+          <span class="ronda-pulse-dot" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
+          <span>Visitas:</span>
+          <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;">...</b>
+        </span>
       </div>
     </div>
   </div>
@@ -2019,6 +2074,10 @@ footer.site-footer {
   // Modal logic
   const modal = document.getElementById('lead-modal');
   function openModal(src) {
+    const formBox = document.getElementById('lead-form-container');
+    const successBox = document.getElementById('lead-success-box');
+    if (formBox) formBox.style.display = 'block';
+    if (successBox) successBox.style.display = 'none';
     modal.classList.add('open');
   }
   function closeModal() {
@@ -2030,8 +2089,20 @@ footer.site-footer {
 
   function handleFormSubmit(e) {
     e.preventDefault();
-    alert('¡Excelente! Los datos de tu local han sido registrados. Nuestro Scout se pondrá en contacto por WhatsApp.');
-    closeModal();
+    const barName = (document.getElementById('lead-bar-name')?.value || '').trim();
+    const barZone = (document.getElementById('lead-bar-zone')?.value || '').trim();
+    const barPhone = (document.getElementById('lead-bar-phone')?.value || '').trim();
+
+    const waBtn = document.getElementById('lead-wa-direct-btn');
+    if (waBtn) {
+      const msg = encodeURIComponent(`Hola Scout RONDA, acabo de postular mi gastrobar "${barName}" en ${barZone} (Tel: ${barPhone})`);
+      waBtn.href = `https://wa.me/573026543854?text=${msg}`;
+    }
+
+    const formBox = document.getElementById('lead-form-container');
+    const successBox = document.getElementById('lead-success-box');
+    if (formBox) formBox.style.display = 'none';
+    if (successBox) successBox.style.display = 'block';
   }
 
   // Hamburger menu
@@ -2125,7 +2196,7 @@ footer.site-footer {
 
   // Contador global persistente conectado a la base de datos real (Firestore)
   document.addEventListener('DOMContentLoaded', () => {
-    const globalCounterEl = document.querySelector('#global-visit-counter span');
+    const globalCounterEl = document.querySelector('#global-visit-counter .ronda-visit-count-val') || document.querySelector('#global-visit-counter b') || document.querySelector('#global-visit-counter span:last-child');
     if (globalCounterEl) {
       async function trackRealVisit() {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';

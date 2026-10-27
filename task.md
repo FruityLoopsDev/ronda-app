@@ -363,7 +363,7 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 
 ### 📋 Tareas de Implementación para Cline:
 
-- [ ] **T-16.1: Conectar el Botón "Cambiar Aforo" (`btn-admin-change-capacity`)**
+- [x] **T-16.1: Conectar el Botón "Cambiar Aforo" (`btn-admin-change-capacity`)**
   - **Archivos:** `admin.html` (línea ~1693) y `src/bar.ts`.
   - **Acción:**
     1. En `admin.html`, asignar `id="btn-admin-change-capacity"` al botón de aforo.
@@ -371,26 +371,26 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
     3. Usar `RondaDialog.confirm` o un modal interactivo para solicitar la nueva cantidad de mesas (ej. 8, 10, 12).
     4. Guardar en Firestore con `DB.saveEvent(this.currentEvent)`, actualizar `#nn-tables` y recalcular `#nn-confirmed`.
 
-- [ ] **T-16.2: Conectar el Botón "Proponer Carta de la Noche" (`btn-admin-menu`)**
+- [x] **T-16.2: Conectar el Botón "Proponer Carta de la Noche" (`btn-admin-menu`)**
   - **Archivos:** `admin.html` (línea ~1694) y `src/bar.ts`.
   - **Acción:**
     1. En `admin.html`, asignar `id="btn-admin-menu"` al botón de carta.
     2. En `src/bar.ts` (`renderDashboard`), vincular el listener para desplegar un modal (`RondaDialog.alert` o modal luxury) con los 4 cócteles sugeridos de la alianza y permitir al bar ajustar el precio acordado de consumición (`#nn-price`), guardando la actualización en Firestore.
 
-- [ ] **T-16.3: Corregir ID del Botón "Finalizar y Emitir NFTs"**
+- [x] **T-16.3: Corregir ID del Botón "Finalizar y Emitir NFTs"**
   - **Archivos:** `src/bar.ts` (línea ~271).
   - **Acción:**
     1. Reemplazar `document.getElementById('btn-end-e')` por `document.getElementById('btn-admin-end-event')`.
     2. Asegurar que al confirmar el cierre, cambie a `"Procesando..."` (deshabilitado) y luego a `"✓ Evento Finalizado"`, notificando con `RondaDialog.alert`.
 
-- [ ] **T-16.4: Sustituir `prompt()` / `confirm()` Nativos por Carga Autónoma & RondaDialog**
+- [x] **T-16.4: Sustituir `prompt()` / `confirm()` Nativos por Carga Autónoma & RondaDialog**
   - **Archivos:** `src/bar.ts` (`initAdminDashboard`, líneas 70-105).
   - **Acción:**
     1. Eliminar `prompt("Ingresa el ID del evento que vas a gestionar...")`.
     2. Si `adminUser.venueId` existe, buscar el evento activo de la sede en Firestore. Si no se especifica, usar por defecto el evento predeterminado `rnd-caronte-mar-25` o cargar el evento activo más reciente.
     3. Si el evento no existe, en vez de `confirm()` / `prompt()` nativos, usar `RondaDialog.confirm` para crearlo limpiamente con los datos por defecto de la sede.
 
-- [ ] **T-16.5: Agregar Botón "Cerrar Sesión" en la Consola `/admin`**
+- [x] **T-16.5: Agregar Botón "Cerrar Sesión" en la Consola `/admin`**
   - **Archivos:** `admin.html` (dentro de `.admin-header`) y `src/entry-admin.ts` / `src/bar.ts`.
   - **Acción:**
     1. Agregar un botón de cierre de sesión en `.admin-header`:
@@ -401,7 +401,7 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
        ```
     2. Conectar el evento click con `Auth.logout()` para redirigir a `/admin` (mostrando el formulario de login del portal).
 
-- [ ] **T-16.6: Renderizar la Lista en Vivo de Participantes y Check-in**
+- [x] **T-16.6: Renderizar la Lista en Vivo de Participantes y Check-in**
   - **Archivos:** `src/bar.ts` (`renderDashboard` / `renderAttendeesList`).
   - **Acción:**
     1. Añadir una tarjeta en el dashboard debajo de `admin-qr-tools` con la lista de asistentes (`this.currentEvent.participants`):
@@ -410,7 +410,7 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
        - Badge de Verificación: `"LinkedIn"` o `"Face ID"`.
        - Botón rápido `"✓ Check-in"` para registrar manualmente sin escanear.
 
-- [ ] **T-16.7: Verificación con TypeScript y Compilación Vite**
+- [x] **T-16.7: Verificación con TypeScript y Compilación Vite**
   - **Comandos:**
     - `node test/test-integrity-zero-functions.cjs` (las 5 pruebas deben pasar).
     - `npx tsc --noEmit` (0 errores).
@@ -430,21 +430,71 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 
 ### 📋 Tareas de Implementación para Cline:
 
-- [ ] **T-17.1: Barrido de Restos de "mem-rr-v2" en Interfaces Públicas**
+- [x] **T-17.1: Barrido de Restos de "mem-rr-v2" en Interfaces Públicas**
   - **Archivos:** `index.html`, `landing.html`, `partners.html`, `invest.html`, `src/client.ts`, `src/views/`.
   - **Acción:**
     1. Asegurar que NINGÚN modal, banner o párrafo visible al usuario mencione *"mem-rr-v2"* o términos algorítmicos.
     2. Mantener intacto el código del motor interno (`src/mem-rr-v2/`), cambiando únicamente cadenas de texto visibles (strings de UI, microcopy, alertas).
 
-- [ ] **T-17.2: Humanización de Textos en la Web App (`index.html`)**
+- [x] **T-17.2: Humanización de Textos en la Web App (`index.html`)**
   - **Archivos:** `index.html` y vistas asociadas (`src/views/profile-modal.ts`, `src/satisfaction.ts`, `src/icebreakers.ts`).
   - **Acción:**
     1. Revisar los textos del onboarding, safeword y feedback post-cita.
     2. Usar un tono conversacional de tú a tú: *"Cuéntanos cómo te sentiste"*, *"¿Hubo química?"*, *"Tu tranquilidad es lo primero"*.
 
-- [ ] **T-17.3: Verificación de Reglas y Compilación**
+- [x] **T-17.3: Verificación de Reglas y Compilación**
   - **Comandos:**
     - `node test/test-integrity-zero-functions.cjs`
+    - `npx tsc --noEmit`
+    - `npm run build`
+
+## FASE 18: AUDITORÍA DE SEGURIDAD, BLINDAJE DE FIRESTORE, XSS Y BUGS (PARA CLINE)
+
+> **Contexto del Arquitecto (Antigravity):**
+> Se ha emitido la auditoría forense completa en `docs/AUDITORIA_SEGURIDAD_BUGS_CLINE.md`.
+> Se descubrieron 3 fallos críticos de seguridad en reglas de base de datos (escalada en `allow create` y colecciones bloqueadas), vectores de stored XSS en el CRM, y bugs de runtime en la consola del anfitrión y API client.
+> **Instrucciones para Cline:**
+> 1. Ejecuta cada tarea en bucle marcando con `[x]`.
+> 2. Mantén $0 en infraestructura y cero dependencias pesadas.
+> 3. Al finalizar, verifica `test-integrity-zero-functions.cjs`, `npx tsc --noEmit` y `npm run build`.
+
+### 📋 Tareas de Implementación para Cline:
+
+- [ ] **T-18.1: Blindaje de `firestore.rules` contra Escalada en `allow create` y Omisión de Colecciones**
+  - **Archivo:** `firestore.rules`.
+  - **Acción:**
+    1. En `match /users/{userId}` `allow create`: exigir `hasTicket == false`, `trustTier == 0`, `isVerified == false` y bloquear `nfts`, `wallet_address`, `matches`, `verifications`.
+    2. Agregar regla `match /kycReviews/{reviewId}` (lectura: `isStaff()`, creación: dueño autenticado con `status == 'pending'`, actualización/borrado: `isStaff()`).
+    3. Agregar reglas para colecciones B2B: `scouts`, `hosts`, `commission_ledger`, `payouts`, `audit_logs`, `host_offers`, `churn_surveys`, `invest_tokens`.
+    4. Optimizar `isStaff()` para evaluar `userRole()` una sola vez.
+
+- [ ] **T-18.2: Creación de Módulo Utilitario `src/utils.ts` y Sanitización Anti-XSS**
+  - **Archivos:** `src/utils.ts` (nuevo), `src/crm.ts`, `src/profile.ts`, `src/bar.ts`, `src/notifications.ts`.
+  - **Acción:**
+    1. Crear `src/utils.ts` exportando `escapeHtml(str: string | null | undefined): string`.
+    2. En `src/crm.ts` (`kanban-lead-card`): envolver `lead.name`, `lead.contactName`, `lead.zone`, `lead.phone` con `escapeHtml`.
+    3. En `src/profile.ts:114`: escapar `cocktail`, `zone`, `zodiac` antes de inyectar en `profileMeta.innerHTML`.
+    4. En `src/bar.ts:590`: escapar `p.name || uid` en `renderAttendeesList()`.
+    5. En `src/notifications.ts:125-126`: escapar `n.title` y `n.body`.
+
+- [ ] **T-18.3: Corrección de Fugas y Bugs en `src/bar.ts` y `src/api-client.ts`**
+  - **Archivos:** `src/bar.ts`, `src/api-client.ts`.
+  - **Acción:**
+    1. En `src/bar.ts:488`: aplicar `cloneNode(true)` a `btnLogout` antes de agregar el listener para evitar acumulación de eventos.
+    2. En `src/bar.ts:435-442`: sincronizar narrativa económica (1 cóctel de autor = $22.000 COP; `${totalParticipants} cóctel de autor incluido` y `totalRev = totalParticipants * 22000`).
+    3. En `src/bar.ts:545, 556`: convertir `#menu-night-price` en un input numérico editable para que el anfitrión pueda cambiar el precio.
+    4. En `src/api-client.ts:48`: corregir el manejo de errores para que no retorne `[object Object]` (`responseData.error?.message || responseData.error || responseData.message`).
+
+- [ ] **T-18.4: Blindaje de Webhooks en Backend Serverless (`functions-vercel/api/`)**
+  - **Archivos:** `functions-vercel/api/whatsapp-webhook.js`, `functions-vercel/api/wompi-webhook.js`.
+  - **Acción:**
+    1. En `whatsapp-webhook.js`: eliminar fallback inseguro de token y agregar verificación `X-Hub-Signature-256` en peticiones POST.
+    2. En `wompi-webhook.js`: manejar estados `DECLINED`/`ERROR` restableciendo `paymentPending: false`.
+
+- [ ] **T-18.5: Validación Técnica Completa y Reporte**
+  - **Comandos:**
+    - `node test/test-integrity-zero-functions.cjs`
+    - `node test/test-face-verification-suite.cjs`
     - `npx tsc --noEmit`
     - `npm run build`
 

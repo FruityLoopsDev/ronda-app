@@ -10,23 +10,26 @@
 <link rel="canonical" href="https://ronda.uno/invest">
 <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
 
-<!-- Open Graph / Previews Privadas -->
+<!-- Open Graph / Previews Privadas / WhatsApp / LinkedIn -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ronda.uno/invest">
 <meta property="og:title" content="RONDA — Portal Privado &amp; Confidencial">
-<meta property="og:description" content="Acceso exclusivo con credenciales de invitación personal. Documentación privada.">
-<meta property="og:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
-<meta property="og:image:type" content="image/svg+xml">
-<meta property="og:image:alt" content="RONDA — Acceso Confidencial">
+<meta property="og:description" content="Acceso exclusivo con credenciales de invitación personal. Club Fundador 100 y documentación privada.">
+<meta property="og:image" content="https://ronda.uno/assets/og-ronda-invest.jpg">
+<meta property="og:image:secure_url" content="https://ronda.uno/assets/og-ronda-invest.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RONDA — Portal Privado &amp; Confidencial">
 <meta property="og:site_name" content="RONDA">
 <meta property="og:locale" content="es_CO">
 
 <!-- Twitter / X -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://ronda.uno/invest">
 <meta name="twitter:title" content="RONDA — Portal Privado &amp; Confidencial">
-<meta name="twitter:description" content="Acceso exclusivo con credenciales de invitación personal. Documentación privada.">
-<meta name="twitter:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
+<meta name="twitter:description" content="Acceso exclusivo con credenciales de invitación personal. Club Fundador 100 y documentación privada.">
+<meta name="twitter:image" content="https://ronda.uno/assets/og-ronda-invest.jpg">
 
 <!-- Google Analytics 4 (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RH65BSDMP5"></script>
@@ -38,8 +41,8 @@
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/ronda-tokens.css">
+<script src="/assets/ronda-dialog.js"></script>
 <style>
 :root{
   --noche:#16101B;      /* plum casi negro: la sala a las 20:00 */
@@ -766,12 +769,12 @@ footer.site-footer {
 }
 
 /* ---- 2. MODAL STYLES (Data Room & Video) ---- */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(10, 7, 14, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal-content { background: var(--barra); border: 1px solid var(--linea); padding: 32px; border-radius: var(--r); max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s; position: relative; }
+.modal-content { background: #1a1120; border: 1px solid rgba(240, 168, 48, 0.38); padding: 36px 30px; border-radius: 24px; max-width: 520px; width: 90%; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; box-shadow: 0 32px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(240, 168, 48, 0.16); }
 .modal-overlay.active .modal-content { transform: scale(1); }
-.modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--humo); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px; z-index: 10; }
-.modal-close:hover { color: var(--papel); }
+.modal-close { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: rgba(243, 237, 226, 0.06); border: 1px solid rgba(243, 237, 226, 0.14); color: var(--humo); font-size: 14px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; z-index: 10; }
+.modal-close:hover { background: rgba(240, 168, 48, 0.15); color: var(--papel); border-color: rgba(240, 168, 48, 0.4); }
 .modal-content h3 { font-family: "Bodoni Moda", serif; margin: 0 0 16px; color: var(--luz); font-size: 24px; }
 .modal-content p { color: var(--humo); font-size: 14px; margin-bottom: 24px; }
 .modal-video iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 8px; }
@@ -1380,13 +1383,13 @@ iframe.skiptranslate { display: none !important; }
 
       <div style="flex:1;min-width:280px">
         <div class="caja" style="margin-bottom:14px">
-          <p class="quien">Algoritmo de rotación</p>
-          <h4>Round-robin con memoria</h4>
+          <p class="quien">Sistema de encuentros sin repeticiones</p>
+          <h4>Rotación inteligente con memoria</h4>
           <ul>
-            <li>Con <b>n + n</b> asistentes se generan n rondas tipo torneo: un lado fijo en mesa, el otro rota +1.</li>
-            <li>Si los lados son impares, el sobrante hace <b>ronda de barra</b>: descanso de 6 minutos con bebida incluida. El hueco rota, nadie descansa dos veces.</li>
-            <li>Antes de imprimir la rotación se resuelven choques contra el <b>historial de encuentros</b>: si dos personas ya se vieron, se intercambian mesas de salida.</li>
-            <li>Mesas de 4 → formato 2 + 2 y rotación por parejas: menos presión, mejor para el tramo 45+.</li>
+            <li>Con un número parejo de asistentes se generan rondas tipo torneo: un lado se queda en mesa, el otro rota de lugar.</li>
+            <li>Si hay un número impar, el sobrante hace <b>pausa en barra</b>: descanso de 6 minutos con bebida incluida. El hueco rota, nadie descansa dos veces.</li>
+            <li>Antes de definir la rotación se evita que dos personas que ya se conocieron vuelvan a encontrarse.</li>
+            <li>Mesas de 4 → formato 2 + 2 y rotación por parejas: menos presión, ideal para el tramo 45+.</li>
           </ul>
         </div>
         <div class="caja">
@@ -2943,10 +2946,10 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
 
         <div class="footer-meta-right">
           <span style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">Bogotá D.C.</span>
-          <span id="footer-counter" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--humo); letter-spacing:0.04em;">
-            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
+          <span id="footer-counter" class="ronda-visit-counter-pill" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:var(--font-mono, 'JetBrains Mono', monospace); font-size:10.5px; color:var(--humo, #8c8378); letter-spacing:0.04em; white-space:nowrap;">
+            <span class="ronda-pulse-dot" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
             <span>Visitas:</span>
-            <b style="color:var(--luz); font-weight:700;" id="visit-count-num">--</b>
+            <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;" id="visit-count-num">--</b>
           </span>
         </div>
       </div>
@@ -3089,7 +3092,11 @@ function sendCommit() {
   const amount = document.getElementById('commit-ticket').value;
   
   if (!name || !amount) {
-    alert("Por favor completa tu nombre y el ticket estimado.");
+    if (window.RondaDialog) {
+      RondaDialog.alert({ title: 'Ticket Requerido', message: 'Por favor completa tu nombre y el ticket estimado para avanzar.', icon: '⚠️' });
+    } else {
+      alert("Por favor completa tu nombre y el ticket estimado.");
+    }
     return;
   }
   
@@ -3111,7 +3118,11 @@ function sendContact() {
   const topic = document.getElementById('contact-topic').value;
 
   if (!name || !topic) {
-    alert('Por favor completa tu nombre y el motivo del contacto.');
+    if (window.RondaDialog) {
+      RondaDialog.alert({ title: 'Datos Incompletos', message: 'Por favor completa tu nombre y el motivo del contacto.', icon: '⚠️' });
+    } else {
+      alert('Por favor completa tu nombre y el motivo del contacto.');
+    }
     return;
   }
 
@@ -3134,7 +3145,11 @@ function copyNequiNumber() {
   const num = '3169749677';
   const btn = document.getElementById('btn-copy-nequi');
   const fallback = () => {
-    alert('Número de celular Nequi: 316 974 9677');
+    if (window.RondaDialog) {
+      RondaDialog.alert({ title: 'Número Nequi', message: 'Número de celular Nequi: 316 974 9677', icon: '📱' });
+    } else {
+      alert('Número de celular Nequi: 316 974 9677');
+    }
   };
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -3228,7 +3243,13 @@ function selectCryptoNetwork(netKey) {
 
 function copyCryptoData(text, btnId, successLabel) {
   const btn = document.getElementById(btnId);
-  const fallback = () => alert('Dirección copiada: ' + text);
+  const fallback = () => {
+    if (window.RondaDialog) {
+      RondaDialog.alert({ title: 'Dirección Copiada', message: 'Dirección copiada: ' + text, icon: '📋' });
+    } else {
+      alert('Dirección copiada: ' + text);
+    }
+  };
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {

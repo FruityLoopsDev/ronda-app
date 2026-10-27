@@ -5,6 +5,7 @@ import notifications from './notifications.js';
 import { RondaDialog } from './dialog.js';
 import { Verification } from './verification.js';
 import { PrivacyPolicy } from './privacy-policy.js';
+import { escapeHtml } from './utils.js';
 
 export class ProfileService {
   private currentUser: User | null = null;
@@ -111,7 +112,7 @@ export class ProfileService {
     const zone = (user.preferredZones && user.preferredZones.length > 0) ? user.preferredZones.join(', ') : 'Zona G';
     const zodiac = user.zodiacSign || '♏ Escorpio';
     if (profileMeta) {
-      profileMeta.innerHTML = `🍸 <b>${cocktail}</b> · 📍 <b>${zone}</b> · <b>${zodiac}</b>`;
+      profileMeta.innerHTML = `🍸 <b>${escapeHtml(cocktail)}</b> · 📍 <b>${escapeHtml(zone)}</b> · <b>${escapeHtml(zodiac)}</b>`;
     }
 
     // Avatar image

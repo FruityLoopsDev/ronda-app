@@ -149,5 +149,55 @@ service cloud.firestore {
           && request.resource.data.whatsapp is string;
       allow read, update, delete: if isSuperAdmin();
     }
+
+    // --- KYC Reviews: solo staff (superadmin/admin) lee y escribe. ---
+    match /kycReviews/{reviewId} {
+      allow read, write: if isStaff();
+      allow create: if isStaff();
+      allow delete: if isSuperAdmin();
+    }
+
+    // --- B2B: Scouts (comerciales) y Hostes (bares aliados) ---
+    match /scouts/{scoutId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales();
+      allow delete: if isSuperAdmin();
+    }
+    match /hosts/{hostId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
+      allow delete: if isSuperAdmin();
+    }
+
+    // --- B2B: Ledger de comisiones, pagos y auditoría (solo servidor/superadmin) ---
+    match /commission_ledger/{entryId} {
+      allow read: if isStaff();
+      allow write: if isSuperAdmin();
+    }
+    match /payouts/{payoutId} {
+      allow read: if isStaff();
+      allow write: if isSuperAdmin();
+    }
+    match /audit_logs/{logId} {
+      allow read: if isStaff();
+      allow write: if isSuperAdmin();
+    }
+
+    // --- B2B: Ofertas de host, encuestas de churn y tokens de inversión ---
+    match /host_offers/{offerId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
+      allow delete: if isSuperAdmin();
+    }
+    match /churn_surveys/{surveyId} {
+      allow read: if isStaff();
+      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
+      allow delete: if isSuperAdmin();
+    }
+    match /invest_tokens/{tokenId} {
+      allow read: if isStaff();
+      allow create: if isSuperAdmin();
+      allow update, delete: if isSuperAdmin();
+    }
   }
 }

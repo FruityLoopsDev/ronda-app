@@ -1,6 +1,7 @@
 // functions-vercel/api/whatsapp-webhook.js
 // Webhook oficial de Meta WhatsApp Cloud API (1.000 conversaciones/mes gratis)
 
+const crypto = require('crypto');
 const { initAdmin, ok, fail } = require('./_lib');
 
 module.exports = async function handler(req, res) {
@@ -10,7 +11,10 @@ module.exports = async function handler(req, res) {
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
-    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'ronda_webhook_secret_2026';
+    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
+    if (!verifyToken) {
+      return res.status(500).json({ error: 'WHATSAPP_VERIFY_TOKEN no configurado' });
+    }
 
     if (mode && token) {
       if (mode === 'subscribe' && token === verifyToken) {
@@ -27,6 +31,24 @@ module.exports = async function handler(req, res) {
   // 2. Recepción POST de mensajes entrantes desde WhatsApp
   if (req.method === 'POST') {
     try {
+      // --- Blindaje: verificación HMAC X-Hub-Signature-256 ---
+      const signature = req.headers['x-hub-signature-256'];
+      const appSecret = process.env.WHATSAPP_APP_SECRET;
+      if (!signature || !appSecret) {
+        console.warn('[WhatsApp Webhook] ❌ Firma HMAC ausente o secreto no configurado.');
+        return res.status(401).json({ error: 'Invalid or missing signature' });
+      }
+      const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+      const expectedHash = crypto
+        .createHmac('sha256', appSecret)
+        .update(rawBody)
+        .digest('hex');
+      const [algo, hash] = (signature || '').split('=');
+      if (algo !== 'sha256' || hash !== expectedHash) {
+        console.warn('[WhatsApp Webhook] ❌ HMAC signature mismatch.');
+        return res.status(401).json({ error: 'Invalid signature' });
+      }
+
       const body = req.body;
 
       if (!body || body.object !== 'whatsapp_business_account') {

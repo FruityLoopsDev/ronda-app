@@ -1,5 +1,6 @@
 import { DB, Lead, Venue, LedgerEntry, Scout } from './db.js';
 import { RondaDialog } from './dialog.js';
+import { escapeHtml } from './utils.js';
 
 export class CRMController {
   private leads: Lead[] = [];
@@ -230,27 +231,27 @@ export class CRMController {
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
           <div>
-            <b class="crm-lead-name" data-id="${lead.id}" title="Abrir ficha técnica del local" style="font-family: var(--font-display); font-size: 15px; color: var(--papel); cursor: pointer; border-bottom: 1px dashed rgba(240,168,48,0.6);">${lead.name}</b>
-            ${lead.zone ? `<span class="chip" style="font-size: 9px; padding: 2px 6px; margin-left: 6px; background: rgba(243,237,226,0.1);">${lead.zone}</span>` : ''}
+            <b class="crm-lead-name" data-id="${lead.id}" title="Abrir ficha técnica del local" style="font-family: var(--font-display); font-size: 15px; color: var(--papel); cursor: pointer; border-bottom: 1px dashed rgba(240,168,48,0.6);">${escapeHtml(lead.name)}</b>
+            ${lead.zone ? `<span class="chip" style="font-size: 9px; padding: 2px 6px; margin-left: 6px; background: rgba(243,237,226,0.1);">${escapeHtml(lead.zone)}</span>` : ''}
           </div>
           <span class="chip ambar" style="font-size: 9px; padding: 2px 6px;">+$${commFormatted}</span>
         </div>
 
         <p style="font-size: 11.5px; color: var(--humo); font-family: var(--font-mono); margin: 0 0 6px;">
-          👤 ${lead.contactName || 'Sin contacto'}
+          👤 ${escapeHtml(lead.contactName || 'Sin contacto')}
         </p>
 
         ${lead.phone ? `
           <div style="margin-bottom: 8px;">
             <a href="${waLink}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #79D3AC; font-family: var(--font-mono); text-decoration: none; background: rgba(46,107,84,0.15); border: 1px solid rgba(46,107,84,0.4); padding: 3px 8px; border-radius: 6px;">
-              💬 WhatsApp (${lead.phone})
+              💬 WhatsApp (${escapeHtml(lead.phone)})
             </a>
           </div>
         ` : ''}
 
         ${lead.notes ? `
           <p style="font-size: 10.5px; color: var(--humo); background: rgba(0,0,0,0.25); padding: 6px 8px; border-radius: 6px; margin: 0 0 8px; border-left: 2px solid var(--luz);">
-            📝 ${lead.notes}
+            📝 ${escapeHtml(lead.notes)}
           </p>
         ` : ''}
 

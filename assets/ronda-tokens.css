@@ -86,3 +86,77 @@
   text-decoration: underline !important;
   opacity: 0.9 !important;
 }
+
+/* RONDA Visitor Counter Pill Standard — Unificado en todas las páginas */
+.ronda-visit-counter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(240, 168, 48, 0.06);
+  border: 1px solid rgba(240, 168, 48, 0.22);
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10.5px;
+  color: var(--humo, #8c8378);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.ronda-pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #79D3AC;
+  box-shadow: 0 0 8px #79D3AC;
+  animation: rondaPulseDot 2s infinite ease-in-out;
+}
+
+@keyframes rondaPulseDot {
+  0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 4px #79D3AC; }
+  50% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 10px #79D3AC; }
+  100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 4px #79D3AC; }
+}
+
+.ronda-visit-count-val {
+  color: var(--luz, #F0A830);
+  font-weight: 700;
+}
+
+/* RONDA Global Luxury Modal / Dialog Standard */
+.ronda-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 7, 14, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px;
+  font-family: var(--font-body, 'Space Grotesk', sans-serif);
+}
+
+.ronda-dialog-overlay.active {
+  display: flex;
+}
+
+.ronda-dialog-card {
+  width: 100%;
+  max-width: 400px;
+  background: #1a1120;
+  border: 1px solid rgba(240, 168, 48, 0.38);
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(240, 168, 48, 0.16);
+  position: relative;
+  overflow: hidden;
+  animation: rondaDialogPop 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rondaDialogPop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+

@@ -48,3 +48,5 @@ Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
 - `docs/POLITICA_TRATAMIENTO_DATOS_LEY_1581.md` (Política de Privacidad y Habeas Data Ley 1581 / Procedimiento de Supresión).
 - `docs/PROTOCOLO_CIERRE_WAITLIST_Y_ONBOARDING_FUNDADORES.md` (Protocolo operativo de cierre de waitlist, triage, secuencias de activación WhatsApp y noche inaugural).
 - `docs/ip-patent-strategy.md` (Estrategia de Propiedad Intelectual).
+- `docs/REVISION_MODULO_FACE_VERIFY_ARGON.md` (Auditoría forense de fallos en producción móvil y blueprint de refactorización biométrica para Argon de Gemini/Google).
+- `docs/AUDITORIA_SEGURIDAD_BUGS_CLINE.md` (Auditoría integral de seguridad, vulnerabilidades de Firestore, XSS, código duplicado y bugs para ejecución por Cline).

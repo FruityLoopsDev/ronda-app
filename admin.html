@@ -7,22 +7,25 @@
   <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
   <meta name="description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos para profesionales de alto valor.">
   
-  <!-- Open Graph / Facebook / WhatsApp -->
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ronda.uno/">
-  <meta property="og:title" content="RONDA — Citas Rápidas / Speed Dating en ubicaciones secretas">
-  <meta property="og:description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos, sin pantallas ni ghosting.">
-  <meta property="og:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
-  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:url" content="https://ronda.uno/admin">
+  <meta property="og:title" content="RONDA — Consola de Anfitrión">
+  <meta property="og:description" content="Gestión y control de salas de citas rápidas en vivo para sedes aliadas.">
+  <meta property="og:image" content="https://ronda.uno/assets/og-ronda-main.jpg">
+  <meta property="og:image:secure_url" content="https://ronda.uno/assets/og-ronda-main.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="RONDA">
   <meta property="og:locale" content="es_CO">
   
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://ronda.uno/">
-  <meta name="twitter:title" content="RONDA — Citas Rápidas / Speed Dating en ubicaciones secretas">
-  <meta name="twitter:description" content="Compra tu entrada y desbloquea eventos secretos de speed dating en Bogotá. 9 citas de 6 minutos, sin pantallas ni ghosting.">
-  <meta name="twitter:image" content="https://ronda.uno/assets/ronda-logo-amber.svg">
+  <meta name="twitter:url" content="https://ronda.uno/admin">
+  <meta name="twitter:title" content="RONDA — Consola de Anfitrión">
+  <meta name="twitter:description" content="Gestión y control de salas de citas rápidas en vivo para sedes aliadas.">
+  <meta name="twitter:image" content="https://ronda.uno/assets/og-ronda-main.jpg">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1644,6 +1647,7 @@
           <div class="admin-subtitle">ZONA G, BOGOTÁ · 14 MESAS · SOCIO DESDE ENE 2026</div>
         </div>
         <div class="admin-badge">PLAN SALA LLENA · 3 NOCHES/SEMANA</div>
+        <button id="btn-admin-logout" class="btn" style="background: rgba(234,67,53,0.12); border: 1px solid rgba(234,67,53,0.35); color: #EA4335; font-size: 11px; padding: 6px 14px; border-radius: 8px;">🚪 Cerrar Sesión</button>
       </div>
 
       <div class="kpi-grid">
@@ -1690,8 +1694,8 @@
             </div>
             <div class="nn-buttons">
               <button class="btn ambar" id="btn-admin-start-event">Arrancar Noche (Motor)</button>
-              <button class="btn" style="background: transparent; border-color: rgba(255,255,255,0.2);">Cambiar aforo</button>
-              <button class="btn" style="background: transparent; border-color: rgba(255,255,255,0.2);">Proponer carta de la noche</button>
+              <button class="btn" id="btn-admin-change-capacity" style="background: transparent; border-color: rgba(255,255,255,0.2);">Cambiar aforo</button>
+              <button class="btn" id="btn-admin-menu" style="background: transparent; border-color: rgba(255,255,255,0.2);">Proponer carta de la noche</button>
               <button class="btn" id="btn-admin-end-event" style="background: transparent; border-color: var(--vino); color: var(--vino); display: none;">Finalizar y Emitir NFTs</button>
             </div>
           </div>
