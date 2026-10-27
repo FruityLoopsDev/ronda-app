@@ -1023,46 +1023,12 @@ class ClientAppService {
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <button id="btn-simulate-spot" class="btn ambar" style="font-size: 12.5px; font-weight: 700; padding: 12px;">
-            ✨ Simular Cupo Liberado (Demo)
-          </button>
           <button id="btn-leave-waitlist" class="btn" style="font-size: 11.5px; color: var(--humo); border-color: var(--linea); padding: 10px;">
             Salir de la Lista de Espera
           </button>
         </div>
       </div>
     `;
-
-    document.getElementById('btn-simulate-spot')?.addEventListener('click', async () => {
-      const user = Auth.currentUser;
-      if (!user) return;
-      const evt = RONDA_EVENTS.find(e => e.id === waitlist.eventId) || RONDA_EVENTS[2];
-      user.activeEventId = evt.id;
-      delete user.activeWaitlist;
-      user.activeReservation = {
-        eventId: evt.id,
-        venueName: evt.venueName,
-        venueAddress: evt.venueAddress,
-        mapsUrl: evt.mapsUrl,
-        dayDate: evt.dayDate,
-        tableNumber: '02',
-        cocktailName: evt.drinkOptions[0].name,
-        cocktailDesc: evt.drinkOptions[0].desc,
-        cocktailImg: evt.drinkOptions[0].img,
-        bookingCode: '#RND-9104',
-        priceFormatted: evt.priceFormatted,
-        hostTips: evt.hostTips,
-        status: 'confirmed'
-      };
-      await DB.updateUserProfile(user.uid, {
-        activeEventId: user.activeEventId,
-        activeWaitlist: null,
-        activeReservation: user.activeReservation
-      });
-      this.showToast('🎉 ¡Cupo asignado en Patio Poca Prisa!');
-      this.renderClientView();
-      this.renderDiscoveryFeed();
-    });
 
     document.getElementById('btn-leave-waitlist')?.addEventListener('click', async () => {
       const user = Auth.currentUser;
@@ -1094,10 +1060,6 @@ class ClientAppService {
     const tableGrid = document.getElementById('match-table-grid');
     const tableLegend = document.getElementById('match-table-legend');
     
-    // Simulate low time remaining (e.g. 15 seconds) to show the transition UI immediately for demo purposes
-    if (durationSeconds > 60) {
-      timeLeft = 15; 
-    }
 
     this.timerInterval = setInterval(() => {
       if (timeLeft <= 0) {
@@ -1167,11 +1129,9 @@ class ClientAppService {
         this.stopTimer();
         this.showToast('🔔 ¡Nueva ronda! Toma asiento.');
         
-        // Simular siguiente match
+        // Notificar rotación
         if (this.currentEvent && this.currentEvent.activeMatches) {
           this.currentEvent.currentRound = (this.currentEvent.currentRound || 1) + 1;
-          this.currentEvent.activeMatches[0].tableId = '12';
-          this.currentEvent.activeMatches[0].p2 = { uid: 'user_andres_demo', name: 'Andrés (31) · Diseñador' };
           this.renderClientView();
         }
       } else {
@@ -1272,7 +1232,7 @@ class ClientAppService {
           </div>
         </div>
 
-        <button id="btn-simulate-10am" class="btn ambar" style="width: 100%; font-size: 12.5px; font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <button id="btn-open-letter" class="btn ambar" style="width: 100%; font-size: 12.5px; font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
           ✨ Romper Sello de Cera (Abrir Correspondencia)
         </button>
       </div>
@@ -1378,7 +1338,7 @@ class ClientAppService {
         this.triggerOpenLetterAnimation(postState);
       });
 
-      document.getElementById('btn-simulate-10am')?.addEventListener('click', () => {
+      document.getElementById('btn-open-letter')?.addEventListener('click', () => {
         this.triggerOpenLetterAnimation(postState);
       });
     }
@@ -1453,20 +1413,7 @@ class ClientAppService {
     if (user?.postEventState?.chatHistory && user.postEventState.chatHistory.length > 0) {
       this.chatMessages = user.postEventState.chatHistory;
     } else {
-      // Inicializar mensajes rompehielos de demostración
-      this.chatMessages = [
-        {
-          id: 'init_msg',
-          sender: 'partner',
-          text: `¡Hola! Qué gran noche ayer en el bar. Me encantó nuestra charla en la mesa. ¿Nos vemos para una segunda ronda?`,
-          time: '10:02 AM',
-          timestamp: Date.now()
-        }
-      ];
-      if (user?.postEventState) {
-        user.postEventState.chatHistory = this.chatMessages;
-        DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
-      }
+      this.chatMessages = [];
     }
 
     this.renderChatStream();
@@ -1558,18 +1505,6 @@ class ClientAppService {
       DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
     }
 
-    // Respuesta simulada de la pareja al poco tiempo
-    setTimeout(async () => {
-      const simulatedReply = '¡Claro! 🥂 Qué buena charla tuvimos. ¿Te parece si vamos por ese café el fin de semana?';
-      const autoMsg = { id: `msg_${Date.now()}`, sender: 'partner' as const, text: simulatedReply, time, timestamp: Date.now() };
-      this.chatMessages.push(autoMsg);
-      this.renderChatStream();
-
-      if (user && user.postEventState) {
-        user.postEventState.chatHistory = this.chatMessages;
-        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
-      }
-    }, 1800);
   }
 
   renderClientView() {
@@ -1672,38 +1607,8 @@ class ClientAppService {
         </p>
 
         <button id="btn-safeword" class="btn" style="border: 1px dashed var(--vino); color: #f08ca8; background: transparent; width: 100%; font-weight: 700; font-size: 10.5px; padding: 12px; border-radius: 999px;">⚠️ Solicitar Asistencia Discreta</button>
-
-        <button id="btn-sim-finish-event" class="btn" style="margin-top: 14px; font-size: 11px; color: var(--humo); background: transparent; border: none; text-decoration: underline; width: 100%;">
-          Saltar al fin de evento (10:00 AM)
-        </button>
       `;
       setTimeout(() => this.startTimer(300), 100);
-
-      document.getElementById('btn-sim-finish-event')?.addEventListener('click', async () => {
-        this.stopTimer();
-        this.currentEvent = null;
-        user.postEventState = {
-          eventId: res.eventId,
-          venueName: res.venueName,
-          dayDate: res.dayDate,
-          revealTimeIso: new Date(Date.now() + 14 * 3600000).toISOString(),
-          isRevealed: false,
-          matches: [
-            {
-              id: 'match_camila',
-              name: 'Camila Ospina',
-              age: 28,
-              profession: 'Arquitecta de Interiores',
-              zone: 'Zona G',
-              cocktail: res.cocktailName || 'Negroni Ahumado',
-              icebreakerSummary: 'Ambos coincidieron en pasión por los viajes, arquitectura urbana y cócteles de autor.'
-            }
-          ]
-        };
-        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
-        this.showToast('🔔 ¡Evento concluido! Resultados sellados para las 10:00 AM.');
-        this.renderClientView();
-      });
     } else {
       const isCheckedIn = res.status === 'checked_in';
 
@@ -1812,13 +1717,6 @@ class ClientAppService {
             </button>
           ` : ''}
 
-          <button id="btn-simulate-checkin" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px; margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            ${isCheckedIn ? '🔔 Iniciar Ronda 1 (Tomar Asiento)' : '🍸 Simular Llegada al Bar (Canjear Trago)'}
-          </button>
-
-          <button id="btn-sim-direct-10am" class="btn" style="font-size: 11px; color: var(--luz); border-color: rgba(240,168,48,.3); background: rgba(240,168,48,.06); padding: 9px; margin-top: 4px;">
-            💌 Simular Día Siguiente (Sobre de Matches 10:00 AM)
-          </button>
         </div>
 
         ${!isCheckedIn ? `
@@ -1853,53 +1751,6 @@ class ClientAppService {
         this.showToast('📅 Archivo de calendario descargado');
       });
 
-      document.getElementById('btn-simulate-checkin')?.addEventListener('click', async () => {
-        if (!isCheckedIn) {
-          res.status = 'checked_in';
-          user.activeReservation = res;
-          await DB.updateUserProfile(user.uid, { activeReservation: res });
-          this.showToast('🍸 ¡Trago canjeado en barra! Disfruta la previa.');
-          this.renderClientView();
-        } else {
-          this.currentEvent = {
-            id: res.eventId,
-            currentRound: 1,
-            activeMatches: [
-              {
-                tableId: res.tableNumber,
-                p1: { uid: user.uid, name: user.name || 'Tú' },
-                p2: { uid: 'user_camila_demo', name: 'Camila (28) · Arquitecta' }
-              }
-            ]
-          };
-          this.showToast('🔔 ¡Campanada! Toma asiento en la mesa ' + res.tableNumber);
-          this.renderClientView();
-        }
-      });
-
-      document.getElementById('btn-sim-direct-10am')?.addEventListener('click', async () => {
-        user.postEventState = {
-          eventId: res.eventId,
-          venueName: res.venueName,
-          dayDate: res.dayDate,
-          revealTimeIso: new Date(Date.now() + 14 * 3600000).toISOString(),
-          isRevealed: false,
-          matches: [
-            {
-              id: 'match_camila',
-              name: 'Camila Ospina',
-              age: 28,
-              profession: 'Arquitecta de Interiores',
-              zone: 'Zona G',
-              cocktail: res.cocktailName || 'Negroni Ahumado',
-              icebreakerSummary: 'Ambos coincidieron en gusto por el Negroni Ahumado, diseño urbano y viajes por Colombia.'
-            }
-          ]
-        };
-        await DB.updateUserProfile(user.uid, { postEventState: user.postEventState });
-        this.showToast('⏳ ¡Correspondencia sellada! Abriendo cuenta atrás a las 10:00 AM.');
-        this.renderClientView();
-      });
     }
 
     const safeWordBtn = document.getElementById('btn-safeword');

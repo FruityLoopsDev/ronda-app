@@ -56,21 +56,21 @@ export class ProfileService {
     const statVenues = document.getElementById('stat-venues');
     const statMatches = document.getElementById('stat-matches');
 
-    const rounds = user.stats?.roundsPlayed ?? 12;
-    const venues = user.stats?.venuesVisited ?? 3;
-    const matches = user.stats?.matchesCount ?? 5;
+    const rounds = user.stats?.roundsPlayed || 0;
+    const venues = user.stats?.venuesVisited || 0;
+    const matches = user.stats?.matchesCount || 0;
 
     if (statRounds) statRounds.textContent = rounds.toString();
     if (statVenues) statVenues.textContent = venues.toString();
     if (statMatches) statMatches.textContent = matches.toString();
 
     // Username / Handle
-    const username = user.username || (user.email ? user.email.split('@')[0].toLowerCase() : 'soltero.ronda');
-    if (profileHandle) profileHandle.textContent = `@${username}`;
+    const username = user.username || (user.email ? user.email.split('@')[0].toLowerCase() : '');
+    if (profileHandle) profileHandle.textContent = username ? `@${username}` : '';
 
     // Name & Age
     const ageStr = user.age ? ` (${user.age})` : '';
-    if (profileName) profileName.textContent = `${user.name || 'Sin Nombre'}${ageStr}`;
+    if (profileName) profileName.textContent = user.name ? `${user.name}${ageStr}` : 'Mi Perfil';
 
     // KYC Badge & LinkedIn Badge
     if (kycBadge) {
@@ -78,6 +78,21 @@ export class ProfileService {
         kycBadge.style.display = 'inline-flex';
       } else {
         kycBadge.style.display = 'none'; // solo mostrar si está verificado
+      }
+    }
+
+    const kycSettingsStatus = document.getElementById('kyc-settings-status');
+    if (kycSettingsStatus) {
+      if (user.isVerified) {
+        kycSettingsStatus.textContent = 'Verificado ✓';
+        kycSettingsStatus.className = 'chip verde';
+        kycSettingsStatus.style.fontSize = '9.5px';
+        kycSettingsStatus.style.padding = '3px 8px';
+      } else {
+        kycSettingsStatus.textContent = 'Pendiente';
+        kycSettingsStatus.className = 'chip ambar';
+        kycSettingsStatus.style.fontSize = '9.5px';
+        kycSettingsStatus.style.padding = '3px 8px';
       }
     }
 
@@ -104,15 +119,28 @@ export class ProfileService {
     }
 
     // Bio
-    const bioText = user.bio || 'Amante del buen café, cócteles de autor y conversaciones de 6 minutos sin rodeos.';
-    if (profileBio) profileBio.textContent = bioText;
+    const bioText = user.bio || '';
+    if (profileBio) {
+      profileBio.textContent = bioText;
+      profileBio.style.display = bioText ? 'block' : 'none';
+    }
 
     // Meta details
-    const cocktail = user.favoriteCocktail || 'Negroni Ahumado';
-    const zone = (user.preferredZones && user.preferredZones.length > 0) ? user.preferredZones.join(', ') : 'Zona G';
-    const zodiac = user.zodiacSign || '♏ Escorpio';
+    const cocktail = user.favoriteCocktail || '';
+    const zone = (user.preferredZones && user.preferredZones.length > 0) ? user.preferredZones.join(', ') : '';
+    const zodiac = user.zodiacSign || '';
     if (profileMeta) {
-      profileMeta.innerHTML = `🍸 <b>${escapeHtml(cocktail)}</b> · 📍 <b>${escapeHtml(zone)}</b> · <b>${escapeHtml(zodiac)}</b>`;
+      const parts: string[] = [];
+      if (cocktail) parts.push(`🍸 <b>${escapeHtml(cocktail)}</b>`);
+      if (zone) parts.push(`📍 <b>${escapeHtml(zone)}</b>`);
+      if (zodiac) parts.push(`<b>${escapeHtml(zodiac)}</b>`);
+      if (parts.length > 0) {
+        profileMeta.innerHTML = parts.join(' · ');
+        profileMeta.style.display = 'block';
+      } else {
+        profileMeta.innerHTML = '';
+        profileMeta.style.display = 'none';
+      }
     }
 
     // Avatar image
@@ -134,8 +162,8 @@ export class ProfileService {
     // Highlights bubbles
     const hlCocktail = document.getElementById('hl-cocktail-val');
     const hlZone = document.getElementById('hl-zone-val');
-    if (hlCocktail) hlCocktail.textContent = cocktail;
-    if (hlZone) hlZone.textContent = zone;
+    if (hlCocktail) hlCocktail.textContent = cocktail || '-';
+    if (hlZone) hlZone.textContent = zone || '-';
 
     // Populate Tab 1: Sobre Mí
     const aboutGender = document.getElementById('about-gender');
@@ -145,10 +173,10 @@ export class ProfileService {
     const aboutCocktail = document.getElementById('about-cocktail');
 
     if (aboutGender) aboutGender.textContent = user.gender === 'M' ? 'Hombre' : (user.gender === 'F' ? 'Mujer' : (user.gender || 'No especificado'));
-    if (aboutOrientation) aboutOrientation.textContent = user.orientation === 'F' ? 'Mujeres' : (user.orientation === 'M' ? 'Hombres' : (user.orientation || 'Ambos'));
-    if (aboutZodiac) aboutZodiac.textContent = zodiac;
-    if (aboutZones) aboutZones.textContent = zone;
-    if (aboutCocktail) aboutCocktail.textContent = cocktail;
+    if (aboutOrientation) aboutOrientation.textContent = user.orientation === 'F' ? 'Mujeres' : (user.orientation === 'M' ? 'Hombres' : (user.orientation || 'No especificado'));
+    if (aboutZodiac) aboutZodiac.textContent = zodiac || 'No especificado';
+    if (aboutZones) aboutZones.textContent = zone || 'No especificado';
+    if (aboutCocktail) aboutCocktail.textContent = cocktail || 'No especificado';
 
     // Populate Tab 3: Ajustes & Seguridad
     const inputSafeword = document.getElementById('setting-safeword') as HTMLInputElement;
@@ -156,7 +184,7 @@ export class ProfileService {
     const chkDrinkStats = document.getElementById('setting-share-drinks') as HTMLInputElement;
     const chkMarketing = document.getElementById('setting-marketing') as HTMLInputElement;
 
-    if (inputSafeword) inputSafeword.value = user.safeword || 'Martini Azul';
+    if (inputSafeword) inputSafeword.value = user.safeword || '';
     if (inputEmergency) inputEmergency.value = user.emergencyContact || '';
     if (chkDrinkStats) chkDrinkStats.checked = user.privacySettings?.shareDrinkStats !== false;
     if (chkMarketing) chkMarketing.checked = user.privacySettings?.marketingConsent !== false;
@@ -380,7 +408,6 @@ export class ProfileService {
           this.currentUser.linkedinVerified = true;
           this.currentUser.linkedinSlug = result.data.slug;
           this.currentUser.linkedinHeadline = result.data.headline;
-          this.currentUser.isVerified = true;
         }
       } else {
         status.textContent = `✕ ${result.error || 'No se pudo verificar el perfil.'}`;
@@ -400,7 +427,7 @@ export class ProfileService {
     (document.getElementById('edit-username') as HTMLInputElement).value = user.username || (user.email ? user.email.split('@')[0] : '');
     (document.getElementById('edit-age') as HTMLInputElement).value = user.age ? user.age.toString() : '25';
     (document.getElementById('edit-bio') as HTMLTextAreaElement).value = user.bio || '';
-    (document.getElementById('edit-cocktail') as HTMLInputElement).value = user.favoriteCocktail || 'Negroni Ahumado';
+    (document.getElementById('edit-cocktail') as HTMLInputElement).value = user.favoriteCocktail || '';
     (document.getElementById('edit-gender') as HTMLSelectElement).value = user.gender || 'Hombre';
     (document.getElementById('edit-orientation') as HTMLSelectElement).value = user.orientation || 'Mujeres';
     const editLinkedin = document.getElementById('edit-linkedin') as HTMLInputElement | null;
@@ -505,7 +532,6 @@ export class ProfileService {
         if (val.valid) {
           patch.linkedinVerified = true;
           patch.linkedinSlug = val.slug;
-          patch.isVerified = true;
           if (this.currentUser.linkedinHeadline) {
             patch.linkedinHeadline = this.currentUser.linkedinHeadline;
           }
@@ -544,12 +570,12 @@ export class ProfileService {
     const chkDrinkStats = document.getElementById('setting-share-drinks') as HTMLInputElement;
     const chkMarketing = document.getElementById('setting-marketing') as HTMLInputElement;
 
-    if (inputSafeword) inputSafeword.value = user.safeword || 'Martini Azul';
+    if (inputSafeword) inputSafeword.value = user.safeword || '';
     if (chkDrinkStats) chkDrinkStats.checked = user.privacySettings?.shareDrinkStats !== false;
     if (chkMarketing) chkMarketing.checked = user.privacySettings?.marketingConsent !== false;
 
     // Sincronizar zonas
-    const zones = user.preferredZones || ['Zona G', 'Quinta Camacho'];
+    const zones = user.preferredZones || [];
     document.querySelectorAll('.zone-checkbox').forEach((chk: any) => {
       chk.checked = zones.includes(chk.value);
     });
@@ -582,7 +608,7 @@ export class ProfileService {
       });
 
       const patch: Partial<User> = {
-        safeword: safeword || 'Martini Azul',
+        safeword: safeword || '',
         privacySettings: {
           shareDrinkStats,
           marketingConsent
@@ -655,8 +681,8 @@ export class ProfileService {
     const modal = document.getElementById('modal-select-cocktail');
     if (!modal) return;
     
-    const current = this.currentUser.favoriteCocktail || 'Negroni Ahumado';
-    const radio = modal.querySelector(`input[value="${current}"]`) as HTMLInputElement;
+    const current = this.currentUser.favoriteCocktail || '';
+    const radio = current ? modal.querySelector(`input[value="${current}"]`) as HTMLInputElement : null;
     if (radio) {
       radio.checked = true;
     }
@@ -668,7 +694,7 @@ export class ProfileService {
     const modal = document.getElementById('modal-select-zone');
     if (!modal) return;
     
-    const zones = this.currentUser.preferredZones || ['Zona G', 'Quinta Camacho'];
+    const zones = this.currentUser.preferredZones || [];
     document.querySelectorAll('.badge-zone-checkbox').forEach((chk: any) => {
       chk.checked = zones.includes(chk.value);
     });

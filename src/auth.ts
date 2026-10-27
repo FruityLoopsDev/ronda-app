@@ -124,6 +124,12 @@ export class AuthService {
         gender: profileData.gender || '',
         orientation: profileData.orientation || '',
         email: email,
+        isVerified: false,
+        stats: {
+          roundsPlayed: 0,
+          venuesVisited: 0,
+          matchesCount: 0
+        },
         ...profileData
       };
 

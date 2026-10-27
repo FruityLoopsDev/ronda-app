@@ -114,7 +114,6 @@ export class ProfileModal {
           user.linkedinVerified = true;
           user.linkedinSlug = result.data.slug;
           user.linkedinHeadline = result.data.headline;
-          user.isVerified = true;
         }
       } else {
         if (linkedinStatus) {
@@ -161,13 +160,12 @@ export class ProfileModal {
           if (val.valid) {
             patch.linkedinVerified = true;
             patch.linkedinSlug = val.slug;
-            patch.isVerified = true;
             if (user.linkedinHeadline) patch.linkedinHeadline = user.linkedinHeadline;
           }
         }
 
-        // Persistir el estado de verificación de identidad en el perfil.
-        if (Verification.isVerified || user.linkedinVerified || patch.linkedinVerified) {
+        // Persistir el estado de verificación biométrica de identidad si fue completado.
+        if (Verification.isVerified) {
           patch.isVerified = true;
         }
 

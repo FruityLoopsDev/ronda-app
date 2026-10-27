@@ -737,9 +737,9 @@ class HostConsoleService {
 
     if (user.linkedinUrl || user.verifications?.professional?.method === 'linkedin_oauth' || user.verifications?.identity?.method === 'linkedin_persona') {
       await RondaDialog.alert({
-        title: '🎉 ¡Incentivo LinkedIn!',
-        message: `El asistente <b>${user.name || uid}</b> verificó su perfil con LinkedIn.<br><br><b>¡Entrégale una bebida de cortesía! 🍺</b>`,
-        icon: '🎉'
+        title: '💼 Perfil Verificado',
+        message: `El asistente <b>${user.name || uid}</b> cuenta con verificación profesional de LinkedIn confirmada.`,
+        icon: '💼'
       });
     }
 

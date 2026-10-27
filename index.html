@@ -1370,7 +1370,7 @@
               <input type="url" id="profile-linkedin" placeholder="https://linkedin.com/in/tu-perfil" style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); background: rgba(243,237,226,.06); color: var(--papel); outline: none; font-family: 'Space Grotesk', sans-serif; font-size: 13px;">
               <button type="button" id="btn-verify-profile-linkedin" class="btn luz" style="padding: 12px 14px; font-size: 12px; border-radius: 8px; white-space: nowrap; font-weight: 700;">Validar 🔗</button>
             </div>
-            <p style="font-size: 11px; color: var(--ambar); margin-bottom: 4px; font-weight: bold; text-align: left;">🍺 ¡Verifica con LinkedIn y recibe una bebida de cortesía al llegar!</p>
+            <p style="font-size: 11px; color: var(--humo); margin-bottom: 4px; font-weight: 500; text-align: left;">💼 Requisito obligatorio para verificar tu identidad profesional y garantizar la calidad del grupo.</p>
             <p id="linkedin-verify-status" style="font-size: 10.5px; color: var(--humo); margin: -4px 0 4px; text-align: left;"></p>
 
             <div id="kyc-container" style="margin-top: 6px; border: 1px dashed var(--linea); padding: 10px; border-radius: 8px; position: relative;">
@@ -1599,12 +1599,12 @@
     <!-- Identidad & Bio -->
     <div style="margin-bottom: 16px;">
       <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-        <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Julio Cesar (29)</h3>
-        <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px;">🛡️ KYC Verificado</span>
+        <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Mi Perfil</h3>
+        <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px; display: none;">🛡️ KYC Verificado</span>
         <span id="profile-linkedin-badge" class="chip verde" style="font-size: 9px; padding: 2px 8px; display: none;">💼 LinkedIn Verificado</span>
         <span id="profile-founder-badge" class="chip founder" style="font-size: 9px; padding: 2px 8px; display: none;">⭐ Miembro Fundador #<span id="profile-founder-number">1</span></span>
       </div>
-      <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;">@julio.ronda</p>
+      <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;"></p>
       <p id="profile-display-bio" style="font-size: 13px; color: var(--papel); margin: 0 0 6px; line-height: 1.4;"></p>
       <p id="profile-display-meta" style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); margin: 0;"></p>
     </div>
@@ -1623,11 +1623,11 @@
     <div class="highlights-scroll" style="margin-bottom: 14px;">
       <div class="highlight-bubble" id="badge-cocktail">
         <div class="bubble-circle">🍸</div>
-        <span class="bubble-label" id="hl-cocktail-val">Negroni</span>
+        <span class="bubble-label" id="hl-cocktail-val">-</span>
       </div>
       <div class="highlight-bubble" id="badge-zone">
         <div class="bubble-circle">📍</div>
-        <span class="bubble-label" id="hl-zone-val">Zona G</span>
+        <span class="bubble-label" id="hl-zone-val">-</span>
       </div>
       <div class="highlight-bubble" id="badge-services">
         <div class="bubble-circle">✨</div>
@@ -1648,11 +1648,11 @@
     <!-- TAB 1: SOBRE MÍ -->
     <div id="tab-content-about" class="profile-tab-content active">
       <div style="background: rgba(28, 19, 36, 0.65); backdrop-filter: blur(12px); border: 1px solid var(--linea); border-radius: var(--r); padding: 18px; font-size: 12.5px;">
-        <div class="kv"><span>Género</span><b id="about-gender">Hombre</b></div>
-        <div class="kv"><span>Interés</span><b id="about-orientation">Mujeres</b></div>
-        <div class="kv"><span>Signo Zodíaco</span><b id="about-zodiac">♏ Escorpio</b></div>
-        <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">Zona G, Quinta Camacho</b></div>
-        <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">Negroni Ahumado</b></div>
+        <div class="kv"><span>Género</span><b id="about-gender">No especificado</b></div>
+        <div class="kv"><span>Interés</span><b id="about-orientation">No especificado</b></div>
+        <div class="kv"><span>Signo Zodíaco</span><b id="about-zodiac">No especificado</b></div>
+        <div class="kv"><span>Barrios frecuentes</span><b id="about-zones">No especificado</b></div>
+        <div class="kv"><span>Cóctel de Autor</span><b id="about-cocktail">No especificado</b></div>
         <div class="kv" id="profile-row-linkedin" style="display: none;">
           <span>Perfil LinkedIn</span>
           <b><a id="profile-linkedin-link" href="#" target="_blank" style="color: var(--luz); text-decoration: underline;">Ver Perfil ↗</a></b>
@@ -1666,17 +1666,10 @@
 
     <!-- TAB 2: PASAPORTE & NFTS -->
     <div id="tab-content-passport" class="profile-tab-content">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 16px; padding: 16px 14px; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 6px;">🍸</div>
-          <b style="font-size: 12px; color: var(--luz); display: block;">CARONTE VIP</b>
-          <span style="font-size: 10px; color: var(--humo);">-25% Mar–Jue</span>
-        </div>
-        <div style="background: rgba(28, 19, 36, 0.65); border: 1px solid var(--linea); border-radius: 16px; padding: 16px 14px; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 6px;">🍷</div>
-          <b style="font-size: 12px; color: var(--botella); display: block;">LA MARÍA CLUB</b>
-          <span style="font-size: 10px; color: var(--humo);">-25% Cóctel Autor</span>
-        </div>
+      <div id="passport-empty-state" style="background: rgba(28, 19, 36, 0.65); border: 1px dashed var(--linea); border-radius: 16px; padding: 24px 16px; text-align: center;">
+        <div style="font-size: 32px; margin-bottom: 8px;">🎟️</div>
+        <b style="font-size: 13px; color: var(--papel); display: block; margin-bottom: 4px;">Sin Pases de Eventos Aún</b>
+        <span style="font-size: 11px; color: var(--humo); line-height: 1.4; display: block;">Tus pases de acceso y beneficios exclusivos en bares aliados se desbloquearán automáticamente al asistir a tu primera cita en RONDA.</span>
       </div>
       <div class="aviso" style="margin-top: 14px; font-size: 11.5px; padding: 12px 14px; border-radius: 14px;">
         🎟️ Tu billetera digital descentralizada custodia tus pases de asistencia de forma invisible.
@@ -1807,7 +1800,7 @@
               </p>
               <span style="font-size: 11px; color: var(--humo);">Cédula de Colombia validada · Cero perfiles falsos</span>
             </div>
-            <span class="chip verde" style="font-size: 9.5px; padding: 3px 8px;">100% OK</span>
+            <span id="kyc-settings-status" class="chip ambar" style="font-size: 9.5px; padding: 3px 8px;">Pendiente</span>
           </div>
 
           <!-- Safeword / Asistencia Discreta -->
@@ -1818,7 +1811,7 @@
             <p style="font-size: 11.5px; color: var(--humo); margin: 0 0 10px; line-height: 1.35;">
               Palabra clave que se enviará al anfitrión de sala si solicitas asistencia en medio de una cita incómoda:
             </p>
-            <input type="text" id="setting-safeword" class="ronda-input-premium" placeholder="Ej. Martini Azul" value="Martini Azul" style="margin-bottom: 0;">
+            <input type="text" id="setting-safeword" class="ronda-input-premium" placeholder="Ej. Palabra Secreta" value="" style="margin-bottom: 0;">
           </div>
 
           <!-- Zonas de Bogotá -->
@@ -1828,10 +1821,10 @@
             </p>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
               <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                <input type="checkbox" class="zone-checkbox" value="Zona G" checked style="accent-color: var(--luz);"> Zona G
+                <input type="checkbox" class="zone-checkbox" value="Zona G" style="accent-color: var(--luz);"> Zona G
               </label>
               <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                <input type="checkbox" class="zone-checkbox" value="Quinta Camacho" checked style="accent-color: var(--luz);"> Quinta Camacho
+                <input type="checkbox" class="zone-checkbox" value="Quinta Camacho" style="accent-color: var(--luz);"> Quinta Camacho
               </label>
               <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
                 <input type="checkbox" class="zone-checkbox" value="Usaquén" style="accent-color: var(--luz);"> Usaquén
