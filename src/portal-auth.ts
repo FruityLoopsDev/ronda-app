@@ -145,7 +145,12 @@ function renderPortalLoginForm(config: PortalConfig) {
           </div>
 
           <div>
-            <label style="display: block; font-size: 11px; font-family: var(--font-mono); color: var(--humo); margin-bottom: 5px;">Contraseña</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+              <label style="font-size: 11px; font-family: var(--font-mono); color: var(--humo); margin-bottom: 0;">Contraseña</label>
+              <button type="button" id="btn-portal-forgot" style="background: none; border: none; color: var(--luz); font-size: 11px; font-family: var(--font-mono); cursor: pointer; text-decoration: underline; padding: 0;">
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
             <input type="password" id="portal-password" required placeholder="••••••••" class="ronda-input" style="width: 100%; box-sizing: border-box; margin-bottom: 0;">
           </div>
 
@@ -169,6 +174,39 @@ function renderPortalLoginForm(config: PortalConfig) {
   `;
 
   renderRondaFooter(authSection);
+
+  // Listener para recuperar contraseña
+  document.getElementById('btn-portal-forgot')?.addEventListener('click', async () => {
+    const emailInput = document.getElementById('portal-email') as HTMLInputElement | null;
+    const currentEmail = emailInput?.value?.trim() || '';
+
+    const targetEmail = await RondaDialog.prompt({
+      title: 'Recuperar Contraseña',
+      message: 'Ingresa tu correo corporativo o registrado para enviarte el enlace seguro de restablecimiento:',
+      icon: '🔑',
+      placeholder: currentEmail || 'tu@correo.com',
+      confirmText: 'Enviar Enlace',
+      cancelText: 'Cancelar'
+    });
+
+    const emailToSend = (targetEmail || currentEmail).trim();
+    if (!emailToSend) return;
+
+    try {
+      await Auth.sendPasswordReset(emailToSend);
+      await RondaDialog.alert({
+        title: 'Enlace Enviado',
+        message: `Hemos enviado un correo a <b>${emailToSend}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
+        icon: '✉️'
+      });
+    } catch (err: any) {
+      await RondaDialog.alert({
+        title: 'Error al Enviar',
+        message: err.message || 'No se pudo enviar el correo de recuperación. Verifica la dirección.',
+        icon: '⚠️'
+      });
+    }
+  });
 
   const form = document.getElementById('portal-login-form');
   const btn = document.getElementById('btn-portal-login') as HTMLButtonElement;

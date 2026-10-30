@@ -50,190 +50,7 @@ export interface RondaEvent {
   bookingCode: string;
 }
 
-export let RONDA_EVENTS: RondaEvent[] = [
-  {
-    id: 'rnd-caronte-mar-25',
-    venueName: 'CARONTE Cocktail Bar',
-    venueAddress: 'Cra. 4A #66-22 · Zona G, Bogotá',
-    mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cra+4A+66-22+Zona+G+Bogota',
-    dayDate: 'Martes 25 de marzo · 20:00',
-    startIso: '2026-03-25T20:00:00-05:00',
-    endIso: '2026-03-25T21:45:00-05:00',
-    timeRange: '20:00 a 21:45',
-    roundsInfo: '9 rondas de 6 min · 1 campanada',
-    ageRange: '25–34 años',
-    drinkMenuTitle: '🍸 CARTA SUGERIDA POR EL BARTENDER',
-    drinkOptions: [
-      {
-        id: 'opt-negroni',
-        name: 'Negroni Ahumado de Autor',
-        desc: 'Campari en roble, Vermut Rosso artesanal y Gin botánico con piel de naranja al fuego.',
-        type: 'cocktail',
-        tag: 'Firma de la Casa',
-        img: '/assets/coctel-negroni.svg'
-      },
-      {
-        id: 'opt-old-fashioned',
-        name: 'Old Fashioned de Cacao & Especias',
-        desc: 'Bourbon añejo, bitter de cacao amazónico y panela orgánica caramelizada.',
-        type: 'cocktail',
-        tag: 'Intenso & Aromático',
-        img: '/assets/coctel-negroni.svg'
-      },
-      {
-        id: 'opt-mocktail',
-        name: 'Mocktail Silvestre (Sin Alcohol)',
-        desc: 'Infusión de flor de saúco, pepino macerado y agua tónica botánica premium.',
-        type: 'mocktail',
-        tag: 'Refrescante Mocktail',
-        img: '/assets/coctel-gintonic.svg'
-      }
-    ],
-    cocktailIncluded: 'Negroni Ahumado de Autor',
-    cocktailDesc: 'Campari infusionado en madera de roble ahumado, Vermut Rosso artesanal y Gin botánico con piel de naranja caramelizada al fuego. Opción mocktail disponible.',
-    cocktailImg: '/assets/coctel-negroni.svg',
-    hostTips: [
-      '👔 Dress Code: Smart Casual elegante (no ropa deportiva).',
-      '⏰ Puntualidad: Llega a las 19:50 para recibir tu cóctel en barra antes de la 1ª campanada.',
-      '🔔 Dinámica: 6 minutos por mesa. Al sonar la campana, el Lado B rota en sentido horario.',
-      '🛡️ Seguridad: Si requieres asistencia discreta, usa tu palabra clave con el bartender o anfitrión.'
-    ],
-    price: 45000,
-    priceFormatted: '$45.000',
-    priceSub: 'Sube a $55.000 al equilibrarse',
-    status: 'escaso',
-    statusLabel: 'Por confirmar',
-    chipClass: 'ambar',
-    balanceTag: 'Tu lado por confirmar',
-    balancePercent1: 62,
-    balancePercent2: 38,
-    registeredText: '12 apuntadas',
-    neededText: 'faltan 3 · Lado B',
-    tableNumber: '07',
-    bookingCode: '#RND-4471'
-  },
-  {
-    id: 'rnd-lamaria-mie-26',
-    venueName: 'La María Quinta Camacho',
-    venueAddress: 'Calle 70A #9-44 · Quinta Camacho, Bogotá',
-    mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Calle+70A+9-44+Quinta+Camacho+Bogota',
-    dayDate: 'Miércoles 26 de marzo · 20:00',
-    startIso: '2026-03-26T20:00:00-05:00',
-    endIso: '2026-03-26T21:45:00-05:00',
-    timeRange: '20:00 a 21:45',
-    roundsInfo: '9 rondas de 6 min · Noche de tapas y vino',
-    ageRange: '35–49 años',
-    drinkMenuTitle: '🍷 CARTA SUGERIDA POR EL SOMMELIER',
-    drinkOptions: [
-      {
-        id: 'opt-tinto-verano',
-        name: 'Tinto de Verano Especiado de Autor',
-        desc: 'Reducción de vino tinto con frutos silvestres, canela en rama y rodaja de pomelo.',
-        type: 'cocktail',
-        tag: 'Favorito Sommelier',
-        img: '/assets/coctel-vino.svg'
-      },
-      {
-        id: 'opt-tinto-reserva',
-        name: 'Copa de Tinto Reserva (Ribera del Duero)',
-        desc: '14 meses en barrica de roble francés, taninos sedosos y notas a mora madura.',
-        type: 'wine',
-        tag: 'Vino Tinto Premium',
-        img: '/assets/coctel-vino.svg'
-      },
-      {
-        id: 'opt-blanco-albarino',
-        name: 'Copa de Blanco Albariño Fresco',
-        desc: 'D.O. Rías Baixas, acidez cítrica brillante y notas florales delicadas.',
-        type: 'wine',
-        tag: 'Vino Blanco Fresco',
-        img: '/assets/coctel-gintonic.svg'
-      }
-    ],
-    cocktailIncluded: 'Tinto de Verano Especiado',
-    cocktailDesc: 'Reducción de vino tinto reserva con frutos rojos silvestres, soda cítrica, canela en rama y rodaja de pomelo rosado.',
-    cocktailImg: '/assets/coctel-vino.svg',
-    hostTips: [
-      '👔 Dress Code: Casual sofisticado.',
-      '⏰ Llegada: Barra abierta desde las 19:45.',
-      '🍷 Maridaje: Incluye degustación de tapas de la casa.',
-      '🎫 Beneficio: -25% de descuento en carta para citas posteriores.'
-    ],
-    price: 55000,
-    priceFormatted: '$55.000',
-    priceSub: 'Incluye Copa o Cóctel de Autor',
-    status: 'ok',
-    statusLabel: 'Confirmado',
-    chipClass: 'verde',
-    balanceTag: 'Sala equilibrada',
-    balancePercent1: 50,
-    balancePercent2: 50,
-    registeredText: '12 apuntadas',
-    neededText: '12 confirmados (100%)',
-    tableNumber: '04',
-    bookingCode: '#RND-8923'
-  },
-  {
-    id: 'rnd-patio-jue-27',
-    venueName: 'Patio Poca Prisa',
-    venueAddress: 'Cra. 5 #69-26 · Chapinero Alto, Bogotá',
-    mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cra+5+69-26+Chapinero+Alto+Bogota',
-    dayDate: 'Jueves 27 de marzo · 20:30',
-    startIso: '2026-03-27T20:30:00-05:00',
-    endIso: '2026-03-27T22:15:00-05:00',
-    timeRange: '20:30 a 22:15',
-    roundsInfo: '9 rondas de 6 min · Temática: Cine & Arte',
-    ageRange: '28–38 años',
-    drinkMenuTitle: '🌿 CARTA BOTÁNICA DEL BARTENDER',
-    drinkOptions: [
-      {
-        id: 'opt-gintonic',
-        name: 'Gin Tonic Botánico Colombiano',
-        desc: 'Gin artesanal con enebro andino, pepino macerado y flor de saúco.',
-        type: 'cocktail',
-        tag: 'Ginebra de Autor',
-        img: '/assets/coctel-gintonic.svg'
-      },
-      {
-        id: 'opt-spritz',
-        name: 'Spritz de Guayaba Agria & Prosecco',
-        desc: 'Aperitivo burbujeante cítrico, refrescante y floral.',
-        type: 'cocktail',
-        tag: 'Aperitivo Italiano',
-        img: '/assets/coctel-vino.svg'
-      },
-      {
-        id: 'opt-infusion-mocktail',
-        name: 'Infusión Fría Herbal con Miel de Bosque',
-        desc: 'Menta fresca, limonaria, tónica premium y miel orgánica.',
-        type: 'mocktail',
-        tag: 'Mocktail Botánico',
-        img: '/assets/coctel-negroni.svg'
-      }
-    ],
-    cocktailIncluded: 'Gin Tonic Botánico',
-    cocktailDesc: 'Gin artesanal colombiano con bayas de enebro, listón de pepino macerado, agua tónica premium y flor de saúco.',
-    cocktailImg: '/assets/coctel-gintonic.svg',
-    hostTips: [
-      '👔 Dress Code: Bohemia urbana / Creativo.',
-      '🎨 Temática: Noche con preguntas rompehielos de cine y cultura.',
-      '⏳ Lista de Espera: Si alguien cancela o se abre mesa impar, se notifica por orden de turno.'
-    ],
-    price: 65000,
-    priceFormatted: '$65.000',
-    priceSub: 'Jueves, tarifa alta',
-    status: 'lleno',
-    statusLabel: 'Lista de espera',
-    chipClass: 'gris',
-    balanceTag: 'Últimos cupos en rotación',
-    balancePercent1: 90,
-    balancePercent2: 10,
-    registeredText: '18 apuntados',
-    neededText: 'Lista de espera abierta',
-    tableNumber: '02',
-    bookingCode: '#RND-9104'
-  }
-];
+export let RONDA_EVENTS: RondaEvent[] = [];
 
 class ClientAppService {
   currentEvent: any = null;
@@ -315,7 +132,7 @@ class ClientAppService {
       if (confirmed && user && user.postEventState) {
         user.postEventState.secondDateBooking = {
           venueName,
-          date: 'Viernes 28 de marzo',
+          date: 'Próximo Fin de Semana',
           time: '20:30',
           discountCode: 'RONDA-2DATE-25',
           status: 'confirmed'
@@ -460,18 +277,25 @@ class ClientAppService {
     }
 
     // Historial de Citas Pasadas
+    const pastList = (user as any).reservationsHistory || [];
     html += `
       <div style="border-top: 1px solid var(--linea); padding-top: 14px; margin-top: 14px;">
         <p style="font-size: 11px; font-family: var(--font-mono); color: var(--humo); text-transform: uppercase; font-weight: 700; margin: 0 0 10px; letter-spacing: 0.08em;">
           🏛️ HISTORIAL DE CITAS PASADAS
         </p>
-        <div style="background: rgba(243,237,226,.03); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <b style="font-size: 12px; color: var(--papel); display: block;">La María Quinta Camacho</b>
-            <span style="font-size: 10.5px; color: var(--humo);">12 de marzo · 9 rondas · 3 matches ✨</span>
+        ${pastList.length === 0 ? `
+          <p style="font-size: 11.5px; color: var(--humo); font-style: italic; margin: 0;">
+            Aún no has participado en citas anteriores. Tu historial se construirá con tus asistencias en sala.
+          </p>
+        ` : pastList.map((past: any) => `
+          <div style="background: rgba(243,237,226,.03); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div>
+              <b style="font-size: 12px; color: var(--papel); display: block;">${past.venueName}</b>
+              <span style="font-size: 10.5px; color: var(--humo);">${past.dayDate} · Mesa ${past.tableNumber}</span>
+            </div>
+            <span class="chip verde" style="font-size: 9px; padding: 2px 6px;">Completada</span>
           </div>
-          <span class="chip verde" style="font-size: 9px; padding: 2px 6px;">Completada</span>
-        </div>
+        `).join('')}
       </div>
     `;
 
@@ -906,6 +730,21 @@ class ClientAppService {
           <button id="btn-feed-manage-res" class="btn ambar" style="font-size: 11.5px; padding: 8px 14px; font-weight: 700; white-space: nowrap; border-radius: 999px;">
             Gestionar
           </button>
+        </div>
+      `;
+    }
+
+    if (RONDA_EVENTS.length === 0) {
+      html += `
+        <div style="background: rgba(22,15,29,0.7); border: 1px dashed var(--linea); border-radius: 18px; padding: 40px 24px; text-align: center; margin: 12px 0;">
+          <span style="font-size: 38px; display: block; margin-bottom: 12px;">🥂</span>
+          <h3 style="font-family: var(--font-display); font-size: 22px; color: var(--papel); margin: 0 0 8px;">Convocatorias en Preparación</h3>
+          <p style="font-size: 13px; color: var(--humo); line-height: 1.5; margin: 0 auto 20px; max-width: 340px;">
+            Estamos coordinando las próximas noches exclusivas en nuestra red de gastrobares aliados de Bogotá. Tu membresía te garantiza notificación prioritaria en cuanto se abran las mesas.
+          </p>
+          <a href="#profile" id="btn-empty-feed-profile" class="btn ambar" style="font-size: 12px; font-weight: 700; padding: 12px 24px; text-decoration: none; display: inline-block;">
+            👤 Completar mi Perfil & Pasaporte
+          </a>
         </div>
       `;
     }

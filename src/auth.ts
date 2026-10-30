@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getIdToken, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getIdToken, setPersistence, browserSessionPersistence, sendPasswordResetEmail } from "firebase/auth";
 import { RondaServices } from "./firebase-config.js";
 import { DB, User } from "./db.js";
 
@@ -130,6 +130,32 @@ export class AuthService {
         throw new Error('El correo electrónico no tiene un formato válido.');
       } else if (code === 'auth/user-disabled') {
         throw new Error('Esta cuenta ha sido deshabilitada. Contacta al equipo RONDA.');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Envía un correo electrónico con el enlace oficial de recuperación de contraseña.
+   */
+  async sendPasswordReset(email: string): Promise<void> {
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      throw new Error('Por favor, ingresa tu correo electrónico.');
+    }
+    console.log('[Auth] Solicitando restablecimiento de contraseña para:', cleanEmail);
+    try {
+      await sendPasswordResetEmail(this._getAuth(), cleanEmail);
+      console.log('[Auth] Enlace de recuperación enviado exitosamente a:', cleanEmail);
+    } catch (error: any) {
+      console.error('[Auth] Error al enviar restablecimiento:', error);
+      const code = error?.code;
+      if (code === 'auth/user-not-found') {
+        throw new Error('No encontramos ninguna cuenta registrada con este correo.');
+      } else if (code === 'auth/invalid-email') {
+        throw new Error('El correo electrónico no tiene un formato válido.');
+      } else if (code === 'auth/too-many-requests') {
+        throw new Error('Demasiados intentos. Espera unos minutos antes de solicitar otro enlace.');
       }
       throw error;
     }

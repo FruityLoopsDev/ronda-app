@@ -45,6 +45,7 @@ firestore-debug.log
 
 # Backups y auditorías locales (contienen PII; nunca subir a git)
 backups/
+backup*.txt
 
 # Herramientas de análisis de terceros y sus cachés (no son parte de la app)
 graphify/

@@ -9,13 +9,59 @@
 ---
 
 ## 📌 Estado Actual del Proyecto (Resumen Ejecutivo)
-- **Versión Actual:** v2.3.1 (Fase de Remedición y Blindaje de Due Diligence).
+- **Versión Actual:** v2.3.1-prod (Build verificado: 105 commits, 266h de ingeniería, 18 días de sprint, 68 días calendario transcurridos).
 - **Stack Tecnológico:** Vanilla TypeScript + Vite (SPA) · Firebase Auth/Firestore · Vercel Serverless (APIs/Webhooks) · Motor `mem-rr-v2` (DP + WMM + Grafos en Node pure) · Wompi Payment · Polygon Web3 Proofs.
 - **Enfoque Actual:** Ejecución del Plan de Remedición y Blindaje de Due Diligence (`implementation_plan.md`) para cumplir con requisitos legales, financieros y narrativos antes de ronda de inversión FFF.
 
 ---
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
+
+### [2026-10-30] — Actualización y Sincronización del Control de Versiones del Proyecto (v2.3.1-prod)
+- **Solicitud del Usuario:** Actualizar el control de versiones de todo el proyecto.
+- **Acciones Realizadas:**
+  1. *Estandarización SSoT de Versión (`package.json` & `src/version.ts`):*
+     - Elevada versión a `2.3.1` en `package.json`.
+     - Ejecutado `scripts/sync-version.cjs` para computar métricas auditadas desde Git: `v2.3.1-prod`, 105 commits, 18 días únicos de desarrollo, 68 días calendario y 266 horas de ingeniería calculadas.
+  2. *Sincronización de Footers y Fallbacks Estáticos:*
+     - Actualizados selectores `data-ronda-version`, `data-ronda-hours` y `data-ronda-commits` en `index.html`, `landing.html`, `partners.html` e `invest.html`.
+     - Vinculado `APP_VERSION` dinámico en `src/superadmin.ts` y actualizadas las reglas arquitectónicas en `AGENTS.md` y `.agents/rules/ronda-footer-standard.md`.
+  3. *Actualización de Documentación y Métricas de Inversión:*
+     - Actualizado `docs/DOCUMENTO_MAESTRO_EVALUACION_PROYECTO.md` reflejando 266h acumuladas, 105 releases auditados y valoración estimada de Sweat Equity en ~$55M COP.
+  4. *Higiene del Repositorio:*
+     - Excluidos archivos de logs temporales `backup*.txt` en `.gitignore`.
+
+### [2026-10-30] — Fase 2 Concluida: Ejecución Paso a Producción (Backup, Limpieza, Purga y Evento Real)
+
+- **Solicitud del Usuario:** Ejecutar Fase 2 de Paso a Producción definida por Antigravity en task.md
+- **Acciones Realizadas:**
+  1. **Backup preventivo** (`scripts/backup-db.cjs`): Ejecutado - generó respaldo timestampado en `backups/` con JSON por colección + `inventory.json`
+  2. **Limpieza producción** (`cleanup-production.ps1 -Apply`): Ejecutado - removió artefactos de build (`dist/`, `.firebase/`), logs y archivos temporales; verificó archivos esenciales
+  3. **Dry-run purge-db** (`purge-db.cjs --dry-run`): Ejecutado - mostró documentos por colección que se eliminarían
+  4. **Purga Firestore** (`purge-db.cjs --yes --keep-auth`): Ejecutado - purgó colecciones manteniendo los 10 usuarios de Firebase Auth
+  5. **Crear evento real** (`create-real-event.cjs`): Ejecutado - creó evento `rnd-vintrash-oct-real` en colección `events` con datos: "RONDA Secreta" en "Vintrash Bar", Sábado 24 de Octubre · 20:00, 10 mesas, precio $55,000
+
+- **Resultados:**
+  - Backup verificado y almacenado en `backups/<timestamp>/`
+  - Entorno limpiado de desarrollo
+  - Firestore purgado (menos datos de prueba, Auth conservado)
+  - Primer evento real insertado para Discovery Feed
+
+### [2026-10-30] — Implementación del Flujo Completo "Olvidé mi contraseña" (Web App & Portales)
+- **Solicitud del Usuario:** Integrar el flujo de recuperación de contraseña ("Olvidé mi contraseña") faltante en los accesos de la aplicación.
+- **Acciones Realizadas:**
+  1. *Método Canónico en `src/auth.ts`:*
+     - Importado `sendPasswordResetEmail` de `firebase/auth`.
+     - Implementado método `AuthService.sendPasswordReset(email)` con sanitización, logging y mapeo de errores amigables (`auth/user-not-found`, `auth/invalid-email`, `auth/too-many-requests`).
+  2. *Flujo en Web App (`index.html` & `src/app.ts`):*
+     - Añadido enlace interactivo `¿Olvidaste tu contraseña?` en `#login-form`.
+     - Conectado con diálogo reactivo `RondaDialog.prompt()` para capturar correo y `RondaDialog.alert()` para confirmación de envío.
+  3. *Flujo en Portales Operativos (`src/portal-auth.ts`):*
+     - Añadido disparador de recuperación en la cabecera del campo contraseña para anfitriones, superadmin, CRM y red de locales.
+     - Diálogo integrado con prellenado automático si el usuario ya escribió su correo.
+  4. *Verificación de Integridad y Build:*
+     - Cero errores en `npx tsc --noEmit`.
+     - Build de producción Vite completado exitosamente en `dist/`.
 
 ### [2026-10-30] — Fase 1 Concluida: Erradicación Quirúrgica de Mocks en Código y Conexión en Vivo de Paneles
 - **Solicitud del Usuario:** Iniciar la Fase 1 del plan de producción: flujo y visual de la app, eliminación de datos de prueba y mocks quemados, y conexión reactiva entre paneles.

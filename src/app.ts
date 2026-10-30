@@ -3,7 +3,7 @@ import { Auth } from './auth.js';
 import { ClientApp } from './client.js';
 import { Verification } from './verification.js';
 import { Profile } from './profile.js';
-import { calculateAge, getZodiacSign } from './utils.js';
+import { calculateAge, getZodiacSign, escapeHtml } from './utils.js';
 import { RondaDialog } from './dialog.js';
 import { Icebreakers } from './icebreakers.js';
 import { Satisfaction } from './satisfaction.js';
@@ -511,6 +511,42 @@ function initApp() {
           title: 'Campos Requeridos',
           message: 'Por favor, ingresa correo y contraseña.',
           icon: '📝'
+        });
+      }
+    });
+  }
+
+  // Flujo: Olvidé mi contraseña (Web App)
+  const btnLoginForgot = document.getElementById('btn-login-forgot');
+  if (btnLoginForgot) {
+    btnLoginForgot.addEventListener('click', async () => {
+      const emailInput = document.getElementById('login-email') as HTMLInputElement | null;
+      const currentEmail = emailInput?.value?.trim() || '';
+
+      const targetEmail = await RondaDialog.prompt({
+        title: 'Recuperar Contraseña',
+        message: 'Ingresa tu correo registrado para enviarte el enlace seguro de restablecimiento:',
+        icon: '🔑',
+        placeholder: currentEmail || 'tu@correo.com',
+        confirmText: 'Enviar Enlace',
+        cancelText: 'Cancelar'
+      });
+
+      const emailToSend = (targetEmail || currentEmail).trim();
+      if (!emailToSend) return;
+
+      try {
+        await Auth.sendPasswordReset(emailToSend);
+        await RondaDialog.alert({
+          title: 'Enlace Enviado',
+          message: `Hemos enviado un correo a <b>${escapeHtml(emailToSend)}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
+          icon: '✉️'
+        });
+      } catch (err: any) {
+        await RondaDialog.alert({
+          title: 'Error al Enviar',
+          message: err.message || 'No se pudo enviar el correo de recuperación. Verifica la dirección ingresada.',
+          icon: '⚠️'
         });
       }
     });

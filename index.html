@@ -1465,7 +1465,12 @@
         <p class="detalle" style="margin-bottom: 16px; font-size: 11.5px;">Acceso para pruebas y administración.</p>
         <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
         <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input" autocomplete="current-password">
-        <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
+        <div style="text-align: right; margin-top: -4px; margin-bottom: 8px;">
+          <button type="button" id="btn-login-forgot" style="background: none; border: none; color: var(--luz); font-size: 11px; font-family: var(--font-mono); cursor: pointer; text-decoration: underline; padding: 0;">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+        <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 2px;">Ingresar</button>
         <button type="button" id="btn-back-to-waitlist" class="btn" style="background: transparent; margin-top: 8px; font-size: 12px; border: none; color: var(--humo);">← Volver a Lista de Espera</button>
         <button type="button" id="btn-show-register" class="btn" style="background: transparent; margin-top: 6px; font-size: 11px; border: none; color: rgba(243,237,226,0.4);">Registro interno</button>
       </form>
@@ -1555,7 +1560,7 @@
     </div>
 
     <div class="aviso" style="margin-top: 16px;">
-      Si el jueves no se equilibra antes de las <b>20:00 del martes</b>, se cancela y te devolvemos el importe + $20.000 de saldo.
+      <b>Garantía de Equilibrio de Sala:</b> Si la convocatoria no alcanza paridad y aforo 24h antes del evento, se reembolsa el 100% de tu entrada más un beneficio de cortesía para la siguiente noche.
     </div>
   </section>
 
@@ -2317,11 +2322,11 @@
           Hecho por amor ❤️ a Colombia <img src="https://flagcdn.com/16x12/co.png" alt="Colombia" style="height: 10px; width: 14px; object-fit: cover; border-radius: 2px; vertical-align: middle;">
         </span>
         <span style="opacity: 0.3;">·</span>
-        <span data-ronda-version class="chip gris" style="font-size: 10px; padding: 1px 7px; border-radius: 999px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea, rgba(243,237,226,0.12)); color: var(--papel, #f3ede2);">v2.3.0-prod</span>
+        <span data-ronda-version class="chip gris" style="font-size: 10px; padding: 1px 7px; border-radius: 999px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea, rgba(243,237,226,0.12)); color: var(--papel, #f3ede2);">v2.3.1-prod</span>
       </div>
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         <span data-ronda-engineering-badge style="font-size: 10px; color: var(--luz, #F0A830); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.22); padding: 2px 7px; border-radius: 4px;">
-          ⚡ <span data-ronda-hours>243</span>h ops · <span data-ronda-commits>98</span> deploys
+          ⚡ <span data-ronda-hours>266</span>h ops · <span data-ronda-commits>105</span> deploys
         </span>
         <span style="opacity: 0.3;">·</span>
         <a href="#legal-terminos" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-terminos')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Términos</a>

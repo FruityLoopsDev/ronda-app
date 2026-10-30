@@ -42,7 +42,7 @@
 | **Base de Datos & Auth** | Google Cloud Firestore (Modo Datastore NoSQL en tiempo real) + Firebase Authentication |
 | **Capa Web3 / Confianza** | Polygon PoS (ERC-721 Smart Contracts) + Proof of Existence Keccak256 local ($0 gas) |
 | **Pasarelas Transaccionales** | Wompi Web Checkout (Tarjetas, PSE, Bancolombia) + Webhook Criptográfico HMAC-SHA256 + Nequi QR Fallback |
-| **Métricas de Esfuerzo (Sweat Equity)** | **+220 horas de ingeniería acumuladas**, 88 releases/commits auditados, 15 días intensivos de sprint, valoración técnica estimada en **~$45.000.000 COP** |
+| **Métricas de Esfuerzo (Sweat Equity)** | **+266 horas de ingeniería acumuladas**, 105 releases/commits auditados, 18 días intensivos de sprint, valoración técnica estimada en **~$55.000.000 COP** |
 | **Sede de Despliegue Piloto** | Bogotá D.C., Colombia (Zonas: Chapinero Alto, Zona G, Quinta Camacho, Usaquén) |
 
 ### 1.2 Resumen Ejecutivo para Comités Evaluadores

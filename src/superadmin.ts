@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, dele
 import { RondaServices } from './firebase-config.js';
 import { RondaB2BEngine } from './b2b-engine.ts';
 import { renderRondaFooter } from './footer.js';
+import { APP_VERSION } from './version.js';
 
 export type AdminSection =
   | 'summary'
@@ -260,7 +261,7 @@ export class SuperAdminController {
             ● Ecosistema Operativo
           </span>
           <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
-            Bogotá D.C. · Versión v2.3.0-prod
+            Bogotá D.C. · Versión ${APP_VERSION}
           </span>
         `;
         document.getElementById('sa-header-refresh-summary')?.addEventListener('click', () => {
