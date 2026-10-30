@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, deleteField, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, deleteField, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe, serverTimestamp, query, where } from "firebase/firestore";
 import { RondaServices } from "./firebase-config.js";
 import { Matches } from "./matches.js";
 
@@ -135,6 +135,10 @@ export interface User {
   /** Club Fundador 100 - insignia de los primeros 100 usuarios */
   isFoundingMember?: boolean;
   founderNumber?: number;
+  /** Asignación a local/establecimiento aliado (para rol 'admin' / anfitrión de sala) */
+  venueId?: string;
+  venueIds?: string[];
+  venueCapabilities?: ('read' | 'reception' | 'operation' | 'cashier' | 'config' | 'team')[];
 }
 
 export interface Match {
@@ -146,13 +150,64 @@ export interface Match {
 
 export interface RondaEvent {
   id: string;
-  status: string;
+  venueId?: string;
+  venueName?: string;
+  status: string; // 'waiting' | 'in_progress' | 'completed' | 'cancelled'
   participants: string[];
   currentRound: number;
   activeMatches?: Match[];
   playedPairs?: string[];
   name?: string;
-  venueName?: string;
+  tables?: number;
+  tablesCount?: number;
+  capacity?: number;
+  price?: number;
+  priceFormatted?: string;
+  dayDate?: string;
+}
+
+export interface NightClosing {
+  id: string;
+  closingId?: string;
+  venueId: string;
+  eventId: string;
+  closedAt: string;
+  operatorUid: string;
+  attendeesCount: number;
+  includedDrinksCount: number;
+  extraDrinksCop: number;
+  foodCop: number;
+  barTotalCop: number;
+  rondaCommissionCop: number;
+  netVenueCop: number;
+  status: 'draft' | 'submitted' | 'approved' | 'settled';
+  notes?: string;
+  adjustmentLog?: {
+    at: string;
+    by: string;
+    reason: string;
+    amountDeltaCop: number;
+  }[];
+}
+
+export interface BenefitRedemption {
+  id: string;
+  venueId: string;
+  userId: string;
+  benefitType: 'welcome_cocktail' | 'second_date_discount' | 'special_perk';
+  redeemedAt: string;
+  operatorUid: string;
+  status: 'valid' | 'used' | 'rejected';
+  details?: string;
+}
+
+export interface VenueStaffMember {
+  uid: string;
+  name: string;
+  email: string;
+  role: string;
+  capabilities: ('read' | 'reception' | 'operation' | 'cashier' | 'config' | 'team')[];
+  assignedAt: string;
 }
 
 export type MilestoneState = 'not_eligible' | 'accrued' | 'review' | 'payable' | 'paid' | 'held' | 'void';
@@ -332,6 +387,17 @@ export interface Venue {
   territorial_terms?: string;
   termination_at?: string;
   termination_reason?: string;
+  // Campos de contenido público, borrador y staff (Paso 2 y 10)
+  description?: string;
+  photos?: string[];
+  dressCode?: string;
+  accessibility?: string;
+  parkingInfo?: string;
+  tablesCount?: number;
+  publicPublished?: boolean;
+  draftContent?: Record<string, any>;
+  staffUids?: string[];
+  ownerUid?: string;
 }
 
 export interface Lead {
@@ -510,13 +576,63 @@ export class DatabaseInterface {
       const events: any[] = [];
       snap.forEach(doc => {
         const data = doc.data();
-        if (data.status === 'upcoming' || data.status === 'active') {
-          events.push(data);
+        if (data.status === 'upcoming' || data.status === 'active' || data.status === 'waiting' || data.status === 'in_progress') {
+          events.push({ id: doc.id, ...data });
         }
       });
       return events;
     } catch (e) {
       console.warn("getUpcomingEvents no implementado o falló", e);
+      return [];
+    }
+  }
+
+  async getEventsForVenue(venueId: string): Promise<RondaEvent[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'events');
+      const q = query(colRef, where('venueId', '==', venueId));
+      const snap = await getDocs(q);
+      const events: RondaEvent[] = [];
+      snap.forEach(docSnap => {
+        events.push({ id: docSnap.id, ...(docSnap.data() as any) });
+      });
+      return events;
+    } catch (e) {
+      console.warn("getEventsForVenue falló:", e);
+      return [];
+    }
+  }
+
+  async getAllEvents(): Promise<RondaEvent[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'events');
+      const snap = await getDocs(colRef);
+      const events: RondaEvent[] = [];
+      snap.forEach(docSnap => {
+        events.push({ id: docSnap.id, ...(docSnap.data() as any) });
+      });
+      return events;
+    } catch (e) {
+      console.warn("getAllEvents falló:", e);
+      return [];
+    }
+  }
+
+  async getBookingsForEvent(eventId: string): Promise<{ user: User; reservation: Reservation }[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'users');
+      const q = query(colRef, where('activeReservation.eventId', '==', eventId));
+      const snap = await getDocs(q);
+      const list: { user: User; reservation: Reservation }[] = [];
+      snap.forEach(docSnap => {
+        const u = { uid: docSnap.id, ...(docSnap.data() as any) } as User;
+        if (u.activeReservation) {
+          list.push({ user: u, reservation: u.activeReservation });
+        }
+      });
+      return list;
+    } catch (e) {
+      console.warn("getBookingsForEvent falló:", e);
       return [];
     }
   }
@@ -682,6 +798,17 @@ export class DatabaseInterface {
       console.error("Error obteniendo leads:", e);
       return [];
     }
+  }
+
+  subscribeToLeads(callback: (leads: Lead[]) => void, salesUid?: string): Unsubscribe {
+    const colRef = collection(this._getFirestore(), 'leads');
+    return onSnapshot(colRef, (snap) => {
+      let leads = snap.docs.map(d => d.data() as Lead);
+      if (salesUid) leads = leads.filter(l => l.sales_uid === salesUid);
+      callback(leads);
+    }, (err) => {
+      console.error("[DB] Error en suscripción a leads:", err);
+    });
   }
 
   async saveLead(lead: Lead): Promise<void> {
@@ -894,6 +1021,62 @@ export class DatabaseInterface {
         console.error('[DB] Error eliminando usuario de Firebase Auth:', err);
       }
     }
+  }
+
+  // --- Night Closings & Settlements (Paso 8) ---
+  async getNightClosing(venueId: string, eventId: string): Promise<NightClosing | null> {
+    try {
+      const closingId = `${venueId}_${eventId}`;
+      const docRef = doc(this._getFirestore(), 'night_closings', closingId);
+      const snap = await getDoc(docRef);
+      return snap.exists() ? (snap.data() as NightClosing) : null;
+    } catch (e) {
+      console.error("[DB] Error getting night closing:", e);
+      return null;
+    }
+  }
+
+  async saveNightClosing(closing: NightClosing): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'night_closings', closing.id);
+    await setDoc(docRef, cleanFirestoreData(closing), { merge: true });
+  }
+
+  // --- Benefits & Redemptions (Paso 9) ---
+  async getBenefitRedemptions(venueId: string): Promise<BenefitRedemption[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'benefit_redemptions');
+      const snap = await getDocs(colRef);
+      return snap.docs
+        .map(d => d.data() as BenefitRedemption)
+        .filter(r => r.venueId === venueId);
+    } catch (e) {
+      console.error("[DB] Error getting benefit redemptions:", e);
+      return [];
+    }
+  }
+
+  async saveBenefitRedemption(redemption: BenefitRedemption): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'benefit_redemptions', redemption.id);
+    await setDoc(docRef, cleanFirestoreData(redemption), { merge: true });
+  }
+
+  // --- Support Tickets (Paso 11) ---
+  async getSupportTickets(venueId?: string): Promise<any[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'support_tickets');
+      const snap = await getDocs(colRef);
+      let tickets = snap.docs.map(d => d.data());
+      if (venueId) tickets = tickets.filter(t => t.venueId === venueId);
+      return tickets;
+    } catch (e) {
+      console.error("[DB] Error getting support tickets:", e);
+      return [];
+    }
+  }
+
+  async saveSupportTicket(ticket: any): Promise<void> {
+    const docRef = doc(this._getFirestore(), 'support_tickets', ticket.id);
+    await setDoc(docRef, cleanFirestoreData(ticket), { merge: true });
   }
 }
 

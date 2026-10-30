@@ -7,11 +7,24 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(uid)).data.role;
     }
 
+    function getUserData(uid) {
+      return get(/databases/$(database)/documents/users/$(uid)).data;
+    }
+
     function isSuperAdmin() { return request.auth != null && userRole(request.auth.uid) == 'superadmin'; }
     function isSales()      { return request.auth != null && userRole(request.auth.uid) == 'sales'; }
     function isNetwork()    { return request.auth != null && userRole(request.auth.uid) == 'network'; }
     function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
     function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
+
+    function isVenueStaff(venueId) {
+      return isSuperAdmin() || (
+        isAdmin() && (
+          getUserData(request.auth.uid).get('venueId', '') == venueId ||
+          getUserData(request.auth.uid).get('venueIds', []).hasAny([venueId])
+        )
+      );
+    }
 
     // Campos que el propio usuario NO puede alterar (NFTs, wallet, matches,
     // trustTier, verifications). Solo staff/servidor los modifican.
@@ -21,18 +34,14 @@ service cloud.firestore {
       ]);
     }
 
-    // Validación de campos de verificación y pago cuando el cliente actualiza su propio perfil:
-    // - isVerified / linkedinVerified: el cliente no puede revocarlos una vez verificados,
-    //   pero puede activarlos tras el flujo de validación LinkedIn / KYC ($0 en cliente).
-    // - paymentPending / paymentMethod: el cliente solo puede marcar pago pendiente ('nequi'),
-    //   nunca otorgarse hasTicket (que se valida en allow update).
     function validClientVerificationAndPayment() {
       let changed = request.resource.data.diff(resource.data).affectedKeys();
-      let okVerified = !changed.hasAny(['isVerified']) || request.resource.data.isVerified == true;
-      let okLinkedin = !changed.hasAny(['linkedinVerified']) || request.resource.data.linkedinVerified == true;
+      // El cliente no puede tocar isVerified, linkedinVerified, trustTier ni verifications.
+      let noSensitiveVerification = !changed.hasAny(['isVerified', 'linkedinVerified', 'trustTier', 'verifications']);
+      // Pago manual: solo puede marcar pendiente con Nequi, nunca otorgarse ticket.
       let okPayPending = !changed.hasAny(['paymentPending']) || request.resource.data.paymentPending == true;
       let okPayMethod = !changed.hasAny(['paymentMethod']) || request.resource.data.paymentMethod == 'nequi';
-      return okVerified && okLinkedin && okPayPending && okPayMethod;
+      return noSensitiveVerification && okPayPending && okPayMethod;
     }
 
     // --- Usuarios ---
@@ -43,7 +52,13 @@ service cloud.firestore {
       // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación).
       allow create: if request.auth != null
                     && request.auth.uid == userId
-                    && request.resource.data.role == 'client';
+                    && request.resource.data.role == 'client'
+                    && request.resource.data.get('hasTicket', false) == false
+                    && request.resource.data.get('trustTier', 0) == 0
+                    && request.resource.data.get('isVerified', false) == false
+                    && !request.resource.data.keys().hasAny([
+                      'nfts', 'wallet_address', 'matches', 'verifications'
+                    ]);
 
       // Actualización: el propio usuario sin poder escalar su rol ni auto-otorgarse
       // ticket. El staff/admin puede actualizar para check-in, matches y emisión de certificados ($0 sin Cloud Functions).
@@ -54,10 +69,15 @@ service cloud.firestore {
           && !clientTouchedSensitive()
           && validClientVerificationAndPayment())
         || isSuperAdmin()
-        || isAdmin()
+        || (isAdmin()
+          && request.resource.data.get('role', resource.data.role) == resource.data.role
+          && request.resource.data.get('venueId', resource.data.get('venueId', '')) == resource.data.get('venueId', '')
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+            'role', 'venueId', 'venueIds', 'venueCapabilities', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
+          ]))
       );
 
-      allow delete: if isSuperAdmin();
+      allow delete: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
 
       // Historial de encuentros (mem-rr): el usuario gestiona sus propios registros.
       match /encounters/{otherUid} {
@@ -79,7 +99,13 @@ service cloud.firestore {
     // --- Eventos / Salas ---
     match /events/{eventId} {
       allow read: if request.auth != null;
-      allow create, update, delete: if isStaff();
+      allow create: if isSuperAdmin() || (
+        isAdmin() && isVenueStaff(request.resource.data.get('venueId', ''))
+      );
+      allow update: if isSuperAdmin() || (
+        isAdmin() && isVenueStaff(resource.data.get('venueId', request.resource.data.get('venueId', '')))
+      );
+      allow delete: if isSuperAdmin();
 
       // Likes: cada usuario escribe únicamente su propio like (${uid}_${targetUid}).
       // Privacidad P0: Solo el emisor puede leer su voto individual; el staff lee todos para calcular matches ($0).
@@ -119,14 +145,58 @@ service cloud.firestore {
 
     // --- Locales (venues) ---
     match /venues/{venueId} {
-      allow read: if request.auth != null && isStaff();
-      allow write: if isSuperAdmin();
+      // Lectura: superadmin, anfitrión asignado a este local, o cualquier usuario autenticado con trustTier >= 1.
+      allow read: if request.auth != null && (
+        isSuperAdmin() ||
+        isVenueStaff(venueId) ||
+        getUserData(request.auth.uid).get('trustTier', 0) >= 1
+      );
+      // Actualización de ficha del local: superadmin libre; anfitrión solo de su local sin alterar términos fiscales/contractuales
+      allow update: if isSuperAdmin() || (
+        isAdmin() && isVenueStaff(venueId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'nit', 'origin_scout_uid', 'affiliation_status', 'contract_id', 'territorial_terms', 'bar_package_price_cop'
+        ])
+      );
+      allow create, delete: if isSuperAdmin();
+    }
+
+    // --- Cierres de Noche / Liquidaciones Operativas de Barra ---
+    match /night_closings/{closingId} {
+      allow read: if request.auth != null && (
+        isSuperAdmin() || isVenueStaff(resource.data.venueId)
+      );
+      allow create: if isSuperAdmin() || (
+        isAdmin() && isVenueStaff(request.resource.data.venueId)
+        && request.resource.data.status in ['draft', 'submitted']
+      );
+      allow update: if isSuperAdmin() || (
+        isAdmin() && isVenueStaff(resource.data.venueId)
+        && resource.data.status == 'draft'
+        && request.resource.data.status in ['draft', 'submitted']
+      );
+      allow delete: if isSuperAdmin();
+    }
+
+    // --- Beneficios y Canjes en Barra ---
+    match /benefit_redemptions/{redemptionId} {
+      allow read: if request.auth != null && (
+        isSuperAdmin() || isVenueStaff(resource.data.venueId) || request.auth.uid == resource.data.userId
+      );
+      allow create: if isSuperAdmin() || (
+        isAdmin() && isVenueStaff(request.resource.data.venueId)
+      );
+      allow update, delete: if isSuperAdmin();
     }
 
     // --- Leads (CRM / ventas) ---
     match /leads/{leadId} {
-      allow read, update: if isSuperAdmin() || (isSales() && resource.data.sales_uid == request.auth.uid);
-      allow create: if isSuperAdmin() || isSales();
+      allow read, update: if isSuperAdmin() || isSales() || isNetwork() || isAdmin();
+      allow create: if isSuperAdmin() || isSales() || (
+        request.resource.data.keys().hasOnly(['id', 'name', 'zone', 'contactName', 'phone', 'status', 'source', 'notes', 'commission', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.phone is string
+      );
       allow delete: if isSuperAdmin();
     }
 
@@ -150,10 +220,14 @@ service cloud.firestore {
       allow read, update, delete: if isSuperAdmin();
     }
 
-    // --- KYC Reviews: solo staff (superadmin/admin) lee y escribe. ---
+    // --- KYC Reviews ---
     match /kycReviews/{reviewId} {
-      allow read, write: if isStaff();
-      allow create: if isStaff();
+      // El cliente crea su propia solicitud en estado 'pending'; no puede leerla ni modificarla después.
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.userId
+                    && request.resource.data.status == 'pending';
+      // Lectura y resolución: solo staff.
+      allow read, update: if isStaff();
       allow delete: if isSuperAdmin();
     }
 
@@ -191,12 +265,17 @@ service cloud.firestore {
     }
     match /churn_surveys/{surveyId} {
       allow read: if isStaff();
-      allow create, update: if isSuperAdmin() || isSales() || isNetwork();
-      allow delete: if isSuperAdmin();
+      allow create: if request.auth != null;
+      allow update, delete: if isSuperAdmin();
     }
     match /invest_tokens/{tokenId} {
-      allow read: if isStaff();
+      allow read: if true;
       allow create: if isSuperAdmin();
+      allow update, delete: if isSuperAdmin();
+    }
+    match /support_tickets/{ticketId} {
+      allow read: if isSuperAdmin() || (isAdmin() && isVenueStaff(resource.data.venueId));
+      allow create: if isSuperAdmin() || (isAdmin() && isVenueStaff(request.resource.data.venueId));
       allow update, delete: if isSuperAdmin();
     }
   }

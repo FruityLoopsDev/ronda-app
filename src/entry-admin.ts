@@ -1,4 +1,4 @@
-import { Admin } from './bar.js';
+import { HostAdmin } from './host-admin.js';
 import { setupIndependentPortal, PORTALS } from './portal-auth.js';
 
 if (document.readyState === 'loading') {
@@ -8,8 +8,8 @@ if (document.readyState === 'loading') {
 }
 
 function init() {
-  console.log('[EntryAdmin] Inicializando portal de Anfitrión de Bar...');
-  setupIndependentPortal(PORTALS.admin, () => {
-    Admin.init();
+  console.log('[EntryAdmin] Inicializando portal de Anfitrión de Bar & Sala...');
+  setupIndependentPortal(PORTALS.admin, (user) => {
+    HostAdmin.init(user);
   });
 }

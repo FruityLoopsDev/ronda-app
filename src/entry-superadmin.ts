@@ -9,7 +9,7 @@ if (document.readyState === 'loading') {
 
 function init() {
   console.log('[EntrySuperAdmin] Inicializando portal SuperAdmin...');
-  setupIndependentPortal(PORTALS.superadmin, () => {
-    SuperAdmin.init();
+  setupIndependentPortal(PORTALS.superadmin, (user) => {
+    SuperAdmin.init(user);
   });
 }

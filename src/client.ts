@@ -657,12 +657,221 @@ class ClientAppService {
     this.renderDiscoveryFeed();
   }
 
+  renderOnboardingPassport(user: any) {
+    const container = document.getElementById('onboarding-passport-container');
+    if (!container) return;
+
+    if (!user) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      return;
+    }
+
+    // Evaluación de las 4 Misiones del Challenge
+    const m1_basic = Boolean(user.name && user.name.trim() !== '' && user.name !== 'Usuario RONDA' && user.age && user.age >= 18);
+    const m2_drink = Boolean(user.favoriteCocktail || (user.preferredZones && user.preferredZones.length > 0));
+    const m3_identity = Boolean(user.isVerified || (user.trustTier && user.trustTier >= 1));
+    const m4_linkedin = Boolean(user.linkedinVerified || user.linkedinUrl);
+
+    let completedCount = 0;
+    if (m1_basic) completedCount++;
+    if (m2_drink) completedCount++;
+    if (m3_identity) completedCount++;
+
+    const percent = Math.round((completedCount / 3) * 100);
+    const isAllComplete = completedCount === 3;
+
+    container.style.display = 'block';
+
+    if (isAllComplete) {
+      container.innerHTML = `
+        <div style="background: linear-gradient(135deg, rgba(46,107,84,0.18), rgba(22,16,27,0.92)); border: 1.5px solid var(--botella); border-radius: 16px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 26px;">🥂</span>
+            <div>
+              <b style="font-family: var(--font-display); font-size: 15px; color: var(--papel); display: block; margin-bottom: 2px;">
+                ¡Tu Pasaporte está 100% Activo!
+              </b>
+              <span style="font-size: 11.5px; color: #79D3AC; font-family: var(--font-mono);">
+                Identidad verificada · Copa de autor desbloqueada en barras aliadas
+              </span>
+            </div>
+          </div>
+          <span class="chip verde" style="font-size: 10px; padding: 4px 10px; font-weight: 700; white-space: nowrap;">
+            Acceso Total ✓
+          </span>
+        </div>
+      `;
+      return;
+    }
+
+    let subtitle = "Estás a un paso de sentarte en tu primera mesa secreta.";
+    if (!m1_basic) {
+      subtitle = "Comencemos por lo esencial: tu nombre y edad para recibirte en la sala.";
+    } else if (!m2_drink) {
+      subtitle = "Tu primera copa va por la casa. Elige qué trago te serviremos al sonar la campana.";
+    } else if (!m3_identity) {
+      subtitle = "Cero perfiles falsos. Tu selfie de 15 segundos desbloquea los bares de la semana.";
+    }
+
+    container.innerHTML = `
+      <div style="background: linear-gradient(135deg, rgba(34,24,38,0.95), rgba(22,16,27,0.98)); border: 1.5px solid rgba(240,168,48,0.35); border-radius: 18px; padding: 18px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 0 20px rgba(240,168,48,0.04);">
+        
+        <!-- Header con progreso -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 16px;">🎟️</span>
+            <span style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--luz); font-weight: 700; text-transform: uppercase;">Tu Pasaporte a la Noche</span>
+          </div>
+          <span class="chip ambar" style="font-size: 10px; padding: 3px 8px; font-weight: 700; font-family: var(--font-mono);">${completedCount} de 3 pasos · ${percent}%</span>
+        </div>
+
+        <p style="font-family: var(--font-display); font-size: 14px; color: var(--papel); font-style: italic; margin: 4px 0 14px; line-height: 1.4;">
+          «${subtitle}»
+        </p>
+
+        <!-- Barra de progreso con resplandor ámbar -->
+        <div style="height: 5px; width: 100%; background: rgba(243,237,226,0.1); border-radius: 999px; overflow: hidden; margin-bottom: 16px; position: relative;">
+          <div style="height: 100%; width: ${percent}%; background: linear-gradient(90deg, var(--luz), #79D3AC); border-radius: 999px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px rgba(240,168,48,0.5);"></div>
+        </div>
+
+        <!-- Lista de Misiones -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          
+          <!-- Misión 1: Nombre & Edad -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(243,237,226,0.03); border: 1px solid ${m1_basic ? 'rgba(46,107,84,0.4)' : 'var(--linea)'}; border-radius: 12px; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: ${m1_basic ? '#2e6b54' : 'rgba(243,237,226,0.1)'}; color: ${m1_basic ? '#fff' : 'var(--luz)'};">
+                ${m1_basic ? '✓' : '1'}
+              </span>
+              <div>
+                <b style="font-size: 12.5px; color: var(--papel); display: block;">¿Cómo te llamamos en la barra?</b>
+                <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
+                  ${m1_basic ? `${user.name.split(' ')[0]} (${user.age} años)` : 'Tu nombre real y edad para tu mesa'}
+                </span>
+              </div>
+            </div>
+            ${m1_basic 
+              ? `<span style="font-size: 11px; color: #79D3AC; font-weight: 700;">Listo</span>`
+              : `<button id="btn-passport-m1" class="btn ambar" style="font-size: 10.5px; padding: 6px 12px; border-radius: 999px; font-weight: 700; white-space: nowrap;">Completar ▶</button>`
+            }
+          </div>
+
+          <!-- Misión 2: Cóctel & Zona -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(243,237,226,0.03); border: 1px solid ${m2_drink ? 'rgba(46,107,84,0.4)' : 'var(--linea)'}; border-radius: 12px; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: ${m2_drink ? '#2e6b54' : 'rgba(243,237,226,0.1)'}; color: ${m2_drink ? '#fff' : 'var(--luz)'};">
+                ${m2_drink ? '✓' : '2'}
+              </span>
+              <div>
+                <b style="font-size: 12.5px; color: var(--papel); display: block;">Tu primera copa va por la casa</b>
+                <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
+                  ${m2_drink ? (user.favoriteCocktail || user.preferredZones?.[0] || 'Preferencias listas') : 'Elige tu trago preferido (incluido)'}
+                </span>
+              </div>
+            </div>
+            ${m2_drink 
+              ? `<span style="font-size: 11px; color: #79D3AC; font-weight: 700;">Listo</span>`
+              : `<button id="btn-passport-m2" class="btn ambar" style="font-size: 10.5px; padding: 6px 12px; border-radius: 999px; font-weight: 700; white-space: nowrap;">Elegir trago 🍸</button>`
+            }
+          </div>
+
+          <!-- Misión 3: Ponle rostro a tu copa (Verificación facial) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(243,237,226,0.03); border: 1px solid ${m3_identity ? 'rgba(46,107,84,0.4)' : 'rgba(240,168,48,0.35)'}; border-radius: 12px; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: ${m3_identity ? '#2e6b54' : 'rgba(240,168,48,0.2)'}; color: ${m3_identity ? '#fff' : 'var(--luz)'};">
+                ${m3_identity ? '✓' : '3'}
+              </span>
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <b style="font-size: 12.5px; color: var(--papel);">Ponle rostro a tu copa</b>
+                  ${m3_identity ? `<span class="chip verde" style="font-size: 8px; padding: 1px 5px;">Escudo 🛡️</span>` : `<span class="chip ambar" style="font-size: 8px; padding: 1px 5px;">Clave</span>`}
+                </div>
+                <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
+                  ${m3_identity ? 'Identidad verificada · Barras aliadas desbloqueadas' : 'Selfie de 15s para una sala 100% real y segura'}
+                </span>
+              </div>
+            </div>
+            ${m3_identity 
+              ? `<span style="font-size: 11px; color: #79D3AC; font-weight: 700;">Listo</span>`
+              : `<button id="btn-passport-m3" class="btn ambar" style="font-size: 10.5px; padding: 6px 12px; border-radius: 999px; font-weight: 700; white-space: nowrap; background: var(--luz); color: #16101B;">Verificar 📸</button>`
+            }
+          </div>
+
+          <!-- Misión 4: Sello Profesional LinkedIn (Opcional) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(243,237,226,0.02); border: 1px solid var(--linea); border-radius: 12px; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: ${m4_linkedin ? '#2e6b54' : 'rgba(243,237,226,0.06)'}; color: ${m4_linkedin ? '#fff' : 'var(--humo)'};">
+                ${m4_linkedin ? '✓' : '★'}
+              </span>
+              <div>
+                <b style="font-size: 11.5px; color: var(--papel); display: block;">Sello Profesional (Opcional)</b>
+                <span style="font-size: 10px; color: var(--humo); font-family: var(--font-mono);">
+                  ${m4_linkedin ? 'Insignia profesional activa' : 'Conecta LinkedIn para destacar en los sobres'}
+                </span>
+              </div>
+            </div>
+            ${m4_linkedin 
+              ? `<span style="font-size: 10.5px; color: #79D3AC; font-weight: 700;">Listo</span>`
+              : `<button id="btn-passport-m4" class="btn" style="font-size: 10px; padding: 5px 10px; border-radius: 999px; border-color: var(--linea); color: var(--papel); white-space: nowrap;">Conectar 💼</button>`
+            }
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    document.getElementById('btn-passport-m1')?.addEventListener('click', () => {
+      const modal = document.getElementById('modal-profile');
+      if (modal) {
+        modal.classList.add('active');
+        const nameInput = document.getElementById('profile-name') as HTMLInputElement | null;
+        if (nameInput) nameInput.focus();
+      }
+    });
+
+    document.getElementById('btn-passport-m2')?.addEventListener('click', async () => {
+      try {
+        const { Profile } = await import('./profile.js');
+        Profile.openCocktailModal();
+      } catch (err) {
+        document.getElementById('modal-select-cocktail')?.classList.add('active');
+      }
+    });
+
+    document.getElementById('btn-passport-m3')?.addEventListener('click', () => {
+      const modal = document.getElementById('modal-profile');
+      if (modal) {
+        modal.classList.add('active');
+        const kycContainer = document.getElementById('kyc-container');
+        if (kycContainer) {
+          kycContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          kycContainer.style.borderColor = 'var(--luz)';
+        }
+      }
+    });
+
+    document.getElementById('btn-passport-m4')?.addEventListener('click', () => {
+      const modal = document.getElementById('modal-profile');
+      if (modal) {
+        modal.classList.add('active');
+        const liInput = document.getElementById('profile-linkedin') as HTMLInputElement | null;
+        if (liInput) {
+          liInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          liInput.focus();
+        }
+      }
+    });
+  }
+
   renderDiscoveryFeed() {
     const feed = document.getElementById('discovery-feed');
     if (!feed) return;
 
     let html = '';
     const user = Auth.currentUser;
+
+    this.renderOnboardingPassport(user);
 
     if (user?.postEventState && !user.postEventState.isRevealed) {
       feed.innerHTML = `
@@ -767,6 +976,21 @@ class ClientAppService {
   }
 
   openEventModal(eventId: string) {
+    const user = Auth.currentUser;
+    if (user && (!user.trustTier || user.trustTier < 1) && !user.isVerified) {
+      void RondaDialog.alert({
+        title: 'Ponle Rostro a tu Copa',
+        message: 'Tu mesa está casi lista. Completa tu verificación facial de 15 segundos en tu Pasaporte para desbloquear el acceso a esta barra y reservar tu asiento.',
+        icon: '📸',
+        type: 'alert'
+      });
+      const passportEl = document.getElementById('onboarding-passport-container');
+      if (passportEl) {
+        passportEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
     const event = RONDA_EVENTS.find(e => e.id === eventId);
     if (!event) return;
 
@@ -1168,10 +1392,13 @@ class ClientAppService {
 
   async handleVote(targetUid: string, isYes: boolean) {
     const myUid = Auth.currentUser?.uid;
-    const eventId = this.currentEvent?.id || 'ronda-demo';
+    const eventId = this.currentEvent?.id;
+    if (!myUid || !targetUid || !eventId) {
+      console.warn('No hay sesión o evento activo para registrar voto.');
+      return;
+    }
     
     try {
-      if (!myUid || !targetUid) return;
       await DB.pushLike(eventId, myUid, targetUid, isYes);
       this.showToast(isYes ? '¡Preferencia mutua guardada! 😉' : 'Voto registrado.');
 
@@ -1420,9 +1647,11 @@ class ClientAppService {
     
     // Sincronizar temporizador de 48h
     if (this.countdownInterval) clearInterval(this.countdownInterval);
-    const expireTime = user?.postEventState?.revealTimeIso 
-      ? new Date(user.postEventState.revealTimeIso).getTime() + (48 * 3600000) 
-      : Date.now() + (48 * 3600000); // Demo fallback
+    const expireTime = user?.postEventState?.chatExpiresAtIso
+      ? new Date(user.postEventState.chatExpiresAtIso).getTime()
+      : (user?.postEventState?.revealTimeIso
+        ? new Date(user.postEventState.revealTimeIso).getTime() + (48 * 3600000)
+        : Date.now() + (48 * 3600000));
       
     this.countdownInterval = setInterval(() => {
       const remaining = expireTime - Date.now();
@@ -1528,26 +1757,37 @@ class ClientAppService {
       return;
     }
 
-    const res = user.activeReservation || {
-      eventId: 'rnd-caronte-mar-25',
-      venueName: 'CARONTE Cocktail Bar',
-      venueAddress: 'Cra. 4A #66-22 · Zona G, Bogotá',
-      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cra+4A+66-22+Zona+G+Bogota',
-      dayDate: 'Martes 25 de marzo · 20:00',
-      tableNumber: '07',
-      cocktailName: 'Negroni Ahumado de Autor',
-      cocktailDesc: 'Campari ahumado en roble, Vermut Rosso y Gin botánico con cáscara de naranja caramelizada.',
-      cocktailImg: '/assets/coctel-negroni.svg',
-      bookingCode: '#RND-4471',
-      priceFormatted: '$45.000',
-      status: 'confirmed'
-    };
+    const res = user.activeReservation;
+    if (!res) {
+      container.innerHTML = `
+        <div style="background: rgba(22,15,29,0.7); border: 1px solid var(--linea); border-radius: 18px; padding: 36px 20px; text-align: center; margin-top: 20px;">
+          <span style="font-size: 38px; display: block; margin-bottom: 12px;">🍸</span>
+          <h3 style="font-family: var(--font-display); font-size: 22px; color: var(--papel); margin: 0 0 8px;">Sin Convocatoria Activa en Sala</h3>
+          <p style="font-size: 13px; color: var(--humo); line-height: 1.5; margin: 0 auto 20px; max-width: 320px;">
+            Aún no tienes una mesa confirmada para esta noche. Explora las próximas noches exclusivas o comunícate con Concierge para tu asignación de mesa.
+          </p>
+          <a href="/" id="btn-client-go-home" class="btn ambar" style="display: inline-block; padding: 12px 24px; font-weight: 700; text-decoration: none; font-size: 12px;">
+            Ver Próximas Noches
+          </a>
+        </div>
+      `;
+      document.getElementById('btn-client-go-home')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = '/';
+      });
+      return;
+    }
 
     const match = this.getMyCurrentMatch(user);
 
     if (match) {
       const partner = match.p1.uid === user.uid ? match.p2 : match.p1;
-      const partnerTags = ['SALSA LOS MARTES', 'CORRE 10 KM', 'CAFÉ DE ESPECIALIDAD']; // Mock tags
+      const partnerUser: any = partner as any;
+      const partnerTags = (partnerUser.tags && partnerUser.tags.length > 0)
+        ? partnerUser.tags
+        : (partnerUser.preferredZones && partnerUser.preferredZones.length > 0)
+          ? partnerUser.preferredZones.map((z: string) => `ZONA: ${z.toUpperCase()}`)
+          : ['CONVERSACIÓN', 'COCTELERÍA DE AUTOR', 'AFINIDAD'];
       
       container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -1572,7 +1812,7 @@ class ClientAppService {
           <p style="font-size: 13px; color: var(--humo); font-family: var(--font-body); margin: 0 0 16px;">${partner.age || '29'} años - mesa ${match.tableId}</p>
           
           <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-bottom: 20px;">
-            ${partnerTags.map(tag => `<span style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); background: rgba(243,237,226,0.06); border: 1px solid rgba(243,237,226,0.12); padding: 6px 14px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase;">${tag}</span>`).join('')}
+            ${partnerTags.map((tag: string) => `<span style="font-family: var(--font-mono); font-size: 10px; color: var(--humo); background: rgba(243,237,226,0.06); border: 1px solid rgba(243,237,226,0.12); padding: 6px 14px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase;">${tag}</span>`).join('')}
           </div>
         </div>
 
@@ -1689,7 +1929,7 @@ class ClientAppService {
 
             <!-- BACK: NFT Card -->
             <div class="ticket-flip-back">
-              <img src="/assets/nft-mock.webp" class="nft-image-layer" alt="Pasaporte" onerror="this.src='https://images.unsplash.com/photo-1563240619-44ce021fbecc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
+              <img src="/assets/img/founder-welcome-bg.jpg" class="nft-image-layer" alt="Pasaporte" style="object-fit: cover; width: 100%; height: 100%;">
               <div class="nft-overlay">
                 <h4 style="font-family: var(--font-display); font-size: 20px; color: #ffd778; margin: 0 0 4px;">RONDA Passport</h4>
                 <span style="font-size: 11px; font-family: var(--font-mono); color: var(--papel); display: block; margin-bottom: 6px;">Edición Exclusiva · ${res.cocktailName}</span>

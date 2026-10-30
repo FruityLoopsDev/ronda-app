@@ -1464,13 +1464,13 @@ footer.site-footer {
 <header class="site-header">
   <div class="container nav-wrap">
     <div class="brand-group">
-      <a href="/index.html" class="brand-logo">R<em>O</em>NDA</a>
+      <a href="/" class="brand-logo">R<em>O</em>NDA</a>
       <span class="badge-partner">B2B PARTNERS</span>
     </div>
     <button class="menu-toggle" id="menu-toggle" aria-label="Menú">☰</button>
     <div class="nav-links" id="nav-links">
-      <a href="/index.html" class="nav-link">← Ver App</a>
-      <a href="/invest.html" class="nav-link">Inversionistas</a>
+      <a href="/" class="nav-link">← Ver App</a>
+      <a href="/invest" class="nav-link">Inversionistas</a>
       <button class="btn btn-primary" style="padding: 8px 18px; font-size: 13px;" onclick="openModal()">Postular mi Bar</button>
     </div>
   </div>
@@ -1984,8 +1984,8 @@ footer.site-footer {
         <ul class="footer-nav-links">
           <li><a href="/">← Portal General de Usuarios</a></li>
           <li><a href="/invest">Pista Privada para Inversionistas FFF</a></li>
-          <li><a href="index.html#legal-terminos">Términos y Condiciones del Servicio</a></li>
-          <li><a href="index.html#legal-privacidad">Política de Tratamiento de Datos (Ley 1581)</a></li>
+          <li><a href="/#legal-terminos">Términos y Condiciones del Servicio</a></li>
+          <li><a href="/#legal-privacidad">Política de Tratamiento de Datos (Ley 1581)</a></li>
         </ul>
       </div>
 
@@ -2087,11 +2087,31 @@ footer.site-footer {
     if (e.target === modal) closeModal();
   });
 
-  function handleFormSubmit(e) {
+  async function handleFormSubmit(e) {
     e.preventDefault();
     const barName = (document.getElementById('lead-bar-name')?.value || '').trim();
     const barZone = (document.getElementById('lead-bar-zone')?.value || '').trim();
     const barPhone = (document.getElementById('lead-bar-phone')?.value || '').trim();
+
+    // Persistir lead en Firestore REST en segundo plano (0s latencia hacia el CRM)
+    try {
+      const leadPayload = {
+        fields: {
+          id: { stringValue: 'lead_' + Date.now() },
+          name: { stringValue: barName },
+          zone: { stringValue: barZone },
+          phone: { stringValue: barPhone },
+          status: { stringValue: 'lead' },
+          source: { stringValue: 'partners_landing' },
+          createdAt: { stringValue: new Date().toISOString() }
+        }
+      };
+      fetch('https://firestore.googleapis.com/v1/projects/ronda-uno/databases/(default)/documents/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadPayload)
+      }).catch(() => null);
+    } catch (err) {}
 
     const waBtn = document.getElementById('lead-wa-direct-btn');
     if (waBtn) {

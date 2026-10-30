@@ -48,6 +48,14 @@ export class CRMController {
     await this.refreshLeads();
     await this.loadMyAccount();
     this.renderMyAccount();
+
+    // Sincronización en tiempo real: cualquier lead postulado en landings aparece inmediatamente
+    DB.subscribeToLeads((liveLeads) => {
+      if (liveLeads && liveLeads.length > 0) {
+        this.leads = liveLeads;
+        this.render();
+      }
+    });
   }
 
   // ============ T3: Mi Estado de Cuenta (solo lectura, ledger propio) ============

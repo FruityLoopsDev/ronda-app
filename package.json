@@ -17,7 +17,11 @@
     "preview": "vite preview",
     "simulate:b2b": "node src/b2b-simulation.ts",
     "test:b2b": "node test/test-b2b-scouts-hosters.cjs && node src/b2b-simulation.ts",
-    "test:face": "node test/test-face-verification-suite.cjs"
+    "test:face": "node test/test-face-verification-suite.cjs",
+    "emulator:status": "node scripts/firebase-emulator.cjs status",
+    "emulator:stop": "node scripts/firebase-emulator.cjs stop",
+    "emulator:start": "firebase emulators:start --only firestore,auth,hosting",
+    "commit": "node scripts/git-lean-commit.cjs"
   },
   "repository": {
     "type": "git",

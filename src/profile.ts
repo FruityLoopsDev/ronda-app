@@ -6,6 +6,7 @@ import { RondaDialog } from './dialog.js';
 import { Verification } from './verification.js';
 import { PrivacyPolicy } from './privacy-policy.js';
 import { escapeHtml } from './utils.js';
+import { Satisfaction } from './satisfaction.js';
 
 export class ProfileService {
   private currentUser: User | null = null;
@@ -50,6 +51,7 @@ export class ProfileService {
     const profileBio = document.getElementById('profile-display-bio');
     const profileMeta = document.getElementById('profile-display-meta');
     const kycBadge = document.getElementById('profile-kyc-badge');
+    const linkedinBadge = document.getElementById('profile-linkedin-badge');
 
     // Stats
     const statRounds = document.getElementById('stat-rounds');
@@ -72,13 +74,24 @@ export class ProfileService {
     const ageStr = user.age ? ` (${user.age})` : '';
     if (profileName) profileName.textContent = user.name ? `${user.name}${ageStr}` : 'Mi Perfil';
 
-    // KYC Badge & LinkedIn Badge
-    if (kycBadge) {
-      if (user.isVerified) {
-        kycBadge.style.display = 'inline-flex';
+    // Escudo Verde de Verificación Unificado
+    const verifiedShield = document.getElementById('profile-verified-shield');
+    if (verifiedShield) {
+      if (user.isVerified || user.linkedinVerified) {
+        verifiedShield.style.display = 'inline-flex';
+        const tooltip = user.isVerified && user.linkedinVerified
+          ? 'Identidad y Perfil Profesional Verificados (Biometría & LinkedIn)'
+          : user.isVerified
+            ? 'Identidad Verificada con Documento Oficial (KYC)'
+            : 'Perfil Profesional Verificado (LinkedIn)';
+        verifiedShield.setAttribute('title', tooltip);
       } else {
-        kycBadge.style.display = 'none'; // solo mostrar si está verificado
+        verifiedShield.style.display = 'none';
       }
+    }
+
+    if (kycBadge) {
+      kycBadge.style.display = 'none';
     }
 
     const kycSettingsStatus = document.getElementById('kyc-settings-status');
@@ -96,13 +109,8 @@ export class ProfileService {
       }
     }
 
-    const linkedinBadge = document.getElementById('profile-linkedin-badge');
     if (linkedinBadge) {
-      if (user.linkedinVerified || user.linkedinUrl) {
-        linkedinBadge.style.display = 'inline-flex';
-      } else {
-        linkedinBadge.style.display = 'none';
-      }
+      linkedinBadge.style.display = 'none';
     }
 
     const rowLinkedin = document.getElementById('profile-row-linkedin');
@@ -280,7 +288,82 @@ export class ProfileService {
     // Abrir Modal de Satisfacción / Veredicto de la Noche
     document.getElementById('btn-settings-open-satisfaction')?.addEventListener('click', () => {
       this.closeSettingsModal();
-      window.dispatchEvent(new CustomEvent('satisfaction:open'));
+      Satisfaction.open();
+    });
+
+    // ==================== T-11.2 & T-11.3: Darse de baja y suprimir datos ====================
+    let selectedChurnReason = '';
+    const modalDelete = document.getElementById('modal-delete-account');
+    const churnSurveyForm = document.getElementById('churn-survey-form');
+    const churnSelectedReason = document.getElementById('churn-selected-reason');
+    const churnFeedback = document.getElementById('churn-feedback') as HTMLTextAreaElement | null;
+    const btnDeleteConfirm = document.getElementById('btn-delete-confirm') as HTMLButtonElement | null;
+
+    document.getElementById('btn-open-delete-account')?.addEventListener('click', () => {
+      this.closeSettingsModal();
+      if (modalDelete) {
+        modalDelete.style.display = 'flex';
+        modalDelete.classList.add('active');
+        if (churnSurveyForm) churnSurveyForm.style.display = 'block';
+      }
+    });
+
+    document.getElementById('btn-delete-cancel')?.addEventListener('click', () => {
+      if (modalDelete) {
+        modalDelete.style.display = 'none';
+        modalDelete.classList.remove('active');
+      }
+    });
+
+    modalDelete?.querySelectorAll('.churn-reason-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        modalDelete.querySelectorAll('.churn-reason-btn').forEach((b) => {
+          (b as HTMLElement).style.borderColor = 'var(--linea)';
+          (b as HTMLElement).style.background = 'rgba(243,237,226,0.06)';
+        });
+        const target = e.currentTarget as HTMLElement;
+        target.style.borderColor = 'var(--luz)';
+        target.style.background = 'rgba(240,168,48,0.12)';
+        selectedChurnReason = target.getAttribute('data-reason') || '';
+        if (churnSelectedReason) {
+          churnSelectedReason.textContent = `Motivo seleccionado: ${target.textContent?.trim()}`;
+        }
+      });
+    });
+
+    btnDeleteConfirm?.addEventListener('click', async () => {
+      if (!this.currentUser) return;
+      btnDeleteConfirm.disabled = true;
+      btnDeleteConfirm.textContent = 'Suprimiendo...';
+      try {
+        await DB.deleteUserAccount(this.currentUser.uid, {
+          reason: selectedChurnReason || 'not_specified',
+          feedback: churnFeedback?.value?.trim() || ''
+        });
+        if (modalDelete) {
+          modalDelete.style.display = 'none';
+          modalDelete.classList.remove('active');
+        }
+        await RondaDialog.alert({
+          title: 'Cuenta Suprimida',
+          message: 'Tu cuenta y todos tus datos personales han sido eliminados de acuerdo a la Ley 1581 de Habeas Data.',
+          icon: '👋',
+          type: 'alert'
+        });
+        await Auth.logout();
+        window.location.reload();
+      } catch (err: any) {
+        console.error('Error al suprimir cuenta:', err);
+        await RondaDialog.alert({
+          title: 'Error al eliminar cuenta',
+          message: err?.message || 'No se pudo completar la baja. Inténtalo de nuevo.',
+          icon: '⚠️',
+          type: 'danger'
+        });
+      } finally {
+        btnDeleteConfirm.disabled = false;
+        btnDeleteConfirm.textContent = 'Sí, suprimir mi cuenta';
+      }
     });
 
     // Botón de Cerrar Sesión dentro de Mi Perfil / Ajustes
@@ -295,9 +378,9 @@ export class ProfileService {
       });
       if (confirmed) {
         try {
+          this.closeSettingsModal();
           await Auth.logout();
-          // La navegación a view-auth se gestiona desde el listener 'auth:logout'
-          // en app.ts (updateNavbar → switchView('view-auth')).
+          window.location.reload();
         } catch (err) {
           await RondaDialog.alert({
             title: 'No se pudo cerrar sesión',

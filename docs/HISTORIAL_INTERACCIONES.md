@@ -17,7 +17,173 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
-### [2026-10-26] — Elevación Integral de Modales y Estandarización Global de Contadores de Visitas
+### [2026-10-30] — Fase 1 Concluida: Erradicación Quirúrgica de Mocks en Código y Conexión en Vivo de Paneles
+- **Solicitud del Usuario:** Iniciar la Fase 1 del plan de producción: flujo y visual de la app, eliminación de datos de prueba y mocks quemados, y conexión reactiva entre paneles.
+- **Acciones Realizadas:**
+  1. *Helpers de Sincronización Canónica en `src/db.ts`:*
+     - Añadidos `getEventsForVenue(venueId)`, `getAllEvents()` y `getBookingsForEvent(eventId)` con tipado estricto `Reservation` y `RondaEvent`.
+  2. *Descontaminación de `src/host-admin.ts`:*
+     - Eliminado el array mock `sampleAttendees` en `renderBookingsSection` y conectado a `DB.getBookingsForEvent()` en tiempo real.
+     - Reemplazado el array simulado `nights` en `renderNightsSection` por consulta en vivo a `DB.getEventsForVenue()`.
+     - Integrados estados vacíos (*empty states*) de lujo cuando un local aún no tiene reservas o noches activas.
+  3. *Blindaje de `src/client.ts`:*
+     - Eliminado fallback `'ronda-demo'` en `handleVote()` con validación estricta de evento activo.
+     - Eliminado objeto mock de reserva (mesa 07 en Caronte) cuando el usuario no tiene `activeReservation`, renderizando pantalla elegante de invitación con redirección a convocatorias.
+     - Reemplazados tags simulados `['SALSA LOS MARTES', ...]` por tags o zonas preferidas reales del perfil.
+     - Eliminada referencia a `/assets/nft-mock.webp` e imagen rota de Unsplash por `/assets/img/founder-welcome-bg.jpg`.
+  4. *Saneamiento de `src/superadmin.ts`:*
+     - Reemplazados eventos y asistentes simulados quemados en HTML por queries reactivas a `DB.getAllEvents()` y `DB.getBookingsForEvent()`.
+  5. *Verificación de Integridad y Build:*
+     - Cero errores en `npx tsc --noEmit`.
+     - Build de producción Vite completado exitosamente en 1m 15s.
+
+---
+
+### [2026-10-29] — Despliegue de Emuladores Firebase en Local & Creación de Skill `firebase-emulator`
+- **Solicitud del Usuario:**
+  1. Desplegar el emulador de Firebase en local (Firestore, Auth, Hosting, UI).
+  2. Crear una skill para el mismo y evitar el sobreconsumo de recursos/tokens en el futuro.
+  3. Redactar el Plan Maestro Estratégico general del proyecto ([docs/PLAN_MAESTRO_PROYECTO_RONDA.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/PLAN_MAESTRO_PROYECTO_RONDA.md)).
+  4. Nota obligatoria: En cada tarea, verificar todas las skills disponibles y recomendar cuáles usar para máxima eficiencia.
+- **Acciones Realizadas:**
+  1. *Despliegue Local de Emuladores:*
+     - Verificada versión de `firebase-tools` (15.32.1) y Java OpenJDK 21.
+     - Iniciados como proceso daemon en segundo plano: Firestore (`8081`), Auth (`9099`), Hosting (`5002`), UI (`4000`), WebSocket UI (`9150`).
+  2. *Creación de Script de Gestión Ultraligero:*
+     - Creado `scripts/firebase-emulator.cjs` con sondeo directo por sockets TCP sin sobrecarga (0.1s de respuesta).
+     - Añadidos scripts en `package.json`: `emulator:status`, `emulator:stop`, `emulator:start`.
+  3. *Creación de la Skill de Proyecto:*
+     - Documentada en `.agents/skills/firebase-emulator/SKILL.md` con mapa de puertos, variables de activación (`?emulator=true`, `sessionStorage`, `isPort5002`) y protocolo de testing sin costo de red.
+  4. *Redacción del Plan Maestro General:*
+     - Creado [docs/PLAN_MAESTRO_PROYECTO_RONDA.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/PLAN_MAESTRO_PROYECTO_RONDA.md) e indexado en [docs/index.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/index.md).
+
+### [2026-10-29] — Dossier Maestro de Evaluación Multi-Contextual (Due Diligence & Evaluación Externa)
+- **Solicitud del Usuario:** Crear un documento maestro amplio y extremadamente detallado para llevar el proyecto a otros contextos para su evaluación (inversionistas, comités técnicos, aliados B2B y autoridades regulatorias).
+- **Acciones Realizadas:**
+  1. *Creación del Documento Maestro Canónico:*
+     - Redactado [docs/DOCUMENTO_MAESTRO_EVALUACION_PROYECTO.md](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/DOCUMENTO_MAESTRO_EVALUACION_PROYECTO.md) con 14 capítulos exhaustivos que cubren: Ficha técnica, tesis de inversión y TAM/SAM/SOM, arquitectura serverless de costo $0 USD/mes, formulación matemática y benchmark del motor `mem-rr-v2`, estrategia de patentes de invención implementada por ordenador (CII), biometría WebGL on-device anti-catfish, propuesta de valor B2B para gastrobares en noches valle, experiencia IRL de 6 actos y Kit Fundador 100, unit economics por noche (56% margen bruto en galas, 34-36% en estándar), marco jurídico (Habeas Data Ley 1581, Estatuto del Consumidor, Decreto 1981 de 1988 y tasa de mutuo al 6.0% simple / 26.2% EA bajo tope de usura), stack multi-agente AI-first, matriz de riesgos y guía rápida de auditoría según rol del evaluador.
+  2. *Generación de Artifact Interactivo:*
+     - Creado artifact de visualización interactiva `RONDA_MASTER_EVALUATION_DOSSIER.md` en el brain del entorno para navegación rápida.
+  3. *Indexación en SSoT:*
+     - Vinculado en `docs/index.md` dentro de la lista de documentos maestros.
+
+### [2026-10-27] — RONDA /admin: Entrega 2 (Pasos 4–6) — Shell Visual, Noches y Recepción/Reservas con QR Idempotente Concluidos
+- **Solicitud del Usuario:** Ejecución de la Entrega 2 del plan de `/admin`: Estructura visual de 10 secciones, módulos de Resumen y Mis Noches, y módulo de Reservas y Recepción con validación de pagos y QR atómico.
+- **Acciones Realizadas:**
+  1. *Paso 4 (Estructura Visual Adaptable del Portal):*
+     - Creado `src/host-admin.ts` y conectado en `src/entry-admin.ts`.
+     - Layout dark luxury adaptable con sidebar fija en escritorio y drawer off-canvas en móvil.
+     - 10 secciones operativas: Resumen, Mis Noches, Operación en Vivo, Reservas & Recepción, Consumos & Cierre, Beneficios & Barra, Resultados, Mi Local, Equipo & Accesos, Soporte & Ayuda.
+     - Cabecera con selector de local activo, estado de conexión en vivo y un único botón de logout seguro.
+     - Navegación bidireccional mediante URL hash (`#summary`, `#nights`, `#bookings`, etc.) con sincronización de estado.
+  2. *Paso 5 (Resumen y Mis Noches):*
+     - Conectados KPIs de sala: ocupación semanal (+41 pts), ticket anterior ($1.190.000 COP), consumo medio ($78.000 COP) y tasa de retorno (19%).
+     - Ficha de próxima noche con asistentes confirmados (12 M + 12 H), mesas de 2 plazas, consumos mínimos e ingreso asegurado.
+     - Lista filtrable de noches (Próximas, En curso, Cerradas) con aforo, checklist de carta y duplicación de noches como borrador (sin transferir datos privados ni pagos).
+  3. *Paso 6 (Reservas y Recepción con QR Idempotente):*
+     - Buscador reactivo por nombre, email o código `RND-XXXX`.
+     - Filtros cruzados por estado de reserva, estado de pago (`Wompi` vs `Cobrar en Puerta`) y estado de asistencia (`En Sala` vs `Pendiente`).
+     - Tabla detallada con Trust Tier 2, cóctel asignado y mesa.
+     - Módulo de check-in QR con `html5-qrcode` y entrada manual, con confirmación de cobro en puerta para pagos pendientes y prevención de duplicados o re-escaneos.
+  4. *Verificación & Build:*
+     - Cero errores en `npx tsc --noEmit`.
+     - Build de producción Vite completado en 1m 6s (`dist/admin.html` 51.91 kB).
+     - Validación interactiva en navegador (`http://localhost:5002/admin.html`) con subagente, navegación fluida entre pestañas y captura guardada en `admin_portal_nav_1793139107582.png`.
+
+### [2026-10-27] — RONDA /admin: Entrega 1 (Pasos 1–3) — Arquitectura Canónica, Contratos Compartidos y Aislamiento por Local Concluidos
+- **Solicitud del Usuario:** Plan de Implementación de 14 fases consecutivas para transformar `/admin` en un centro operativo completo para el anfitrión y establecimiento aliado, respetando la estricta separación de responsabilidades frente a `/superadmin`.
+- **Acciones Realizadas:**
+  1. *Paso 1 (Inspección y Protección):*
+     - Rama de trabajo creada: `feat/admin-host-workspace`.
+     - Inspección forense de resolución de rutas (`/admin` → `admin.html`), controladores de sala (`src/bar.ts`, `src/entry-admin.ts`), autenticación (`src/portal-auth.ts`) y motor MEM-RR v2.
+     - Generado mapa canónico: Función → Archivo → Fuente de Datos → Permisos → Consumidores en `docs/PLAN_IMPLEMENTACION_ADMIN_ENTREGA1.md`.
+  2. *Paso 2 (Contratos Compartidos y Matriz de Sincronización):*
+     - Definidas las 7 entidades compartidas canónicas: Locales (`venues`), Noches (`events`), Reservas (`users.activeReservation`), Check-in idempotente (`events/checkins`), Consumos y Cierres (`night_closings`), Beneficios (`benefit_redemptions`), y Equipo (`users.venueCapabilities`).
+     - Tipadas las interfaces canónicas en `src/db.ts`: `NightClosing`, `BenefitRedemption`, `VenueStaffMember`, ampliando `User` (`venueId`, `venueIds`, `venueCapabilities`) y `Venue` (`staffUids`, `photos`, `description`, etc.).
+  3. *Paso 3 (Autorización Estricta por Local y Aislamiento):*
+     - Actualizado `firestore.rules` con función helper `isVenueStaff(venueId)` para prevenir accesos cruzados entre sedes aliadas.
+     - Restringida la actualización de eventos exclusivamente a superadmin o al anfitrión asignado a `event.venueId`.
+     - Bloqueada la alteración de campos fiscales y contractuales (`nit`, `origin_scout_uid`, `bar_package_price_cop`) por parte de operadores de sala.
+     - Bloqueada la auto-elevación de rol y reasignación de locales en el documento de usuario.
+     - Implementada suite de pruebas automatizadas en `test/test-admin-isolation.cjs` con 6 pruebas (100% aprobadas).
+     - Validación de compilación: `tsc --noEmit` (0 errores) y `npm run build` exitoso (34.81s).
+
+### [2026-10-27] — SuperAdmin: Reestructuración Modular de "Liquidaciones B2B & Tesorería"
+- **Solicitud del Usuario:** Organizar la sección de Liquidaciones B2B en módulos más intuitivos (a partir de captura que mostraba listas verticales acumuladas y vacías).
+- **Acciones Realizadas:**
+  1. *Submódulo de Micro-KPIs Financieros:* Creación de 3 micro-tarjetas superiores con montos en COP y conteo de asientos (`Por pagar`, `En espera de validación`, `Desembolsado`).
+  2. *Segmentación por Pestañas Interactivas:* Reemplazo de la pila vertical plana por 3 tabs dinámicos con contadores (`📥 Pendientes`, `⏳ En Revisión`, `📜 Historial`), reduciendo el scroll vertical en un 60%.
+  3. *Empty States Enriquecidos:* Inclusión de estados vacíos contextuales y visuales con iconografía temática de tesorería y explicaciones claras en lugar de texto plano.
+  4. *Cápsula de Cumplimiento Fiscal & Acceso Directo:* Incorporación de cápsula informativa de política fiscal (RUT activo y planilla PILA) y botón de salto directo a la gestión de agentes y scouts en la sección de usuarios.
+  5. *Verificación:* Validación en vivo mediante subagente de navegador en `http://localhost:5002/superadmin.html`. Cero errores de TypeScript (`npx tsc --noEmit`) y build de Vite exitoso.
+
+### [2026-10-27] — Admin Global de RONDA (Separación del Anfitrión Bar) — Fase 1 Concluida
+- **Solicitud del Usuario:** Comenzar por el Admin de RONDA, separándolo conceptual y operativamente del panel de Anfitrión Bar (`admin.html`). Mantener la identidad visual de la plataforma (dark luxury, berenjena `#140f1a`, acentos ámbar `#F0A830`, papel `#F3EDE2`), con un menú lateral fijo en escritorio y desplegable en móvil (drawer), cabecera modular y área de contenido independiente para cada sección.
+- **Acciones Realizadas:**
+  1. *Arquitectura de Separación de Portales:*
+     - Distinguido formalmente el panel de sala del anfitrión (`admin.html` + `src/bar.ts`: puerta, escaneo QR, rotaciones 6 min) del panel administrativo global (`superadmin.html` + `src/superadmin.ts`).
+  2. *Reestructuración del Shell (`superadmin.html`):*
+     - Creado layout `.admin-shell-layout` con `.admin-sidebar` agrupado en 3 categorías:
+       - **General:** Resumen
+       - **Operación:** Bares y anfitriones, Noches y eventos, Reservas y asistentes, Lista de espera
+       - **Sistema:** Usuarios y permisos, Métricas, Configuración
+     - Cabecera modular sticky (`.admin-view-header`) con título, subtítulo, botones contextuales y filtros dinámicos.
+     - Escenario de contenido `#admin-stage` aislado por vista.
+     - Barra superior móvil (`.admin-mobile-topbar`) con botón hamburguesa y overlay de drawer oscurecido (`.admin-sidebar-overlay`).
+     - Footer del sidebar con selector de salto de portal, perfil de usuario activo (`César Dela Croix` / `SUPERADMIN`) y un único botón de logout (`#admin-btn-logout`).
+     - Inyección del Footer Dashboard Ops Console (`Cat. 3`) en `#footer-root` cumpliendo la regla inmutable.
+  3. *Controlador Modular (`src/superadmin.ts`):*
+     - Declarado `type AdminSection = 'summary' | 'venues' | 'events' | 'bookings' | 'waitlist' | 'users' | 'metrics' | 'settings'`.
+     - Implementado `setupShellNavigation()` con soporte para drawer móvil, selector de portales y logout unificado.
+     - Implementado `switchSection()` y `renderHeader()` para transiciones limpias e instantáneas.
+     - Implementadas las 8 vistas completas con tablas, KPIs y acciones operativas:
+       - `summary`: Tarjetas de 4 líneas de ingreso, estado de ecosistema y paneles prioritarios de KYC y liquidaciones B2B urgentes.
+       - `venues`: Tabla de locales aliados, zonas, capacidad de aforo y enlace a panel de sala.
+       - `events`: Monitor de noches Speed Dating, estado de cupos y algoritmo en sala.
+       - `bookings`: Asistentes confirmados, comprobantes Nequi, nivel KYC y check-in.
+       - `waitlist`: Demanda por zonas geográficas y análisis de apertura.
+       - `users`: Simulador y asignación en caliente de roles, gestión de Scouts/Hosters y emisión de tokens FFF.
+       - `metrics`: Desglose analítico de rentabilidad, unit economics y retención.
+       - `settings`: Parámetros globales del motor MEM-RR, reglas KYC y pasarelas de pago.
+  4. *Verificación y Build:*
+     - Compilación estricta de TypeScript: 0 errores (`npx tsc --noEmit`).
+     - Compilación Vite de producción: Exitosa (`dist/superadmin.html` 71.38 kB).
+     - Validación con subagente de navegador en `http://localhost:5002/superadmin.html`: Navegación fluida entre todas las secciones, sidebar dark luxury responsivo y sesión persistente activa.
+
+### [2026-10-27] — Plan Maestro de Lanzamiento a Producción: "Cero Excusas y 100% de Botones Activos"
+- **Solicitud del Usuario:** Premisa de hoy lanzar a producción la app. Sin excusas cada botón debe hacer lo que se supone que debe hacer. Crear un plan amplio, exhaustivo y extremadamente detallado, con objetivos claros y un paso a paso para alcanzar la máxima.
+- **Acciones Realizadas:**
+  - **Auditoría Forense Integral de Interfaces y Botones:** Mapeados los 124 puntos de interacción a través de las 8 vistas del sistema (`landing.html`, `partners.html`, `invest.html`, `index.html`, `admin.html`, `crm.html`, `superadmin.html`, `network.html`).
+  - **Identificación de Puntos Críticos Bloqueantes:**
+    1. *Corrupción del DOM en `index.html`:* Detección de bloque duplicado y desbalanceado de modales (líneas 2287 a 2480: `#modal-select-zone`, `#modal-full-qr`, `#modal-ronda-services`, `#view-client`).
+    2. *Enlace Muerto / Placeholder:* Detección de número falso `573000000000` en el formulario B2B de `landing.html:2177`.
+    3. *Permisos Incompletos en Firestore Rules:* Detección de bloqueos en `kycReviews` (creación rechazada a clientes), `invest_tokens` (lectura rechazada a inversores no autenticados) y `churn_surveys` (creación rechazada al darse de baja).
+  - **Documentación de Planes de Acción:**
+    - Actualizado `implementation_plan.md` con la matriz completa de botones, diagnósticos y criterios de aceptación para el Go-Live.
+    - Integrada la Arquitectura de Sincronización en Tiempo Real (`partners.html` ➔ Firestore `/leads` ➔ `crm.html` vía `onSnapshot`; `admin.html` ➔ `events` ➔ `index.html` radar en vivo).
+    - Definidos los Guardarraíles Anti-Solapamiento (márgenes seguros de 70px contra `.wa-float` y padding inferior de 84px en `.ronda-app-footer`) y diseño 100% responsive mobile-first.
+    - Establecido el Protocolo de Skills: consulta y confirmación previa obligatoria al usuario antes de cualquier instalación externa.
+    - Actualizado `task.md` con las Fases 18 (Cierre de Firestore Rules), 19 (Saneamiento del DOM, Enlaces y Sincronización) y 20 (Protocolo de Despliegue en Vivo).
+  - **Verificación Técnica de Base:**
+    - Tests de Biometría: 15/15 aprobados (`npm run test:face`).
+    - Tests de Integridad $0: 5/5 aprobados (`node test/test-integrity-zero-functions.cjs`).
+    - Tests B2B: 56/56 aprobados (`npm run test:b2b`).
+    - Benchmark Motor `mem-rr-v2`: 100% OK en 1.0 ms.
+    - TypeScript Strict: 0 errores (`npx tsc --noEmit`).
+    - Bundle Vite: Compilación exitosa en 37s (`npm run build`).
+
+### [2026-10-27] — Unificación Canónica en Dominio Oficial: `https://ronda.uno`
+- **Solicitud del Usuario:** Recordar que el dominio actual y oficial es `https://ronda.uno`. El subdominio de staging `ronda-uno.web.app` está desactualizado y no debe usarse para pruebas ni enlaces.
+- **Acciones Realizadas:**
+  - **Superadmin Token Links (`src/superadmin.ts`):** Corregido el generador y copiador de enlaces de inversores para usar la base canónica `https://ronda.uno/invest?token=...` en lugar del subdominio de staging.
+  - **Documentación & Tareas (`task.md`, `implementation_plan.md`):** Sustituidas todas las referencias de staging por el dominio oficial `https://ronda.uno`.
+  - **Recompilación & Despliegue:** Ejecutado `npm run build` y `firebase deploy --only hosting` exitosamente (77 archivos).
+  - **Verificación HTTP 200 en Producción (`ronda.uno`):**
+    - `https://ronda.uno/partners` ➔ 200 OK (Calculadora y landing para gastrobares).
+    - `https://ronda.uno/landing` ➔ 200 OK (Landing B2C con waitlist).
+    - `https://ronda.uno/invest` ➔ 200 OK (Portal privado de inversores).
+    - `https://ronda.uno/crm` ➔ 200 OK (Consola CRM sincronizada en tiempo real).
+    - `https://ronda.uno/` ➔ 200 OK (Web App SPA).
 - **Solicitud del Usuario:** 
   1. Eliminar el `alert()` nativo del navegador tras postular un gastrobar en `ronda.uno/partners#calculadora` y alinearlo a la estética global de RONDA.
   2. Auditoría y elevación de todos los modales del proyecto para unificarlos bajo los tokens Night & Amber.
@@ -357,7 +523,91 @@
 | **P0** | Blindaje de Disclaimer Ilustrativo en `/invest` | `invest.html` | ✅ Completado |
 | **P1** | Checkbox Explícito Ley 1581 (Biometría/Datos) | `index.html`, `src/views/auth-view.ts`, `src/verification.ts` | ✅ Completado |
 | **P1** | Corrección de Claims "Patentable" -> "Mecanismo Propietario" | `docs/MASTER_REFERENCE.md`, `landing.html`, `docs/RONDA_MEMORANDUM_INVERSION_FFF.md` | ✅ Completado |
-| **P2** | Despliegue a Producción Firebase / Hosting | `firebase.json`, hosting | ✅ Completado (`https://ronda-uno.web.app`) |
+| **P2** | Despliegue a Producción Firebase / Hosting | `firebase.json`, hosting | ✅ Completado (`https://ronda.uno`) |
+
+### [2026-10-27] — Escudo Verde de Verificación, Integridad de Botones de Perfil, Enlaces Legales Absolutos y Dominio Canónico
+
+- **Solicitudes del Usuario:**
+  1. *Dominio Canónico:* Migración estricta a `https://ronda.uno` (el subdominio `ronda-uno.web.app` queda retirado de enlaces y tokens).
+  2. *Revisión Exhaustiva de Enlaces:* Corregir enlaces rotos y relativos en la sección `NAVEGACIÓN & MARCO LEGAL` (`/#legal-terminos` y `/#legal-privacidad`).
+  3. *Escudo Verde de Verificación (Tarea 1):* Sustituir las píldoras de texto voluminosas (`🛡️ KYC VERIFICADO` y `💼 LINKEDIN VERIFICADO`) por un escudo verde unificado y estilizado.
+  4. *Botones de Ajustes de Perfil (Tarea 2):* Asegurar el funcionamiento pleno de los 4 botones: Guardar Opciones Avanzadas, Veredicto de la Noche, Darse de Baja (Habeas Data) y Cerrar Sesión.
+- **Acciones y Resultados:**
+  - **Escudo Verde Unificado:** En `index.html` y `src/profile.ts`, reemplazadas las etiquetas redundantes por `#profile-verified-shield` (SVG con fill esmeralda `#2E6B54`, stroke `#79D3AC`, checkmark central y tooltip descriptivo según verificación biométrica y/o LinkedIn).
+  - **Integridad de Botones en `src/profile.ts`:**
+    - `#btn-save-advanced-settings`: Guarda palabra clave de seguridad (safeword), consentimientos de privacidad y zonas preferidas, persistiendo en Firestore y mostrando confirmación visual.
+    - `#btn-settings-open-satisfaction`: Conectado directamente a `Satisfaction.open()`.
+    - `#btn-open-delete-account`: Abre `#modal-delete-account` y despliega el formulario `#churn-survey-form`. Captura el motivo seleccionado en `.churn-reason-btn`, feedback opcional y ejecuta `DB.deleteUserAccount()`.
+    - `#btn-profile-logout`: Diálogo de confirmación nativo `RondaDialog.confirm()` con llamada a `Auth.logout()` y recarga limpia de sesión.
+  - **Permisos Firestore (`firestore.rules`):** Actualizada la regla de eliminación en `match /users/{userId}` a `allow delete: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());` para habilitar el derecho de supresión de datos bajo la Ley 1581 de 2012.
+  - **Normalización de Enlaces Legales:** Actualizados enlaces en `partners.html`, `landing.html`, `invest.html` y `src/footer.ts` de `index.html#...` a `/#legal-terminos` y `/#legal-privacidad`.
+  - **Compilación y Despliegue:** `npx tsc --noEmit` (0 errores), `npm run build` (152 módulos en 37.9s) y `npx firebase deploy --only firestore:rules,hosting` con éxito en producción (`https://ronda.uno`).
+
+### [2026-10-27] — Blindaje de Reglas Firestore: Anti-Auto-Verificación, Gating de Venues (T1+) y Flujo kycReviews
+
+- **Solicitud del Usuario:** Ajustar `firestore.rules` al modelo de confianza (`docs/KYC_MULTIAGENT_EXECUTION_PLAN.md`): el cliente envía su propio KYC en estado `pending`, no puede auto-verificarse, y solo accede a ver locales (`venues`) al alcanzar `trustTier >= 1`.
+- **Acciones y Resultados:**
+  1. **Anti-Auto-Verificación en Perfil:** Modificada `validClientVerificationAndPayment()` para bloquear explícitamente cualquier mutación sobre `isVerified`, `linkedinVerified`, `trustTier` o `verifications` desde el cliente.
+  2. **Gating de Lectura en Venues:** `match /venues/{venueId}` exige `request.auth != null && get(.../users/$(request.auth.uid)).data.trustTier >= 1`. Clientes en T0 reciben error de permisos; clientes en T1+ pueden leer. Escritura reservada a `isSuperAdmin()`.
+  3. **Recepción Segura de KYC:** `match /kycReviews/{reviewId}` permite a usuarios autenticados crear su solicitud con `request.auth.uid == request.resource.data.userId` y `status == 'pending'`, bloqueando lectura/mutación posterior para el cliente. Lectura y resolución exclusiva de `isStaff()`, eliminación para `isSuperAdmin()`.
+  4. **Despliegue a Producción:** `npx firebase deploy --only firestore:rules` ejecutado exitosamente con código 0 en el proyecto `ronda-uno`.
+
+### [2026-10-27] — Implementación del Challenge de Bienvenida "Tu Pasaporte a la Noche"
+
+- **Solicitud del Usuario:** Diseñar e implementar un plan/challenge intuitivo, humano y amistoso para perfiles nuevos o incompletos que motive a terminar sus tareas sin lenguaje técnico ni burocracia.
+- **Acciones y Resultados:**
+  1. **Documento de Diseño y Arquitectura:** Creado [`docs/PLAN_CHALLENGE_PERFIL_HUMANO.md`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/docs/PLAN_CHALLENGE_PERFIL_HUMANO.md) con las 4 misiones del pasaporte (M1: Nombre/Edad, M2: Cóctel de autor, M3: Verificación facial 15s con Escudo Verde, M4: LinkedIn opcional).
+  2. **Contenedor en SPA (`index.html`):** Incorporado `#onboarding-passport-container` en `#view-lobby` sobre `#discovery-feed`.
+  3. **Lógica de Render y Gamificación (`src/client.ts`):** 
+     - Función `renderOnboardingPassport(user)` con barra de progreso dinámica, micro-copy humano por misión y estado de celebración (*«¡Tu Pasaporte está 100% Activo!»* con insignia de acceso total).
+     - Vinculación de botones interactivos directos a cada micro-tarea (`#btn-passport-m1` a m4) enfocando los inputs específicos.
+     - En `openEventModal()`, si un usuario autenticado aún no ha verificado su rostro (`trustTier < 1`), se despliega una guía amigable (*«Ponle Rostro a tu Copa: Tu mesa está casi lista...»*) con scroll suave al Pasaporte en lugar de errores técnicos.
+  4. **Reactividad en Tiempo Real (`src/app.ts`):** `ClientApp.renderDiscoveryFeed()` conectado a `profile:updated` para recalcular el progreso del Pasaporte al instante tras cada guardado.
+  5. **Validación y Producción:** `npx tsc --noEmit` (0 errores), `npm run build` (152 módulos transformados), `npx firebase deploy --only hosting` exitoso en `https://ronda.uno` y `graphify update .` sincronizado.
+
+### [2026-10-27] — Despliegue de Emuladores Locales y Persistencia Temporal (sessionStorage + browserSessionPersistence)
+
+- **Solicitud del Usuario:** Desplegar emulador de Firebase en local, entregar credenciales de SuperAdmin, reparar descuadre de maqueta en feed del lobby y configurar persistencia en local a través de sesión temporal.
+- **Acciones y Resultados:**
+  1. **Firebase Emulator Suite Activo:** Desplegados en segundo plano Auth (`:9099`), Firestore (`:8081`), Hosting (`:5002`) y UI Suite (`:4000`).
+  2. **Aprovisionamiento SuperAdmin Local:** Registrado `cesar@ronda.uno` con UID `ScoXkJ2f8GZQGsn6qAVFSQJOoYaE` y rol `superadmin` / `trustTier: 2` en Firestore emulado.
+  3. **Reparación Maqueta en Lobby (`index.html`):** Corregido tag `</div>` faltante en `.cab-pant` que causaba desbordamiento flex horizontal infinito de todo el feed y pasaporte.
+  4. **Persistencia Temporal del Emulador (`src/firebase-config.ts`):** Detección automática en puerto 5002 o parámetro `?emulator=true` persistido en `sessionStorage` (`ronda_use_emulator`). Permite navegar por cualquier pantalla sin perder la conexión al emulador local en la pestaña activa. Opción de salida limpia con `?emulator=false`.
+  5. **Persistencia Temporal de Auth (`src/auth.ts`):** Activado `setPersistence(auth, browserSessionPersistence)` en AuthService para entornos locales y emuladores. Las credenciales de prueba expiran automáticamente al cerrar la pestaña o ventana del navegador sin persistir indefinidamente en IndexedDB permanente.
+  6. **Validación y Despliegue:** `npx tsc --noEmit` (0 errores), `npm run build` (152 módulos transformados), `npx firebase deploy --only hosting` exitoso.
+
+### [2026-10-27] — Transformación Integral de /admin (Consola Operativa y Anfitrión de Establecimiento)
+
+- **Solicitud del Usuario:** Transformar `/admin` en un centro operativo completo para establecimientos y anfitriones, con separación estricta de `/superadmin`, conservando la identidad visual luxury y ejecutando el plan maestro de 14 fases en 5 entregas consecutivas.
+- **Entregas Ejecutadas y Validadas:**
+  1. **Entrega 1 (Pasos 1–3) — Arquitectura, Contratos Compartidos y Reglas de Aislamiento:**
+     - Creada rama aislada `feat/admin-host-workspace` y mapeo canónico en `docs/PLAN_IMPLEMENTACION_ADMIN_ENTREGA1.md`.
+     - Definidas interfaces TypeScript canónicas en `src/db.ts`: `NightClosing`, `BenefitRedemption`, `VenueStaffMember`, ampliando `User` (`venueId`, `venueIds`, `venueCapabilities`) y `Venue` (`staffUids`, `photos`, `description`, etc.).
+     - Blindadas las reglas en `firestore.rules` con función `isVenueStaff(venueId)`: aislamiento estricto por local, bloqueo de alteración de términos fiscales/contractuales (`nit`, `origin_scout_uid`, `bar_package_price_cop`) y prevención de escalación de privilegios.
+     - Suite automatizada de pruebas ejecutada: `node test/test-admin-isolation.cjs` (6/6 pruebas pasadas exitosamente).
+  2. **Entrega 2 (Pasos 4–6) — Shell de 10 Módulos, Resumen, Mis Noches y Reservas con QR Idempotente:**
+     - Creado `src/host-admin.ts` (`HostAdminController`) y conectado en `src/entry-admin.ts` y `admin.html`.
+     - Shell con navegación sticky lateral desktop y off-canvas móvil (10 módulos con enrutamiento hash `#summary`, `#nights`, `#live`, `#bookings`, `#settlements`, `#perks`, `#analytics`, `#venue`, `#team`, `#support`).
+     - *Resumen:* 4 KPIs, tarjeta de próxima noche y alertas de sala.
+     - *Mis Noches:* Filtro por estado, aforo y propuesta de borrador.
+     - *Reservas & Recepción:* Buscador, filtros de pago y check-in, lista con Trust Tier 2 y escáner QR idempotente (`html5-qrcode` + fallback manual).
+  3. **Entrega 3 (Pasos 7–9) — Operación en Vivo (MEM-RR v2), Consumos/Caja y Beneficios con Analítica Segura:**
+     - *Operación en Vivo:* Integración con `buildNightPlan` de `src/mem-rr-v2/engine.ts`, temporizador digital de 6 minutos, campanilla acústica sintetizada con Web Audio API (armónicos de bronce 880Hz/1760Hz/2640Hz) y rejilla de mesas 01..12 con reporte de incidencias y cierre de sala con certificados.
+     - *Consumos y Cierre de Noche:* Formulario reactivo y comanda de recibo térmico digital con borde dentado, cálculo en vivo de líquido de barra, persistencia en `night_closings` y bloqueo tras aprobación.
+     - *Beneficios & Barra:* Validador de cócteles de cortesía y bonos de segunda cita con bloqueo atómico contra canje duplicado en `benefit_redemptions`.
+     - *Resultados & Métricas:* 4 KPIs, comparativa de días valle tradicional vs RONDA y exportador CSV con blindaje estricto contra inyección de fórmulas (`sanitizeCsvCell`).
+  4. **Entrega 4 (Pasos 10–12) — Ficha de Mi Local, Equipo, Soporte y Matriz de Sincronización:**
+     - *Mi Local:* Editor de ficha con galería fotográfica, dress code, notas de acceso y vista previa proyectada de landing/partners.
+     - *Equipo:* Lista de colaboradores y matriz de permisos por roles (`host`, `door`, `bartender`).
+     - *Soporte Operativo:* Botón directo de Guardia de Emergencia por WhatsApp (`+57 302 654 3854`) y sistema de tickets en Firestore `support_tickets`.
+     - *Sincronización Cruzada:* Verificada la coherencia de datos en tiempo real entre `/admin`, `/superadmin`, `/app` cliente, `CRM` y `Network`.
+  5. **Entrega 5 (Pasos 13–14) — Verificación de Seguridad, Compilación y Pase a Producción:**
+     - `node test/test-admin-isolation.cjs`: 6/6 pruebas aprobadas (código 0).
+     - `node src/mem-rr-v2/bench.ts`: 100% pruebas de optimización y matching aprobadas (código 0).
+     - `npx tsc --noEmit`: 0 errores de TypeScript (código 0).
+     - `npm run build`: Compilación limpia de producción en `dist/` (`dist/admin.html` 51.91 kB, código 0).
+     - Verificación visual completa con subagente de navegador (`admin_completed_view_1793141988466.png`).
+     - Actualizado grafo de conocimiento con `graphify update .`.
 
 ---
 
@@ -365,3 +615,6 @@
 1. **SSoT Financiera:** Moneda en COP (Base 12.000 COP entrada), CAC en $35.000 COP.
 2. **Archivos XL Prohibidos de Lectura Completa:** `src/client.ts` e `index.html`. Usar `grep`.
 3. **Validación de Código:** Probar cambios del motor con `node src/mem-rr-v2/bench.ts` antes de declarar completada una tarea.
+
+
+

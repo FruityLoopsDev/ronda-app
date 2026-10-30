@@ -290,6 +290,9 @@ function getAssignedPanelUrl(role: string): { url: string; name: string } | null
  * Inyecta una barra superior persistente con identidad de usuario y botón de logout
  */
 function injectPortalHeaderBar(config: PortalConfig, user: User) {
+  // SuperAdmin gestiona su propio shell integrado con sidebar, perfil y un único botón de logout
+  if (config.id === 'superadmin') return;
+
   let nav = document.getElementById('portal-top-bar');
   if (!nav) {
     nav = document.createElement('div');
@@ -309,12 +312,13 @@ function injectPortalHeaderBar(config: PortalConfig, user: User) {
   }
 
   // Si es superadmin, dar acceso a saltar entre paneles
+  const currentId = config.id as string;
   const switcherHtml = user.role === 'superadmin' ? `
     <select id="portal-quick-switch" style="background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-family: var(--font-mono); outline: none; cursor: pointer;">
-      <option value="/superadmin.html" ${config.id === 'superadmin' ? 'selected' : ''}>👑 SuperAdmin</option>
-      <option value="/admin.html" ${config.id === 'admin' ? 'selected' : ''}>🏢 Anfitrión Bar</option>
-      <option value="/crm.html" ${config.id === 'crm' ? 'selected' : ''}>💼 CRM Ventas</option>
-      <option value="/network.html" ${config.id === 'network' ? 'selected' : ''}>🗺️ Red Bares</option>
+      <option value="/superadmin.html" ${currentId === 'superadmin' ? 'selected' : ''}>👑 SuperAdmin</option>
+      <option value="/admin.html" ${currentId === 'admin' ? 'selected' : ''}>🏢 Anfitrión Bar</option>
+      <option value="/crm.html" ${currentId === 'crm' ? 'selected' : ''}>💼 CRM Ventas</option>
+      <option value="/network.html" ${currentId === 'network' ? 'selected' : ''}>🗺️ Red Bares</option>
       <option value="/">🍸 Cliente</option>
     </select>
   ` : '';

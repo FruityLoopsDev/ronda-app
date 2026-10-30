@@ -37,6 +37,8 @@ Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
 - **Web3:** `scripts/register-proof.cjs` (keccak256 proof of existence local, modo reserva, 0 gas).
 
 - `docs/HISTORIAL_INTERACCIONES.md` (Registro persistente de decisiones y contexto entre sesiones de chat).
+- `docs/PLAN_MAESTRO_PROYECTO_RONDA.md` (Plan maestro estratégico del proyecto, visión ejecutiva y roadmap 2026-2027).
+- `docs/DOCUMENTO_MAESTRO_EVALUACION_PROYECTO.md` (Dossier maestro integral de evaluación para comités de inversión, técnicos, B2B y regulatorios).
 - `docs/MASTER_REFERENCE.md` (Documento maestro de referencia técnica y arquitectura completa).
 - `docs/architecture.md` (Arquitectura general).
 - `docs/algorithm-v2-spec.md` (Teoría del motor mem-rr-v2).
@@ -50,3 +52,4 @@ Módulo puro (Zero dependencias de DOM/Firebase). Testable localmente:
 - `docs/ip-patent-strategy.md` (Estrategia de Propiedad Intelectual).
 - `docs/REVISION_MODULO_FACE_VERIFY_ARGON.md` (Auditoría forense de fallos en producción móvil y blueprint de refactorización biométrica para Argon de Gemini/Google).
 - `docs/AUDITORIA_SEGURIDAD_BUGS_CLINE.md` (Auditoría integral de seguridad, vulnerabilidades de Firestore, XSS, código duplicado y bugs para ejecución por Cline).
+- `docs/PLAN_CHALLENGE_PERFIL_HUMANO.md` (Plan de onboarding gamificado y humanizado "Tu Pasaporte a la Noche" para perfiles nuevos o incompletos).

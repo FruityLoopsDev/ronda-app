@@ -1546,7 +1546,10 @@
       <h3 style="font-family: var(--font-display); font-size: 30px; font-weight: 700; margin: 0; color: var(--papel); letter-spacing: -0.01em;">Esta semana</h3>
       <span class="chip gris" style="font-size: 11px; padding: 5px 12px;">25–34 · Zona G</span>
     </div>
-    
+
+    <!-- Widget de Onboarding Gamificado: Pasaporte a la Noche -->
+    <div id="onboarding-passport-container" style="margin-bottom: 20px;"></div>
+
     <div id="discovery-feed">
       <!-- Renderizado dinámicamente con las clases oficiales desde client.ts -->
     </div>
@@ -1600,8 +1603,15 @@
     <div style="margin-bottom: 16px;">
       <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
         <h3 id="profile-display-name" style="font-family: var(--font-display); font-size: 22px; margin: 0; font-weight: 700;">Mi Perfil</h3>
-        <span id="profile-kyc-badge" class="chip ambar" style="font-size: 9px; padding: 2px 8px; display: none;">🛡️ KYC Verificado</span>
-        <span id="profile-linkedin-badge" class="chip verde" style="font-size: 9px; padding: 2px 8px; display: none;">💼 LinkedIn Verificado</span>
+        <span id="profile-verified-shield" class="chip verde" style="font-size: 10.5px; padding: 3px 8px; border-radius: 999px; display: none; align-items: center; gap: 4px; background: rgba(46, 107, 84, 0.22); border: 1.5px solid var(--botella); color: #79D3AC; font-weight: 700; box-shadow: 0 0 10px rgba(46, 107, 84, 0.35); cursor: default;" title="Identidad Verificada">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#2E6B54" stroke="#79D3AC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+          <span>Verificado</span>
+        </span>
+        <span id="profile-kyc-badge" style="display: none;"></span>
+        <span id="profile-linkedin-badge" style="display: none;"></span>
         <span id="profile-founder-badge" class="chip founder" style="font-size: 9px; padding: 2px 8px; display: none;">⭐ Miembro Fundador #<span id="profile-founder-number">1</span></span>
       </div>
       <p id="profile-display-handle" style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); margin: 3px 0 6px;"></p>
@@ -2282,202 +2292,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Vista: Cliente / Reserva Activa -->
-  <section id="view-client" class="panel">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--linea);">
-      <button id="btn-client-back-feed" class="btn-round-back" title="Atrás">
-        ←
-      </button>
-      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--humo); display: inline-flex; align-items: center; gap: 6px;">
-        <span id="offline-indicator" style="display:none; color: #ff5252; font-size: 10px; margin-right: 4px;">🔴 Local</span>
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #4caf50; display: inline-block;"></span>
-        Reserva Confirmada
-        <div id="chat-security-warning" style="display: none; background: #9b2748; color: #fff; font-size: 11px; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; text-align: center; font-weight: 600;">
-          ⛔ Mensaje bloqueado: Prohibido compartir información de contacto directo.
-        </div>
-
-        <!-- Input del Chat -->
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <input type="text" id="input-chat-msg" class="ronda-input-premium" placeholder="Escribe un mensaje seguro..." style="margin-bottom: 0; font-size: 13px; padding: 11px 14px;">
-          <button id="btn-chat-send" class="btn ambar" style="padding: 11px 16px; border-radius: 12px; font-weight: 700; white-space: nowrap;">
-            Enviar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Selector de Cóctel (Badge) -->
-  <div id="modal-select-cocktail" class="modal-overlay" style="z-index: 10100;">
-    <div class="tel" style="width: 100%; max-width: 410px; background: #1a1120; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
-      <div class="tel-in" style="padding: 22px 18px;">
-        <div class="edit-modal-top">
-          <button id="btn-close-cocktail" class="modal-icon-btn" title="Cerrar">✕</button>
-          <h3 class="modal-nav-title" style="font-size: 18px;">Mi Cóctel de Autor</h3>
-          <span style="width: 36px; height: 36px;"></span>
-        </div>
-        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px;">
-          Elige el cóctel que más te representa. Este dato ayuda a romper el hielo en tus rondas.
-        </p>
-        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
-          <!-- Opciones (Negroni, Gin Tonic, Old Fashioned, Margarita, etc) -->
-          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
-            <input type="radio" name="badge-cocktail-choice" value="Negroni Ahumado" style="accent-color: var(--luz); width: 16px; height: 16px;">
-            <div style="font-size: 24px; width: 38px; text-align: center;">🥃</div>
-            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Negroni Ahumado</b></div>
-          </label>
-          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
-            <input type="radio" name="badge-cocktail-choice" value="Gin Tonic" style="accent-color: var(--luz); width: 16px; height: 16px;">
-            <div style="font-size: 24px; width: 38px; text-align: center;">🍸</div>
-            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Gin Tonic Botánico</b></div>
-          </label>
-          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
-            <input type="radio" name="badge-cocktail-choice" value="Margarita Mezcal" style="accent-color: var(--luz); width: 16px; height: 16px;">
-            <div style="font-size: 24px; width: 38px; text-align: center;">🍹</div>
-            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Margarita Picante</b></div>
-          </label>
-          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
-            <input type="radio" name="badge-cocktail-choice" value="Old Fashioned" style="accent-color: var(--luz); width: 16px; height: 16px;">
-            <div style="font-size: 24px; width: 38px; text-align: center;">🧊</div>
-            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Old Fashioned Clásico</b></div>
-          </label>
-          <label class="drink-option-label" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--linea); border-radius: 12px; padding: 10px 12px; cursor: pointer;">
-            <input type="radio" name="badge-cocktail-choice" value="Mocktail" style="accent-color: var(--luz); width: 16px; height: 16px;">
-            <div style="font-size: 24px; width: 38px; text-align: center;">🍃</div>
-            <div style="flex: 1;"><b style="font-size: 14px; color: var(--papel);">Mocktail (Sin alcohol)</b></div>
-          </label>
-        </div>
-        <button id="btn-save-badge-cocktail" class="btn ambar" style="width: 100%; margin-top: 16px; font-weight: 700;">✓ Guardar Selección</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Selector de Zonas (Badge) -->
-  <div id="modal-select-zone" class="modal-overlay" style="z-index: 10000;">
-    <div class="tel" style="width: 100%; max-width: 410px; background: #1a1120; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
-      <div class="tel-in" style="padding: 22px 18px;">
-        <div class="edit-modal-top">
-          <button id="btn-close-zone" class="modal-icon-btn" title="Cerrar">✕</button>
-          <h3 class="modal-nav-title" style="font-size: 18px;">Zonas Preferidas</h3>
-          <span style="width: 36px; height: 36px;"></span>
-        </div>
-        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px;">
-          Selecciona las zonas donde prefieres tener tus citas RONDA.
-        </p>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
-            <input type="checkbox" class="badge-zone-checkbox" value="Zona G" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Zona G</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
-            <input type="checkbox" class="badge-zone-checkbox" value="Quinta Camacho" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Quinta Camacho</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
-            <input type="checkbox" class="badge-zone-checkbox" value="Usaquén" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Usaquén</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background: rgba(243,237,226,.04); padding: 12px; border-radius: 12px; border: 1px solid var(--linea);">
-            <input type="checkbox" class="badge-zone-checkbox" value="Chapinero Alto" style="accent-color: var(--luz); width: 18px; height: 18px;"> <span style="font-size: 14px;">Chapinero Alto</span>
-          </label>
-        </div>
-        <button id="btn-save-badge-zone" class="btn ambar" style="width: 100%; margin-top: 16px; font-weight: 700;">✓ Guardar Zonas</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Pase QR Pantalla Completa (Badge) -->
-  <div id="modal-full-qr" class="modal-overlay" style="z-index: 10000; background: #000;">
-    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
-      <button id="btn-close-qr" class="modal-icon-btn" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.15); font-size: 24px; width: 44px; height: 44px; color: #fff;">✕</button>
-      
-      <h3 style="font-family: var(--font-display); font-size: 28px; color: var(--luz); margin-bottom: 6px; letter-spacing: 0.1em; text-align: center;">RONDA PASSPORT</h3>
-      <p style="color: var(--humo); font-size: 14px; font-family: var(--font-mono); margin-bottom: 40px; text-transform: uppercase;">Beneficio: -25% en Bares</p>
-
-      <div style="background: #fff; padding: 24px; border-radius: 20px; box-shadow: 0 0 40px rgba(240,168,48,0.3);">
-        <!-- Simulación de código QR grande -->
-        <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; width: 220px; height: 220px;">
-          <div style="grid-column: span 12; display: flex; flex-wrap: wrap; gap: 2px;" id="big-qr-grid"></div>
-        </div>
-      </div>
-      
-      <p style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 30px; text-align: center; max-width: 280px; line-height: 1.5;">
-        Presenta este código al mesero para validar tu estatus RONDA y aplicar el descuento de la comunidad.
-      </p>
-    </div>
-  </div>
-  <div id="modal-ronda-services" class="modal-overlay" style="z-index: 10000;">
-    <div class="tel" style="width: 100%; max-width: 410px; max-height: 90vh; overflow-y: auto; scrollbar-width: none; background: #180f20; border: 1px solid rgba(240,168,48,0.3); border-radius: 24px;">
-      <div class="tel-in" style="padding: 22px 18px 24px;">
-        
-        <!-- Header -->
-        <div class="edit-modal-top">
-          <button id="btn-services-close" class="modal-icon-btn" title="Cerrar">✕</button>
-          <h3 class="modal-nav-title" style="font-size: 18px;">Servicios Exclusivos</h3>
-          <span style="width: 36px; height: 36px;"></span>
-        </div>
-
-        <p style="font-size: 12px; color: var(--humo); text-align: center; margin: 4px 0 16px; line-height: 1.4;">
-          Mejora tu presencia, habilidades y perfil con nuestros expertos aliados de RONDA en Bogotá.
-        </p>
-
-        <!-- Tarjetas de Servicios -->
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          
-          <!-- 1. Sesión de Fotos Profesional -->
-          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-              <div>
-                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">📸 Sesión con Fotógrafo Pro</b>
-                <span style="font-size: 10.5px; color: var(--luz); font-family: var(--font-mono); display: block;">Retrato Urbano & Editorial · 45 min</span>
-              </div>
-              <span class="chip ambar" style="font-size: 9px; padding: 2px 8px;">$120.000 COP</span>
-            </div>
-            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
-              5 fotos profesionales retocadas en locaciones exclusivas de Zona G o Parque Virrey para multiplicar tu atractivo presencial.
-            </p>
-            <button class="btn btn-book-service" data-service="Sesión de Fotos con Fotógrafo Profesional" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(240,168,48,0.1); border-color: rgba(240,168,48,0.3); color: var(--luz); font-weight: 700;">
-              Solicitar Fotógrafo Aliado
-            </button>
-          </div>
-
-          <!-- 2. Asesoría de Imagen y Maquillaje -->
-          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-              <div>
-                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">💄 Asesoría de Imagen & Maquillaje</b>
-                <span style="font-size: 10.5px; color: var(--botella); font-family: var(--font-mono); display: block;">Estilismo Personalizado & Grooming</span>
-              </div>
-              <span class="chip verde" style="font-size: 9px; padding: 2px 8px;">$95.000 COP</span>
-            </div>
-            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
-              Consultoría de estilo, paleta de colores y preparación previa al evento para proyectar máxima sofisticación y confianza.
-            </p>
-            <button class="btn btn-book-service" data-service="Asesoría de Imagen y Maquillaje Profesional" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(46,107,84,0.12); border-color: rgba(46,107,84,0.4); color: #79D3AC; font-weight: 700;">
-              Agendar Asesoría de Imagen
-            </button>
-          </div>
-
-          <!-- 3. Coaching en Habilidades Blandas -->
-          <div style="background: rgba(243,237,226,.04); border: 1px solid var(--linea); border-radius: 16px; padding: 14px 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-              <div>
-                <b style="font-family: var(--font-display); font-size: 16px; color: var(--papel);">🧠 Coaching en Habilidades Blandas</b>
-                <span style="font-size: 10.5px; color: #f08ca8; font-family: var(--font-mono); display: block;">Comunicación & Conexión Auténtica</span>
-              </div>
-              <span class="chip ambar" style="font-size: 9px; padding: 2px 8px;">$110.000 COP</span>
-            </div>
-            <p style="font-size: 11.5px; color: var(--humo); line-height: 1.4; margin: 0 0 10px;">
-              Sesión 1 a 1 para dominar el arte de las citas cortas: lenguaje no verbal, escucha activa y cómo generar intriga en 6 minutos.
-            </p>
-            <button class="btn btn-book-service" data-service="Coaching en Habilidades Blandas y Dinámica Social" style="width: 100%; font-size: 11px; padding: 9px; background: rgba(155,39,72,0.12); border-color: var(--vino); color: #f08ca8; font-weight: 700;">
-              Reservar Sesión de Coaching
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Vista: Cliente / Reserva Activa -->
   <section id="view-client" class="panel">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--linea);">

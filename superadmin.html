@@ -36,6 +36,363 @@
   <script src="/assets/ronda-dialog.js"></script>
 
   <style>
+      /* ============================================================
+         RONDA — Admin Platform Shell (Fase 1: Menú Lateral + Cabecera)
+         ============================================================ */
+      body.dark-theme {
+        margin: 0;
+        padding: 0;
+        background-color: #140f1a;
+      }
+      #view-superadmin.panel {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+      .admin-shell-layout {
+        display: flex;
+        min-height: 100vh;
+        background: #140f1a;
+        color: var(--papel);
+        position: relative;
+        width: 100%;
+      }
+      .admin-sidebar {
+        width: 260px;
+        min-width: 260px;
+        background: #18111e;
+        border-right: 1px solid var(--linea);
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        z-index: 100;
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        box-sizing: border-box;
+      }
+      .admin-sidebar-header {
+        padding: 24px 20px 18px;
+        border-bottom: 1px solid rgba(243, 237, 226, 0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .admin-sidebar-brand {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .admin-brand-title {
+        font-family: var(--font-serif);
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        color: var(--papel);
+        line-height: 1;
+        margin: 0;
+      }
+      .admin-brand-tag {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        color: var(--luz);
+        text-transform: uppercase;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .admin-brand-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #79D3AC;
+        box-shadow: 0 0 6px #79D3AC;
+      }
+      .admin-sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(243,237,226,0.1) transparent;
+      }
+      .admin-nav-group-label {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: var(--humo);
+        text-transform: uppercase;
+        padding: 0 10px;
+        margin-bottom: 6px;
+      }
+      .admin-nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .admin-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        color: var(--humo);
+        font-size: 13px;
+        font-family: var(--font-sans);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        border: 1px solid transparent;
+        background: transparent;
+        user-select: none;
+        text-align: left;
+        box-sizing: border-box;
+      }
+      .admin-nav-item:hover {
+        background: rgba(243, 237, 226, 0.05);
+        color: var(--papel);
+      }
+      .admin-nav-item.active {
+        background: rgba(240, 168, 48, 0.12);
+        color: var(--papel);
+        font-weight: 700;
+        border-color: rgba(240, 168, 48, 0.35);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+      }
+      .admin-nav-item.active .admin-nav-icon {
+        color: var(--luz);
+        transform: scale(1.1);
+      }
+      .admin-nav-icon {
+        font-size: 15px;
+        line-height: 1;
+        width: 18px;
+        text-align: center;
+        transition: transform 0.18s ease;
+      }
+      .admin-nav-badge {
+        margin-left: auto;
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: rgba(240, 168, 48, 0.2);
+        color: var(--luz);
+        font-weight: 700;
+      }
+      .admin-sidebar-footer {
+        padding: 16px 14px;
+        border-top: 1px solid rgba(243, 237, 226, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: rgba(14, 9, 18, 0.5);
+      }
+      .admin-user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .admin-user-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--barra-alta);
+        border: 1.5px solid var(--luz);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-serif);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--luz);
+        flex-shrink: 0;
+      }
+      .admin-user-meta {
+        overflow: hidden;
+        line-height: 1.3;
+      }
+      .admin-user-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--papel);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .admin-user-role {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: #79D3AC;
+        text-transform: uppercase;
+        font-weight: 700;
+        display: block;
+      }
+      .admin-portal-switcher {
+        background: rgba(243, 237, 226, 0.04);
+        border: 1px solid var(--linea);
+        color: var(--papel);
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        width: 100%;
+        outline: none;
+        cursor: pointer;
+      }
+      .admin-logout-btn {
+        background: transparent;
+        border: 1px solid rgba(142, 36, 58, 0.4);
+        color: #ff8ca8;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-family: var(--font-sans);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .admin-logout-btn:hover {
+        background: rgba(142, 36, 58, 0.15);
+        border-color: var(--vino);
+        color: #fff;
+      }
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #140f1a;
+      }
+      .admin-view-header {
+        padding: 24px 32px 18px;
+        border-bottom: 1px solid rgba(243, 237, 226, 0.08);
+        background: rgba(20, 15, 26, 0.92);
+        backdrop-filter: blur(14px);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .admin-view-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .admin-title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .admin-view-title {
+        font-family: var(--font-serif);
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--papel);
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      .admin-view-subtitle {
+        font-size: 12.5px;
+        color: var(--humo);
+        margin: 0;
+      }
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .admin-view-filters {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+      }
+      .admin-stage {
+        flex: 1;
+        padding: 28px 32px 40px;
+        max-width: 1400px;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 auto;
+      }
+      .admin-mobile-topbar {
+        display: none;
+        background: #18111e;
+        border-bottom: 1px solid var(--linea);
+        padding: 12px 16px;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 90;
+      }
+      .admin-hamburger-btn {
+        background: rgba(243, 237, 226, 0.06);
+        border: 1px solid var(--linea);
+        color: var(--papel);
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .admin-sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(4px);
+        z-index: 95;
+      }
+      @media (max-width: 900px) {
+        .admin-mobile-topbar {
+          display: flex;
+        }
+        .admin-sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          transform: translateX(-100%);
+          box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+        .admin-sidebar.open {
+          transform: translateX(0);
+        }
+        .admin-sidebar-overlay.active {
+          display: block;
+        }
+        .admin-view-header {
+          padding: 18px 16px 14px;
+        }
+        .admin-stage {
+          padding: 20px 16px 32px;
+        }
+      }
+
       .ronda-input {
         margin-bottom: 10px; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); 
         background: rgba(243,237,226,.06); color: var(--papel); outline: none; 
@@ -1368,60 +1725,168 @@
   <!-- Vista: Lobby / Discovery (Esta Semana) -->
 
 <section id="view-superadmin" class="panel">
-    <div style="padding: 24px 16px; color: var(--papel); font-family: var(--font-body); max-width: 1050px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 12px;">
+  <!-- Barra superior móvil (drawer toggle + marca) -->
+  <header class="admin-mobile-topbar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button id="admin-btn-menu-open" class="admin-hamburger-btn" aria-label="Abrir menú">☰</button>
+      <span class="brand-logo" style="font-size: 20px; letter-spacing: 0.12em;">RONDA</span>
+      <span class="admin-brand-tag" style="font-size: 8.5px;">ADMIN</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div class="admin-brand-dot"></div>
+      <span style="font-size: 10px; font-family: var(--font-mono); color: var(--botella); font-weight: 700;">ONLINE</span>
+    </div>
+  </header>
+
+  <!-- Overlay para cerrar drawer en móvil -->
+  <div id="admin-sidebar-overlay" class="admin-sidebar-overlay"></div>
+
+  <!-- Layout Principal de 2 Columnas -->
+  <div class="admin-shell-layout">
+    <!-- Sidebar de Navegación -->
+    <aside id="admin-sidebar" class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <div class="admin-sidebar-brand">
+          <h1 class="admin-brand-title">RONDA</h1>
+          <div class="admin-brand-tag">
+            <span class="admin-brand-dot"></span>
+            <span>Administración</span>
+          </div>
+        </div>
+        <button id="admin-btn-menu-close" class="admin-hamburger-btn" style="display: none; padding: 4px 8px; font-size: 14px;" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <!-- Navegación por Grupos -->
+      <nav class="admin-sidebar-nav">
+        <!-- Grupo 1: General -->
+        <div class="admin-nav-group">
+          <div class="admin-nav-group-label">General</div>
+          <ul class="admin-nav-list">
+            <li>
+              <button class="admin-nav-item active" data-section="summary">
+                <span class="admin-nav-icon">📊</span>
+                <span>Resumen</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grupo 2: Operación -->
+        <div class="admin-nav-group">
+          <div class="admin-nav-group-label">Operación</div>
+          <ul class="admin-nav-list">
+            <li>
+              <button class="admin-nav-item" data-section="venues">
+                <span class="admin-nav-icon">🏢</span>
+                <span>Bares y anfitriones</span>
+              </button>
+            </li>
+            <li>
+              <button class="admin-nav-item" data-section="events">
+                <span class="admin-nav-icon">🍸</span>
+                <span>Noches y eventos</span>
+              </button>
+            </li>
+            <li>
+              <button class="admin-nav-item" data-section="bookings">
+                <span class="admin-nav-icon">🎟️</span>
+                <span>Reservas y asistentes</span>
+              </button>
+            </li>
+            <li>
+              <button class="admin-nav-item" data-section="waitlist">
+                <span class="admin-nav-icon">⏳</span>
+                <span>Lista de espera</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grupo 3: Sistema -->
+        <div class="admin-nav-group">
+          <div class="admin-nav-group-label">Sistema</div>
+          <ul class="admin-nav-list">
+            <li>
+              <button class="admin-nav-item" data-section="users">
+                <span class="admin-nav-icon">👥</span>
+                <span>Usuarios y permisos</span>
+              </button>
+            </li>
+            <li>
+              <button class="admin-nav-item" data-section="metrics">
+                <span class="admin-nav-icon">📈</span>
+                <span>Métricas</span>
+              </button>
+            </li>
+            <li>
+              <button class="admin-nav-item" data-section="settings">
+                <span class="admin-nav-icon">⚙️</span>
+                <span>Configuración</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Pie del Sidebar: Selector de portal, Perfil y Logout único -->
+      <div class="admin-sidebar-footer">
         <div>
-          <h2 style="font-family: var(--font-display); font-size: 28px; margin: 0; color: var(--papel);">👑 Super Admin Global</h2>
-          <p style="color: var(--humo); font-size: 12px; margin: 4px 0 0;">Consola Maestra de Operaciones, Ingresos Multi-Línea y Control de Permisos</p>
+          <label style="display: block; font-size: 9.5px; font-family: var(--font-mono); color: var(--humo); text-transform: uppercase; margin-bottom: 5px;">Saltar a Portal:</label>
+          <select id="admin-portal-switch" class="admin-portal-switcher">
+            <option value="/superadmin.html" selected>👑 SuperAdmin (Global)</option>
+            <option value="/admin.html">🏢 Anfitrión de Bar</option>
+            <option value="/crm.html">💼 CRM de Ventas</option>
+            <option value="/network.html">🗺️ Red de Bares</option>
+            <option value="/">🍸 Portal de Clientes</option>
+          </select>
         </div>
-        <div style="display: flex; gap: 8px;">
-          <span class="chip ambar" style="font-size: 11px; font-weight: 700; padding: 4px 10px;">Master Control</span>
-          <span class="chip verde" style="font-size: 11px; padding: 4px 10px;">Sistemas OK</span>
+
+        <div class="admin-user-profile">
+          <div class="admin-user-avatar" id="admin-user-avatar">C</div>
+          <div class="admin-user-meta">
+            <span class="admin-user-name" id="admin-user-name">César Dela Croix</span>
+            <span class="admin-user-role" id="admin-user-role">SuperAdmin</span>
+          </div>
         </div>
-      </div>
-      <div id="superadmin-content"></div>
-    </div>
-  </section>
 
-  <!-- Animación Flash Overlay -->
-  <div id="login-flash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--ambar); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;"></div>
+        <button id="admin-btn-logout" class="admin-logout-btn" title="Cerrar sesión">
+          <span>🚪</span>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </aside>
 
-  <!-- Footer Dashboard Ops Console (Cat. 3) -->
-  <footer class="ronda-footer ronda-dashboard-footer" data-ronda-footer style="border-top: 1px solid var(--linea); padding: 12px 20px; margin-top: 40px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--humo); background: rgba(10, 7, 14, 0.85); backdrop-filter: blur(12px); width: 100%; box-sizing: border-box;">
-    <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span style="font-weight: 700; color: var(--papel); letter-spacing: 0.06em;">RONDA <span style="color: var(--ambar);">Ops Console</span></span>
-        <span style="opacity: 0.3;">·</span>
-        <span data-ronda-copyright style="color: var(--humo); font-weight: 500;">RONDA System © 2026</span>
-        <span style="opacity: 0.3;">·</span>
-        <span data-ronda-version class="chip gris" style="font-size: 10px; padding: 1px 7px; border-radius: 999px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel);">v2.3.0-prod</span>
-        <span style="opacity: 0.3;">·</span>
-        <span style="display: inline-flex; align-items: center; gap: 5px; color: #8ce4be; font-size: 10.5px;">
-          <span style="width: 6px; height: 6px; border-radius: 50%; background: #25d366; box-shadow: 0 0 6px #25d366; display: inline-block;"></span>
-          <span>Red Operativa</span>
-        </span>
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <!-- Cabecera Común Modular -->
+      <header class="admin-view-header">
+        <div class="admin-view-header-top">
+          <div class="admin-title-wrap">
+            <h2 id="admin-view-title" class="admin-view-title">Resumen</h2>
+            <p id="admin-view-subtitle" class="admin-view-subtitle">Estado general de la operación, alertas inmediatas y métricas clave.</p>
+          </div>
+          <div id="admin-header-actions" class="admin-header-actions">
+            <!-- Acción contextual inyectada dinámicamente -->
+          </div>
+        </div>
+        <div id="admin-header-filters" class="admin-view-filters">
+          <!-- Filtros contextuales inyectados dinámicamente -->
+        </div>
+      </header>
+
+      <!-- Escenario Dinámico de Vistas -->
+      <div id="admin-stage" class="admin-stage">
+        <!-- Contenido de la sección activa inyectado por SuperAdminController -->
       </div>
 
-      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-        <span data-ronda-engineering-badge style="font-size: 10px; color: var(--ambar); background: rgba(240,168,48,0.08); border: 1px solid rgba(240,168,48,0.22); padding: 2px 7px; border-radius: 4px;">
-          ⚡ <span data-ronda-hours>233</span>h ops · <span data-ronda-commits>90</span> deploys
-        </span>
-        <span style="opacity: 0.3;">·</span>
-        <a href="https://wa.me/573026543854?text=Hola%20RONDA,%20alerta%20superadmin" target="_blank" rel="noopener noreferrer" style="color: #8ce4be; text-decoration: none; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-          <span>WhatsApp Mesa Ops (+57 302 654 3854)</span>
-        </a>
-        <span style="opacity: 0.3;">·</span>
-        <span id="superadmin-visit-counter" class="ronda-visit-counter-pill" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:var(--font-mono, 'JetBrains Mono', monospace); font-size:10.5px; color:var(--humo, #8c8378); letter-spacing:0.04em; white-space:nowrap;">
-          <span class="ronda-pulse-dot" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
-          <span>Visitas:</span>
-          <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;" id="visit-count">--</b>
-        </span>
-        <span style="opacity: 0.3;">·</span>
-        <span style="color: var(--humo); opacity: 0.7;">Bogotá D.C.</span>
-      </div>
-    </div>
-  </footer>
-</div>
+      <!-- Footer Dashboard Ops Console (Cat. 3) -->
+      <div id="footer-root"></div>
+    </main>
+  </div>
+</section>
+
+<!-- Animación Flash Overlay -->
+<div id="login-flash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--ambar); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;"></div>
 
 <script>
   // Contador de visitas dinámico (Simulado / LocalStorage)

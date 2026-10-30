@@ -150,9 +150,10 @@ function initApp() {
     updateNavbar();
   });
 
-  // Refrescar avatar/iniciales en navbar cuando el perfil se edita sin cambiar la vista activa
+  // Refrescar avatar/iniciales en navbar y progreso del pasaporte cuando el perfil se edita
   window.addEventListener('profile:updated', () => {
     renderNavbarBadgeOnly();
+    ClientApp.renderDiscoveryFeed();
   });
 
   // Inicializar servicio de perfil

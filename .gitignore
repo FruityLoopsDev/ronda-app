@@ -49,6 +49,7 @@ backups/
 # Herramientas de análisis de terceros y sus cachés (no son parte de la app)
 graphify/
 graphify-out/
+ECC/
 
 # Documentos legales/institucionales con PII y contratos (¡no versionar!)
 # Mantener ronda-files/ fuera del repositorio o moverla a almacenamiento privado.

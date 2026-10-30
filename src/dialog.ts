@@ -5,6 +5,7 @@ export interface DialogOptions {
   message: string;
   icon?: string;
   imageUrl?: string;   // Imagen opcional (ej. QR de pago Nequi)
+  placeholder?: string; // Placeholder para el input de tipo prompt
   confirmText?: string;
   cancelText?: string;
   type?: 'confirm' | 'alert' | 'danger';
@@ -44,6 +45,7 @@ export class RondaDialog {
             </div>
             <h3 id="dialog-title" style="font-family:var(--font-display,'Bodoni Moda',serif);font-size:21px;color:var(--papel,#f3ede2);margin:0 0 8px;">Confirmar Acción</h3>
             <p id="dialog-message" style="font-size:13px;color:var(--humo,#8c8378);line-height:1.48;margin:0 0 22px;"></p>
+            <input id="dialog-prompt-input" type="text" style="display:none;width:100%;margin-top:12px;padding:10px;border:1px solid var(--linea,rgba(243,237,226,0.12));border-radius:8px;background:#0e0a12;color:var(--papel,#f3ede2);font-family:inherit;font-size:13px;box-sizing:border-box;">
             <div style="display:flex;gap:10px;justify-content:center;">
               <button id="btn-dialog-cancel" class="btn" style="flex:1;font-size:12px;padding:11px;border-radius:999px;background:rgba(243,237,226,.06);border:1px solid var(--linea,rgba(243,237,226,0.12));color:var(--humo,#8c8378);font-weight:600;cursor:pointer;">✕ Cancelar</button>
               <button id="btn-dialog-confirm" class="btn ambar" style="flex:1;font-size:12px;padding:11px;border-radius:999px;background:var(--luz,#f0a830);border:1px solid var(--luz,#f0a830);color:#14101a;font-weight:700;cursor:pointer;">✓ Aceptar</button>
@@ -144,10 +146,40 @@ export class RondaDialog {
       }
     }
 
+    const inputEl = document.getElementById('dialog-prompt-input') as HTMLInputElement | null;
+    if (inputEl) {
+      if (opts.placeholder) {
+        inputEl.style.display = 'block';
+        inputEl.placeholder = opts.placeholder;
+        inputEl.value = '';
+      } else {
+        inputEl.style.display = 'none';
+      }
+    }
+
     if (this.modalEl) this.modalEl.classList.add('active');
 
     return new Promise((resolve) => {
       this.resolvePromise = resolve;
+    });
+  }
+
+  static prompt(options: DialogOptions | string): Promise<string | null> {
+    const opts: DialogOptions = typeof options === 'string' ? { message: options } : options;
+    return new Promise(resolve => {
+      this.show({
+        title: opts.title || 'Entrada requerida',
+        message: opts.message,
+        icon: opts.icon || '✏️',
+        placeholder: opts.placeholder,
+        confirmText: opts.confirmText || '✓ Aceptar',
+        cancelText: opts.cancelText || '✕ Cancelar',
+        type: 'confirm'
+      }).then(confirmed => {
+        if (!confirmed) { resolve(null); return; }
+        const input = document.getElementById('dialog-prompt-input') as HTMLInputElement | null;
+        resolve(input ? input.value.trim() : null);
+      });
     });
   }
 

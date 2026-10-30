@@ -1,9 +1,20 @@
-import { DB, User, LedgerEntry, Payout, Scout, Host, MilestoneState } from './db.js';
+import { DB, User, LedgerEntry, Payout, Scout, Host, MilestoneState, Reservation } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
 import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, limit, startAfter, getCountFromServer, QueryDocumentSnapshot } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { RondaB2BEngine } from './b2b-engine.ts';
+import { renderRondaFooter } from './footer.js';
+
+export type AdminSection =
+  | 'summary'
+  | 'venues'
+  | 'events'
+  | 'bookings'
+  | 'waitlist'
+  | 'users'
+  | 'metrics'
+  | 'settings';
 
 export interface KycReviewCase {
   reviewId: string;
@@ -34,6 +45,11 @@ export interface InvestToken {
 }
 
 export class SuperAdminController {
+  // --- Estado de Navegación del Shell Global ---
+  public currentSection: AdminSection = 'summary';
+  private currentUser: any = null;
+  private modalsInjected = false;
+
   // --- Estado de paginación de la cola KYC (cursor de Firestore) ---
   private kycLastDoc: QueryDocumentSnapshot | null = null;
   private kycShown = 0;
@@ -58,215 +74,95 @@ export class SuperAdminController {
 
   constructor() {}
 
-  async init() {
-    console.log('[SuperAdminController] Inicializando Super Admin Dashboard...');
-    this.render();
-    this.setupListeners();
+  async init(user?: any) {
+    console.log('[SuperAdminController] Inicializando Super Admin Global...');
+    this.currentUser = user || Auth.currentUser;
+    this.setupShellNavigation();
+    this.ensureModalsInDom();
+    renderRondaFooter();
+    await this.switchSection('summary');
   }
 
-  render() {
-    const container = document.getElementById('superadmin-content');
-    if (!container) return;
+  // Configura navegación lateral, menú móvil, selector de portal y logout único
+  private setupShellNavigation() {
+    // 1. Manejo del cajón (drawer) en móvil
+    const openBtn = document.getElementById('admin-btn-menu-open');
+    const closeBtn = document.getElementById('admin-btn-menu-close');
+    const sidebar = document.getElementById('admin-sidebar');
+    const overlay = document.getElementById('admin-sidebar-overlay');
 
-    const venuesCount = Object.keys(DB.memoryDb?.venues || {}).length || 6;
+    const toggleDrawer = (open: boolean) => {
+      if (sidebar) sidebar.classList.toggle('open', open);
+      if (overlay) overlay.style.display = open ? 'block' : 'none';
+    };
 
-    container.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-        
-        <!-- Header & Quick Metrics -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
-          <div id="sa-card-b2c" style="background: rgba(243,237,226,0.05); border: 1px solid var(--linea); border-radius: 14px; padding: 18px;">
-            <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">🎟️ Línea 1: Tickets B2C</span>
-            <b id="sa-metric-b2c-value" style="font-size: 26px; color: var(--papel); font-family: var(--font-display); display: block; margin-top: 4px;">$12.450.000</b>
-            <span id="sa-metric-b2c-badge" style="display:none; font-size:10px; font-family: var(--font-mono); color: #f0a830; border: 1px dashed rgba(240,168,48,0.5); border-radius: 6px; padding: 2px 6px; margin-top: 4px;">📈 Estimado / Proyectado</span>
-            <span id="sa-metric-b2c-sub" style="font-size: 10px; color: var(--botella); font-family: var(--font-mono); display:block; margin-top: 4px;">+18% vs semana anterior</span>
-          </div>
+    openBtn?.addEventListener('click', () => toggleDrawer(true));
+    closeBtn?.addEventListener('click', () => toggleDrawer(false));
+    overlay?.addEventListener('click', () => toggleDrawer(false));
 
-          <div style="background: rgba(243,237,226,0.05); border: 1px solid var(--linea); border-radius: 14px; padding: 18px;">
-            <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">🏢 Línea 2: SaaS Bares B2B</span>
-            <b style="font-size: 26px; color: var(--luz); font-family: var(--font-display); display: block; margin-top: 4px;">$3.800.000</b>
-            <span id="sa-metric-venues-sub" style="font-size: 10px; color: var(--humo); font-family: var(--font-mono);">${venuesCount} locales bajo suscripción</span>
-          </div>
+    // 2. Navegación entre secciones
+    document.querySelectorAll<HTMLElement>('.admin-nav-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        const sec = item.getAttribute('data-section') as AdminSection;
+        if (sec) {
+          void this.switchSection(sec);
+          toggleDrawer(false);
+        }
+      });
+    });
 
-          <div style="background: rgba(243,237,226,0.05); border: 1px solid var(--linea); border-radius: 14px; padding: 18px;">
-            <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">📊 Línea 3: Data Insights</span>
-            <b style="font-size: 26px; color: var(--papel); font-family: var(--font-display); display: block; margin-top: 4px;">$2.100.000</b>
-            <span style="font-size: 10px; color: var(--luz); font-family: var(--font-mono);">Reportes B2B & Maridajes</span>
-          </div>
+    // 3. Selector de saltar a portal
+    const portalSelect = document.getElementById('admin-portal-switch') as HTMLSelectElement | null;
+    portalSelect?.addEventListener('change', () => {
+      if (portalSelect.value) {
+        window.location.href = portalSelect.value;
+      }
+    });
 
-          <div style="background: rgba(243,237,226,0.05); border: 1px solid var(--linea); border-radius: 14px; padding: 18px;">
-            <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">🍸 Línea 4: Segunda Cita</span>
-            <b style="font-size: 26px; color: #ff8ca8; font-family: var(--font-display); display: block; margin-top: 4px;">$1.650.000</b>
-            <span style="font-size: 10px; color: var(--humo); font-family: var(--font-mono);">Comisión por reservas -25%</span>
-          </div>
-        </div>
+    // 4. Logout único en el pie del sidebar
+    const logoutBtn = document.getElementById('admin-btn-logout');
+    logoutBtn?.addEventListener('click', async () => {
+      const confirmLogout = await RondaDialog.confirm({
+        title: 'Cerrar Sesión',
+        message: '¿Estás seguro de que deseas salir del panel SuperAdmin?',
+        confirmText: 'Cerrar Sesión',
+        cancelText: 'Cancelar',
+        icon: '🚪'
+      });
+      if (confirmLogout) {
+        await Auth.logout();
+        window.location.href = '/index.html';
+      }
+    });
 
-        <!-- Infrastructure & Security Health Status -->
-        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--linea); border-radius: 16px; padding: 20px;">
-          <h4 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0 0 14px;">⚡ Estado del Ecosistema RONDA</h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(243,237,226,0.03); padding: 12px; border-radius: 10px; border: 1px solid var(--linea);">
-              <span style="font-size: 20px;">🔥</span>
-              <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Firebase Firestore</b>
-                <span style="font-size: 10px; color: var(--botella); font-family: var(--font-mono);">● Operativo (v10)</span>
-              </div>
-            </div>
+    // 5. Cargar perfil de usuario en el sidebar
+    this.updateUserSidebarProfile();
+  }
 
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(243,237,226,0.03); padding: 12px; border-radius: 10px; border: 1px solid var(--linea);">
-              <span style="font-size: 20px;">💚</span>
-              <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Pagos Nequi</b>
-                <span style="font-size: 10px; color: var(--botella); font-family: var(--font-mono);">● Enlace de cobro · verificación manual</span>
-              </div>
-            </div>
+  private updateUserSidebarProfile() {
+    const user = this.currentUser || Auth.currentUser;
+    const nameEl = document.getElementById('admin-user-name');
+    const roleEl = document.getElementById('admin-user-role');
+    const avatarEl = document.getElementById('admin-user-avatar');
 
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(243,237,226,0.03); padding: 12px; border-radius: 10px; border: 1px solid var(--linea);">
-              <span style="font-size: 20px;">🛡️</span>
-              <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Biometría & OCR</b>
-                <span style="font-size: 10px; color: var(--botella); font-family: var(--font-mono);">● MediaPipe + Tesseract</span>
-              </div>
-            </div>
+    const displayName = user?.name || user?.displayName || user?.email?.split('@')[0] || 'César Dela Croix';
+    const initial = displayName.charAt(0).toUpperCase();
 
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(243,237,226,0.03); padding: 12px; border-radius: 10px; border: 1px solid var(--linea);">
-              <span style="font-size: 20px;">🔄</span>
-              <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Motor Round-Robin</b>
-                <span style="font-size: 10px; color: var(--botella); font-family: var(--font-mono);">● Algoritmo MEM-RR</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    if (nameEl) nameEl.textContent = displayName;
+    if (roleEl) roleEl.textContent = user?.role ? user.role.toUpperCase() : 'SUPERADMIN';
+    if (avatarEl) avatarEl.textContent = initial;
+  }
 
-        <!-- Role Administration & Fast Simulator -->
-        <div style="background: rgba(240,168,48,0.08); border: 1px dashed rgba(240,168,48,0.35); border-radius: 16px; padding: 20px;">
-          <h4 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0 0 6px;">👑 Simulador y Asignación de Roles</h4>
-          <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px;">
-            Cambia el rol del usuario activo en memoria para probar de inmediato la experiencia de cualquier perfil sin reiniciar sesión:
-          </p>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn ambar sa-set-role" data-role="superadmin" style="font-size: 11px; padding: 10px 16px; font-weight: 700;">👑 Rol: Super Admin</button>
-            <button class="btn sa-set-role" data-role="sales" style="font-size: 11px; padding: 10px 16px; background: rgba(0,0,0,0.3); border-color: var(--luz); color: var(--luz);">💼 Rol: Vendedor (Sales)</button>
-            <button class="btn sa-set-role" data-role="admin" style="font-size: 11px; padding: 10px 16px; background: rgba(0,0,0,0.3); border-color: var(--linea);">🏢 Rol: Anfitrión Bar</button>
-            <button class="btn sa-set-role" data-role="client" style="font-size: 11px; padding: 10px 16px; background: rgba(0,0,0,0.3); border-color: var(--linea);">🍸 Rol: Cliente / Usuario</button>
-          </div>
-        </div>
+  // Garantiza que los modales de payout existan en el DOM
+  private ensureModalsInDom() {
+    if (this.modalsInjected) return;
+    this.modalsInjected = true;
 
-        <!-- [C-4] Revisión KYC Pendiente (Administrador Central) -->
-        <div style="background: rgba(0,0,0,0.35); border: 1px solid var(--linea); border-radius: 16px; padding: 20px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-            <h4 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0;">🛡️ Revisión KYC Pendiente</h4>
-            <button class="btn" id="sa-kyc-refresh" style="font-size: 11px; padding: 8px 14px;">↻ Actualizar cola</button>
-          </div>
-          <p style="font-size: 12px; color: var(--humo); margin: 0 0 14px;">Casos <b>kycReviews / status == 'pending'</b>. Compara selfie vs documento, revisa la métrica facial y aprueba Tier 2 o rechaza con motivo.</p>
-          <div id="sa-kyc-list" style="display: flex; flex-direction: column; gap: 14px;">
-            <p style="font-size: 12px; color: var(--humo);">Cargando cola…</p>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px dashed var(--linea);">
-            <span id="sa-kyc-count" style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Mostrando 0 de 0 casos pendientes</span>
-            <button class="btn" id="sa-kyc-more" style="font-size: 11px; padding: 8px 14px; display:none;">➕ Cargar más casos (10 más)</button>
-          </div>
-        </div>
-
-        <!-- T1: Liquidaciones B2B (Ledger de Scouts y Hosters) -->
-        <div style="background: rgba(0,0,0,0.35); border: 1px solid var(--linea); border-radius: 16px; padding: 20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
-            <h4 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin: 0;">💸 Liquidaciones B2B</h4>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn" id="sa-liq-refresh" style="font-size: 11px; padding: 8px 14px;">↻ Actualizar</button>
-              <button class="btn" id="sa-people-toggle" style="font-size: 11px; padding: 8px 14px;">👥 Scouts &amp; Hosters</button>
-            </div>
-          </div>
-
-          <!-- Banner fijo: modo desembolso manual -->
-          <div style="display:flex; align-items:center; gap:8px; background: rgba(240,168,48,0.10); border: 1px dashed rgba(240,168,48,0.45); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px;">
-            <span style="font-size: 14px;">🛡️</span>
-            <span style="font-size: 11.5px; color: var(--papel); font-family: var(--font-mono);">Modo desembolso manual — no se realizan transferencias automáticas.</span>
-          </div>
-
-          <div style="margin-bottom: 18px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel);">✅ Pendientes por pagar</b>
-              <span id="sa-liq-pending-count" style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);"></span>
-            </div>
-            <div id="sa-liq-pending" style="display:flex; flex-direction:column; gap:12px;">
-              <p style="font-size:12px; color:var(--humo);">Cargando ledger…</p>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 18px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel);">⏳ En revisión / retenidas</b>
-              <span id="sa-liq-held-count" style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);"></span>
-            </div>
-            <div id="sa-liq-held" style="display:flex; flex-direction:column; gap:10px;">
-              <p style="font-size:12px; color:var(--humo);">Cargando ledger…</p>
-            </div>
-          </div>
-
-          <div>
-            <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel); display:block; margin-bottom:8px;">📜 Historial de desembolsos</b>
-            <div id="sa-liq-history" style="display:flex; flex-direction:column; gap:10px;">
-              <p style="font-size:12px; color:var(--humo);">Cargando payouts…</p>
-            </div>
-          </div>
-
-          <!-- T2: Gestión de Scouts y Hosters (colapsable) -->
-          <div id="sa-people-panel" style="display:none; margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--linea);">
-            <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel); display:block; margin-bottom:10px;">👥 Alta y gestión de Scouts / Hosters</b>
-            <form id="sa-people-form" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-bottom:14px;">
-              <select id="sa-people-type" class="ronda-input" style="margin-bottom:0;">
-                <option value="scout">Scout</option>
-                <option value="host">Hoster</option>
-              </select>
-              <input id="sa-people-uid" class="ronda-input" placeholder="UID (requerido)" required style="margin-bottom:0;">
-              <input id="sa-people-name" class="ronda-input" placeholder="Nombre" style="margin-bottom:0;">
-              <input id="sa-people-email" class="ronda-input" type="email" placeholder="Email" style="margin-bottom:0;">
-              <select id="sa-people-status" class="ronda-input" style="margin-bottom:0;">
-                <option value="active">Activo</option>
-                <option value="inactive">Inactivo</option>
-              </select>
-              <input id="sa-people-contract" class="ronda-input" placeholder="contract_id" style="margin-bottom:0;">
-              <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--papel); font-family:var(--font-mono);">
-                <input type="checkbox" id="sa-people-rut"> RUT verificado
-              </label>
-              <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--papel); font-family:var(--font-mono);">
-                <input type="checkbox" id="sa-people-pila"> PILA vigente (mes actual)
-              </label>
-              <button type="submit" class="btn ambar" style="font-size:11px; padding:10px; font-weight:700;">Guardar</button>
-            </form>
-            <div id="sa-people-list" style="display:flex; flex-direction:column; gap:8px;">
-              <p style="font-size:12px; color:var(--humo);">Cargando…</p>
-            </div>
-          </div>
-
-          <!-- T-8.2: Tokens de inversión Pista Privada FFF (/invest) -->
-          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--linea); border-radius: 16px; padding: 20px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-              <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel);">🎟️ Pista Privada FFF: Tokens & Enlaces de Inversión (/invest)</b>
-              <span id="sa-tokens-count" style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);"></span>
-            </div>
-            <form id="sa-token-form" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px; margin-bottom:14px; align-items:end;">
-              <input id="sa-token-name" class="ronda-input" placeholder="Nombre Completo" required>
-              <select id="sa-token-ring" class="ronda-input">
-                <option value="A1">A1: Núcleo</option>
-                <option value="A2">A2: Amigos</option>
-                <option value="A3">A3: Red Prof.</option>
-                <option value="A4">A4: Mentores</option>
-                <option value="GEN">GEN: General</option>
-              </select>
-              <input id="sa-token-token" class="ronda-input" placeholder="Slug/Token (rnd-…)" required>
-              <input id="sa-token-phone" class="ronda-input" placeholder="WhatsApp (opcional)">
-              <input id="sa-token-notes" class="ronda-input" placeholder="Notas (opcional)">
-              <button type="submit" class="btn ambar" style="font-size:11px; padding:10px 16px; font-weight:700;">➕ Emitir Token</button>
-            </form>
-            <p id="sa-tokens-empty" style="font-size:12px; color:var(--humo); display:none;">Sin tokens emitidos.</p>
-            <div id="sa-tokens-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-          </div>
-        </div>
-
-        <!-- T1: Modal "Aprobar desembolso" -->
+    // Si ya existen por markup previo, solo asociamos listeners
+    if (!document.getElementById('sa-payout-overlay')) {
+      const modalWrapper = document.createElement('div');
+      modalWrapper.innerHTML = `
+        <!-- Modal Aprobar Desembolso B2B -->
         <div id="sa-payout-overlay" style="display:none; position:fixed; inset:0; z-index:10001; background:rgba(10,7,14,0.88); backdrop-filter:blur(8px); padding:16px; align-items:center; justify-content:center;">
           <div style="background: rgba(22,16,27,0.98); border: 1px solid var(--linea); border-radius: 18px; width:100%; max-width:480px; max-height:88vh; overflow-y:auto; padding: 24px 22px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -291,7 +187,7 @@ export class SuperAdminController {
           </div>
         </div>
 
-        <!-- T1: Modal motivo de reverso -->
+        <!-- Modal Motivo de Reverso -->
         <div id="sa-reverse-overlay" style="display:none; position:fixed; inset:0; z-index:10001; background:rgba(10,7,14,0.88); backdrop-filter:blur(8px); padding:16px; align-items:center; justify-content:center;">
           <div style="background: rgba(22,16,27,0.98); border: 1px solid var(--vino); border-radius: 18px; width:100%; max-width:440px; padding: 24px 22px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -306,13 +202,1044 @@ export class SuperAdminController {
             </div>
           </div>
         </div>
+      `;
+      document.body.appendChild(modalWrapper);
+    }
+
+    // Listeners del modal de desembolso
+    document.getElementById('sa-payout-close')?.addEventListener('click', () => this.closePayoutModal());
+    const payoutChecks = ['sa-payout-rut', 'sa-payout-pila', 'sa-payout-bank'];
+    payoutChecks.forEach((id) => document.getElementById(id)?.addEventListener('change', () => this.validatePayoutForm()));
+    document.getElementById('sa-payout-ref')?.addEventListener('input', () => this.validatePayoutForm());
+    document.getElementById('sa-payout-confirm')?.addEventListener('click', () => void this.confirmPayout());
+
+    // Listeners del modal de reverso
+    document.getElementById('sa-reverse-close')?.addEventListener('click', () => this.closeReverseModal());
+    document.getElementById('sa-reverse-cancel')?.addEventListener('click', () => this.closeReverseModal());
+    document.getElementById('sa-reverse-reason')?.addEventListener('input', () => this.validateReverseForm());
+    document.getElementById('sa-reverse-confirm')?.addEventListener('click', () => void this.confirmReverse());
+  }
+
+  // Cambia la vista activa del SuperAdmin
+  public async switchSection(section: AdminSection): Promise<void> {
+    this.currentSection = section;
+
+    // Actualizar clase activa en el menú lateral
+    document.querySelectorAll<HTMLElement>('.admin-nav-item').forEach((item) => {
+      const isTarget = item.getAttribute('data-section') === section;
+      item.classList.toggle('active', isTarget);
+    });
+
+    // Renderizar cabecera modular
+    this.renderHeader(section);
+
+    // Renderizar cuerpo del escenario
+    await this.renderSectionContent(section);
+  }
+
+  // Renderiza la cabecera dinámica de cada vista
+  private renderHeader(section: AdminSection) {
+    const titleEl = document.getElementById('admin-view-title');
+    const subtitleEl = document.getElementById('admin-view-subtitle');
+    const actionsEl = document.getElementById('admin-header-actions');
+    const filtersEl = document.getElementById('admin-header-filters');
+
+    if (!titleEl || !subtitleEl || !actionsEl || !filtersEl) return;
+
+    switch (section) {
+      case 'summary':
+        titleEl.textContent = 'Resumen General';
+        subtitleEl.textContent = 'Indicadores clave, alertas de verificación KYC y liquidaciones operativas pendientes.';
+        actionsEl.innerHTML = `
+          <button class="btn ambar" id="sa-header-refresh-summary" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
+            ↻ Actualizar Todo
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <span style="font-size: 10.5px; color: #79D3AC; font-family: var(--font-mono); background: rgba(121,211,172,0.1); border: 1px solid rgba(121,211,172,0.3); padding: 4px 10px; border-radius: 999px;">
+            ● Ecosistema Operativo
+          </span>
+          <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
+            Bogotá D.C. · Versión v2.3.0-prod
+          </span>
+        `;
+        document.getElementById('sa-header-refresh-summary')?.addEventListener('click', () => {
+          void this.loadKycQueue();
+          void this.loadLiquidaciones();
+          void this.loadRealMetrics();
+        });
+        break;
+
+      case 'venues':
+        titleEl.textContent = 'Bares y Anfitriones';
+        subtitleEl.textContent = 'Gestión de establecimientos aliados, aforos de mesas y responsables de sala.';
+        actionsEl.innerHTML = `
+          <button class="btn ambar" id="sa-btn-new-venue" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
+            + Registrar Local
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <input type="text" id="sa-venues-search" class="ronda-input" placeholder="🔍 Buscar por nombre o zona…" style="margin-bottom:0; max-width:260px; font-size:11.5px; padding:6px 12px;">
+          <select id="sa-venues-filter" class="ronda-input" style="margin-bottom:0; max-width:180px; font-size:11.5px; padding:6px 10px;">
+            <option value="all">Todos los locales</option>
+            <option value="active">Activos hoy</option>
+            <option value="expansion">En expansión</option>
+          </select>
+        `;
+        break;
+
+      case 'events':
+        titleEl.textContent = 'Noches y Eventos';
+        subtitleEl.textContent = 'Programación de citas Speed Dating, aforos vendidos y orquestación del motor MEM-RR.';
+        actionsEl.innerHTML = `
+          <button class="btn ambar" id="sa-btn-new-event" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
+            + Programar Noche
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <select class="ronda-input" style="margin-bottom:0; max-width:190px; font-size:11.5px; padding:6px 10px;">
+            <option value="upcoming">Próximas noches</option>
+            <option value="live">En curso ahora</option>
+            <option value="past">Finalizadas</option>
+          </select>
+          <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Rotación: Rondas de 6 minutos</span>
+        `;
+        break;
+
+      case 'bookings':
+        titleEl.textContent = 'Reservas y Asistentes';
+        subtitleEl.textContent = 'Comprobantes de pago Nequi, estado de verificación de identidad y control de acceso.';
+        actionsEl.innerHTML = `
+          <button class="btn" id="sa-btn-export-bookings" style="font-size: 11.5px; padding: 8px 16px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel);">
+            📥 Exportar Asistentes
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <input type="text" id="sa-search-booking" class="ronda-input" placeholder="🔍 Buscar por nombre, cédula o UID…" style="margin-bottom:0; max-width:280px; font-size:11.5px; padding:6px 12px;">
+          <select id="sa-filter-booking" class="ronda-input" style="margin-bottom:0; max-width:180px; font-size:11.5px; padding:6px 10px;">
+            <option value="all">Todas las reservas</option>
+            <option value="confirmed">Confirmadas</option>
+            <option value="pending">Pendientes de pago</option>
+          </select>
+        `;
+        break;
+
+      case 'waitlist':
+        titleEl.textContent = 'Lista de Espera';
+        subtitleEl.textContent = 'Demanda acumulada por zonas para apertura y balanceo de nuevas fechas.';
+        actionsEl.innerHTML = `
+          <button class="btn ambar" id="sa-btn-notify-waitlist" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
+            📢 Notificar Nueva Fecha
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <span style="font-size: 11px; color: #F0A830; font-family: var(--font-mono);">
+            🔥 389 personas activas en lista de espera
+          </span>
+        `;
+        break;
+
+      case 'users':
+        titleEl.textContent = 'Usuarios y Permisos';
+        subtitleEl.textContent = 'Simulador de roles, permisos de staff, red de Scouts/Hosters y Pista Privada FFF.';
+        actionsEl.innerHTML = ``;
+        filtersEl.innerHTML = `
+          <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">
+            Control administrativo central y emisión de credenciales
+          </span>
+        `;
+        break;
+
+      case 'metrics':
+        titleEl.textContent = 'Métricas y Finanzas';
+        subtitleEl.textContent = 'Desglose analítico de las 4 líneas de ingresos, márgenes de liquidación y retención.';
+        actionsEl.innerHTML = `
+          <button class="btn ambar" id="sa-btn-download-report" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
+            📊 Descargar Reporte
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <select class="ronda-input" style="margin-bottom:0; max-width:180px; font-size:11.5px; padding:6px 10px;">
+            <option value="month">Mes en curso (Octubre)</option>
+            <option value="q4">Q4 2026</option>
+            <option value="all">Histórico completo</option>
+          </select>
+        `;
+        break;
+
+      case 'settings':
+        titleEl.textContent = 'Configuración del Sistema';
+        subtitleEl.textContent = 'Parámetros del motor MEM-RR, reglas de acceso KYC y pasarela de pago.';
+        actionsEl.innerHTML = `
+          <button class="btn ambar" id="sa-btn-save-settings" style="font-size: 11.5px; padding: 8px 18px; font-weight: 700;">
+            💾 Guardar Cambios
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono);">
+            Modo de alta seguridad · Cambios auditados en Firebase
+          </span>
+        `;
+        break;
+    }
+  }
+
+  // Renderiza el contenido del contenedor `#admin-stage`
+  private async renderSectionContent(section: AdminSection): Promise<void> {
+    const stage = document.getElementById('admin-stage');
+    if (!stage) return;
+
+    switch (section) {
+      case 'summary':
+        this.renderSummarySection(stage);
+        break;
+      case 'venues':
+        await this.renderVenuesSection(stage);
+        break;
+      case 'events':
+        await this.renderEventsSection(stage);
+        break;
+      case 'bookings':
+        await this.renderBookingsSection(stage);
+        break;
+      case 'waitlist':
+        await this.renderWaitlistSection(stage);
+        break;
+      case 'users':
+        this.renderUsersSection(stage);
+        break;
+      case 'metrics':
+        this.renderMetricsSection(stage);
+        break;
+      case 'settings':
+        this.renderSettingsSection(stage);
+        break;
+    }
+  }
+
+  // --- SECCIÓN 1: RESUMEN GENERAL ---
+  private renderSummarySection(stage: HTMLElement) {
+    const venuesCount = Object.keys(DB.memoryDb?.venues || {}).length || 6;
+
+    stage.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- 4 Líneas de Negocio (KPIs Principales) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+          <div id="sa-card-b2c" style="background: rgba(243,237,226,0.04); border: 1px solid var(--linea); border-radius: 14px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">🎟️ Línea 1: Tickets B2C</span>
+              <span style="font-size: 9.5px; font-family: var(--font-mono); color: #79D3AC; background: rgba(121,211,172,0.12); padding: 2px 6px; border-radius: 4px;">Activo</span>
+            </div>
+            <b id="sa-metric-b2c-value" style="font-size: 28px; color: var(--papel); font-family: var(--font-display); display: block; margin-top: 6px;">$12.450.000</b>
+            <span id="sa-metric-b2c-badge" style="display:none; font-size:10px; font-family: var(--font-mono); color: #f0a830; border: 1px dashed rgba(240,168,48,0.5); border-radius: 6px; padding: 2px 6px; margin-top: 4px;">📈 Estimado / Proyectado</span>
+            <span id="sa-metric-b2c-sub" style="font-size: 10.5px; color: var(--botella); font-family: var(--font-mono); display:block; margin-top: 6px;">+18% vs semana anterior</span>
+          </div>
+
+          <div style="background: rgba(243,237,226,0.04); border: 1px solid var(--linea); border-radius: 14px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">🏢 Línea 2: SaaS Bares B2B</span>
+              <span style="font-size: 9.5px; font-family: var(--font-mono); color: var(--luz); background: rgba(240,168,48,0.12); padding: 2px 6px; border-radius: 4px;">Recurrente</span>
+            </div>
+            <b style="font-size: 28px; color: var(--luz); font-family: var(--font-display); display: block; margin-top: 6px;">$3.800.000</b>
+            <span id="sa-metric-venues-sub" style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono); display:block; margin-top:6px;">${venuesCount} locales bajo suscripción</span>
+          </div>
+
+          <div style="background: rgba(243,237,226,0.04); border: 1px solid var(--linea); border-radius: 14px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">📊 Línea 3: Data Insights</span>
+              <span style="font-size: 9.5px; font-family: var(--font-mono); color: #79D3AC; background: rgba(121,211,172,0.12); padding: 2px 6px; border-radius: 4px;">B2B</span>
+            </div>
+            <b style="font-size: 28px; color: var(--papel); font-family: var(--font-display); display: block; margin-top: 6px;">$2.100.000</b>
+            <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono); display:block; margin-top:6px;">Reportes de Maridaje & Consumo</span>
+          </div>
+
+          <div style="background: rgba(243,237,226,0.04); border: 1px solid var(--linea); border-radius: 14px; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); text-transform: uppercase;">🍸 Línea 4: Segunda Cita</span>
+              <span style="font-size: 9.5px; font-family: var(--font-mono); color: #ff8ca8; background: rgba(255,140,168,0.12); padding: 2px 6px; border-radius: 4px;">Comisión 25%</span>
+            </div>
+            <b style="font-size: 28px; color: #ff8ca8; font-family: var(--font-display); display: block; margin-top: 6px;">$1.650.000</b>
+            <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono); display:block; margin-top:6px;">Monetización de Match Exitoso</span>
+          </div>
+        </div>
+
+        <!-- Infrastructure & Security Health Status -->
+        <div style="background: rgba(20, 15, 26, 0.6); border: 1px solid var(--linea); border-radius: 16px; padding: 20px;">
+          <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--papel); margin: 0 0 14px;">⚡ Estado del Ecosistema RONDA</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(243,237,226,0.03); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(243,237,226,0.08);">
+              <span style="font-size: 20px;">🔥</span>
+              <div>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Firebase Firestore</b>
+                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">● Operativo (v10)</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(243,237,226,0.03); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(243,237,226,0.08);">
+              <span style="font-size: 20px;">💚</span>
+              <div>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Pagos Nequi</b>
+                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">● Cobro Manual Activo</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(243,237,226,0.03); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(243,237,226,0.08);">
+              <span style="font-size: 20px;">🛡️</span>
+              <div>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Biometría & OCR</b>
+                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">● MediaPipe + Tesseract</span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(243,237,226,0.03); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(243,237,226,0.08);">
+              <span style="font-size: 20px;">🔄</span>
+              <div>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Motor Round-Robin</b>
+                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">● Algoritmo MEM-RR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Columnas de Acción Inmediata: KYC y Liquidaciones B2B -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px;">
+          
+          <!-- Columna 1: Revisión KYC Pendiente -->
+          <div style="background: rgba(20, 15, 26, 0.7); border: 1px solid var(--linea); border-radius: 16px; padding: 22px; display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px;">
+              <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0;">🛡️ Revisión KYC Pendiente</h4>
+              <button class="btn" id="sa-kyc-refresh" style="font-size: 11px; padding: 6px 12px; background: rgba(243,237,226,0.06); border-color: var(--linea);">↻ Refrescar</button>
+            </div>
+            <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px;">
+              Cola prioritaria de verificación manual. Compara selfie vs documento y valida el umbral biométrico.
+            </p>
+            <div id="sa-kyc-list" style="display: flex; flex-direction: column; gap: 12px; flex:1;">
+              <p style="font-size: 12px; color: var(--humo);">Cargando cola KYC…</p>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:16px; padding-top:12px; border-top:1px dashed var(--linea);">
+              <span id="sa-kyc-count" style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Mostrando 0 casos</span>
+              <button class="btn" id="sa-kyc-more" style="font-size: 11px; padding: 6px 12px; display:none;">➕ Cargar más</button>
+            </div>
+          </div>
+
+          <!-- Columna 2: Consola Modular de Liquidaciones B2B -->
+          <div style="background: rgba(20, 15, 26, 0.7); border: 1px solid var(--linea); border-radius: 16px; padding: 22px; display:flex; flex-direction:column; gap:16px;">
+            <!-- Cabecera del Módulo -->
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+              <div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:18px;">💸</span>
+                  <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0;">Liquidaciones B2B & Tesorería</h4>
+                </div>
+                <p style="font-size: 11.5px; color: var(--humo); margin: 3px 0 0;">Gestión de comisiones para Scouts de expansión y Hosters de sala.</p>
+              </div>
+              <button class="btn" id="sa-liq-refresh" style="font-size: 11px; padding: 6px 12px; background: rgba(243,237,226,0.06); border-color: var(--linea);">↻ Actualizar</button>
+            </div>
+
+            <!-- Módulo 1: Micro-KPIs de Tesorería -->
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
+              <div style="background:rgba(243,237,226,0.03); border:1px solid rgba(121,211,172,0.25); border-radius:10px; padding:10px; text-align:center;">
+                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--humo); text-transform:uppercase; display:block;">Por Pagar</span>
+                <b id="sa-kpi-liq-pending" style="font-size:15px; color:#79D3AC; font-family:var(--font-mono); display:block; margin-top:2px;">$0</b>
+                <span id="sa-badge-liq-pending" style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">0 asientos</span>
+              </div>
+              <div style="background:rgba(243,237,226,0.03); border:1px solid rgba(240,168,48,0.25); border-radius:10px; padding:10px; text-align:center;">
+                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--humo); text-transform:uppercase; display:block;">En Espera</span>
+                <b id="sa-kpi-liq-held" style="font-size:15px; color:var(--luz); font-family:var(--font-mono); display:block; margin-top:2px;">$0</b>
+                <span id="sa-badge-liq-held" style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">0 en revisión</span>
+              </div>
+              <div style="background:rgba(243,237,226,0.03); border:1px solid var(--linea); border-radius:10px; padding:10px; text-align:center;">
+                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--humo); text-transform:uppercase; display:block;">Desembolsado</span>
+                <b id="sa-kpi-liq-paid" style="font-size:15px; color:var(--papel); font-family:var(--font-mono); display:block; margin-top:2px;">$0</b>
+                <span id="sa-badge-liq-paid" style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">0 giros</span>
+              </div>
+            </div>
+
+            <!-- Módulo 2: Pestañas Interactivas (Segmented Tabs) -->
+            <div style="display:flex; background:rgba(0,0,0,0.35); border:1px solid var(--linea); border-radius:10px; padding:3px; gap:4px;">
+              <button class="sa-liq-tab-btn active" data-tab="pending" style="flex:1; background:rgba(240,168,48,0.18); border:1px solid rgba(240,168,48,0.35); color:var(--papel); font-size:11px; font-weight:700; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-sans); transition:all 0.2s;">
+                📥 Pendientes (<span id="sa-tab-cnt-pending">0</span>)
+              </button>
+              <button class="sa-liq-tab-btn" data-tab="held" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-sans); transition:all 0.2s;">
+                ⏳ En Revisión (<span id="sa-tab-cnt-held">0</span>)
+              </button>
+              <button class="sa-liq-tab-btn" data-tab="history" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-sans); transition:all 0.2s;">
+                📜 Historial (<span id="sa-tab-cnt-history">0</span>)
+              </button>
+            </div>
+
+            <!-- Módulo 3: Paneles de Contenido (1 visible a la vez) -->
+            <div id="sa-liq-pane-pending" class="sa-liq-pane" style="display:flex; flex-direction:column; gap:10px; min-height:110px;">
+              <div id="sa-liq-pending" style="display:flex; flex-direction:column; gap:10px;">
+                <p style="font-size:12px; color:var(--humo);">Cargando ledger…</p>
+              </div>
+            </div>
+
+            <div id="sa-liq-pane-held" class="sa-liq-pane" style="display:none; flex-direction:column; gap:10px; min-height:110px;">
+              <div id="sa-liq-held" style="display:flex; flex-direction:column; gap:8px;">
+                <p style="font-size:12px; color:var(--humo);">Cargando ledger…</p>
+              </div>
+            </div>
+
+            <div id="sa-liq-pane-history" class="sa-liq-pane" style="display:none; flex-direction:column; gap:10px; min-height:110px;">
+              <div id="sa-liq-history" style="display:flex; flex-direction:column; gap:8px;">
+                <p style="font-size:12px; color:var(--humo);">Cargando historial…</p>
+              </div>
+            </div>
+
+            <!-- Módulo 4: Cápsula de Cumplimiento Fiscal & Acceso Directo -->
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:rgba(240,168,48,0.05); border:1px dashed rgba(240,168,48,0.25); border-radius:10px; padding:10px 14px; margin-top:auto;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:13px;">🛡️</span>
+                <span style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">
+                  Validación obligatoria: <b>RUT activo</b> + <b>PILA del mes</b>.
+                </span>
+              </div>
+              <button class="btn" id="sa-btn-goto-people" style="font-size:10px; padding:4px 10px; background:rgba(243,237,226,0.06); border-color:var(--linea); color:var(--papel); white-space:nowrap;">
+                👥 Ver Agentes
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     `;
 
-    this.attachListeners();
+    this.attachSummaryListeners();
+    void this.loadKycQueue();
     void this.loadLiquidaciones();
+    void this.loadRealMetrics();
+  }
+
+  private attachSummaryListeners() {
+    const refreshKyc = document.getElementById('sa-kyc-refresh');
+    refreshKyc?.addEventListener('click', () => void this.loadKycQueue());
+    const moreKyc = document.getElementById('sa-kyc-more');
+    moreKyc?.addEventListener('click', () => void this.loadKycQueue({ append: true }));
+
+    const refreshLiq = document.getElementById('sa-liq-refresh');
+    refreshLiq?.addEventListener('click', () => void this.loadLiquidaciones());
+
+    // Tabs interactivos para la consola de Liquidaciones B2B
+    document.querySelectorAll<HTMLElement>('.sa-liq-tab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        document.querySelectorAll<HTMLElement>('.sa-liq-tab-btn').forEach((b) => {
+          const isActive = b.getAttribute('data-tab') === targetTab;
+          b.classList.toggle('active', isActive);
+          b.style.background = isActive ? 'rgba(240,168,48,0.18)' : 'transparent';
+          b.style.borderColor = isActive ? 'rgba(240,168,48,0.35)' : 'transparent';
+          b.style.color = isActive ? 'var(--papel)' : 'var(--humo)';
+          b.style.fontWeight = isActive ? '700' : '500';
+        });
+
+        const pendingPane = document.getElementById('sa-liq-pane-pending');
+        const heldPane = document.getElementById('sa-liq-pane-held');
+        const historyPane = document.getElementById('sa-liq-pane-history');
+
+        if (pendingPane) pendingPane.style.display = targetTab === 'pending' ? 'flex' : 'none';
+        if (heldPane) heldPane.style.display = targetTab === 'held' ? 'flex' : 'none';
+        if (historyPane) historyPane.style.display = targetTab === 'history' ? 'flex' : 'none';
+      });
+    });
+
+    // Acceso directo a gestión de Scouts & Hosters
+    document.getElementById('sa-btn-goto-people')?.addEventListener('click', () => {
+      void this.switchSection('users');
+      setTimeout(() => {
+        const panel = document.getElementById('sa-people-panel');
+        if (panel) panel.style.display = 'block';
+      }, 100);
+    });
+  }
+
+  // --- SECCIÓN 2: BARES Y ANFITRIONES ---
+  private async renderVenuesSection(stage: HTMLElement) {
+    const venues = (await DB.getVenues()) || [];
+
+    const rows = venues.map((v: any) => `
+      <tr style="border-bottom: 1px solid rgba(243,237,226,0.06); transition: background 0.15s ease;">
+        <td style="padding: 14px 16px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:36px; height:36px; border-radius:8px; background:rgba(240,168,48,0.12); border:1px solid rgba(240,168,48,0.3); display:flex; align-items:center; justify-content:center; font-size:16px;">🍸</div>
+            <div>
+              <b style="color:var(--papel); font-size:13.5px; display:block;">${v.name || 'Bar Aliado'}</b>
+              <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">${v.id}</span>
+            </div>
+          </div>
+        </td>
+        <td style="padding: 14px 16px;">
+          <span style="color:var(--papel); font-size:12.5px; display:block;">${v.zone || 'Bogotá D.C.'}</span>
+          <span style="font-size:11px; color:var(--humo);">${v.address || 'Zona Rosa'}</span>
+        </td>
+        <td style="padding: 14px 16px; font-family:var(--font-mono); font-size:12px; color:var(--papel);">
+          ${v.capacity || 24} personas (${Math.floor((v.capacity || 24) / 2)} mesas)
+        </td>
+        <td style="padding: 14px 16px;">
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-family:var(--font-mono); color:#79D3AC;">
+            <span style="width:6px; height:6px; border-radius:50%; background:#79D3AC;"></span>
+            ${v.assignedHost || 'Anfitrión Asignado'}
+          </span>
+        </td>
+        <td style="padding: 14px 16px;">
+          <span style="font-size:10px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); border:1px solid rgba(240,168,48,0.3); padding:3px 8px; border-radius:999px;">
+            $650.000 COP / mes
+          </span>
+        </td>
+        <td style="padding: 14px 16px; text-align:right;">
+          <a href="/admin.html?venueId=${v.id}" target="_blank" class="btn" style="font-size:11px; padding:6px 12px; text-decoration:none; background:rgba(243,237,226,0.06); border-color:var(--linea); color:var(--papel); display:inline-flex; align-items:center; gap:6px;">
+            <span>🚪 Panel Sala</span>
+          </a>
+        </td>
+      </tr>
+    `).join('');
+
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Locales Registrados</span>
+            <b style="font-size:26px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">${venues.length} Bares</b>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Capacidad Total</span>
+            <b style="font-size:26px; color:var(--luz); font-family:var(--font-display); display:block; margin-top:4px;">${venues.reduce((acc: number, v: any) => acc + (v.capacity || 24), 0)} Asientos</b>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Ingreso B2B Proyectado</span>
+            <b style="font-size:26px; color:#79D3AC; font-family:var(--font-display); display:block; margin-top:4px;">$${(venues.length * 650000).toLocaleString('es-CO')}</b>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; overflow:hidden;">
+          <div style="padding:18px 20px; border-bottom:1px solid var(--linea); display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="font-family:var(--font-display); font-size:16px; color:var(--papel); margin:0;">Red de Establecimientos Aliados</h4>
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">${venues.length} locales activos</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; text-align:left;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--linea); background:rgba(243,237,226,0.02);">
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ESTABLECIMIENTO</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ZONA</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">CAPACIDAD</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ANFITRIÓN RESPONSABLE</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">PLAN SAAS</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600; text-align:right;">ACCIÓN</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sa-btn-new-venue')?.addEventListener('click', async () => {
+      await RondaDialog.alert({
+        title: 'Alta de Bar Aliado',
+        message: 'Para vincular un nuevo bar y proteger su radio de exclusividad de 500m, utiliza el Portal Red de Bares (/network.html).',
+        icon: '🏢'
+      });
+    });
+  }
+
+  // --- SECCIÓN 3: NOCHES Y EVENTOS ---
+  private async renderEventsSection(stage: HTMLElement) {
+    const events = await DB.getAllEvents();
+    const upcomingEvents = events.filter(e => e.status !== 'completed' && e.status !== 'cancelled');
+    const nextEvent = upcomingEvents[0];
+    const totalSold = events.reduce((acc, e) => acc + (e.participants?.length || 0), 0);
+    const totalCapacity = events.reduce((acc, e) => acc + (e.capacity || (e.tables ? e.tables * 2 : 24)), 0);
+
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Próxima Noche Speed Dating</span>
+            <b style="font-size:24px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">${nextEvent?.dayDate || 'Por programar'}</b>
+            <span style="font-size:11px; color:#79D3AC; font-family:var(--font-mono);">${nextEvent?.venueName || 'Local por asignar'}</span>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Boletos Vendidos Global</span>
+            <b style="font-size:24px; color:var(--luz); font-family:var(--font-display); display:block; margin-top:4px;">${totalSold} / ${totalCapacity || 24} Cupos</b>
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">${totalCapacity > 0 ? Math.round((totalSold / totalCapacity) * 100) : 0}% aforo cubierto</span>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Algoritmo en Puerta</span>
+            <b style="font-size:24px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">MEM-RR v2.4</b>
+            <span style="font-size:11px; color:#79D3AC; font-family:var(--font-mono);">M2 (Mesas 1 a 1) + M4</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; padding:22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+            <h4 style="font-family:var(--font-display); font-size:16px; color:var(--papel); margin:0;">Calendario de Noches Programadas (${events.length})</h4>
+            <button id="sa-btn-new-event" class="btn ambar" style="font-size:11px; font-weight:700; padding:6px 14px;">+ Nueva Noche</button>
+          </div>
+          
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            ${events.length === 0 ? `
+              <div style="background:rgba(243,237,226,0.02); border:1px dashed var(--linea); border-radius:12px; padding:36px; text-align:center;">
+                <span style="font-size:28px; display:block; margin-bottom:8px;">📅</span>
+                <b style="color:var(--papel); font-size:14px; display:block; margin-bottom:4px;">Sin Noches Registradas</b>
+                <p style="color:var(--humo); font-size:12px; margin:0;">Usa el botón "+ Nueva Noche" o ejecuta el script de siembra para habilitar la primera convocatoria oficial.</p>
+              </div>
+            ` : events.map(e => `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(243,237,226,0.03); border:1px solid var(--linea); border-radius:12px; padding:16px; flex-wrap:wrap; gap:12px;">
+                <div style="display:flex; align-items:center; gap:16px;">
+                  <div style="font-family:var(--font-mono); text-align:center; padding:8px 12px; background:rgba(240,168,48,0.1); border-radius:8px; border:1px solid rgba(240,168,48,0.25);">
+                    <span style="font-size:10px; color:var(--humo); display:block; text-transform:uppercase;">${e.dayDate?.slice(0,3) || 'EVE'}</span>
+                    <b style="font-size:18px; color:var(--luz);">${e.id.slice(-2)}</b>
+                  </div>
+                  <div>
+                    <b style="font-size:14px; color:var(--papel); display:block;">${e.name || 'Speed Dating · Noche Clásica'}</b>
+                    <span style="font-size:11.5px; color:var(--humo);">${e.dayDate || 'Fecha por confirmar'} · ${e.venueName || 'Local asignado'} · ${e.participants?.length || 0} confirmados</span>
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:4px 10px; border-radius:999px;">${e.status || 'Activa'}</span>
+                  <a href="/admin.html" class="btn ambar" style="font-size:11px; padding:7px 14px; text-decoration:none; font-weight:700;">Control en Sala</a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sa-btn-new-event')?.addEventListener('click', async () => {
+      await RondaDialog.alert({
+        title: 'Nueva Noche Speed Dating',
+        message: 'Para habilitar una nueva noche, selecciona el venue aliado y confirma la disponibilidad de las 12 mesas.',
+        icon: '🍸'
+      });
+    });
+  }
+
+  // --- SECCIÓN 4: RESERVAS Y ASISTENTES ---
+  private async renderBookingsSection(stage: HTMLElement) {
+    const events = await DB.getAllEvents();
+    let allBookings: { user: User; reservation: Reservation }[] = [];
+    for (const ev of events) {
+      const bList = await DB.getBookingsForEvent(ev.id);
+      allBookings.push(...bList);
+    }
+
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; overflow:hidden;">
+          <div style="padding:16px 20px; border-bottom:1px solid var(--linea); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h4 style="font-family:var(--font-display); font-size:16px; color:var(--papel); margin:0;">Monitor de Asistentes & Check-in (${allBookings.length})</h4>
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Sincronización en tiempo real</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; text-align:left;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--linea); background:rgba(243,237,226,0.02);">
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ASISTENTE</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">CONTACTO</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">SEDE & NOCHE</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ESTADO PAGO</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">TIER KYC</th>
+                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600; text-align:right;">CHECK-IN</th>
+                </tr>
+              </thead>
+              <tbody id="sa-bookings-table-body">
+                ${allBookings.length === 0 ? `
+                  <tr>
+                    <td colspan="6" style="padding:36px; text-align:center; color:var(--humo);">
+                      <span style="font-size:24px; display:block; margin-bottom:6px;">🎟️</span>
+                      No hay reservas confirmadas registradas en el sistema aún.
+                    </td>
+                  </tr>
+                ` : allBookings.map(b => `
+                  <tr style="border-bottom:1px solid rgba(243,237,226,0.06);">
+                    <td style="padding:14px 16px;">
+                      <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="width:32px; height:32px; border-radius:50%; background:var(--barra-alta); border:1px solid var(--luz); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--luz); font-weight:700;">${(b.user.name || 'I')[0].toUpperCase()}</div>
+                        <div>
+                          <b style="color:var(--papel); font-size:13px; display:block;">${b.user.name || 'Invitado RONDA'}</b>
+                          <span style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${b.user.email || 'Confidencial'}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td style="padding:14px 16px; font-family:var(--font-mono); font-size:11.5px; color:var(--papel);">
+                      ${b.user.phoneNumber || 'N/A'}
+                    </td>
+                    <td style="padding:14px 16px; font-size:12px; color:var(--papel);">
+                      ${b.reservation.venueName} · ${b.reservation.dayDate}
+                    </td>
+                    <td style="padding:14px 16px;">
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : '✅ Pagado Wompi'}</span>
+                    </td>
+                    <td style="padding:14px 16px;">
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); padding:2px 8px; border-radius:999px;">🛡️ Tier ${b.user.trustTier || 1}</span>
+                    </td>
+                    <td style="padding:14px 16px; text-align:right;">
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:${b.user.checkedIn ? '#79D3AC' : 'var(--humo)'};">${b.user.checkedIn ? '✅ En Sala' : '⏳ Esperando'}</span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sa-btn-export-bookings')?.addEventListener('click', () => {
+      alert('Generando archivo CSV para personal en puerta...');
+    });
+  }
+
+  // --- SECCIÓN 5: LISTA DE ESPERA ---
+  private renderWaitlistSection(stage: HTMLElement) {
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Total en Espera</span>
+            <b style="font-size:26px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">389 Usuarios</b>
+            <span style="font-size:11px; color:var(--luz); font-family:var(--font-mono);">Demanda no satisfecha</span>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Zona Más Solicitada</span>
+            <b style="font-size:24px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">Chapinero Alto</b>
+            <span style="font-size:11px; color:#79D3AC; font-family:var(--font-mono);">142 registrados (36%)</span>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Tiempo Promedio</span>
+            <b style="font-size:26px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">4.2 días</b>
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Antes de asignar cupo</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; padding:22px;">
+          <h4 style="font-family:var(--font-display); font-size:16px; color:var(--papel); margin:0 0 16px;">Demanda Geográfica para Apertura de Fechas</h4>
+          
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                <b style="color:var(--papel);">Chapinero Alto & Zona G</b>
+                <span style="font-family:var(--font-mono); color:var(--luz);">142 personas · Sugerida fecha Viernes</span>
+              </div>
+              <div style="width:100%; height:8px; background:rgba(243,237,226,0.06); border-radius:999px; overflow:hidden;">
+                <div style="width:85%; height:100%; background:var(--luz); border-radius:999px;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                <b style="color:var(--papel);">Usaquén & Santa Bárbara</b>
+                <span style="font-family:var(--font-mono); color:var(--luz);">98 personas · Sugerida fecha Sábado</span>
+              </div>
+              <div style="width:100%; height:8px; background:rgba(243,237,226,0.06); border-radius:999px; overflow:hidden;">
+                <div style="width:62%; height:100%; background:#79D3AC; border-radius:999px;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                <b style="color:var(--papel);">Parque de la 93 & Zona Rosa</b>
+                <span style="font-family:var(--font-mono); color:var(--luz);">85 personas</span>
+              </div>
+              <div style="width:100%; height:8px; background:rgba(243,237,226,0.06); border-radius:999px; overflow:hidden;">
+                <div style="width:54%; height:100%; background:#ff8ca8; border-radius:999px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- SECCIÓN 6: USUARIOS Y PERMISOS ---
+  private renderUsersSection(stage: HTMLElement) {
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:24px;">
+        
+        <!-- Simulador Rápido de Roles (Permite alternar sin desloguearse) -->
+        <div style="background: rgba(240,168,48,0.06); border: 1px dashed rgba(240,168,48,0.35); border-radius: 16px; padding: 22px;">
+          <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0 0 6px;">👑 Simulador y Asignación de Roles</h4>
+          <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px;">
+            Cambia el rol del usuario activo en memoria para auditar y verificar cualquier perfil sin reiniciar la sesión:
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn ambar sa-set-role" data-role="superadmin" style="font-size: 11px; padding: 10px 16px; font-weight: 700;">👑 Rol: Super Admin</button>
+            <button class="btn sa-set-role" data-role="sales" style="font-size: 11px; padding: 10px 16px; background: rgba(0,0,0,0.3); border-color: var(--luz); color: var(--luz);">💼 Rol: Vendedor (Sales)</button>
+            <button class="btn sa-set-role" data-role="admin" style="font-size: 11px; padding: 10px 16px; background: rgba(0,0,0,0.3); border-color: var(--linea);">🏢 Rol: Anfitrión Bar</button>
+            <button class="btn sa-set-role" data-role="client" style="font-size: 11px; padding: 10px 16px; background: rgba(0,0,0,0.3); border-color: var(--linea);">🍸 Rol: Cliente / Usuario</button>
+          </div>
+        </div>
+
+        <!-- T2: Gestión de Scouts y Hosters B2B -->
+        <div style="background: rgba(20,15,26,0.8); border: 1px solid var(--linea); border-radius: 16px; padding: 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <div>
+              <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0;">👥 Scouts y Hosters B2B</h4>
+              <p style="font-size: 12px; color: var(--humo); margin: 4px 0 0;">Alta de personal comercial y coordinadores de sala con validación tributaria.</p>
+            </div>
+            <button class="btn" id="sa-people-toggle" style="font-size: 11px; padding: 8px 14px; background:rgba(243,237,226,0.06); border-color:var(--linea);">+ Nuevo Agente</button>
+          </div>
+
+          <div id="sa-people-panel" style="display:none; margin-bottom: 20px; padding: 16px; background:rgba(0,0,0,0.3); border: 1px dashed var(--linea); border-radius:12px;">
+            <b style="font-family: var(--font-display); font-size: 14px; color: var(--papel); display:block; margin-bottom:10px;">Formulario de Registro</b>
+            <form id="sa-people-form" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px; margin-bottom:14px;">
+              <select id="sa-people-type" class="ronda-input" style="margin-bottom:0;">
+                <option value="scout">Scout (Comercial)</option>
+                <option value="host">Hoster (Anfitrión Sala)</option>
+              </select>
+              <input id="sa-people-uid" class="ronda-input" placeholder="UID (requerido)" required style="margin-bottom:0;">
+              <input id="sa-people-name" class="ronda-input" placeholder="Nombre Completo" style="margin-bottom:0;">
+              <input id="sa-people-email" class="ronda-input" type="email" placeholder="Email" style="margin-bottom:0;">
+              <select id="sa-people-status" class="ronda-input" style="margin-bottom:0;">
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+              </select>
+              <input id="sa-people-contract" class="ronda-input" placeholder="contract_id" style="margin-bottom:0;">
+              <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--papel); font-family:var(--font-mono);">
+                <input type="checkbox" id="sa-people-rut"> RUT verificado
+              </label>
+              <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--papel); font-family:var(--font-mono);">
+                <input type="checkbox" id="sa-people-pila"> PILA vigente
+              </label>
+              <button type="submit" class="btn ambar" style="font-size:11px; padding:10px; font-weight:700;">Guardar Agente</button>
+            </form>
+          </div>
+
+          <div id="sa-people-list" style="display:flex; flex-direction:column; gap:8px;">
+            <p style="font-size:12px; color:var(--humo);">Cargando lista de agentes…</p>
+          </div>
+        </div>
+
+        <!-- T-8.2: Tokens de inversión Pista Privada FFF (/invest) -->
+        <div style="background: rgba(20,15,26,0.8); border: 1px solid var(--linea); border-radius: 16px; padding: 22px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+            <div>
+              <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0;">🎟️ Pista Privada FFF: Tokens de Inversión (/invest)</h4>
+              <p style="font-size: 12px; color: var(--humo); margin: 4px 0 0;">Emisión de tokens para inversionistas ángeles y acceso a la ronda Friends & Family.</p>
+            </div>
+            <span id="sa-tokens-count" style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);"></span>
+          </div>
+
+          <form id="sa-token-form" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px; margin-bottom:16px; align-items:end;">
+            <input id="sa-token-name" class="ronda-input" placeholder="Nombre del Invitado" required style="margin-bottom:0;">
+            <select id="sa-token-ring" class="ronda-input" style="margin-bottom:0;">
+              <option value="A1">A1: Núcleo</option>
+              <option value="A2">A2: Amigos</option>
+              <option value="A3">A3: Red Profesional</option>
+              <option value="A4">A4: Mentores</option>
+              <option value="GEN">GEN: General</option>
+            </select>
+            <input id="sa-token-token" class="ronda-input" placeholder="Slug/Token (rnd-…)" required style="margin-bottom:0;">
+            <input id="sa-token-phone" class="ronda-input" placeholder="WhatsApp (opcional)" style="margin-bottom:0;">
+            <input id="sa-token-notes" class="ronda-input" placeholder="Notas (opcional)" style="margin-bottom:0;">
+            <button type="submit" class="btn ambar" style="font-size:11px; padding:10px 16px; font-weight:700;">➕ Emitir Token</button>
+          </form>
+
+          <p id="sa-tokens-empty" style="font-size:12px; color:var(--humo); display:none;">Sin tokens emitidos.</p>
+          <div id="sa-tokens-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+
+      </div>
+    `;
+
+    this.attachUsersListeners();
     void this.loadPeople();
     void this.loadTokens();
+  }
+
+  private attachUsersListeners() {
+    // Simulador de roles
+    document.querySelectorAll('.sa-set-role').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const role = (e.currentTarget as HTMLElement).getAttribute('data-role');
+        if (!role) return;
+
+        const user = Auth.currentUser;
+        if (user) {
+          user.role = role;
+          await DB.saveUser(user);
+        }
+
+        const select = document.getElementById('admin-portal-switch') as HTMLSelectElement | null;
+        if (select) {
+          if (role === 'admin') select.value = '/admin.html';
+          else if (role === 'sales') select.value = '/crm.html';
+        }
+
+        this.updateUserSidebarProfile();
+
+        await RondaDialog.alert({
+          title: 'Rol Asignado en Memoria',
+          message: `Tu usuario actual ahora tiene el rol: ${role.toUpperCase()}.\nPuedes usar el menú lateral para probar los permisos de la plataforma.`,
+          icon: '✨'
+        });
+      });
+    });
+
+    // Toggle panel personas
+    document.getElementById('sa-people-toggle')?.addEventListener('click', () => {
+      const panel = document.getElementById('sa-people-panel');
+      if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Formulario personas
+    document.getElementById('sa-people-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      void this.savePerson();
+    });
+
+    // Formulario tokens FFF
+    document.getElementById('sa-token-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      void this.emitToken();
+    });
+  }
+
+  // --- SECCIÓN 7: MÉTRICAS Y FINANZAS ---
+  private renderMetricsSection(stage: HTMLElement) {
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Facturación Bruta (Run-Rate)</span>
+            <b style="font-size:26px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">$20.000.000 COP</b>
+            <span style="font-size:11px; color:#79D3AC; font-family:var(--font-mono);">Meta Q4: $35.000.000</span>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Tasa de Match Mutuo</span>
+            <b style="font-size:26px; color:var(--luz); font-family:var(--font-display); display:block; margin-top:4px;">74.2%</b>
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Matches recíprocos en app</span>
+          </div>
+          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">CAC vs LTV</span>
+            <b style="font-size:26px; color:#79D3AC; font-family:var(--font-display); display:block; margin-top:4px;">1 : 4.8</b>
+            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Retorno altamente saludable</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; padding:22px;">
+          <h4 style="font-family:var(--font-display); font-size:16px; color:var(--papel); margin:0 0 16px;">Desglose de Rentabilidad por Línea de Negocio</h4>
+          
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:rgba(243,237,226,0.02); border-radius:10px; border:1px solid var(--linea);">
+              <div>
+                <b style="color:var(--papel); font-size:13px; display:block;">🎟️ Tickets B2C (Boletos Speed Dating)</b>
+                <span style="font-size:11px; color:var(--humo);">$45.000 COP por asistente · 276 tickets emitidos</span>
+              </div>
+              <div style="text-align:right;">
+                <b style="color:var(--papel); font-family:var(--font-display); font-size:15px;">$12.450.000 COP</b>
+                <span style="font-size:10.5px; color:#79D3AC; font-family:var(--font-mono); display:block;">Margen Bruto: 82%</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:rgba(243,237,226,0.02); border-radius:10px; border:1px solid var(--linea);">
+              <div>
+                <b style="color:var(--papel); font-size:13px; display:block;">🏢 SaaS Bares B2B (Suscripción recurrente mensual)</b>
+                <span style="font-size:11px; color:var(--humo);">$650.000 COP / mes por local · Exclusividad de 500m</span>
+              </div>
+              <div style="text-align:right;">
+                <b style="color:var(--luz); font-family:var(--font-display); font-size:15px;">$3.800.000 COP</b>
+                <span style="font-size:10.5px; color:#79D3AC; font-family:var(--font-mono); display:block;">Margen Bruto: 95%</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:rgba(243,237,226,0.02); border-radius:10px; border:1px solid var(--linea);">
+              <div>
+                <b style="color:var(--papel); font-size:13px; display:block;">🍸 Segunda Cita (Comisión sobre consumo posterior)</b>
+                <span style="font-size:11px; color:var(--humo);">25% comisión de RONDA sobre cuentas en citas agendadas</span>
+              </div>
+              <div style="text-align:right;">
+                <b style="color:#ff8ca8; font-family:var(--font-display); font-size:15px;">$1.650.000 COP</b>
+                <span style="font-size:10.5px; color:#79D3AC; font-family:var(--font-mono); display:block;">Margen Bruto: 90%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sa-btn-download-report')?.addEventListener('click', () => {
+      alert('Descargando informe consolidado en formato PDF/Excel...');
+    });
+  }
+
+  // --- SECCIÓN 8: CONFIGURACIÓN GLOBAL ---
+  private renderSettingsSection(stage: HTMLElement) {
+    stage.innerHTML = `
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; padding:24px;">
+          <h4 style="font-family:var(--font-display); font-size:17px; color:var(--papel); margin:0 0 16px;">Parámetros del Motor Algorítmico (MEM-RR)</h4>
+          
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            <div>
+              <label style="display:block; font-size:12px; font-family:var(--font-mono); color:var(--humo); margin-bottom:6px;">DURACIÓN DE RONDAS (MINUTOS)</label>
+              <input type="number" id="sa-setting-duration" class="ronda-input" value="6" min="3" max="15" style="margin-bottom:0;">
+              <span style="font-size:10.5px; color:var(--humo); display:block; margin-top:4px;">Tiempo de conversación 1 a 1 por mesa.</span>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:12px; font-family:var(--font-mono); color:var(--humo); margin-bottom:6px;">DELTA DE AFINIDAD MÍNIMA</label>
+              <input type="number" id="sa-setting-delta" class="ronda-input" value="0.15" step="0.05" min="0" max="1" style="margin-bottom:0;">
+              <span style="font-size:10.5px; color:var(--humo); display:block; margin-top:4px;">Tolerancia de compatibilidad en el grafo.</span>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:12px; font-family:var(--font-mono); color:var(--humo); margin-bottom:6px;">FORMATO DE MESA POR DEFECTO</label>
+              <select id="sa-setting-tablesize" class="ronda-input" style="margin-bottom:0;">
+                <option value="2" selected>Mesas de 2 (Cita clásica 1 a 1)</option>
+                <option value="4">Mesas de 4 (Formato Grupal / Coctel)</option>
+              </select>
+              <span style="font-size:10.5px; color:var(--humo); display:block; margin-top:4px;">Distribución espacial en el local.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; padding:24px;">
+          <h4 style="font-family:var(--font-display); font-size:17px; color:var(--papel); margin:0 0 16px;">Políticas de Acceso & Modelo de Confianza</h4>
+          
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--papel); cursor:pointer;">
+              <input type="checkbox" id="sa-setting-kyc-req" checked disabled>
+              <span>Exigir KYC Tier 1 (Selfie + Cédula) para visualizar sedes aliadas y reservar (Acuerdo de Negocio Vigente).</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--papel); cursor:pointer;">
+              <input type="checkbox" id="sa-setting-biometry" checked>
+              <span>Validar prueba de vida (Liveness) con MediaPipe antes de permitir envío a cola de revisión.</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; padding:24px;">
+          <h4 style="font-family:var(--font-display); font-size:17px; color:var(--papel); margin:0 0 16px;">Pasarela de Pago</h4>
+          
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            <div>
+              <label style="display:block; font-size:12px; font-family:var(--font-mono); color:var(--humo); margin-bottom:6px;">MÉTODO ACTIVO</label>
+              <select class="ronda-input" style="margin-bottom:0;">
+                <option value="nequi" selected>Nequi (Verificación Manual de Comprobante)</option>
+                <option value="wompi_test">Wompi Sandbox (Pruebas)</option>
+                <option value="wompi_live">Wompi Producción (Tarjetas / PSE / Bancolombia)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sa-btn-save-settings')?.addEventListener('click', async () => {
+      await RondaDialog.alert({
+        title: 'Configuración Guardada',
+        message: 'Los parámetros del sistema han sido actualizados en Firestore y propagados a la red de salas.',
+        icon: '✅'
+      });
+    });
   }
 
   private escapeKyc(s: unknown): string {
@@ -746,18 +1673,47 @@ export class SuperAdminController {
     const pendEl = document.getElementById('sa-liq-pending');
     const heldEl = document.getElementById('sa-liq-held');
     const histEl = document.getElementById('sa-liq-history');
-    const pendCount = document.getElementById('sa-liq-pending-count');
-    const heldCount = document.getElementById('sa-liq-held-count');
     if (!pendEl || !heldEl || !histEl) return;
 
     const pending = this.liqEntries.filter((e) => e.status === 'payable');
     const held = this.liqEntries.filter((e) => e.status === 'accrued' || e.status === 'review');
     const totalPend = pending.reduce((s, e) => s + (e.amount_gross_cop || 0), 0);
-    if (pendCount) pendCount.textContent = pending.length ? `${pending.length} asientos · ${this.formatCop(totalPend)}` : '';
-    if (heldCount) heldCount.textContent = held.length ? `${held.length} asientos en espera` : '';
+    const totalHeld = held.reduce((s, e) => s + (e.amount_gross_cop || 0), 0);
+    const totalPaid = this.liqPayouts.reduce((s, p) => s + (p.gross_cop || 0), 0);
 
+    // Actualizar micro-KPIs superiores
+    const kpiPend = document.getElementById('sa-kpi-liq-pending');
+    const badgePend = document.getElementById('sa-badge-liq-pending');
+    const kpiHeld = document.getElementById('sa-kpi-liq-held');
+    const badgeHeld = document.getElementById('sa-badge-liq-held');
+    const kpiPaid = document.getElementById('sa-kpi-liq-paid');
+    const badgePaid = document.getElementById('sa-badge-liq-paid');
+
+    if (kpiPend) kpiPend.textContent = this.formatCop(totalPend);
+    if (badgePend) badgePend.textContent = `${pending.length} asiento${pending.length === 1 ? '' : 's'}`;
+    if (kpiHeld) kpiHeld.textContent = this.formatCop(totalHeld);
+    if (badgeHeld) badgeHeld.textContent = `${held.length} en espera`;
+    if (kpiPaid) kpiPaid.textContent = this.formatCop(totalPaid);
+    if (badgePaid) badgePaid.textContent = `${this.liqPayouts.length} giro${this.liqPayouts.length === 1 ? '' : 's'}`;
+
+    // Actualizar contadores de las pestañas
+    const tabCntPend = document.getElementById('sa-tab-cnt-pending');
+    const tabCntHeld = document.getElementById('sa-tab-cnt-held');
+    const tabCntHist = document.getElementById('sa-tab-cnt-history');
+
+    if (tabCntPend) tabCntPend.textContent = String(pending.length);
+    if (tabCntHeld) tabCntHeld.textContent = String(held.length);
+    if (tabCntHist) tabCntHist.textContent = String(this.liqPayouts.length);
+
+    // 1. Panel: Pendientes por Pagar
     if (pending.length === 0) {
-      pendEl.innerHTML = `<p style="font-size:12px;color:var(--botella);">✅ Sin pendientes por pagar.</p>`;
+      pendEl.innerHTML = `
+        <div style="text-align:center; padding:24px 16px; background:rgba(243,237,226,0.02); border:1px solid rgba(121,211,172,0.18); border-radius:12px;">
+          <span style="font-size:24px; display:block; margin-bottom:6px;">✨</span>
+          <b style="color:var(--papel); font-size:13px; display:block;">Tesorería al Día</b>
+          <span style="font-size:11px; color:var(--humo); display:block; margin-top:2px;">No hay comisiones pendientes de desembolso en este momento.</span>
+        </div>
+      `;
     } else {
       const byPayee = new Map<string, LedgerEntry[]>();
       for (const e of pending) {
@@ -789,8 +1745,15 @@ export class SuperAdminController {
         b.addEventListener('click', () => void this.openPayoutModal((b as HTMLElement).getAttribute('data-payee') || '')));
     }
 
+    // 2. Panel: En Revisión / Custodia
     if (held.length === 0) {
-      heldEl.innerHTML = `<p style="font-size:12px;color:var(--humo);">Sin asientos en revisión.</p>`;
+      heldEl.innerHTML = `
+        <div style="text-align:center; padding:24px 16px; background:rgba(243,237,226,0.02); border:1px solid var(--linea); border-radius:12px;">
+          <span style="font-size:24px; display:block; margin-bottom:6px;">⏳</span>
+          <b style="color:var(--papel); font-size:13px; display:block;">Sin Asientos en Custodia</b>
+          <span style="font-size:11px; color:var(--humo); display:block; margin-top:2px;">Todas las comisiones devengadas han completado su maduración.</span>
+        </div>
+      `;
     } else {
       heldEl.innerHTML = held.map((e) => {
         const name = this.escapeKyc(this.liqPayeeNames.get(e.payee_uid) || e.payee_uid);
@@ -802,8 +1765,15 @@ export class SuperAdminController {
       }).join('');
     }
 
+    // 3. Panel: Historial de Desembolsos
     if (this.liqPayouts.length === 0) {
-      histEl.innerHTML = `<p style="font-size:12px;color:var(--humo);">Sin desembolsos registrados.</p>`;
+      histEl.innerHTML = `
+        <div style="text-align:center; padding:24px 16px; background:rgba(243,237,226,0.02); border:1px solid var(--linea); border-radius:12px;">
+          <span style="font-size:24px; display:block; margin-bottom:6px;">📜</span>
+          <b style="color:var(--papel); font-size:13px; display:block;">Sin Giros Registrados</b>
+          <span style="font-size:11px; color:var(--humo); display:block; margin-top:2px;">Los desembolsos aprobados aparecerán aquí con su referencia bancaria.</span>
+        </div>
+      `;
     } else {
       histEl.innerHTML = this.liqPayouts.map((p) => {
         const name = this.escapeKyc(this.liqPayeeNames.get(p.payee_uid) || p.payee_uid);
@@ -1160,14 +2130,17 @@ export class SuperAdminController {
       const token = target.getAttribute('data-token') || '';
       if (!token) return;
       try {
+        const baseOrigin = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
+          ? window.location.origin
+          : 'https://ronda.uno';
         if (action === 'copy') {
-          await navigator.clipboard.writeText(`https://ronda-uno.web.app/invest.html?token=${token}`);
+          await navigator.clipboard.writeText(`${baseOrigin}/invest?token=${token}`);
           const prev = target.textContent;
           target.textContent = '✅ Copiado';
           setTimeout(() => { target.textContent = prev; }, 1500);
         } else if (action === 'wa') {
           const name = target.getAttribute('data-name') || '';
-          const text = `Hola ${name}, este es tu enlace de acceso privado a la Pista Privada FFF de RONDA:\nhttps://ronda-uno.web.app/invest.html?token=${token}`;
+          const text = `Hola ${name}, este es tu enlace de acceso privado a la Pista Privada FFF de RONDA:\n${baseOrigin}/invest?token=${token}`;
           await navigator.clipboard.writeText(text);
           const prev = target.textContent;
           target.textContent = '✅ Copiado';

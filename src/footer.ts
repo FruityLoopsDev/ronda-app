@@ -124,8 +124,8 @@ export function getRondaFooterHtml(): string {
               <a href="/" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">✦ Portal Principal (Solteros)</a>
               <a href="/partners" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">Para Bares Aliados (Partners)</a>
               <a href="/invest" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">Pista Inversionistas FFF</a>
-              <a href="index.html#legal-terminos" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">Términos y Condiciones</a>
-              <a href="index.html#legal-privacidad" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">Política de Privacidad (Ley 1581)</a>
+              <a href="/#legal-terminos" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">Términos y Condiciones</a>
+              <a href="/#legal-privacidad" style="color: var(--humo, #8c8378); text-decoration: none; transition: color 0.2s;">Política de Privacidad (Ley 1581)</a>
             </div>
           </div>
 

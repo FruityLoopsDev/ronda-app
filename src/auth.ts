@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getIdToken } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getIdToken, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { RondaServices } from "./firebase-config.js";
 import { DB, User } from "./db.js";
 
@@ -11,12 +11,38 @@ export class AuthService {
   constructor() {
     this.currentUser = null;
     
+    // Configurar persistencia en sesión temporal para local / emulador
+    this._ensureSessionPersistence();
+
     // Iniciar escucha del estado de autenticación
     setTimeout(() => this.initAuthStateListener(), 100);
   }
 
   private _getAuth() {
     return RondaServices.auth;
+  }
+
+  /**
+   * Configura la persistencia en sesión temporal (browserSessionPersistence)
+   * para entornos locales o de emulador, evitando que las credenciales queden
+   * atrapadas permanentemente en IndexedDB tras cerrar la pestaña.
+   */
+  private async _ensureSessionPersistence(): Promise<void> {
+    if (typeof window === 'undefined') return;
+    try {
+      const isLocalOrEmulator = sessionStorage.getItem('ronda_use_emulator') === 'true' || 
+                                window.location.search.includes('emulator=true') ||
+                                (import.meta as any).env?.VITE_USE_FIREBASE_EMULATOR === 'true' ||
+                                window.location.port === '5002' ||
+                                window.location.hostname === 'localhost' ||
+                                window.location.hostname === '127.0.0.1';
+      if (isLocalOrEmulator) {
+        await setPersistence(this._getAuth(), browserSessionPersistence);
+        console.log("[Auth] Persistencia en local establecida en sesión temporal (browserSessionPersistence).");
+      }
+    } catch (e) {
+      console.warn("[Auth] No se pudo establecer browserSessionPersistence:", e);
+    }
   }
 
   initAuthStateListener() {
@@ -89,6 +115,7 @@ export class AuthService {
   async loginWithEmail(email: string, password: string) {
     console.log(`[Auth] Login intent: ${email}`);
     try {
+      await this._ensureSessionPersistence();
       await signInWithEmailAndPassword(this._getAuth(), email, password);
     } catch (error: any) {
       console.error("Error de login en Firebase Auth:", error);
@@ -111,6 +138,7 @@ export class AuthService {
   async registerWithEmail(email: string, password: string, profileData: Partial<User>) {
     console.log(`[Auth] Register intent: ${email}`);
     try {
+      await this._ensureSessionPersistence();
       const userCredential = await createUserWithEmailAndPassword(this._getAuth(), email, password);
       const uid = userCredential.user.uid;
 
