@@ -769,6 +769,23 @@ export class DatabaseInterface {
     return unsubscribe;
   }
 
+  subscribeToBookings(eventId: string, callback: (bookings: { user: User; reservation: Reservation }[]) => void): Unsubscribe {
+    const colRef = collection(this._getFirestore(), 'users');
+    const q = query(colRef, where('activeReservation.eventId', '==', eventId));
+    return onSnapshot(q, (snap) => {
+      const list: { user: User; reservation: Reservation }[] = [];
+      snap.forEach(docSnap => {
+        const u = { uid: docSnap.id, ...(docSnap.data() as any) } as User;
+        if (u.activeReservation) {
+          list.push({ user: u, reservation: u.activeReservation });
+        }
+      });
+      callback(list);
+    }, (err) => {
+      console.warn('[DB] Error en suscripción a reservas:', err);
+    });
+  }
+
   // --- Venues (Red) ---
   async getVenues(): Promise<Venue[]> {
     try {

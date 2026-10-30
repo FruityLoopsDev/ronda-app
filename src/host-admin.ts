@@ -62,6 +62,7 @@ export class HostAdminController {
   // Estado del escáner QR
   private qrScanner: any = null;
   private qrScanning: boolean = false;
+  private bookingsUnsubscribe: any = null;
 
   // --- FASE 21: Caja / Cierre de Noche ---
   private readonly DRINK_UNIT_PRICE_COP = 25000; // precio unitario por copa incluida (COP)
