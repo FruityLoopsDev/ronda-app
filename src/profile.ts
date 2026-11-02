@@ -101,9 +101,14 @@ export class ProfileService {
         kycSettingsStatus.className = 'chip verde';
         kycSettingsStatus.style.fontSize = '9.5px';
         kycSettingsStatus.style.padding = '3px 8px';
+      } else if (user.isPendingManualReview || user.kycStatus === 'pending_manual') {
+        kycSettingsStatus.textContent = 'En revisión manual ⏳';
+        kycSettingsStatus.className = 'chip ambar';
+        kycSettingsStatus.style.fontSize = '9.5px';
+        kycSettingsStatus.style.padding = '3px 8px';
       } else {
         kycSettingsStatus.textContent = 'Pendiente';
-        kycSettingsStatus.className = 'chip ambar';
+        kycSettingsStatus.className = 'chip gris';
         kycSettingsStatus.style.fontSize = '9.5px';
         kycSettingsStatus.style.padding = '3px 8px';
       }

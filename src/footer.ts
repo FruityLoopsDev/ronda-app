@@ -286,9 +286,9 @@ export function getRondaAppFooterHtml(): string {
           ⚡ <span data-ronda-hours>${APP_DEV_HOURS}</span>h ops · <span data-ronda-commits>${APP_COMMIT_COUNT}</span> deploys
         </span>
         <span style="opacity: 0.3;">·</span>
-        <a href="#legal-terminos" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-terminos')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Términos</a>
+        <a href="#legal-terminos" onclick="const m=document.getElementById('modal-legal-terminos'); if(m){m.style.display='flex';} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Términos</a>
         <span style="opacity: 0.3;">·</span>
-        <a href="#legal-privacidad" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-privacidad')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Privacidad</a>
+        <a href="#legal-privacidad" onclick="const m=document.getElementById('modal-legal-privacidad'); if(m){m.style.display='flex';} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Privacidad</a>
       </div>
     </footer>
   `;

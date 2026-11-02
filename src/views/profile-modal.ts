@@ -163,9 +163,13 @@ export class ProfileModal {
           }
         }
 
-        // Persistir el estado de verificación biométrica de identidad si fue completado.
+        // Persistir el estado de verificación biométrica de identidad si fue completado o está en revisión manual.
         if (Verification.isVerified) {
           patch.isVerified = true;
+          patch.kycStatus = 'approved';
+        } else if (Verification.isPendingManualReview) {
+          patch.isPendingManualReview = true;
+          patch.kycStatus = 'pending_manual';
         }
 
         Object.assign(user, patch);
@@ -189,21 +193,42 @@ export class ProfileModal {
   // ── KYC Biométrico ─────────────────────────────────────────
 
   private setupKYC() {
-    const btnStartKyc = document.getElementById('btn-start-kyc');
-    const btnSaveProfile = document.getElementById('btn-save-profile') as HTMLButtonElement;
+    const btnStartKyc = document.getElementById('btn-start-kyc') as HTMLButtonElement | null;
+    const btnSaveProfile = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
+    const kycStatus = document.getElementById('kyc-status');
     if (!btnStartKyc) return;
+
+    // Sincronizar estado previo si ya está verificado o en revisión manual
+    const user = Auth.currentUser;
+    if (user?.isVerified || Verification.isVerified) {
+      if (kycStatus) {
+        kycStatus.textContent = "✓ Identidad verificada.";
+        kycStatus.style.color = "var(--botella)";
+      }
+      btnStartKyc.disabled = true;
+      btnStartKyc.textContent = "Identidad Verificada ✓";
+      if (btnSaveProfile) btnSaveProfile.disabled = false;
+    } else if (user?.isPendingManualReview || user?.kycStatus === 'pending_manual' || Verification.isPendingManualReview) {
+      Verification.isPendingManualReview = true;
+      if (kycStatus) {
+        kycStatus.textContent = "⏳ Tu identidad está en aprobación manual por el equipo de Ronda (máx. 24h). Puedes guardar tu perfil y continuar.";
+        kycStatus.style.color = "var(--luz)";
+      }
+      btnStartKyc.disabled = true;
+      btnStartKyc.textContent = "En revisión manual por el equipo Ronda ⏳";
+      if (btnSaveProfile) btnSaveProfile.disabled = false;
+    } else if (Verification.failedAttempts === 1) {
+      btnStartKyc.textContent = "Reintentar Verificación KYC (Intento 2 de 2)";
+    }
 
     btnStartKyc.addEventListener('click', async () => {
       const kycVideo = document.getElementById('kyc-video');
       const kycCanvas = document.getElementById('kyc-canvas');
       if (kycVideo) kycVideo.style.display = 'block';
       if (kycCanvas) kycCanvas.style.display = 'block';
-      const kycStatus = document.getElementById('kyc-status');
-      (btnStartKyc as HTMLButtonElement).disabled = true;
+      btnStartKyc.disabled = true;
       btnStartKyc.textContent = "Verificando...";
       try {
-        // startVerification es robusto: maneja el flujo, muestra el estado en kyc-status
-        // y devuelve boolean sin lanzar (salvo fallo imprevisto).
         const isVerified = await Verification.startVerification('kyc-video', 'kyc-canvas');
         if (isVerified) {
           if (kycStatus) {
@@ -211,6 +236,16 @@ export class ProfileModal {
             kycStatus.style.color = "var(--botella)";
           }
           if (btnSaveProfile) btnSaveProfile.disabled = false;
+          btnStartKyc.disabled = true;
+          btnStartKyc.textContent = "Identidad Verificada ✓";
+        } else if (Verification.isPendingManualReview) {
+          if (kycStatus) {
+            kycStatus.textContent = "⏳ Tras 2 intentos, tu verificación ha pasado a aprobación manual por el equipo de Ronda (máx. 24h). Ya puedes guardar tu perfil y continuar en la app.";
+            kycStatus.style.color = "var(--luz)";
+          }
+          if (btnSaveProfile) btnSaveProfile.disabled = false;
+          btnStartKyc.disabled = true;
+          btnStartKyc.textContent = "En revisión manual por el equipo Ronda ⏳";
         }
       } catch (err) {
         console.error("KYC Error inesperado:", err);
@@ -219,8 +254,12 @@ export class ProfileModal {
           kycStatus.style.color = "var(--vino)";
         }
       } finally {
-        (btnStartKyc as HTMLButtonElement).disabled = false;
-        btnStartKyc.textContent = "Iniciar Verificación KYC";
+        if (!Verification.isVerified && !Verification.isPendingManualReview) {
+          btnStartKyc.disabled = false;
+          btnStartKyc.textContent = Verification.failedAttempts > 0
+            ? `Reintentar Verificación KYC (Intento ${Verification.failedAttempts + 1} de 2)`
+            : "Iniciar Verificación KYC";
+        }
       }
     });
   }

@@ -38,6 +38,8 @@ export interface User {
   preferredZones?: string[];
   ageRangePreference?: { min: number; max: number };
   isVerified?: boolean;
+  isPendingManualReview?: boolean;
+  kycStatus?: 'unverified' | 'pending_manual' | 'approved' | 'rejected';
   faceVerified?: boolean;
   trustTier?: 0 | 1 | 2 | 3;
   verifications?: {

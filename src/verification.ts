@@ -1,4 +1,4 @@
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { Auth } from './auth.js';
 import {
@@ -61,6 +61,8 @@ const OCR_NON_BLOCKING_TIMEOUT_MS = 5500;
 class VerificationService {
   location: { lat: number; lng: number } | null = null;
   isVerified: boolean = false;
+  isPendingManualReview: boolean = false;
+  failedAttempts: number = 0;
   stream: MediaStream | null = null;
   objectUrl: string | null = null;
 
@@ -72,6 +74,13 @@ class VerificationService {
   constructor() {
     this.location = null;
     this.isVerified = false;
+    try {
+      this.failedAttempts = parseInt(sessionStorage.getItem('ronda_kyc_failed_attempts') || '0', 10) || 0;
+      this.isPendingManualReview = sessionStorage.getItem('ronda_kyc_pending_manual') === 'true';
+    } catch {
+      this.failedAttempts = 0;
+      this.isPendingManualReview = false;
+    }
   }
 
   // --- 1. Geolocalización ---
@@ -234,6 +243,86 @@ class VerificationService {
     } catch (err) {
       console.warn('[KYC] No se pudo registrar en kycReviews (permisos o modo offline):', err);
       return { queued: false };
+    }
+  }
+
+  /**
+   * Gestiona intentos fallidos de verificación KYC.
+   * Tras 2 intentos fallidos, el caso se eleva automáticamente a revisión manual
+   * por el equipo de Ronda sin bloquear al usuario para guardar su perfil.
+   */
+  async handleFailedAttempt(
+    reason: string,
+    selfieResult?: any,
+    docCapture?: any,
+    ocr?: any,
+    verdict?: any
+  ): Promise<void> {
+    this.failedAttempts++;
+    console.log(`[KYC] Intento fallido #${this.failedAttempts}. Motivo: ${reason}`);
+
+    try {
+      sessionStorage.setItem('ronda_kyc_failed_attempts', this.failedAttempts.toString());
+    } catch {}
+
+    if (this.failedAttempts >= 2) {
+      this.isPendingManualReview = true;
+      try {
+        sessionStorage.setItem('ronda_kyc_pending_manual', 'true');
+      } catch {}
+
+      // Registrar caso en Firestore kycReviews para que el equipo de RONDA lo apruebe en superadmin
+      await this.submitKycReview({
+        reason: reason || 'manual_approval_after_2_attempts',
+        distance: verdict?.distance,
+        threshold: verdict?.threshold,
+        ocrText: ocr?.rawText,
+        ocrHits: ocr?.hits,
+        livenessPassed: selfieResult?.livenessPassed,
+        baselineEar: selfieResult?.baselineEar,
+        minEarObserved: selfieResult?.minEarObserved,
+        dropRatio: selfieResult?.dropRatio,
+        selfieDataUrl: selfieResult?.selfieDataUrl,
+        documentDataUrl: docCapture?.dataUrl,
+        status: 'pending'
+      });
+
+      // Si hay usuario logueado, actualizar en DB para trazabilidad
+      const uid = Auth.currentUser?.uid;
+      if (uid && RondaServices.db) {
+        try {
+          await updateDoc(doc(RondaServices.db, 'users', uid), {
+            isPendingManualReview: true,
+            kycStatus: 'pending_manual',
+            updatedAt: new Date().toISOString()
+          });
+        } catch (e) {
+          console.warn('[KYC] No se pudo guardar estado pending_manual en perfil:', e);
+        }
+      }
+
+      this.setStatus(
+        '⏳ Tras 2 intentos, tu verificación ha pasado a aprobación manual por el equipo de Ronda (máx. 24h). Ya puedes guardar tu perfil y continuar en la app.',
+        'warn'
+      );
+
+      const btnStartKyc = document.getElementById('btn-start-kyc') as HTMLButtonElement | null;
+      if (btnStartKyc) {
+        btnStartKyc.textContent = 'En revisión manual por el equipo Ronda ⏳';
+        btnStartKyc.disabled = true;
+      }
+
+      const btnSave = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
+      if (btnSave) {
+        btnSave.disabled = false;
+      }
+    } else {
+      const baseMsg = this.statusMessage(reason);
+      this.setStatus(`${baseMsg} (Intento ${this.failedAttempts} de 2).`, 'err');
+      const btnStartKyc = document.getElementById('btn-start-kyc') as HTMLButtonElement | null;
+      if (btnStartKyc) {
+        btnStartKyc.textContent = 'Reintentar Verificación KYC (Intento 2 de 2)';
+      }
     }
   }
 
@@ -622,6 +711,21 @@ class VerificationService {
    *  - Fase 3: Comparación biométrica primaria (`distancia <= 0.52`) y fallback a `submitKycReview`.
    */
   async startVerification(videoId: string, canvasId: string): Promise<boolean> {
+    if (this.isPendingManualReview || this.failedAttempts >= 2) {
+      this.setStatus(
+        '⏳ Tu verificación ya está en aprobación manual por el equipo de Ronda (máx. 24h). Ya puedes guardar tu perfil y continuar en la app.',
+        'warn'
+      );
+      const btnStartKyc = document.getElementById('btn-start-kyc') as HTMLButtonElement | null;
+      if (btnStartKyc) {
+        btnStartKyc.textContent = 'En revisión manual por el equipo Ronda ⏳';
+        btnStartKyc.disabled = true;
+      }
+      const btnSave = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
+      if (btnSave) btnSave.disabled = false;
+      return false;
+    }
+
     // Guard anti-colisión: si otro listener en #btn-start-kyc invoca startVerification
     // mientras ya está corriendo, reutiliza la misma promesa sin destruir el stream.
     if (this.isRunningKyc && this.activeVerificationPromise) {
@@ -642,7 +746,7 @@ class VerificationService {
     const videoEl = document.getElementById(videoId) as HTMLVideoElement | null;
     const canvasEl = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!videoEl || !canvasEl) {
-      this.setStatus(this.statusMessage('no_camera'), 'err');
+      await this.handleFailedAttempt('no_camera');
       return false;
     }
 
@@ -653,7 +757,7 @@ class VerificationService {
     try {
       await this.startCamera(videoEl);
     } catch (e: any) {
-      this.setStatus(this.statusMessage((e && e.message) || 'no_camera'), 'err');
+      await this.handleFailedAttempt((e && e.message) || 'no_camera');
       return false;
     }
 
@@ -665,7 +769,7 @@ class VerificationService {
       this.stopCameraStream(videoEl);
 
       if (!selfieResult.descriptor) {
-        this.setStatus(this.statusMessage(selfieResult.error || 'no_face'), 'err');
+        await this.handleFailedAttempt(selfieResult.error || 'no_face', selfieResult);
         return false;
       }
 
@@ -675,7 +779,7 @@ class VerificationService {
       try {
         docCapture = await this.captureDocumentImage();
       } catch (e: any) {
-        this.setStatus(this.statusMessage((e && e.message) || 'no_document'), 'err');
+        await this.handleFailedAttempt((e && e.message) || 'no_document', selfieResult);
         return false;
       }
 
@@ -691,18 +795,7 @@ class VerificationService {
 
       if (docDesc.error || !docDesc.descriptor) {
         const errCode = docDesc.error === 'no_face' ? 'sin_rostro_documento' : docDesc.error;
-        await this.submitKycReview({
-          reason: errCode || 'sin_rostro_documento',
-          livenessPassed: selfieResult.livenessPassed,
-          baselineEar: selfieResult.baselineEar,
-          minEarObserved: selfieResult.minEarObserved,
-          dropRatio: selfieResult.dropRatio,
-          ocrText: ocr.rawText,
-          ocrHits: ocr.hits,
-          selfieDataUrl: selfieResult.selfieDataUrl,
-          documentDataUrl: docCapture.dataUrl
-        });
-        this.setStatus(this.statusMessage(errCode), 'err');
+        await this.handleFailedAttempt(errCode || 'sin_rostro_documento', selfieResult, docCapture, ocr);
         return false;
       }
 
@@ -718,6 +811,12 @@ class VerificationService {
 
       if (verdict.ok) {
         this.isVerified = true;
+        this.isPendingManualReview = false;
+        this.failedAttempts = 0;
+        try {
+          sessionStorage.removeItem('ronda_kyc_failed_attempts');
+          sessionStorage.removeItem('ronda_kyc_pending_manual');
+        } catch {}
         const distLabel = typeof verdict.distance === 'number' ? ` (dist: ${verdict.distance.toFixed(2)})` : '';
         this.setStatus(`✓ Identidad biométrica verificada con éxito${distLabel}. Ya puedes guardar tu perfil.`, 'ok');
 
@@ -740,27 +839,12 @@ class VerificationService {
         return true;
       }
 
-      // Si la distancia supera 0.52, registrar en kycReviews para auditoría/revisión manual
-      await this.submitKycReview({
-        reason: verdict.reason || 'rostro_no_coincide',
-        distance: verdict.distance,
-        threshold: verdict.threshold,
-        ocrText: ocr.rawText,
-        ocrHits: ocr.hits,
-        livenessPassed: selfieResult.livenessPassed,
-        baselineEar: selfieResult.baselineEar,
-        minEarObserved: selfieResult.minEarObserved,
-        dropRatio: selfieResult.dropRatio,
-        selfieDataUrl: selfieResult.selfieDataUrl,
-        documentDataUrl: docCapture.dataUrl,
-        status: 'pending'
-      });
-
-      this.setStatus(this.statusMessage(verdict.reason), 'err');
+      // Si la distancia supera 0.52, registrar en kycReviews y procesar intento
+      await this.handleFailedAttempt(verdict.reason || 'rostro_no_coincide', selfieResult, docCapture, ocr, verdict);
       return false;
     } catch (e: any) {
       console.error('[KYC] Error inesperado:', e);
-      this.setStatus(this.statusMessage('unknown'), 'err');
+      await this.handleFailedAttempt('unknown');
       return false;
     } finally {
       this.stopCameraStream(videoEl);

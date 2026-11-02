@@ -2329,29 +2329,27 @@
           ⚡ <span data-ronda-hours>266</span>h ops · <span data-ronda-commits>105</span> deploys
         </span>
         <span style="opacity: 0.3;">·</span>
-        <a href="#legal-terminos" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-terminos')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Términos</a>
+        <a href="#legal-terminos" onclick="const m=document.getElementById('modal-legal-terminos'); if(m){m.style.display='flex';} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Términos</a>
         <span style="opacity: 0.3;">·</span>
-        <a href="#legal-privacidad" onclick="const m=document.getElementById('modal-legal-viewer'); if(m){m.style.display='flex'; document.getElementById('legal-tab-privacidad')?.click();} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Privacidad</a>
+        <a href="#legal-privacidad" onclick="const m=document.getElementById('modal-legal-privacidad'); if(m){m.style.display='flex';} return false;" style="color: var(--humo, #8c8378); text-decoration: underline; font-size: 11px;">Privacidad</a>
       </div>
     </footer>
   </div>
 
-  <!-- Modal: Visor Legal (T-11.1) -->
-  <div id="modal-legal-viewer" class="modal-overlay" style="display:none;">
+  <!-- ==================== MODAL: TÉRMINOS Y CONDICIONES (INDEPENDIENTE) ==================== -->
+  <div id="modal-legal-terminos" class="modal-overlay" style="display:none;" onclick="if(event.target===this){this.style.display='none'; if(window.location.hash==='#legal-terminos') history.replaceState(null,'',window.location.pathname);}">
     <div class="tel" style="width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; scrollbar-width: none; background: var(--noche); border: 1px solid var(--linea); border-radius: var(--r); box-shadow: 0 30px 80px rgba(0,0,0,0.85);">
       <div class="tel-in" style="padding: 24px 20px 28px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 18px;">
-          <button id="btn-legal-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar">✕</button>
-          <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin:0;">📄 Documentos Legales</h3>
-          <div style="font-size: 10px; font-family: var(--font-mono); color: var(--humo);">Ley 1581 de 2012 · Habeas Data</div>
-        </div>
-        <div style="display:flex; gap:0; border-bottom: 1px solid var(--linea); margin-bottom: 16px;">
-          <button id="legal-tab-terminos" class="legal-tab active" style="flex:1; padding:10px 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: rgba(240,168,48,0.12); border: none; border-bottom: 2px solid var(--luz); color: var(--papel); cursor: pointer;">Términos y Condiciones</button>
-          <button id="legal-tab-privacidad" class="legal-tab" style="flex:1; padding:10px 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--humo); cursor: pointer;">Política de Privacidad</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 18px; border-bottom: 1px solid var(--linea); padding-bottom: 14px;">
+          <div style="display:flex; align-items:center; gap: 12px;">
+            <button id="btn-terms-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar" onclick="document.getElementById('modal-legal-terminos').style.display='none'; if(window.location.hash==='#legal-terminos') history.replaceState(null,'',window.location.pathname);">✕</button>
+            <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin:0;">📜 Términos y Condiciones</h3>
+          </div>
+          <div style="font-size: 10px; font-family: var(--font-mono); color: var(--humo); background: rgba(243,237,226,0.05); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--linea);">Jurisdicción: Colombia</div>
         </div>
         <div id="legal-content-terminos" style="font-size: 12.5px; line-height: 1.6; color: var(--humo); display: block;">
-          <p><strong>Términos y Condiciones de Uso del Servicio (RONDA)</strong></p>
-          <p style="font-size: 10.5px; color: var(--humo); opacity: 0.8;">Última actualización: 26 de Octubre de 2026 · Jurisdicción: República de Colombia</p>
+          <p style="font-size: 13.5px; color: var(--papel); margin-bottom: 4px;"><strong>Términos y Condiciones de Uso del Servicio (RONDA)</strong></p>
+          <p style="font-size: 10.5px; color: var(--humo); opacity: 0.8; margin-top: 0;">Última actualización: 26 de Octubre de 2026 · Jurisdicción: República de Colombia</p>
           <hr style="border:0; border-top:1px solid var(--linea); margin: 14px 0;">
           <p><strong>1. Aceptación de los Términos</strong><br>Al registrarse, acceder o utilizar la plataforma web, asistir a las experiencias presenciales o adquirir tickets de RONDA, el usuario declara ser mayor de 18 años, contar con plena capacidad civil y aceptar sin reservas los presentes Términos y Condiciones de Uso.</p>
           <p><strong>2. Naturaleza del Servicio</strong><br>RONDA es una plataforma tecnológica que organiza experiencias presenciales curadas de citas rápidas y dinamización comercial en gastrobares aliados en Bogotá.</p>
@@ -2361,9 +2359,27 @@
           <p><strong>6. Darse de Baja y Derecho al Olvido</strong><br>El usuario tiene el derecho inalienable de darse de baja en cualquier momento y de forma inmediata a través del botón «Darse de baja y suprimir mis datos» en su panel de perfil. Al ejecutar la baja se revoca la autorización de tratamiento y se eliminan de forma permanente e irreversible los registros biométricos, fotos, historial de rondas y credenciales.</p>
           <p><strong>7. Canales de Contacto y PQRS</strong><br>Correo: legal@ronda.uno / contacto@ronda.uno · WhatsApp: (+57) 302 654 3854 · Bogotá D.C., Colombia</p>
         </div>
-        <div id="legal-content-privacidad" style="font-size: 12.5px; line-height: 1.6; color: var(--humo); display: none;">
-          <p><strong>Política de Tratamiento de Datos Personales (Habeas Data — Ley 1581 de 2012)</strong></p>
-          <p style="font-size: 10.5px; color: var(--humo); opacity: 0.8;">Responsable del Tratamiento: RONDA System · Bogotá D.C., Colombia</p>
+        <div style="margin-top: 22px; display:flex; justify-content: flex-end; border-top: 1px solid var(--linea); padding-top: 14px;">
+          <button class="btn" onclick="document.getElementById('modal-legal-terminos').style.display='none'; if(window.location.hash==='#legal-terminos') history.replaceState(null,'',window.location.pathname);" style="font-size: 11px; padding: 8px 20px; border: 1px solid var(--linea); color: var(--papel); background: rgba(243,237,226,0.06); cursor: pointer; border-radius: var(--r); font-weight: 600;">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: POLÍTICA DE PRIVACIDAD (INDEPENDIENTE) ==================== -->
+  <div id="modal-legal-privacidad" class="modal-overlay" style="display:none;" onclick="if(event.target===this){this.style.display='none'; if(window.location.hash==='#legal-privacidad') history.replaceState(null,'',window.location.pathname);}">
+    <div class="tel" style="width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; scrollbar-width: none; background: var(--noche); border: 1px solid var(--linea); border-radius: var(--r); box-shadow: 0 30px 80px rgba(0,0,0,0.85);">
+      <div class="tel-in" style="padding: 24px 20px 28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 18px; border-bottom: 1px solid var(--linea); padding-bottom: 14px;">
+          <div style="display:flex; align-items:center; gap: 12px;">
+            <button id="btn-privacy-close" class="modal-icon-btn" title="Cerrar" aria-label="Cerrar" onclick="document.getElementById('modal-legal-privacidad').style.display='none'; if(window.location.hash==='#legal-privacidad') history.replaceState(null,'',window.location.pathname);">✕</button>
+            <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--papel); margin:0;">🔒 Política de Privacidad</h3>
+          </div>
+          <div style="font-size: 10px; font-family: var(--font-mono); color: var(--humo); background: rgba(243,237,226,0.05); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--linea);">Ley 1581 de 2012 · Habeas Data</div>
+        </div>
+        <div id="legal-content-privacidad" style="font-size: 12.5px; line-height: 1.6; color: var(--humo); display: block;">
+          <p style="font-size: 13.5px; color: var(--papel); margin-bottom: 4px;"><strong>Política de Tratamiento de Datos Personales (Habeas Data — Ley 1581 de 2012)</strong></p>
+          <p style="font-size: 10.5px; color: var(--humo); opacity: 0.8; margin-top: 0;">Responsable del Tratamiento: RONDA System · Bogotá D.C., Colombia</p>
           <hr style="border:0; border-top:1px solid var(--linea); margin: 14px 0;">
           <p><strong>1. Principios Rectores</strong><br>Legalidad y finalidad; libertad y consentimiento previo; veracidad y calidad; acceso y circulación restringida; seguridad y confidencialidad.</p>
           <p><strong>2. Tipos de Datos Recopilados</strong><br>Datos generales: nombre, correo, teléfono (WhatsApp), perfil de LinkedIn, edad, género. Datos sensibles (biometría facial): captura y vectorización facial exclusivamente para prevención de suplantación de identidad y validación en puerta de gastrobares aliados. Nunca se venden, comparten ni transfieren a terceros.</p>
@@ -2372,6 +2388,9 @@
           <p><strong>5. Procedimiento Ágil de Supresión (Darse de Baja)</strong><br>Desde el perfil: presionar «Darse de baja y suprimir mis datos»; confirmar en modal de irreversibilidad; cuestionario opcional de salida. Al confirmar: se elimina documento de usuario, descriptores faciales y fotos en Firestore/Storage; se elimina el usuario en Firebase Auth; se borran cachés locales; se cierra la sesión inmediatamente.</p>
           <p><strong>6. Vigencia de las Bases de Datos</strong><br>Los datos se conservan mientras la cuenta esté activa. Al eliminarse la cuenta, los datos son purgados de los servidores activos de producción.</p>
           <p><strong>7. Canal de Protección de Datos</strong><br>legal@ronda.uno / soporte@ronda.uno</p>
+        </div>
+        <div style="margin-top: 22px; display:flex; justify-content: flex-end; border-top: 1px solid var(--linea); padding-top: 14px;">
+          <button class="btn" onclick="document.getElementById('modal-legal-privacidad').style.display='none'; if(window.location.hash==='#legal-privacidad') history.replaceState(null,'',window.location.pathname);" style="font-size: 11px; padding: 8px 20px; border: 1px solid var(--linea); color: var(--papel); background: rgba(243,237,226,0.06); cursor: pointer; border-radius: var(--r); font-weight: 600;">Entendido</button>
         </div>
       </div>
     </div>
@@ -2417,28 +2436,38 @@
   </div>
   <script type="module" src="/src/app.ts"></script>
   <script>
-    // Abrir visor legal desde hash de URL (ej. desde landings: index.html#legal-terminos)
+    // Abrir modales legales independientes desde hash de URL (ej. index.html#legal-terminos o #legal-privacidad)
     (function () {
-      const hash = window.location.hash || '';
-      if (hash === '#legal-terminos' || hash === '#legal-privacidad') {
-        const modal = document.getElementById('modal-legal-viewer');
-        const btnClose = document.getElementById('btn-legal-close');
-        const tabT = document.getElementById('legal-tab-terminos');
-        const tabP = document.getElementById('legal-tab-privacidad');
-        const contentT = document.getElementById('legal-content-terminos');
-        const contentP = document.getElementById('legal-content-privacidad');
-        if (modal) { modal.style.display = 'flex'; }
-        if (tabT) { tabT.className = hash === '#legal-terminos' ? 'legal-tab active' : 'legal-tab'; }
-        if (tabP) { tabP.className = hash === '#legal-privacidad' ? 'legal-tab active' : 'legal-tab'; }
-        if (contentT) { contentT.style.display = hash === '#legal-terminos' ? 'block' : 'none'; }
-        if (contentP) { contentP.style.display = hash === '#legal-privacidad' ? 'block' : 'none'; }
-        if (btnClose) {
-          btnClose.onclick = function () {
-            if (modal) modal.style.display = 'none';
-            history.replaceState(null, '', window.location.pathname);
-          };
+      function syncLegalModalsByHash() {
+        const hash = window.location.hash || '';
+        const modalT = document.getElementById('modal-legal-terminos');
+        const modalP = document.getElementById('modal-legal-privacidad');
+        if (hash === '#legal-terminos' && modalT) {
+          modalT.style.display = 'flex';
+          if (modalP) modalP.style.display = 'none';
+        } else if (hash === '#legal-privacidad' && modalP) {
+          modalP.style.display = 'flex';
+          if (modalT) modalT.style.display = 'none';
         }
       }
+      syncLegalModalsByHash();
+      window.addEventListener('hashchange', syncLegalModalsByHash);
+
+      // Cerrar modales con tecla Escape
+      window.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          const modalT = document.getElementById('modal-legal-terminos');
+          const modalP = document.getElementById('modal-legal-privacidad');
+          if (modalT && modalT.style.display === 'flex') {
+            modalT.style.display = 'none';
+            if (window.location.hash === '#legal-terminos') history.replaceState(null, '', window.location.pathname);
+          }
+          if (modalP && modalP.style.display === 'flex') {
+            modalP.style.display = 'none';
+            if (window.location.hash === '#legal-privacidad') history.replaceState(null, '', window.location.pathname);
+          }
+        }
+      });
     })();
   </script>
 </body>

@@ -631,3 +631,40 @@ Ejecuta los requerimientos detallados en `docs/cline-task-liquidaciones-b2b.md`:
 
 
 
+---
+
+## 🔥 FASE 23: SUITE DE PRUEBAS DE ESTRÉS, CONCURRENCIA Y CARGA PRE-PRODUCCIÓN (PARA CLINE)
+
+> **Especificación del Arquitecto (Antigravity):**
+> Antes de abrir tráfico real en producción, Cline debe implementar y ejecutar en bucle una suite de pruebas de estrés de 4 vectores que certifique la resiliencia matemática, la concurrencia en Firestore (usando el **Firebase Local Emulator** a costo $0) y la ausencia de condiciones de carrera (*race conditions*) en puerta y votación.
+>
+> **Reglas de Ejecución para Cline:**
+> 1. **Cero consumo de cuota en la nube:** Toda prueba contra Firestore/Auth DEBE correr contra el emulador local (`127.0.0.1:8081` y `127.0.0.1:9099`). Verifica primero con `npm run emulator:status`.
+> 2. Marca cada sub-tarea con `[x]` al superarla.
+> 3. Documenta las métricas obtenidas en `docs/bench-results/stress-test-prod.md`.
+
+### 📋 Tareas Paso a Paso para Cline:
+
+- [ ] **T-23.1: Ampliación del Stress Test Algorítmico (`scripts/stress-test.ts`)**
+  - Expandir `scripts/stress-test.ts` para evaluar 5 escenarios críticos con medición de latencia (`p50`, `p95`, `max`) y consumo de memoria (`process.memoryUsage().heapUsed`):
+    1. **Sala Estándar (12M + 12H × 9 rondas):** SLA < 50 ms.
+    2. **Sala con Alta Densidad de Bloqueos (20M + 20H, 40% historial previo/vetos):** Verificar 0 violaciones de pares bloqueados.
+    3. **Caída Intra-Noche / No-Shows (15M + 15H, abandono de 4 personas en ronda 4):** Re-planificación en caliente con `alreadyMet` en < 100 ms y 0 referencias a ausentes.
+    4. **Mesas de 4 + Grafo Espacial (`tableSize: 4`, `delta: 0.35`):** Verificar cobertura ≥ 95% y penalización de distancia activa.
+    5. **Macro-Gala VIP (60M + 60H × 10 rondas):** SLA < 1500 ms sin bloqueo del Event Loop ni OOM.
+
+- [ ] **T-23.2: Creación de Suite de Concurrencia y Condiciones de Carrera (`test/test-stress-concurrency.cjs`)**
+  - Crear el script `test/test-stress-concurrency.cjs` conectado al emulador local de Firestore (`127.0.0.1:8081`) que simule:
+    1. **Ráfaga en Puerta (40 Check-ins Simultáneos):** Lanzar `Promise.all` con 40 usuarios intentando registrarse y hacer check-in en el mismo milisegundo sobre un evento activo.
+    2. **Ataque de Doble Escaneo QR (Idempotencia Atómica):** Disparar 10 peticiones simultáneas de check-in para el mismo `uid` (`usr-stress-01`). Certificar que el array `participants` del evento y el registro de check-in contengan exactamente **1 sola entrada** sin duplicados.
+    3. **Tormenta de Votos en Campanazo Final (24 Usuarios Concurrentes):** Simular a los 24 asistentes enviando sus votos (`Sí`/`No`) exactamente al terminar la ronda (`Promise.all` de 24 escrituras concurrentes). Certificar pérdida de paquetes = 0 y cálculo exacto de matches mutuos.
+    4. **Cierre de Caja Concurrente (`/admin`):** Intentar registrar 2 cierres de caja (`night_closings`) simultáneos para el mismo `eventId` y verificar que prevalezca la idempotencia sin duplicar cobros.
+
+- [ ] **T-23.3: Script NPM y Ejecución Automatizada**
+  - Agregar en `package.json` el comando:
+    `"test:stress": "node src/mem-rr-v2/bench.ts && node scripts/stress-test.ts && node test/test-stress-concurrency.cjs"`
+  - Ejecutar `npm run test:stress` en terminal y corregir cualquier cuello de botella o condición de carrera detectada.
+
+- [ ] **T-23.4: Generación de Reporte de Evidencia (`docs/bench-results/stress-test-prod.md`)**
+  - Generar un informe técnico compacto con tabla de tiempos (ms), memoria RAM pico (MB), tasa de éxito en concurrencia (100%) y veredicto final `✅ STRESS TEST OK — APTO PARA PRODUCCIÓN`.
+  - Ejecutar `npx tsc --noEmit` para asegurar 0 errores de tipos tras la creación de los tests.
