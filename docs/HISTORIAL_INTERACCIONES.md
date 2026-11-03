@@ -17,6 +17,22 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
+### [2026-11-03] — Auditoría Forense Integral y Ejecución de 4 Fases de Seguridad y Blindaje con Cline
+- **Solicitud del Usuario:** Realizar evaluación exhaustiva del proyecto, catalogar todas las vulnerabilidades y trazar un plan para ejecutar con Cline; posteriormente validar la ejecución completa de las 4 fases.
+- **Acciones Realizadas:**
+  1. *Auditoría Forense y Plan:* Antigravity formuló el reporte de 8 hallazgos (P0-SEC-1 a P0-SEC-4, P1-SEC-5 a P1-SEC-7, P2-SEC-8) en `docs/AUDITORIA_SEGURIDAD_BUGS_CLINE.md`.
+  2. *Fase 1 (Reglas Firestore y Headers):* `isMasterAdmin()` restringido estrictamente a UID maestro y `cesar@ronda.uno` con `email_verified == true`. `/invest_tokens` separado en `allow get: if true` y `allow list: if isSuperAdmin()`. Ingesta pública de leads desde `partners.html` habilitada con `sales_uid: 'unassigned'`. Blindaje de `/chats`, `/waitlist`, `/stats/visits` y corrección de `Permissions-Policy: geolocation=(self)` en `firebase.json`.
+  3. *Fase 2 (KYC, Perfil y Auth):* Inclusión de `userId: uid` y `status: 'pending'` en `src/verification.ts`. Adición de `emergencyContact`, `kycStatus`, `isPendingManualReview` a `CLIENT_ALLOWED_USER_FIELDS` y fallback seguro con `safeFields` en `src/db.ts`. Spread `...profileData` colocado al inicio en `src/auth.ts` y protección con `try/catch` de `DB.countUsers()`.
+  4. *Fase 3 (Anti-XSS):* Sanitización sistemática con `escapeHtml()` en `src/superadmin.ts`, `src/network.ts`, `src/entry-network.ts` y `src/portal-auth.ts`.
+  5. *Fase 4 (Webhooks y Web3):* Validación de precio (`tx.amount_in_cents >= eventData.price * 100`), idempotencia y manejo de `VOIDED` en `functions-vercel/api/wompi-webhook.js`. Verificación de pertenencia de `venueId` y eliminación de fallback aleatorio en `functions-vercel/api/mint-nft.js`.
+  6. *Protocolo de Verificación Aprobado:*
+     - `npx tsc --noEmit`: 0 errores.
+     - `node test/test-crm-commission.cjs`: 100% OK.
+     - `npm run test:b2b`: 19 criterios + 56 aserciones OK.
+     - `npm run check:html`: 11 páginas + 26 assets locales OK.
+     - `npm run build`: Multi-page production build exitoso (35.8s).
+     - `graphify update .`: Grafo de conocimiento sincronizado (119/119 archivos AST).
+
 ### [2026-11-02] — Implementación Integral del Plan de Mejoras del Panel CRM (`/crm.html`)
 - **Solicitud del Usuario:** Implementar el Plan de Mejoras planteado en `docs/PLAN_MEJORAS_CRM.md` (Fases F0 a F3: 28 mejoras P0–P3).
 - **Acciones Realizadas:**

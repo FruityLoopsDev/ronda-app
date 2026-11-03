@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "src/version.ts": {
-    "mtime": 1793681916.3568716,
-    "seen": 1793681990.5658696,
-    "ast_hash": "44a5249475dc57fabe80c1a257f5b044",
+    "mtime": 1793712970.417955,
+    "seen": 1793713049.8412197,
+    "ast_hash": "d8cdf868708d70717690b1d94a7c348c",
     "semantic_hash": ""
   },
   "test/face-verify.test.ts": {
