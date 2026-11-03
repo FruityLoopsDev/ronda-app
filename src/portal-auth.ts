@@ -3,6 +3,7 @@ import { User, UserRole } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { renderRondaFooter } from './footer.js';
 import { APP_VERSION } from './version.js';
+import { escapeHtml } from './utils.js';
 
 export type PortalId = 'superadmin' | 'admin' | 'crm' | 'network';
 
@@ -156,9 +157,6 @@ export function setupIndependentPortal(
       clearTimeout(activeWatchdog);
       activeWatchdog = null;
     }
-    if (typeof unsub === 'function') {
-      unsub();
-    }
   };
 
   return activeAuthUnsubscribe;
@@ -251,8 +249,9 @@ function renderPortalLoginForm(config: PortalConfig) {
         await Auth.sendPasswordReset(emailToSend);
         await RondaDialog.alert({
           title: 'Enlace Enviado',
-          message: `Hemos enviado un correo a <b>${emailToSend}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
-          icon: '✉️'
+          message: `Hemos enviado un correo a <b>${escapeHtml(emailToSend)}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
+          icon: '✉️',
+          html: true
         });
       } catch (err: any) {
         await RondaDialog.alert({
@@ -437,8 +436,8 @@ function injectPortalHeaderBar(config: PortalConfig, user: User) {
 
     <div style="display: flex; align-items: center; gap: 12px;">
       <div style="font-size: 11px; text-align: right;">
-        <b style="color: var(--papel);">${user.name || user.email || user.uid}</b>
-        <span style="display: block; font-size: 9.5px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase;">ROL: ${user.role}</span>
+        <b style="color: var(--papel);">${escapeHtml(user.name || user.email || user.uid)}</b>
+        <span style="display: block; font-size: 9.5px; color: var(--luz); font-family: var(--font-mono); text-transform: uppercase;">ROL: ${escapeHtml(user.role)}</span>
       </div>
       <button id="btn-top-logout" class="btn" style="font-size: 10.5px; padding: 6px 12px; border-color: var(--linea); background: rgba(243,237,226,0.04);">
         Cerrar sesión ✕

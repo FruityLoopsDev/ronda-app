@@ -8,6 +8,7 @@
  * 4. Monitoreo de conectividad (offline/online) y manejo de errores con Error Boundary UI.
  * 5. Registro de Service Worker para operación local resiliente.
  */
+import { escapeHtml } from './utils.js';
 
 import { Network } from './network.js';
 import { setupIndependentPortal, PORTALS } from './portal-auth.js';
@@ -195,7 +196,7 @@ function showNetworkToast(message: string, type: 'warning' | 'success' | 'error'
   toast.style.background = isWarn ? 'rgba(240,168,48,0.92)' : isErr ? 'rgba(155,39,72,0.92)' : 'rgba(46,107,84,0.92)';
   toast.style.color = '#fff';
   toast.style.border = `1px solid ${isWarn ? 'var(--luz)' : isErr ? 'var(--vino)' : 'var(--botella)'}`;
-  toast.innerHTML = `<span>${isWarn ? '⚠️' : isErr ? '🛑' : '🗺️'}</span> <span>${message}</span>`;
+  toast.innerHTML = `<span>${isWarn ? '⚠️' : isErr ? '🛑' : '🗺️'}</span> <span>${escapeHtml(message)}</span>`;
   toast.style.display = 'flex';
   toast.style.opacity = '1';
 
@@ -220,7 +221,7 @@ function renderNetworkCrashFallback(errorText: string): void {
           No se pudo sincronizar la cartografía de exclusividad territorial de bares.
         </p>
         <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--linea); border-radius: 8px; padding: 12px; font-family: var(--font-mono); font-size: 10.5px; color: #ff8ca8; text-align: left; margin-bottom: 20px; max-height: 120px; overflow-y: auto;">
-          ${errorText}
+          ${escapeHtml(errorText)}
         </div>
         <button id="btn-net-retry" class="btn ambar" style="width: 100%; padding: 12px; font-weight: 700;">
           Recargar Mapa de Red ↺

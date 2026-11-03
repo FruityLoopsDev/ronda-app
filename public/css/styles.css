@@ -147,8 +147,8 @@ body::before{
 .btn:hover{background:rgba(243,237,226,.06)}
 .btn.si{background:var(--botella);border-color:var(--botella);color:#F3EDE2;font-weight:700}
 .btn.si:hover{filter:brightness(1.12)}
-.btn.pri, .btn.amber, .btn.ambar{background:var(--luz);border-color:var(--luz);color:var(--tinta);font-weight:700}
-.btn.pri:hover, .btn.amber:hover, .btn.ambar:hover{filter:brightness(1.12)}
+.btn.pri, .btn.amber, .btn.ambar, .btn.luz{background:var(--luz);border-color:var(--luz);color:var(--tinta);font-weight:700}
+.btn.pri:hover, .btn.amber:hover, .btn.ambar:hover, .btn.luz:hover{filter:brightness(1.12)}
 .btn:focus-visible{outline:2px solid var(--luz);outline-offset:2px}
 
 /* === Fase 1: Utility classes for inline styles extraction === */

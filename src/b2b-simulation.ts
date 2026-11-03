@@ -360,7 +360,8 @@ for (const u of payoutHost.updatedEntries) {
 }
 check(hostUnpaid.every(e => e.milestone === 'host_base'),
   `Hoster: ${hostUnpaid.length} honorarios base (evento fundador excluido por status void)`);
-check(hostGross === 500000, `Hoster = ${hostGross.toLocaleString('es-CO')} COP (2 eventos × 250.000; aforo independiente)`);
+const expectedTwoHostFees = 2 * 250000;
+check(hostGross === expectedTwoHostFees, `Hoster = ${hostGross.toLocaleString('es-CO')} COP (2 eventos × 250.000; aforo independiente)`);
 
 // -----------------------------------------------
 // 8. Asiento contrario (reverso auditado)
@@ -386,7 +387,7 @@ console.log(`  Payouts emitidos (SIM): ${ledger.payouts.length} → ${ledger.pay
 console.log(`  Asientos totales en ledger: ${ledger.entries.length}`);
 
 check(netScout === scoutGrossBefore - 250000, 'Cuadre contable Scout: bruto − reverso = neto');
-check(netHost === 500000, 'Cuadre contable Hoster: 500.000 COP netos');
+check(netHost === expectedTwoHostFees, 'Cuadre contable Hoster: 500.000 COP netos');
 
 console.log(`\n==========================================`);
 console.log(` ${passed} verificaciones OK, ${failed} fallos`);

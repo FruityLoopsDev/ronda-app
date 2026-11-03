@@ -17,6 +17,28 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
+### [2026-11-02] — Implementación Integral del Plan de Mejoras del Panel CRM (`/crm.html`)
+- **Solicitud del Usuario:** Implementar el Plan de Mejoras planteado en `docs/PLAN_MEJORAS_CRM.md` (Fases F0 a F3: 28 mejoras P0–P3).
+- **Acciones Realizadas:**
+  1. *F0 — Verdad Económica Única y Blindaje de Seguridad (P0-1 a P0-5, P2-24):*
+     - Creado [src/commissions.ts](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/commissions.ts) consumiendo exclusivamente `DEFAULT_SCOUT_POLICY` ($450.000 COP en 3 hitos: A=$100k, B=$250k, C=$100k) y reconciliando con `commission_ledger` (desviación 0). Eliminados todos los literales `500000` / `500_000`.
+     - Cabecera en [crm.html](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/crm.html) actualizada con 3 métricas separadas: *Proyectado · Devengado (Hitos) · Pagado*.
+     - Sanitización completa con `escapeHtml()` en el drawer y formularios de [src/crm.ts](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/crm.ts) (P0-2).
+     - Borrado convertido a *soft-delete* (`status: 'archived'`) con `RondaDialog.confirm`, rollback automático en caso de error y conservación de historial (P0-4).
+     - Blindada regla `leads.create` en [firestore.rules](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) exigiendo `request.auth != null` y `sales_uid == request.auth.uid`, y removido `isAdmin()` de lectura global de leads competitivos (P0-5).
+  2. *F1 — Operabilidad Comercial y Correctitud (P1-6 a P1-14):*
+     - Selector de alcance (`#crm-scope-filter`: *Todo el equipo* vs *Mis leads*) habilitado para SuperAdmin (P1-6).
+     - Catálogo único de zonas en [src/config/zones.ts](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/config/zones.ts) y buscador normalizado sin tildes sobre nombre, zona, contacto, teléfono y notas (P1-7, P1-8).
+     - Normalizador único `toWaPhone()` sin doble prefijo `57` (P1-9) y actualización reactiva de `renderMyAccount()` en cada snapshot (P1-10).
+     - Alta en Red sin `window.prompt`: formulario accesible con GPS que envía solicitud a `venue_requests` para el rol `sales` (P1-11) o ejecuta `writeBatch` atómico (`convertLeadToVenueBatch`) para SuperAdmin/Network (P1-14).
+     - Tira prioritaria **«🎯 Prioridades de Hoy & Seguimientos Vencidos»** (`#crm-today-strip`), campos `next_action_at` / `last_contact_at`, botón rápido de registro de contacto y timeline de auditoría en subcolección `leads/{id}/history` (P1-12, P1-13).
+  3. *F2 & F3 — Arquitectura, Accesibilidad, CSS Modular y Escala (P2-15 a P3-28):*
+     - Creado gestor de hojas modales accesibles [src/ui/sheet.ts](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/ui/sheet.ts) con `role="dialog"`, `aria-modal="true"`, trampa de foco, `Escape`, scroll-lock y retorno de foco (P2-19, P2-20).
+     - Extraído CSS a [public/css/crm.css](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/public/css/crm.css), eliminado login y cabecera duplicada en `crm.html`, implementado render por `DocumentFragment` con delegación de eventos única, IDs con `crypto.randomUUID()`, detección de duplicados, badge de sincronización `fromCache`/`hasPendingWrites` y exportación CSV (`exportCsv()`).
+  4. *Validación Técnica:*
+     - Suite [test/test-crm-commission.cjs](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/test/test-crm-commission.cjs): 100% aprobada.
+     - `npx tsc --noEmit`: 0 errores. `npm run check:html`: 100% OK.
+
 ### [2026-11-02] — Corrección Crítica en Reglas de Firestore: Evaluación Segura de Perfil y Auto-Registro Staff/Master
 - **Solicitud del Usuario:** Resolver el error al crear cuenta en el cliente web: `PERMISSION_DENIED: evaluation error at L53:24 for 'create' @ L53, evaluation error at L65:24 for 'update' @ L65, false for 'update' @ L65`.
 - **Causa Raíz Identificada:**

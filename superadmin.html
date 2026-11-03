@@ -33,7 +33,9 @@
   
   <link rel="stylesheet" href="/assets/ronda-tokens.css">
   <link rel="stylesheet" href="/css/styles.css">
-  <script src="/assets/ronda-dialog.js"></script>
+  <!-- El diálogo lo aporta src/dialog.ts vía entry-superadmin.ts (fuente única).
+       Antes se cargaba aquí la copia legacy /assets/ronda-dialog.js, que quedaba
+       pisada por el módulo y duplicaba la implementación. -->
 
   <style>
       /* ============================================================
@@ -1627,7 +1629,7 @@
             <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">Correo electrónico</label>
             <input type="email" id="auth-wl-email" required placeholder="tu@correo.com" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
           </div>
-          <button id="btn-submit-auth-waitlist" class="btn luz" style="width: 100%; margin-top: 6px; font-weight: 700;">
+          <button id="btn-submit-auth-waitlist" class="btn ambar" style="width: 100%; margin-top: 6px; font-weight: 700;">
             ✨ Unirme a la Lista de Espera
           </button>
         </div>
@@ -1886,7 +1888,7 @@
 </section>
 
 <!-- Animación Flash Overlay -->
-<div id="login-flash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--ambar); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;"></div>
+<div id="login-flash" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--luz); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;"></div>
 
 <script>
   // Contador de visitas dinámico (Simulado / LocalStorage)

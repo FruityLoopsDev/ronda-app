@@ -7,6 +7,7 @@ import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
 import { pairKey } from './mem-rr-v2/weights.ts';
 import { RRHistory } from './mem-rr-history.js';
 import { escapeHtml } from './utils.js';
+import { buildNightMenuHtml, normalizeNightMenu, DEFAULT_DRINK_PRICE_COP } from './night-menu.js';
 import { db } from './firebase-config.js';
 import { doc, updateDoc, arrayUnion, increment, serverTimestamp } from 'firebase/firestore';
 
@@ -80,8 +81,9 @@ class HostConsoleService {
     if (!eventData) {
       const create = await RondaDialog.confirm({
         title: 'Evento no encontrado',
-        message: `El evento <b>${eventId}</b> no existe. ¿Deseas crearlo ahora con los valores por defecto?`,
+        message: `El evento <b>${escapeHtml(eventId)}</b> no existe. ¿Deseas crearlo ahora con los valores por defecto?`,
         icon: '⚠️',
+        html: true,
         confirmText: '✓ Crear Evento',
         cancelText: '✕ Cancelar'
       });
@@ -529,6 +531,7 @@ class HostConsoleService {
       title: 'Cambiar Aforo',
       message: `Mesas actuales: <b>${this.currentEvent.tables ?? 0}</b>. ¿Deseas ajustar la cantidad de mesas para la próxima noche?`,
       icon: '🪑',
+      html: true,
       confirmText: '✓ Ajustar Mesas',
       cancelText: '✕ Cancelar'
     });
@@ -543,47 +546,76 @@ class HostConsoleService {
     await RondaDialog.alert({
       title: 'Aforo Actualizado',
       message: `Se configuraron <b>${n} mesas</b> para el evento.`,
-      icon: '✅'
+      icon: '✅',
+      html: true
     });
     this.renderDashboard();
   }
 
-  /** Despliega el modal de carta de la noche con los cócteles sugeridos y permite ajustar el precio. */
+  /**
+   * Despliega la carta de la noche (cócteles de cortesía + precio acordado) y
+   * permite ajustar el precio de la consumición incluida.
+   *
+   * El markup anterior metía un `<input>` dentro del `message` del diálogo:
+   * al escaparse el HTML nunca se renderizaba y el precio se leía de un nodo
+   * inexistente, así que "Guardar Carta" no guardaba nada.
+   */
   async promptMenuNight() {
     if (!this.currentEvent) return;
-    const msg = `
-      <div style="font-family:var(--font-sans); color:var(--papel); line-height:1.6;">
-        <div style="font-size:13px; margin-bottom:10px;"><b>Cócteles sugeridos de la alianza:</b></div>
-        <div style="margin-bottom:6px;">• Negroni Ahumado · Ginebra botánica, vermú rojo, campari, cáscara de naranja</div>
-        <div style="margin-bottom:6px;">• Gin Tonic de Frutos Rojos · Ginebra premium, tónica, infusión de frutos rojos</div>
-        <div style="margin-bottom:6px;">• Mezcal Mula · Mezcal joven, jugo de lima, cerveza de jengibre, angostura</div>
-        <div style="margin-bottom:6px;">• Old Fashioned RONDA · Bourbon, azúcar de caña, amarga de cacao, cáscara de naranja</div>
-        <hr style="border:none; border-top:1px solid var(--linea); margin:12px 0;">
-        <div style="font-size:13px;"><b>Precio de consumición acordado:</b> $<input type="number" id="menu-night-price" value="${this.currentEvent.price ?? 45000}" min="0" step="1000" style="width:80px;padding:2px;border-radius:4px;border:1px solid var(--linea);background:rgba(243,237,226,0.06);color:var(--papel);font-family:var(--font-mono);font-size:12px;" /> COP</div>
-      </div>
-    `;
-    const confirmed = await RondaDialog.confirm({
+
+    const menu = normalizeNightMenu(this.currentEvent.menu);
+    const price = this.currentEvent.price ?? menu.priceCop ?? DEFAULT_DRINK_PRICE_COP;
+
+    const wantsEdit = await RondaDialog.confirm({
       title: 'Carta de la Noche',
-      message: msg,
+      message: buildNightMenuHtml(menu, price),
       icon: '🍸',
+      html: true,
+      confirmText: '✏️ Ajustar Precio',
+      cancelText: '✓ Cerrar'
+    });
+    if (!wantsEdit) return;
+
+    const raw = await RondaDialog.prompt({
+      title: 'Precio de la Consumición',
+      message: 'Valor acordado por cada consumición incluida en la entrada (COP).',
+      icon: '💵',
+      inputType: 'number',
+      defaultValue: String(price),
+      placeholder: '45000',
       confirmText: '✓ Guardar Carta',
       cancelText: '✕ Cancelar'
     });
-    if (!confirmed) return;
-    const priceInput = document.getElementById('menu-night-price') as HTMLInputElement | null;
-    const price = priceInput ? parseInt(priceInput.value ?? '45000', 10) : this.currentEvent.price;
-    if (price && price > 0) {
-      this.currentEvent.price = price;
-      this.currentEvent.priceFormatted = `$${price.toLocaleString('es-CO')}`;
-      await DB.saveEvent(this.currentEvent);
-      const elPrice = document.getElementById('nn-price');
-      if (elPrice) elPrice.textContent = `$${price.toLocaleString('es-CO')}`;
+    if (raw === null) return;
+
+    const newPrice = parseInt(raw.replace(/[^\d]/g, ''), 10);
+    if (!Number.isFinite(newPrice) || newPrice <= 0) {
       await RondaDialog.alert({
-        title: 'Carta Guardada',
-        message: `Se actualizó el precio de consumición a $${price.toLocaleString('es-CO')} COP.`,
-        icon: '✅'
+        title: 'Precio inválido',
+        message: 'Ingresa un valor mayor a cero, sin puntos ni símbolos (ej. 45000).',
+        icon: '⚠️',
+        type: 'danger'
       });
+      return;
     }
+
+    this.currentEvent.price = newPrice;
+    this.currentEvent.priceFormatted = `$${newPrice.toLocaleString('es-CO')}`;
+    this.currentEvent.menu = {
+      ...menu,
+      priceCop: newPrice,
+      updatedAt: new Date().toISOString()
+    };
+    await DB.saveEvent(this.currentEvent);
+
+    const elPrice = document.getElementById('nn-price');
+    if (elPrice) elPrice.textContent = `$${newPrice.toLocaleString('es-CO')}`;
+
+    await RondaDialog.alert({
+      title: 'Carta Guardada',
+      message: `Se actualizó el precio de consumición a $${newPrice.toLocaleString('es-CO')} COP.`,
+      icon: '✅'
+    });
   }
 
   /** Renderiza la lista en vivo de participantes con estado de check-in y verificación. */
@@ -707,8 +739,9 @@ class HostConsoleService {
     if ((user.trustTier ?? 0) < 2) {
       const proceed = await RondaDialog.confirm({
         title: '🛡️ Verificación Tier 2 Requerida',
-        message: `El asistente <b>${user.name || uid}</b> tiene Tier ${user.trustTier ?? 0} (requiere Tier 2).<br><br>Su identidad aún no está verificada. ¿Autorizar ingreso excepcional?`,
+        message: `El asistente <b>${escapeHtml(user.name || uid)}</b> tiene Tier ${user.trustTier ?? 0} (requiere Tier 2).<br><br>Su identidad aún no está verificada. ¿Autorizar ingreso excepcional?`,
         icon: '🛡️',
+        html: true,
         confirmText: '✓ Autorizar Excepción',
         cancelText: '✕ Denegar Ingreso',
         type: 'confirm'
@@ -723,8 +756,9 @@ class HostConsoleService {
     if (user.paymentPending || !user.hasTicket) {
       const confirmed = await RondaDialog.confirm({
         title: '⚠️ Pago Pendiente en Puerta',
-        message: `El asistente <b>${user.name || uid}</b> figura con pago pendiente o sin boleta confirmada.<br><br>¿Confirmar que el pago (Nequi / Efectivo) fue recibido para autorizar su ingreso?`,
+        message: `El asistente <b>${escapeHtml(user.name || uid)}</b> figura con pago pendiente o sin boleta confirmada.<br><br>¿Confirmar que el pago (Nequi / Efectivo) fue recibido para autorizar su ingreso?`,
         icon: '💵',
+        html: true,
         confirmText: '✓ Confirmar Pago y Entrada',
         cancelText: '✕ Denegar Ingreso',
         type: 'confirm'
@@ -752,8 +786,9 @@ class HostConsoleService {
     if (user.linkedinUrl || user.verifications?.professional?.method === 'linkedin_oauth' || user.verifications?.identity?.method === 'linkedin_persona') {
       await RondaDialog.alert({
         title: '💼 Perfil Verificado',
-        message: `El asistente <b>${user.name || uid}</b> cuenta con verificación profesional de LinkedIn confirmada.`,
-        icon: '💼'
+        message: `El asistente <b>${escapeHtml(user.name || uid)}</b> cuenta con verificación profesional de LinkedIn confirmada.`,
+        icon: '💼',
+        html: true
       });
     }
 

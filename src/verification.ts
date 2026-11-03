@@ -34,6 +34,7 @@ declare var Tesseract: any;
 
 export interface KycReviewPayload {
   uid?: string;
+  userId?: string;
   reason: string;
   distance?: number;
   threshold?: number;
@@ -223,6 +224,7 @@ class VerificationService {
       const ref = doc(db, 'kycReviews', reviewId);
       const record: KycReviewPayload = {
         uid,
+        userId: uid,
         reason: payload.reason,
         distance: payload.distance,
         threshold: payload.threshold ?? PRIMARY_BIOMETRIC_THRESHOLD,
@@ -833,7 +835,8 @@ class VerificationService {
             baselineEar: selfieResult.baselineEar,
             minEarObserved: selfieResult.minEarObserved,
             dropRatio: selfieResult.dropRatio,
-            status: 'approved'
+            userId: Auth.currentUser?.uid,
+            status: 'pending'
           });
         }
         return true;

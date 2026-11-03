@@ -173,6 +173,20 @@ export interface Match {
   isRepeat?: boolean;
 }
 
+/** Un cóctel de la carta de la noche (consumición incluida en la entrada). */
+export interface NightMenuCocktail {
+  name: string;
+  ingredients?: string;
+}
+
+/** Carta de la noche acordada con el local para un evento concreto. */
+export interface NightMenu {
+  cocktails: NightMenuCocktail[];
+  priceCop?: number;
+  updatedAt?: string;
+  updatedBy?: string;
+}
+
 export interface RondaEvent {
   id: string;
   venueId?: string;
@@ -190,6 +204,7 @@ export interface RondaEvent {
   priceFormatted?: string;
   dayDate?: string;
   roundEndsAt?: number; // Timestamp (epoch ms) de fin de ronda activa
+  menu?: NightMenu;    // Carta de la noche (cócteles de cortesía + precio)
 }
 
 export interface NightClosing {
@@ -430,7 +445,7 @@ export interface Lead {
   id: string;
   name: string;
   contactName: string;
-  status: 'lead' | 'negotiating' | 'signed';
+  status: 'lead' | 'negotiating' | 'signed' | 'archived';
   sales_uid: string; // Propietario comercial original (se mantiene para retrocompatibilidad)
   scout_uid?: string; // Mapeo explícito para B2B Scout
   venue_id?: string;
@@ -442,7 +457,15 @@ export interface Lead {
   tablesCount?: number;
   preferredDay?: 'martes' | 'miércoles' | 'jueves';
   venueId?: string;
+  venue_request_id?: string;
+  next_action_at?: string; // YYYY-MM-DD (America/Bogota)
+  last_contact_at?: string; // ISO string
+  next_action_note?: string;
+  stage_updated_at?: string;
+  lost_reason?: string;
+  archived_at?: string;
   createdAt?: string;
+  updatedAt?: string;
   registered_at?: string;
   signed_at?: string;
   verified_at?: string;
@@ -460,6 +483,36 @@ export interface Lead {
     C: MilestoneState;
   };
   risk_review_id?: string;
+}
+
+export interface LeadHistoryEvent {
+  id: string;
+  leadId: string;
+  type: 'created' | 'status_change' | 'contact_logged' | 'detail_updated' | 'venue_requested' | 'venue_created';
+  fromStatus?: string;
+  toStatus?: string;
+  byUid: string;
+  byName?: string;
+  note?: string;
+  at: string;
+}
+
+export interface VenueRequest {
+  id: string;
+  leadId: string;
+  name: string;
+  address: string;
+  zone: string;
+  lat: number;
+  lng: number;
+  requestedByUid: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}
+
+export interface LeadsSyncMeta {
+  fromCache: boolean;
+  hasPendingWrites: boolean;
 }
 
 export function cleanFirestoreData(obj: any): any {
@@ -518,7 +571,10 @@ export const CLIENT_ALLOWED_USER_FIELDS: (keyof User)[] = [
   'reservationsHistory',
   'postEventState',
   'paymentPending',
-  'paymentMethod'
+  'paymentMethod',
+  'emergencyContact',
+  'kycStatus',
+  'isPendingManualReview'
 ];
 
 export class DatabaseInterface {
@@ -570,7 +626,11 @@ export class DatabaseInterface {
     } catch (err: any) {
       // Fallback en caso de que el documento aún no exista en Firestore (NOT_FOUND)
       if (err?.code === 'not-found' || String(err?.message || '').includes('No document to update')) {
-        const fallbackData = cleanFirestoreData({ uid, role: 'client', ...fields });
+        const safeFields: Record<string, any> = {};
+        for (const k of Object.keys(fields)) {
+          if (CLIENT_ALLOWED_USER_FIELDS.includes(k as any)) safeFields[k] = (fields as Record<string, any>)[k];
+        }
+        const fallbackData = cleanFirestoreData({ uid, role: 'client', ...safeFields });
         await setDoc(docRef, fallbackData, { merge: true });
       } else {
         throw err;
@@ -837,7 +897,7 @@ export class DatabaseInterface {
   async getVenues(): Promise<Venue[]> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'venues'));
-      return snap.docs.map(d => ({ id: d.id, ...(d.data() as Venue) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as Venue));
     } catch (e) {
       console.error("[DB] Error obteniendo venues:", e);
       return [];
@@ -847,7 +907,7 @@ export class DatabaseInterface {
   subscribeToVenues(callback: (venues: Venue[]) => void, onError?: (err: Error) => void): Unsubscribe {
     const colRef = collection(this._getFirestore(), 'venues');
     return onSnapshot(colRef, (snap) => {
-      const venues = snap.docs.map(d => ({ id: d.id, ...(d.data() as Venue) }));
+      const venues = snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as Venue));
       callback(venues);
     }, (err) => {
       console.error("[DB] Error en suscripción a venues:", err);
@@ -872,23 +932,36 @@ export class DatabaseInterface {
       const colRef = collection(this._getFirestore(), 'leads');
       const q = salesUid ? query(colRef, where('sales_uid', '==', salesUid)) : colRef;
       const snap = await getDocs(q);
-      return snap.docs.map(d => ({ id: d.id, ...(d.data() as Lead) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as Lead));
     } catch (e) {
       console.error("[DB] Error obteniendo leads:", e);
       return [];
     }
   }
 
-  subscribeToLeads(callback: (leads: Lead[]) => void, salesUid?: string, onError?: (err: Error) => void): Unsubscribe {
+  subscribeToLeads(
+    callback: (leads: Lead[], meta?: LeadsSyncMeta) => void,
+    salesUid?: string,
+    onError?: (err: Error) => void
+  ): Unsubscribe {
     const colRef = collection(this._getFirestore(), 'leads');
     const q = salesUid ? query(colRef, where('sales_uid', '==', salesUid)) : colRef;
-    return onSnapshot(q, (snap) => {
-      const leads = snap.docs.map(d => ({ id: d.id, ...(d.data() as Lead) }));
-      callback(leads);
-    }, (err) => {
-      console.error("[DB] Error en suscripción a leads:", err);
-      onError?.(err);
-    });
+    return onSnapshot(
+      q,
+      { includeMetadataChanges: true },
+      (snap) => {
+        const leads = snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as Lead));
+        const meta: LeadsSyncMeta = {
+          fromCache: !!snap.metadata?.fromCache,
+          hasPendingWrites: !!snap.metadata?.hasPendingWrites
+        };
+        callback(leads, meta);
+      },
+      (err) => {
+        console.error("[DB] Error en suscripción a leads:", err);
+        onError?.(err);
+      }
+    );
   }
 
   async saveLead(lead: Lead): Promise<void> {
@@ -905,9 +978,113 @@ export class DatabaseInterface {
     await deleteDoc(docRef);
   }
 
-  async updateLeadStatus(leadId: string, status: 'lead' | 'negotiating' | 'signed'): Promise<void> {
+  async updateLeadStatus(
+    leadId: string,
+    status: 'lead' | 'negotiating' | 'signed' | 'archived',
+    extra?: Partial<Lead>
+  ): Promise<void> {
+    const now = new Date().toISOString();
     const docRef = doc(this._getFirestore(), 'leads', leadId);
-    await setDoc(docRef, { status, updatedAt: new Date().toISOString() }, { merge: true });
+    const payload = cleanFirestoreData({
+      ...(extra || {}),
+      status,
+      stage_updated_at: now,
+      updatedAt: now
+    });
+    await setDoc(docRef, payload, { merge: true });
+  }
+
+  async appendLeadEvent(
+    leadId: string,
+    event: Omit<LeadHistoryEvent, 'id' | 'leadId' | 'at'> & { at?: string }
+  ): Promise<void> {
+    try {
+      const eventId =
+        'ev_' +
+        (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`);
+      const docRef = doc(this._getFirestore(), 'leads', leadId, 'history', eventId);
+      const record: LeadHistoryEvent = cleanFirestoreData({
+        ...event,
+        id: eventId,
+        leadId,
+        at: event.at || new Date().toISOString()
+      });
+      await setDoc(docRef, record);
+    } catch (e) {
+      console.warn("[DB] No se pudo anexar evento de historial del lead:", e);
+    }
+  }
+
+  async getLeadHistory(leadId: string): Promise<LeadHistoryEvent[]> {
+    try {
+      const colRef = collection(this._getFirestore(), 'leads', leadId, 'history');
+      const snap = await getDocs(colRef);
+      const list = snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as LeadHistoryEvent));
+      return list.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+    } catch (e) {
+      console.warn("[DB] Error leyendo historial de lead:", e);
+      return [];
+    }
+  }
+
+  /**
+   * Conversión atómica Lead -> Venue oficial (P1-14) mediante writeBatch.
+   */
+  async convertLeadToVenueBatch(venue: Venue, lead: Lead): Promise<void> {
+    const fs = this._getFirestore();
+    const batch = writeBatch(fs);
+    const now = new Date().toISOString();
+
+    const venueRef = doc(fs, 'venues', venue.id);
+    batch.set(
+      venueRef,
+      cleanFirestoreData({
+        ...venue,
+        updatedAt: now
+      }),
+      { merge: true }
+    );
+
+    const leadRef = doc(fs, 'leads', lead.id);
+    batch.set(
+      leadRef,
+      cleanFirestoreData({
+        ...lead,
+        venueId: venue.id,
+        venue_id: venue.id,
+        updatedAt: now
+      }),
+      { merge: true }
+    );
+
+    await batch.commit();
+  }
+
+  /**
+   * Solicitud de alta en Red por rol `sales` (P1-11) cuando no tiene permiso directo en `venues`.
+   */
+  async createVenueRequest(req: VenueRequest, lead: Lead): Promise<void> {
+    const fs = this._getFirestore();
+    const batch = writeBatch(fs);
+    const now = new Date().toISOString();
+
+    const reqRef = doc(fs, 'venue_requests', req.id);
+    batch.set(reqRef, cleanFirestoreData(req));
+
+    const leadRef = doc(fs, 'leads', lead.id);
+    batch.set(
+      leadRef,
+      cleanFirestoreData({
+        ...lead,
+        venue_request_id: req.id,
+        updatedAt: now
+      }),
+      { merge: true }
+    );
+
+    await batch.commit();
   }
 
   // --- Waitlist (Lista de Espera) ---
@@ -931,13 +1108,13 @@ export class DatabaseInterface {
   async getScout(uid: string): Promise<Scout | null> {
     const docRef = doc(this._getFirestore(), 'scouts', uid);
     const snap = await getDoc(docRef);
-    return snap.exists() ? ({ uid: snap.id, ...(snap.data() as Scout) }) : null;
+    return snap.exists() ? ({ ...(snap.data() as any), uid: snap.id } as Scout) : null;
   }
 
   async getScouts(): Promise<Scout[]> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'scouts'));
-      return snap.docs.map(d => ({ uid: d.id, ...(d.data() as Scout) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), uid: d.id } as Scout));
     } catch (err) {
       console.error("[DB] Error obteniendo scouts:", err);
       return [];
@@ -947,7 +1124,7 @@ export class DatabaseInterface {
   async getHosts(): Promise<Host[]> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'hosts'));
-      return snap.docs.map(d => ({ uid: d.id, ...(d.data() as Host) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), uid: d.id } as Host));
     } catch (err) {
       console.error("[DB] Error obteniendo hosts:", err);
       return [];
@@ -962,7 +1139,7 @@ export class DatabaseInterface {
   async getHost(uid: string): Promise<Host | null> {
     const docRef = doc(this._getFirestore(), 'hosts', uid);
     const snap = await getDoc(docRef);
-    return snap.exists() ? ({ uid: snap.id, ...(snap.data() as Host) }) : null;
+    return snap.exists() ? ({ ...(snap.data() as any), uid: snap.id } as Host) : null;
   }
 
   async saveHost(host: Host): Promise<void> {
@@ -975,7 +1152,7 @@ export class DatabaseInterface {
       const colRef = collection(this._getFirestore(), 'commission_ledger');
       const q = payeeUid ? query(colRef, where('payee_uid', '==', payeeUid)) : colRef;
       const snap = await getDocs(q);
-      return snap.docs.map(d => ({ id: d.id, ...(d.data() as LedgerEntry) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as LedgerEntry));
     } catch (err) {
       console.error("[DB] Error obteniendo commission_ledger:", err);
       return [];
@@ -992,7 +1169,7 @@ export class DatabaseInterface {
       const colRef = collection(this._getFirestore(), 'payouts');
       const q = payeeUid ? query(colRef, where('payee_uid', '==', payeeUid)) : colRef;
       const snap = await getDocs(q);
-      return snap.docs.map(d => ({ id: d.id, ...(d.data() as Payout) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as Payout));
     } catch (err) {
       console.error("[DB] Error obteniendo payouts:", err);
       return [];
@@ -1019,7 +1196,7 @@ export class DatabaseInterface {
       const colRef = collection(this._getFirestore(), 'host_offers');
       const q = hostUid ? query(colRef, where('accepted_host_uid', '==', hostUid)) : colRef;
       const snap = await getDocs(q);
-      return snap.docs.map(d => ({ id: d.id, ...(d.data() as HostOffer) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as HostOffer));
     } catch (err) {
       console.error("[DB] Error obteniendo host_offers:", err);
       return [];
@@ -1128,7 +1305,7 @@ export class DatabaseInterface {
       const colRef = collection(this._getFirestore(), 'benefit_redemptions');
       const q = query(colRef, where('venueId', '==', venueId));
       const snap = await getDocs(q);
-      return snap.docs.map(d => ({ id: d.id, ...(d.data() as BenefitRedemption) }));
+      return snap.docs.map(d => ({ ...(d.data() as any), id: d.id } as BenefitRedemption));
     } catch (e) {
       console.error("[DB] Error getting benefit redemptions:", e);
       return [];

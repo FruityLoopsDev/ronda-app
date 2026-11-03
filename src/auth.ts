@@ -169,6 +169,7 @@ export class AuthService {
       const uid = userCredential.user.uid;
 
       const newProfile: User = {
+        ...profileData,
         uid: uid,
         role: 'client',
         name: profileData.name || 'Anónimo',
@@ -183,8 +184,7 @@ export class AuthService {
           roundsPlayed: 0,
           venuesVisited: 0,
           matchesCount: 0
-        },
-        ...profileData
+        }
       };
 
       // ── Club Fundador 100 ──

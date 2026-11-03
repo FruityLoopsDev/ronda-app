@@ -1,6 +1,7 @@
 import { DB, User, LedgerEntry, Payout, Scout, Host, MilestoneState, Reservation } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
+import { escapeHtml } from './utils.js';
 import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, limit, startAfter, getCountFromServer, QueryDocumentSnapshot } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { RondaB2BEngine } from './b2b-engine.ts';
@@ -559,13 +560,13 @@ export class SuperAdminController {
 
             <!-- Módulo 2: Pestañas Interactivas (Segmented Tabs) -->
             <div style="display:flex; background:rgba(0,0,0,0.35); border:1px solid var(--linea); border-radius:10px; padding:3px; gap:4px;">
-              <button class="sa-liq-tab-btn active" data-tab="pending" style="flex:1; background:rgba(240,168,48,0.18); border:1px solid rgba(240,168,48,0.35); color:var(--papel); font-size:11px; font-weight:700; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-sans); transition:all 0.2s;">
+              <button class="sa-liq-tab-btn active" data-tab="pending" style="flex:1; background:rgba(240,168,48,0.18); border:1px solid rgba(240,168,48,0.35); color:var(--papel); font-size:11px; font-weight:700; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
                 📥 Pendientes (<span id="sa-tab-cnt-pending">0</span>)
               </button>
-              <button class="sa-liq-tab-btn" data-tab="held" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-sans); transition:all 0.2s;">
+              <button class="sa-liq-tab-btn" data-tab="held" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
                 ⏳ En Revisión (<span id="sa-tab-cnt-held">0</span>)
               </button>
-              <button class="sa-liq-tab-btn" data-tab="history" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-sans); transition:all 0.2s;">
+              <button class="sa-liq-tab-btn" data-tab="history" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
                 📜 Historial (<span id="sa-tab-cnt-history">0</span>)
               </button>
             </div>
@@ -793,12 +794,12 @@ export class SuperAdminController {
               <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(243,237,226,0.03); border:1px solid var(--linea); border-radius:12px; padding:16px; flex-wrap:wrap; gap:12px;">
                 <div style="display:flex; align-items:center; gap:16px;">
                   <div style="font-family:var(--font-mono); text-align:center; padding:8px 12px; background:rgba(240,168,48,0.1); border-radius:8px; border:1px solid rgba(240,168,48,0.25);">
-                    <span style="font-size:10px; color:var(--humo); display:block; text-transform:uppercase;">${e.dayDate?.slice(0,3) || 'EVE'}</span>
+                    <span style="font-size:10px; color:var(--humo); display:block; text-transform:uppercase;">${escapeHtml(e.dayDate?.slice(0,3)) || 'EVE'}</span>
                     <b style="font-size:18px; color:var(--luz);">${e.id.slice(-2)}</b>
                   </div>
                   <div>
-                    <b style="font-size:14px; color:var(--papel); display:block;">${e.name || 'Speed Dating · Noche Clásica'}</b>
-                    <span style="font-size:11.5px; color:var(--humo);">${e.dayDate || 'Fecha por confirmar'} · ${e.venueName || 'Local asignado'} · ${e.participants?.length || 0} confirmados</span>
+                    <b style="font-size:14px; color:var(--papel); display:block;">${escapeHtml(e.name || 'Speed Dating · Noche Clásica')}</b>
+                    <span style="font-size:11.5px; color:var(--humo);">${escapeHtml(e.dayDate || 'Fecha por confirmar')} · ${escapeHtml(e.venueName || 'Local asignado')} · ${e.participants?.length || 0} confirmados</span>
                   </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
@@ -861,18 +862,18 @@ export class SuperAdminController {
                   <tr style="border-bottom:1px solid rgba(243,237,226,0.06);">
                     <td style="padding:14px 16px;">
                       <div style="display:flex; align-items:center; gap:10px;">
-                        <div style="width:32px; height:32px; border-radius:50%; background:var(--barra-alta); border:1px solid var(--luz); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--luz); font-weight:700;">${(b.user.name || 'I')[0].toUpperCase()}</div>
+                        <div style="width:32px; height:32px; border-radius:50%; background:var(--barra-alta); border:1px solid var(--luz); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--luz); font-weight:700;">${escapeHtml(b.user.name || 'I')[0].toUpperCase()}</div>
                         <div>
-                          <b style="color:var(--papel); font-size:13px; display:block;">${b.user.name || 'Invitado RONDA'}</b>
-                          <span style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${b.user.email || 'Confidencial'}</span>
+                          <b style="color:var(--papel); font-size:13px; display:block;">${escapeHtml(b.user.name || 'Invitado RONDA')}</b>
+                          <span style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${escapeHtml(b.user.email || 'Confidencial')}</span>
                         </div>
                       </div>
                     </td>
                     <td style="padding:14px 16px; font-family:var(--font-mono); font-size:11.5px; color:var(--papel);">
-                      ${b.user.phoneNumber || 'N/A'}
+                      ${escapeHtml(b.user.phoneNumber || 'N/A')}
                     </td>
                     <td style="padding:14px 16px; font-size:12px; color:var(--papel);">
-                      ${b.reservation.venueName} · ${b.reservation.dayDate}
+                      ${escapeHtml(b.reservation.venueName)} · ${escapeHtml(b.reservation.dayDate)}
                     </td>
                     <td style="padding:14px 16px;">
                       <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : '✅ Pagado Wompi'}</span>
@@ -1872,7 +1873,7 @@ export class SuperAdminController {
       });
       this.closePayoutModal();
       await this.loadLiquidaciones();
-      await RondaDialog.alert({ title: 'Desembolso registrado 💸', message: `Payout <b>${this.escapeKyc(payout.id)}</b> conciliado por <b>${this.formatCop(payout.gross_cop)}</b> con ref <b>${this.escapeKyc(ref)}</b>.`, icon: '✅' });
+      await RondaDialog.alert({ title: 'Desembolso registrado 💸', message: `Payout <b>${this.escapeKyc(payout.id)}</b> conciliado por <b>${this.formatCop(payout.gross_cop)}</b> con ref <b>${this.escapeKyc(ref)}</b>.`, icon: '✅', html: true });
     } catch (err: any) {
       console.error('[SuperAdmin] Error aprobando desembolso:', err);
       await RondaDialog.alert({ title: 'No se pudo aprobar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
@@ -1950,7 +1951,7 @@ export class SuperAdminController {
       });
       this.closeReverseModal();
       await this.loadLiquidaciones();
-      await RondaDialog.alert({ title: 'Reverso generado ↩️', message: `Se crearon <b>${created}</b> asientos contrarios enlazados al payout. El original se conserva.`, icon: '✅' });
+      await RondaDialog.alert({ title: 'Reverso generado ↩️', message: `Se crearon <b>${created}</b> asientos contrarios enlazados al payout. El original se conserva.`, icon: '✅', html: true });
     } catch (err: any) {
       console.error('[SuperAdmin] Error generando reverso:', err);
       await RondaDialog.alert({ title: 'No se pudo reversar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
@@ -2033,7 +2034,7 @@ export class SuperAdminController {
       });
       await this.loadPeople();
       await this.loadLiquidaciones();
-      await RondaDialog.alert({ title: 'Guardado ✅', message: `Colaborador <b>${this.escapeKyc(uid)}</b> (${type}) guardado con RUT ${rut ? '✓' : '✕'} y PILA ${pila ? `✓ ${this.currentBogotaMonth()}` : '✕'}.`, icon: '✅' });
+      await RondaDialog.alert({ title: 'Guardado ✅', message: `Colaborador <b>${this.escapeKyc(uid)}</b> (${type}) guardado con RUT ${rut ? '✓' : '✕'} y PILA ${pila ? `✓ ${this.currentBogotaMonth()}` : '✕'}.`, icon: '✅', html: true });
     } catch (err: any) {
       console.error('[SuperAdmin] Error guardando persona:', err);
       await RondaDialog.alert({ title: 'No se pudo guardar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
@@ -2154,6 +2155,7 @@ export class SuperAdminController {
             title: 'Eliminar token',
             message: `¿Seguro que deseas revocar y eliminar el token <b>${this.escapeKyc(token)}</b>? Esta acción no se puede deshacer.`,
             icon: '🗑️',
+            html: true,
             type: 'danger',
             confirmText: '✓ Eliminar',
             cancelText: '✕ Cancelar',

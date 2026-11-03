@@ -5,6 +5,8 @@
   --barra: #221826;
   --barra-alta: #2C2033;
   --luz: #F0A830;
+  --ambar: var(--luz);
+  --oro: #D4AF37;
   --botella: #2E6B54;
   --vino: #9B2748;
   --papel: #F3EDE2;
@@ -35,6 +37,8 @@
   --font-display: 'Bodoni Moda', Georgia, serif;
   --font-body: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: var(--font-display);
+  --font-sans: var(--font-body);
 
   /* Transiciones */
   --ease-fast: 150ms ease;

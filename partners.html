@@ -1,164 +1,12 @@
-El archivo `partners.html` es tu **embudo de captación B2B para dueños y administradores de gastrobares y speakeasies en Bogotá**. Es una página limpia, directa y mucho más enfocada que `invest.html`, porque aquí no intentas vender cuatro modelos de negocio a la vez, sino resolver un dolor puntual y sangrante del restaurador: **las mesas vacías los martes y miércoles con los costos fijos corriendo**.
-
-A continuación, el análisis exhaustivo desarmando sus puntos fuertes, sus fallas técnicas/comerciales y cómo optimizarla para cerrar alianzas con bares en frío.
-
----
-
-### ## 1. Las Fortalezas (Lo que sí vende a un dueño de bar)
-
-* **Ataque Directo al Dolor Operativo (Hero & Contraste):** El titular *"¿Tu bar está al 30% los martes y miércoles? Llenémoslo"* y la tabla comparativa (*Martes Tradicional vs. Martes con RONDA*) hablan el idioma exacto de un gerente de restaurante: costos fijos de nómina, arriendo, rotación de inventario y margen en barra y cocina.
-
-
-* **Matriz de División de Responsabilidades ("Nosotros gestionamos, tú facturas"):** Los dueños de bares odian a los promotores de eventos porque suelen darles más trabajo operativo o exigirles descuentos ridículos. Separar claramente las 6 tareas de RONDA (captar, cobrar, pagar por adelantado, poner el Host, llevar el kit) frente a las 4 tareas básicas del bar (reservar zona, servir cócteles, bajar música, facturar upsell) elimina la objeción de carga operativa de un plumazo.
-
-
-* **Calculadora Interactiva de Ingresos B2B (`#calculadora`):** Permitir que el dueño mueva el slider con el precio real de su cóctel y su plato promedio y vea inmediatamente que una noche muerta le deja **+$1.124.000 COP** en caja es el mejor gancho racional de la página.
-
-
-* **Persistencia Silenciosa a Firestore (`handleFormSubmit`):** Enviar el lead directamente por API REST a la colección `leads` de Firestore en segundo plano antes de mostrar la pantalla de confirmación y el botón de WhatsApp asegura que no pierdas el contacto aunque el usuario cierre la pestaña antes de abrir WhatsApp.
-
-
-
----
-
-### ## 2. La Destrucción: Puntos Débiles Técnicos, Comerciales y de UX
-
-#### A. Sabotajes Comerciales y Contradicciones de Negocio
-
-1. **Enlace a `/invest` en el Menú Principal y en el Footer (Error Grave de Posicionamiento):**
-* En la barra de navegación superior (`nav-links`) y en el footer tienes un enlace visible que dice **"Inversionistas" / "Pista Privada para Inversionistas FFF"**.
-
-
-* **El problema:** Si el dueño de un gastrobar de Zona G entra a evaluarte como proveedor/aliado y hace clic en "Inversionistas", va a descubrir dos cosas que matan tu negociación:
-1. Que aún estás pidiendo $8.000.000 COP prestados para arrancar los pilotos (destruye tu autoridad de marca consolidada).
-
-
-2. Que en `invest.html` dices que el bar firma una **penalidad de $550.000 COP si cancela con menos de 24h**, y que en el Q2 les vas a cobrar un **SaaS de $550.000/mes + $7.500 por asistente**, mientras que en el FAQ de `partners.html` les prometes cero riesgo y flexibilidad total.
-
-
-
-
-* **Regla de oro:** ¡Jamás mezcles la vista del proveedor/partner con la vista de levantamiento de capital!
-
-
-2. **Inconsistencia de Horarios entre Páginas (¿7:00 PM o 8:00 PM?):**
-* En `partners.html` (Timelapse y FAQ) dices que el evento empieza a las **7:00 PM (Host llega 6:30 PM, ronda de 7:15 PM a 9:00 PM)**.
-
-
-* En `index.html` e `invest.html` todos los eventos están anunciados de **20:00 a 21:45 (Check-in 19:40)**. Si el bar agenda su personal para liberarse a las 9:00 PM pero tus usuarios llegan a las 8:00 PM, tendrás un conflicto operativo desde el día 1.
-
-
-
-
-3. **El Botón de Play Falso (`play-button-glow`):**
-* En la sección `.experience-banner` hay una foto con un botón gigante de Play (`▶`) que brilla. El dueño del bar hace clic esperando ver un video de 30 segundos del ambiente en sala, pero en su lugar **se le abre el formulario para pedirle sus datos (`openModal('Video Reel')`)**.
-
-
-* Eso se percibe como un *bait-and-switch* (engaño) y genera rechazo inmediato.
-
-
-
-#### B. Errores Técnicos y Bugs en el Código
-
-1. **Bug Visual en el Contador de Visitas del Footer:**
-* En las líneas 911-912 tienes dos etiquetas `<b>` seguidas con la misma clase `.ronda-visit-count-val`:
-
-
-```html
-<b class="ronda-visit-count-val" id="visit-count-num">--</b>
-<b class="ronda-visit-count-val">...</b>
-
-```
-
-
-* El script actualiza el primero, pero el segundo (`...`) se queda impreso al lado para siempre (ej. `Visitas: 142 ...`). Además, igual que en `invest.html`, mostrar un contador de visitas en una página B2B resta exclusividad.
-
-
-
-
-2. **El Parámetro `src` de `openModal(src)` se Pierde en el Limbo:**
-* Pasas el origen del clic en `openModal('Video Reel')`, `openModal('Desde Calculadora')` y `openModal('CTA Final')`, pero la función `openModal(src)` **no hace nada con ese parámetro** y `handleFormSubmit` siempre guarda `source: 'partners_landing'` fijo. Además, cuando el usuario abre el modal desde la calculadora ("Postular mi local con este ticket"), los valores que acaba de calcular (`cPrice` y `fPrice`) no se adjuntan al lead ni al mensaje de WhatsApp.
-
-
-
-
-3. **Vulnerabilidad de Escritura Abierta en Firestore REST:**
-* Haces un `POST` directo sin autenticación a `.../documents/leads` y un `:commit` atómico a `.../documents/stats/visits` desde el navegador. Asegúrate de que las *Firestore Security Rules* para la colección `leads` solo permitan `create` (nunca `read`, `update` o `delete` público) y validen el esquema de campos para evitar ataques de denegación de servicio por facturación (spam de documentos).
-
-
-
-
-4. **Falta de ` <link href="...">` de las Fuentes:**
-* En el `<head>` tienes los `preconnect` a `fonts.googleapis.com` y `fonts.gstatic.com`, pero **olvidaste incluir el `<link href="[https://fonts.googleapis.com/css2?family=Bodoni+Moda...&display=swap](https://fonts.googleapis.com/css2?family=Bodoni+Moda...&display=swap)" rel="stylesheet">**` (a menos que esté importado con `@import` dentro de `ronda-tokens.css`, lo cual bloquea el renderizado).
-
-
-
-
-5. **Matemática Inicial Desincronizada en el HTML:**
-* En el HTML estático de la calculadora muestras `$1.124.000 COP` ($576.000 + $230.400 + $319.200 = **$1.125.600**, no $1.124.000). Aunque el JS (`recalc()`) lo corrige al cargar la página, denota falta de precisión en la plantilla estática.
-
-
-
-
-
----
-
-### ## 3. Plan de Mejora para Multiplicar la Conversión de Bares
-
-Para que un dueño de gastrobar en Zona G, Quinta Camacho o Chapinero Alto pase de leer a agendar la visita del Scout en la primera sesión, aplica estas 5 mejoras:
-
-#### 1. Aislar los Embudos (Ocultar `/invest` de la Vista de Bares)
-
-* **Acción:** Elimina todos los enlaces a `/invest` tanto del header como del footer de `partners.html`. Para el dueño del bar, RONDA debe verse como una operación sólida, financiada y lista para comprarle 24 cócteles por adelantado.
-
-
-
-#### 2. Conectar la Calculadora con el Modal y el Mensaje de WhatsApp
-
-* **Acción:** Guarda el parámetro `src` cuando se llama a `openModal(src)` y captura los valores actuales de la calculadora (`cocktailSlider.value` y `foodSlider.value`).
-
-
-* Cuando el administrador del bar envíe el formulario, incluye automáticamente esos datos en el payload de Firestore y en el texto de WhatsApp:
-> *"Hola Scout RONDA, acabo de postular mi gastrobar 'Black Bear' en Zona G. Mi cóctel promedio es de $26.000 y mi ticket de comida es $40.000 (Proyección noche: $1.206.400 COP). Quiero agendar la visita de 20 min."*
-
-
-* Esto le da a tu Scout munición comercial exacta antes de pisar el local.
-
-#### 3. Reemplazar el Botón de Play Engañoso por un Video Real o Vista Interactiva
-
-* **Acción:** Si ya tienes el archivo `/assets/ronda-pitch-video.mp4` o un reel de atmósfera de 20 segundos, haz que el botón `▶` abra un lightbox de video real (o embebe un video corto en bucle `autoplay muted loop playsinline` mostrando el brindis, la campana y los acrílicos en mesa). No abras el formulario de registro al tocar un botón de reproducción.
-
-
-
-#### 4. Agregar la Sección "Requisitos Físicos de Selección (Checklist de Exclusividad)"
-
-* **Acción:** En ventas B2B de hospitalidad, cuando tú pones condiciones de entrada, el dueño del bar siente que está postulando a un club selecto en lugar de que le estén vendiendo algo. Agrega una tarjeta visual con los **4 requisitos técnicos que evalúa el Scout**:
-1. **Capacidad:** 12 mesas independientes de 2 puestos (o 6 de 4 puestos bien separadas).
-
-
-2. **Acústica Conversacional:** Nivel de música controlable (< 75 dB en la zona asignada entre 7:00 PM y 9:00 PM para permitir conversación íntima).
-
-
-3. **Iluminación Cálida:** Luz tenue de barra/mesa (sin luces blancas de techo).
-4. **Coctelería de Autor:** Capacidad de despachar 24 cócteles de bienvenida en los primeros 20 minutos de check-in sin colapsar la barra.
-
-
-
-
-
-#### 5. Unificar el Horario Oficial en Todo el Ecosistema
-
-* **Acción:** Define si las rondas en Bogotá serán de **7:00 PM a 9:00 PM** (como dice `partners.html`) o de **8:00 PM a 9:45 PM** (como dicen `index.html` e `invest.html`) y alinea las tres páginas. En Bogotá, citar a las **7:00 PM / 7:30 PM** para iniciar rondas a las **7:45 PM** funciona mejor tanto para el tráfico de salida de oficina como para dejarle al bar la ventana de **9:15 PM a 11:00 PM** libre para el *upsell* de comida y segundas rondas.
-
-
-
-¿Quieres que te entregue el bloque de código `<script>` y el HTML del footer/header corregidos para que la calculadora inyecte los datos financieros del bar directo al CRM de Firestore y al WhatsApp del Scout?<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es-CO">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#16101B">
 <title>RONDA Partners — Reactivación de Gastrobares y Speakeasies · Bogotá</title>
+<meta name="description" content="Convierte tus martes y miércoles de baja afluencia en noches rentables: 24 clientes verificados con consumo garantizado y pagado por adelantado. Cero inversión en pauta. Alianzas B2B para gastrobares y speakeasies en Bogotá.">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://ronda.uno/partners">
 <link rel="icon" type="image/svg+xml" href="/assets/ronda-logo-amber.svg">
 
@@ -185,6 +33,8 @@ Para que un dueño de gastrobar en Zona G, Quinta Camacho o Chapinero Alto pase 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Tipografías de marca: sin este <link> el navegador cae a Georgia/system-ui y rompe la identidad RONDA -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="/assets/ronda-tokens.css">
 <script src="/assets/ronda-dialog.js"></script>
 
@@ -531,6 +381,79 @@ header.site-header {
 .play-button-glow:hover {
   transform: scale(1.1);
   background: #ffc966;
+}
+
+.play-caption {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--humo-claro);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+/* Reel lightbox: el ▶ reproduce video real, nunca abre el formulario */
+.reel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(8, 5, 11, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.reel-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.reel-frame {
+  position: relative;
+  width: min(920px, 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(240, 168, 48, 0.35);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 45px rgba(240, 168, 48, 0.15);
+  background: #000;
+}
+.reel-frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+}
+.reel-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(11, 8, 14, 0.78);
+  border: 1px solid rgba(243, 237, 226, 0.25);
+  color: var(--papel);
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.reel-close:hover {
+  background: rgba(240, 168, 48, 0.28);
 }
 
 .experience-content {
@@ -1621,7 +1544,7 @@ footer.site-footer {
       <a href="/" class="brand-logo">R<em>O</em>NDA</a>
       <span class="badge-partner">B2B PARTNERS</span>
     </div>
-    <button class="menu-toggle" id="menu-toggle" aria-label="Menú">☰</button>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menú" aria-controls="nav-links" aria-expanded="false">☰</button>
     <div class="nav-links" id="nav-links">
       <a href="/" class="nav-link">← Ver App</a>
       <a href="/invest" class="nav-link">Inversionistas</a>
@@ -1684,7 +1607,8 @@ footer.site-footer {
   <div class="experience-banner">
     <div class="experience-grid">
       <div class="experience-visual">
-        <div class="play-button-glow" onclick="openModal('Video Reel')">▶</div>
+        <button type="button" class="play-button-glow" onclick="openReel()" aria-label="Reproducir el reel de una noche RONDA">▶</button>
+        <span class="play-caption">Reel · cómo es una noche RONDA</span>
       </div>
       <div class="experience-content">
         <span class="section-tag">EL CONCEPTO EN SALA</span>
@@ -1742,7 +1666,7 @@ footer.site-footer {
       <div class="tl-scroll" id="tl-scroll">
 
         <div class="tl-card">
-          <div class="tl-card-bg" style="background-image: url('/assets/img/tl-1-host-setup.jpg');"></div>
+          <div class="tl-card-bg" style="background-image: url('/assets/img/acto-1-llegada.jpg');"></div>
           <div class="tl-card-overlay"></div>
           <div class="tl-card-content">
             <div class="tl-hour-badge"><span class="tl-dot"></span> 6:30 PM</div>
@@ -1752,7 +1676,7 @@ footer.site-footer {
         </div>
 
         <div class="tl-card">
-          <div class="tl-card-bg" style="background-image: url('/assets/img/tl-2-checkin.jpg');"></div>
+          <div class="tl-card-bg" style="background-image: url('/assets/img/acto-4-brindis.jpg');"></div>
           <div class="tl-card-overlay"></div>
           <div class="tl-card-content">
             <div class="tl-hour-badge"><span class="tl-dot"></span> 7:00 PM</div>
@@ -1762,7 +1686,7 @@ footer.site-footer {
         </div>
 
         <div class="tl-card">
-          <div class="tl-card-bg" style="background-image: url('/assets/img/tl-3-ronda.jpg');"></div>
+          <div class="tl-card-bg" style="background-image: url('/assets/img/acto-2-conversacion.jpg');"></div>
           <div class="tl-card-overlay"></div>
           <div class="tl-card-content">
             <div class="tl-hour-badge"><span class="tl-dot"></span> 7:15 PM</div>
@@ -1794,11 +1718,11 @@ footer.site-footer {
       </div>
 
       <div class="tl-progress" id="tl-progress">
-        <button class="tl-progress-dot active" data-index="0"></button>
-        <button class="tl-progress-dot" data-index="1"></button>
-        <button class="tl-progress-dot" data-index="2"></button>
-        <button class="tl-progress-dot" data-index="3"></button>
-        <button class="tl-progress-dot" data-index="4"></button>
+        <button class="tl-progress-dot active" type="button" data-index="0" aria-label="Ir al paso 1: llega el Host"></button>
+        <button class="tl-progress-dot" type="button" data-index="1" aria-label="Ir al paso 2: check-in y cóctel"></button>
+        <button class="tl-progress-dot" type="button" data-index="2" aria-label="Ir al paso 3: comienza la ronda"></button>
+        <button class="tl-progress-dot" type="button" data-index="3" aria-label="Ir al paso 4: fin de la ronda"></button>
+        <button class="tl-progress-dot" type="button" data-index="4" aria-label="Ir al paso 5: sobremesa libre"></button>
       </div>
       <div class="tl-hint">&#x25B6; reproducci&#xF3;n autom&#xE1;tica</div>
     </div>
@@ -1927,7 +1851,7 @@ footer.site-footer {
 
         <div class="calc-display">
           <span class="calc-display-sub">Ingreso Estimado por Noche</span>
-          <div class="calc-total-number" id="calc-total">$1.124.000 COP</div>
+          <div class="calc-total-number" id="calc-total">$1.125.600 COP</div>
 
           <div class="calc-breakdown-list">
             <div class="row">
@@ -2008,7 +1932,7 @@ footer.site-footer {
 
       <details class="faq-item">
         <summary>¿Qué días y horarios operan?</summary>
-        <div class="faq-answer">Exclusivamente martes, miércoles y jueves (tus días valle), entre 7:00 PM y 9:30 PM. Precisamente los horarios donde más necesitas flujo de caja.</div>
+        <div class="faq-answer">Exclusivamente martes, miércoles y jueves (tus días valle). El Host monta el kit a las 6:30 PM, el check-in es a las 7:00 PM y la ronda cierra a las 9:00 PM; a las 9:15 PM tu zona queda 100% libre para la sobremesa. Precisamente los horarios donde más necesitas flujo de caja.</div>
       </details>
 
       <details class="faq-item">
@@ -2051,6 +1975,17 @@ footer.site-footer {
 
 </main>
 
+<!-- Reel Lightbox -->
+<div class="reel-overlay" id="reel-overlay" role="dialog" aria-modal="true" aria-label="Reel de una noche RONDA">
+  <div class="reel-frame">
+    <button type="button" class="reel-close" onclick="closeReel()" aria-label="Cerrar reel">✕</button>
+    <video id="reel-video" controls playsinline preload="none" poster="/assets/img/acto-2-conversacion.jpg">
+      <source src="/assets/ronda-pitch-video.mp4" type="video/mp4">
+      Tu navegador no soporta video HTML5.
+    </video>
+  </div>
+</div>
+
 <!-- Modal Lead Capture -->
 <div class="modal-overlay" id="lead-modal">
   <div class="modal-card">
@@ -2066,7 +2001,7 @@ footer.site-footer {
       <form id="lead-form" onsubmit="handleFormSubmit(event)">
         <div class="form-group">
           <label>Nombre del Bar / Gastrobar</label>
-          <input type="text" id="lead-bar-name" class="form-input" placeholder="Ej. Black Bear / Huerta Coctelería" required>
+          <input type="text" id="lead-bar-name" class="form-input" placeholder="Ej. Black Bear / Huerta Coctelería" maxlength="100" autocomplete="organization" required>
         </div>
 
         <div class="form-group">
@@ -2083,7 +2018,7 @@ footer.site-footer {
 
         <div class="form-group">
           <label>WhatsApp del Administrador o Dueño</label>
-          <input type="tel" id="lead-bar-phone" class="form-input" placeholder="Ej. 310 123 4567" required>
+          <input type="tel" id="lead-bar-phone" class="form-input" placeholder="Ej. 310 123 4567" minlength="7" maxlength="30" inputmode="tel" autocomplete="tel" required>
         </div>
 
         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 999px;">
@@ -2184,7 +2119,6 @@ footer.site-footer {
           <span class="ronda-pulse-dot" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
           <span>Visitas:</span>
           <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;" id="visit-count-num">--</b>
-          <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;">...</b>
         </span>
       </div>
     </div>
@@ -2226,9 +2160,31 @@ footer.site-footer {
   foodSlider.addEventListener('input', recalc);
   recalc();
 
-  // Modal logic
+  // Reel lightbox: el ▶ reproduce el video real, nunca abre el formulario
+  const reelOverlay = document.getElementById('reel-overlay');
+  const reelVideo = document.getElementById('reel-video');
+  function openReel() {
+    if (!reelOverlay || !reelVideo) return;
+    reelOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    reelVideo.play().catch(() => null);
+  }
+  function closeReel() {
+    if (!reelOverlay || !reelVideo) return;
+    reelOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+    reelVideo.pause();
+  }
+  if (reelOverlay) {
+    reelOverlay.addEventListener('click', (e) => { if (e.target === reelOverlay) closeReel(); });
+  }
+
+  // Modal logic (captura el origen real de cada clic)
   const modal = document.getElementById('lead-modal');
+  let leadSource = 'partners_landing';
+
   function openModal(src) {
+    leadSource = src || 'partners_landing';
     const formBox = document.getElementById('lead-form-container');
     const successBox = document.getElementById('lead-success-box');
     if (formBox) formBox.style.display = 'block';
@@ -2241,6 +2197,17 @@ footer.site-footer {
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeModal(); closeReel(); }
+  });
+
+  // Foto financiera del local en el instante del clic (viaja con el lead)
+  function calcSnapshot() {
+    const c = parseInt(cocktailSlider?.value || '0', 10);
+    const f = parseInt(foodSlider?.value || '0', 10);
+    const total = Math.round(24 * c + (24 * 0.40) * c + (24 * 0.35) * f);
+    return { cocktail: c, food: f, total };
+  }
 
   async function handleFormSubmit(e) {
     e.preventDefault();
@@ -2248,7 +2215,23 @@ footer.site-footer {
     const barZone = (document.getElementById('lead-bar-zone')?.value || '').trim();
     const barPhone = (document.getElementById('lead-bar-phone')?.value || '').trim();
 
-    // Persistir lead en Firestore REST en segundo plano (0s latencia hacia el CRM)
+    // firestore.rules exige name 1-100 y phone 7-30: validamos en cliente para
+    // que un lead válido nunca sea rechazado en silencio.
+    if (!barName || barName.length > 100) {
+      alert('Escribe el nombre de tu bar (máximo 100 caracteres).');
+      return;
+    }
+    if (barPhone.replace(/\D/g, '').length < 7) {
+      alert('Escribe un WhatsApp válido (mínimo 7 dígitos).');
+      return;
+    }
+
+    const calc = calcSnapshot();
+    const fromCalc = leadSource === 'Desde Calculadora';
+    const projection = `Cóctel ${fmt(calc.cocktail)} · Comida ${fmt(calc.food)} · Proyección ${fmt(calc.total)} COP`;
+
+    // Persistir lead en Firestore REST en segundo plano (0s latencia hacia el CRM).
+    // Sólo se envían campos permitidos por firestore.rules (leads.hasOnly).
     try {
       const leadPayload = {
         fields: {
@@ -2257,21 +2240,31 @@ footer.site-footer {
           zone: { stringValue: barZone },
           phone: { stringValue: barPhone },
           status: { stringValue: 'lead' },
-          source: { stringValue: 'partners_landing' },
-          createdAt: { stringValue: new Date().toISOString() }
+          source: { stringValue: leadSource },
+          notes: { stringValue: fromCalc ? projection : '' },
+          createdAt: { stringValue: new Date().toISOString() },
+          sales_uid: { stringValue: 'unassigned' }
         }
       };
       fetch('https://firestore.googleapis.com/v1/projects/ronda-uno/databases/(default)/documents/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(leadPayload)
-      }).catch(() => null);
-    } catch (err) {}
+      }).then((r) => {
+        if (!r.ok) console.warn('[RONDA] lead no persistido, status', r.status);
+      }).catch((err) => console.warn('[RONDA] lead no persistido', err));
+    } catch (err) {
+      console.warn('[RONDA] lead no persistido', err);
+    }
 
     const waBtn = document.getElementById('lead-wa-direct-btn');
     if (waBtn) {
-      const msg = encodeURIComponent(`Hola Scout RONDA, acabo de postular mi gastrobar "${barName}" en ${barZone} (Tel: ${barPhone})`);
-      waBtn.href = `https://wa.me/573026543854?text=${msg}`;
+      let msg = `Hola Scout RONDA, acabo de postular mi gastrobar "${barName}" en ${barZone} (Tel: ${barPhone}).`;
+      if (fromCalc) {
+        msg += ` Mi cóctel promedio es ${fmt(calc.cocktail)} y mi ticket de comida ${fmt(calc.food)} (proyección por noche: ${fmt(calc.total)} COP).`;
+      }
+      msg += ' Quiero agendar la visita de 20 min.';
+      waBtn.href = `https://wa.me/573026543854?text=${encodeURIComponent(msg)}`;
     }
 
     const formBox = document.getElementById('lead-form-container');
@@ -2284,8 +2277,10 @@ footer.site-footer {
   const menuToggle = document.getElementById('menu-toggle');
   const navLinks = document.getElementById('nav-links');
   menuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('mobile-open');
-    menuToggle.textContent = navLinks.classList.contains('mobile-open') ? '✕' : '☰';
+    const isOpen = navLinks.classList.toggle('mobile-open');
+    menuToggle.textContent = isOpen ? '✕' : '☰';
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    menuToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
   });
 
   // Timelapse auto-scroll + sync

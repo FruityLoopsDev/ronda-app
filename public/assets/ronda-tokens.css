@@ -35,6 +35,8 @@
   --font-display: 'Bodoni Moda', Georgia, serif;
   --font-body: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: var(--font-display);
+  --font-sans: var(--font-body);
 
   /* Transiciones */
   --ease-fast: 150ms ease;

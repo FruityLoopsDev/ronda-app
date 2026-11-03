@@ -1,5 +1,6 @@
 import { DB, Venue } from './db.js';
 import { RondaDialog } from './dialog.js';
+import { escapeHtml } from './utils.js';
 import { 
   checkTerritorialExclusivity, 
   detectAllNetworkCollisions, 
@@ -104,14 +105,14 @@ export class NetworkController {
               <div style="background: ${hasConflict ? 'rgba(155,39,72,0.12)' : 'rgba(243,237,226,0.04)'}; border: 1px solid ${hasConflict ? 'rgba(155,39,72,0.4)' : 'var(--linea)'}; border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                 <div>
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                    <b style="font-family: var(--font-display); font-size: 17px; color: var(--papel);">${v.name}</b>
+                    <b style="font-family: var(--font-display); font-size: 17px; color: var(--papel);">${escapeHtml(v.name)}</b>
                     <span class="chip ${v.status === 'active' ? 'verde' : 'gris'}" style="font-size: 9px; padding: 2px 7px;">${v.status === 'active' ? '● En Red' : 'Inactivo'}</span>
-                    <span class="chip ambar" style="font-size: 9px; padding: 2px 7px;">📍 ${v.zone || 'Bogotá'}</span>
+                    <span class="chip ambar" style="font-size: 9px; padding: 2px 7px;">📍 ${escapeHtml(v.zone || 'Bogotá')}</span>
                   </div>
-                  <p style="font-size: 11.5px; color: var(--humo); font-family: var(--font-mono); margin: 0;">${v.address || 'Dirección registrada'} · Coords: (${latVal}, ${lngVal})</p>
+                  <p style="font-size: 11.5px; color: var(--humo); font-family: var(--font-mono); margin: 0;">${escapeHtml(v.address || 'Dirección registrada')} · Coords: (${latVal}, ${lngVal})</p>
                   ${hasConflict ? `
                     <div style="margin-top: 8px; font-size: 11px; color: #ff8ca8; font-family: var(--font-mono); display: flex; align-items: center; gap: 6px;">
-                      ⚠️ <b>Alerta de colisión:</b> A solo ${conflicts[0].distanceMeters}m de <u>${conflicts[0].conflictingVenueName}</u> (Violación de exclusividad &lt;500m)
+                      ⚠️ <b>Alerta de colisión:</b> A solo ${conflicts[0].distanceMeters}m de <u>${escapeHtml(conflicts[0].conflictingVenueName)}</u> (Violación de exclusividad &lt;500m)
                     </div>
                   ` : `
                     <div style="margin-top: 6px; font-size: 10.5px; color: var(--botella); font-family: var(--font-mono);">
@@ -165,7 +166,8 @@ export class NetworkController {
             if (!check.isCompliant) {
               const proceed = await RondaDialog.confirm({
                 title: '⚠️ Conflicto de Exclusividad',
-                message: `Activar este bar genera colisión con <b>${check.conflicts[0].conflictingVenueName}</b> a solo ${check.conflicts[0].distanceMeters}m.<br><br>¿Deseas activarlo de todas formas?`,
+                message: `Activar este bar genera colisión con <b>${escapeHtml(check.conflicts[0].conflictingVenueName)}</b> a solo ${check.conflicts[0].distanceMeters}m.<br><br>¿Deseas activarlo de todas formas?`,
+                html: true,
                 confirmText: 'Activar con Advertencia',
                 cancelText: 'Cancelar'
               });
@@ -226,7 +228,8 @@ export class NetworkController {
       if (!exclusivityCheck.isCompliant) {
         const proceedWithWarning = await RondaDialog.confirm({
           title: '⚠️ Conflicto Territorial Detectado',
-          message: `El bar se ubicaría a <b>${exclusivityCheck.conflicts[0].distanceMeters}m</b> de <b>${exclusivityCheck.conflicts[0].conflictingVenueName}</b>.<br><br>Para proteger a la red aliada, se afiliará con estado <b>Inactivo</b> hasta validación por la dirección.`,
+          message: `El bar se ubicaría a <b>${exclusivityCheck.conflicts[0].distanceMeters}m</b> de <b>${escapeHtml(exclusivityCheck.conflicts[0].conflictingVenueName)}</b>.<br><br>Para proteger a la red aliada, se afiliará con estado <b>Inactivo</b> hasta validación por la dirección.`,
+          html: true,
           confirmText: 'Afiliar como Inactivo',
           cancelText: 'Cancelar'
         });
@@ -251,8 +254,9 @@ export class NetworkController {
 
         await RondaDialog.alert({
           title: 'Bar Registrado en Red',
-          message: `¡<b>${name}</b> ha sido guardado exitosamente en Firestore!<br><br>Estado: <b>${initialStatus === 'active' ? '● En Red' : 'Pausado (Conflicto territorial)'}</b>.`,
-          icon: '✅'
+          message: `¡<b>${escapeHtml(name)}</b> ha sido guardado exitosamente en Firestore!<br><br>Estado: <b>${initialStatus === 'active' ? '● En Red' : 'Pausado (Conflicto territorial)'}</b>.`,
+          icon: '✅',
+          html: true
         });
       } catch (err: any) {
         await RondaDialog.alert({

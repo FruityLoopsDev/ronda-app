@@ -576,7 +576,8 @@ function initApp() {
         await RondaDialog.alert({
           title: 'Enlace Enviado',
           message: `Hemos enviado un correo a <b>${escapeHtml(emailToSend)}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
-          icon: '✉️'
+          icon: '✉️',
+          html: true
         });
       } catch (err: any) {
         await RondaDialog.alert({

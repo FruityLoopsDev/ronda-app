@@ -9,6 +9,18 @@
  */
 const { spawnSync } = require('child_process');
 
+// Puerta de integridad: aborta el publish si una página quedó con prosa pegada
+// antes del doctype (modo quirks) o apunta a assets inexistentes.
+// Nace del incidente partners.html (informe pegado sobre el HTML).
+const gate = spawnSync('node scripts/check-html-integrity.cjs', {
+  stdio: 'inherit',
+  shell: true,
+});
+if (gate.status !== 0) {
+  console.error('\n✗ Build abortado: integridad HTML.');
+  process.exit(gate.status ?? 1);
+}
+
 // shell:true con comando en string: resuelve npx(.cmd) vía PATH en ambas plataformas.
 const r = spawnSync('npx vite build', {
   stdio: 'inherit',

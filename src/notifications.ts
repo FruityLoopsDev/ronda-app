@@ -158,22 +158,45 @@ class NotificationSystem {
     await batch.commit();
   }
 
+  /**
+   * Contenedor de toasts con autocuración.
+   *
+   * `init()` solo se invoca en la app principal; en los portales (admin, crm,
+   * superadmin, network) nadie lo llamaba y `container` quedaba en null, así que
+   * TODOS los avisos de esas consolas se descartaban en silencio.
+   */
+  private ensureContainer(): HTMLElement | null {
+    if (this.container?.isConnected) return this.container;
+
+    this.container = document.getElementById('toast-container');
+    if (this.container) return this.container;
+
+    if (!document.body) return null;
+    const created = document.createElement('div');
+    created.id = 'toast-container';
+    document.body.appendChild(created);
+    this.container = created;
+    return created;
+  }
+
   showToast(notif: AppNotification | { title: string, body: string, type: 'match' | 'reservation' | 'system' | 'alert' }) {
-    if (!this.container) return;
+    const container = this.ensureContainer();
+    if (!container) return;
 
     const toast = document.createElement('div');
     toast.className = `toast-v2 ${notif.type}`;
-    
+
+    // El cuerpo puede incluir datos del usuario (nombre, email): se escapa.
     toast.innerHTML = `
       <div class="toast-icon">${this.getIconForType(notif.type)}</div>
       <div class="toast-text">
-        <h4>${notif.title}</h4>
-        <p>${notif.body}</p>
+        <h4>${escapeHtml(notif.title)}</h4>
+        <p>${escapeHtml(notif.body)}</p>
       </div>
       <button class="toast-close">&times;</button>
     `;
 
-    this.container.appendChild(toast);
+    container.appendChild(toast);
     
     // Animar entrada
     requestAnimationFrame(() => toast.classList.add('show'));

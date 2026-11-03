@@ -44,6 +44,18 @@ module.exports = async function handler(req, res) {
     const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
     const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
+    // Autorización por venueId para rol admin: solo puede mintear eventos de su propio venue
+    if (authCtx.role === 'admin') {
+      const eventDoc = await db.collection('events').doc(eventId).get();
+      if (!eventDoc.exists) {
+        return fail(Object.assign(new Error('Evento no encontrado.'), { statusCode: 404 }));
+      }
+      const eventData = eventDoc.data();
+      if (eventData.venueId !== authCtx.venueId) {
+        return fail(Object.assign(new Error('No autorizado: no pertenece al venue de este evento.'), { statusCode: 403 }));
+      }
+    }
+
     const abi = [
       'function mint(address _userAddress, uint256 _eventId, string memory _ipfsHash) external',
       'event NFTMinted(address indexed user, uint256 indexed eventId, uint256 tokenId)'
@@ -63,11 +75,17 @@ module.exports = async function handler(req, res) {
       console.log(`Tx enviada (sin esperar confirmación): ${txHash}`);
     } else {
       const receipt = await tx.wait();
-      txHash = receipt.transactionHash || '0x' + Math.random().toString(16).substr(2, 40);
-      tokenId = Math.floor(Math.random() * 100000).toString();
+      txHash = receipt.transactionHash;
+      if (!txHash) {
+        throw new Error('No transaction hash received from Polygon');
+      }
+      tokenId = null;
       if (receipt.events) {
         const event = receipt.events.find((e) => e.event === 'NFTMinted');
         if (event && event.args) tokenId = event.args.tokenId.toString();
+      }
+      if (!tokenId) {
+        throw new Error('No NFTMinted event found in receipt');
       }
     }
 

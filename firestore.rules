@@ -3,11 +3,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // SuperAdmin de Emergencia: Exclusivo UID maestro o cesar@ronda.uno verificado
     function isMasterAdmin() {
-      return request.auth != null && (
-        request.auth.token.get('email', '') == 'cesar@ronda.uno' ||
-        request.auth.token.get('email', '').matches('^[a-zA-Z0-9._%+-]+@ronda[.]uno$') ||
-        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53'
+      return isSignedIn() && (
+        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
+        (
+          request.auth.token.email_verified == true &&
+          request.auth.token.email == 'cesar@ronda.uno'
+        )
       );
     }
 
@@ -88,7 +95,8 @@ service cloud.firestore {
           && request.resource.data.get('role', resource.data.get('role', 'client')) == resource.data.get('role', 'client')
           && request.resource.data.get('hasTicket', false) == resource.data.get('hasTicket', false)
           && !clientTouchedSensitive()
-          && validClientVerificationAndPayment())
+          && validClientVerificationAndPayment()
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['kycStatus']) || request.resource.data.get('kycStatus', '') == 'pending'))
         || (isAdmin()
           && request.resource.data.get('role', resource.data.get('role', 'admin')) == resource.data.get('role', 'admin')
           && request.resource.data.get('venueId', resource.data.get('venueId', '')) == resource.data.get('venueId', '')
@@ -192,20 +200,22 @@ service cloud.firestore {
 
     // --- Locales (venues) ---
     match /venues/{venueId} {
-      // Lectura: superadmin, anfitrión asignado a este local, o cualquier usuario autenticado con trustTier >= 1.
+      // Lectura: superadmin, staff operativo (red, ventas, anfitriones) o usuarios verificados (trustTier >= 1).
       allow read: if request.auth != null && (
         isSuperAdmin() ||
+        isStaff() ||
         isVenueStaff(venueId) ||
         getUserData(request.auth.uid).get('trustTier', 0) >= 1
       );
-      // Actualización de ficha del local: superadmin libre; anfitrión solo de su local sin alterar términos fiscales/contractuales
-      allow update: if isSuperAdmin() || (
+      // Actualización de ficha del local: superadmin y equipo de red; anfitrión de su propio local sin alterar términos fiscales/contractuales
+      allow update: if isSuperAdmin() || isNetwork() || (
         isAdmin() && isVenueStaff(venueId)
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
           'nit', 'origin_scout_uid', 'affiliation_status', 'contract_id', 'territorial_terms', 'bar_package_price_cop'
         ])
       );
-      allow create, delete: if isSuperAdmin();
+      allow create: if isSuperAdmin() || isNetwork();
+      allow delete: if isSuperAdmin();
     }
 
     // --- Cierres de Noche / Liquidaciones Operativas de Barra ---
@@ -238,13 +248,51 @@ service cloud.firestore {
 
     // --- Leads (CRM / ventas) ---
     match /leads/{leadId} {
-      allow read, update: if isSuperAdmin() || isSales() || isNetwork() || isAdmin();
-      allow create: if isSuperAdmin() || isSales() || (
-        request.resource.data.keys().hasOnly(['id', 'name', 'zone', 'contactName', 'phone', 'status', 'source', 'notes', 'commission', 'createdAt'])
-        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
-        && request.resource.data.phone is string && request.resource.data.phone.size() >= 7 && request.resource.data.phone.size() <= 30
+      allow read: if isSuperAdmin() || isAdmin() || (
+        isSales() && (
+          resource.data.sales_uid == request.auth.uid ||
+          resource.data.scout_uid == request.auth.uid ||
+          resource.data.sales_uid == 'unassigned'
+        )
+      );
+      allow create: if (
+        (isSales() || isSuperAdmin() || isAdmin()) &&
+        request.resource.data.sales_uid == request.auth.uid &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() > 0 &&
+        request.resource.data.name.size() <= 150
+      ) || (
+        // Ingesta pública acotada desde partners.html (postulación de bares B2B)
+        request.resource.data.keys().hasOnly(['id', 'name', 'zone', 'phone', 'status', 'source', 'notes', 'createdAt', 'sales_uid']) &&
+        request.resource.data.status == 'lead' &&
+        request.resource.data.sales_uid == 'unassigned' &&
+        request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 150 &&
+        request.resource.data.zone is string && request.resource.data.zone.size() <= 80 &&
+        request.resource.data.phone is string && request.resource.data.phone.size() <= 40 &&
+        request.resource.data.source in ['Desde Calculadora', 'Formulario Directo', 'Landing B2B'] &&
+        request.resource.data.notes is string && request.resource.data.notes.size() <= 1000
+      );
+      allow update: if isSuperAdmin() || isAdmin() || (
+        isSales() && (
+          resource.data.sales_uid == request.auth.uid ||
+          resource.data.scout_uid == request.auth.uid ||
+          (resource.data.sales_uid == 'unassigned' && request.resource.data.sales_uid == request.auth.uid)
+        )
       );
       allow delete: if isSuperAdmin();
+
+      match /history/{eventId} {
+        allow read: if isSuperAdmin() || isSales() || isNetwork();
+        allow create: if request.auth != null && (isSuperAdmin() || isSales() || isNetwork());
+        allow update, delete: if isSuperAdmin();
+      }
+
+
+    // --- Solicitudes de Alta de Locales en Red (Scouts -> SuperAdmin/Network) ---
+    match /venue_requests/{reqId} {
+      allow read: if isSuperAdmin() || isNetwork() || isSales();
+      allow create: if request.auth != null && (isSuperAdmin() || isNetwork() || isSales());
+      allow update, delete: if isSuperAdmin() || isNetwork();
     }
 
     // --- Transacciones: solo servidor (Admin SDK). Clientes sin acceso. ---
@@ -261,8 +309,9 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly([
             'name', 'linkedin', 'whatsapp', 'email', 'interestZone', 'source', 'createdAt'
           ])
-          && request.resource.data.name is string
-          && request.resource.data.email is string
+          && request.resource.data.keys().size() <= 12
+          && request.resource.data.name is string && request.resource.data.name.size() <= 120
+          && request.resource.data.email is string && request.resource.data.email.size() <= 150
           && request.resource.data.whatsapp is string;
       allow read, update, delete: if isSuperAdmin();
     }
@@ -316,9 +365,9 @@ service cloud.firestore {
       allow update, delete: if isSuperAdmin();
     }
     match /invest_tokens/{tokenId} {
-      allow read: if true;
-      allow create: if isSuperAdmin();
-      allow update, delete: if isSuperAdmin();
+      allow get: if true;
+      allow list: if isSuperAdmin();
+      allow create, update, delete: if isSuperAdmin();
     }
     match /support_tickets/{ticketId} {
       allow read: if isSuperAdmin() || (isAdmin() && isVenueStaff(resource.data.venueId));
@@ -329,7 +378,23 @@ service cloud.firestore {
     // --- Métricas públicas de plataforma (contador de visitas anónimo) ---
     match /stats/{statId} {
       allow read: if true;
-      allow create, update: if statId == 'visits';
+      allow create: if statId == 'visits' && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == 1;
+      allow update: if statId == 'visits' && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == resource.data.count + 1;
+      allow delete: if isSuperAdmin();
     }
+
+    // --- Chats 1:1: solo participantes del match, sin modificar participantes/id/evento ---
+    match /chats/{chatId} {
+      allow create: if request.auth != null
+        && request.resource.data.participants is list
+        && request.resource.data.participants.size() == 2
+        && request.auth.uid in request.resource.data.participants;
+      allow read: if request.auth != null && request.auth.uid in resource.data.participants;
+      allow update: if request.auth != null
+        && request.auth.uid in resource.data.participants
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['participants', 'id', 'eventId', 'createdAt']);
+      allow delete: if isSuperAdmin();
+    }
+
   }
 }

@@ -4,6 +4,7 @@ import { RondaDialog } from './dialog.js';
 import notifications from './notifications.js';
 import { renderRondaFooter } from './footer.js';
 import { escapeHtml } from './utils.js';
+import { buildNightMenuHtml, normalizeNightMenu, DEFAULT_DRINK_PRICE_COP } from './night-menu.js';
 import { db } from './firebase-config.js';
 import {
   collection,
@@ -220,7 +221,7 @@ export class HostAdminController {
 
     const multiVenue = this.authorizedVenues.length > 1;
     const venueOptionsHtml = this.authorizedVenues.map(v => 
-      `<option value="${v.id}" ${v.id === this.activeVenue?.id ? 'selected' : ''}>${v.name} (${v.zone})</option>`
+      `<option value="${escapeHtml(v.id)}" ${v.id === this.activeVenue?.id ? 'selected' : ''}>${escapeHtml(v.name)} (${escapeHtml(v.zone || '')})</option>`
     ).join('');
 
     viewAdmin.innerHTML = `
@@ -268,8 +269,8 @@ export class HostAdminController {
                 ${venueOptionsHtml}
               </select>
             ` : `
-              <div style="font-size:13px; font-weight:700; color:var(--papel); font-family:var(--font-sans);">${this.activeVenue?.name || 'Local Aliado'}</div>
-              <div style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${this.activeVenue?.zone || 'Bogotá'}</div>
+              <div style="font-size:13px; font-weight:700; color:var(--papel); font-family:var(--font-sans);">${escapeHtml(this.activeVenue?.name || 'Local Aliado')}</div>
+              <div style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${escapeHtml(this.activeVenue?.zone || 'Bogotá')}</div>
             `}
           </div>
 
@@ -347,7 +348,7 @@ export class HostAdminController {
               </div>
               <div style="overflow:hidden; line-height:1.25; flex:1;">
                 <div style="font-size:12px; font-weight:700; color:var(--papel); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                  ${this.currentUser?.name || this.currentUser?.email || 'Anfitrión de Sala'}
+                  ${escapeHtml(this.currentUser?.name || this.currentUser?.email || 'Anfitrión de Sala')}
                 </div>
                 <div style="font-family:var(--font-mono); font-size:9.5px; color:#79D3AC; text-transform:uppercase; font-weight:700;">
                   ${this.currentUser?.role === 'superadmin' ? '👑 SUPERADMIN' : '🏢 ANFITRIÓN SALA'}
@@ -378,7 +379,7 @@ export class HostAdminController {
           <header class="host-view-header" style="padding:20px 32px 18px; border-bottom:1px solid var(--linea); background:rgba(22,15,29,0.85); backdrop-filter:blur(8px); position:sticky; top:0; z-index:50; display:flex; justify-content:space-between; align-items:center;">
             <div>
               <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; color:var(--luz); text-transform:uppercase; margin-bottom:4px;" id="host-header-badge">
-                ${this.activeVenue?.name || 'Local'} · Sala Activa
+                ${escapeHtml(this.activeVenue?.name || 'Local')} · Sala Activa
               </div>
               <h1 id="host-header-title" style="font-family:'Bodoni Moda',serif; font-size:26px; font-weight:700; color:var(--papel); margin:0; letter-spacing:0.02em;">
                 Resumen General
@@ -393,7 +394,7 @@ export class HostAdminController {
                 <span style="font-size:14px;">🍸</span>
                 <div>
                   <div style="font-family:var(--font-mono); font-size:9px; color:var(--humo); text-transform:uppercase;">Noche en Sala</div>
-                  <div style="font-family:var(--font-mono); font-size:11px; color:var(--papel); font-weight:700;">${this.currentEvent?.dayDate || 'Martes 20:00'}</div>
+                  <div style="font-family:var(--font-mono); font-size:11px; color:var(--papel); font-weight:700;">${escapeHtml(this.currentEvent?.dayDate || 'Martes 20:00')}</div>
                 </div>
               </div>
             </div>
@@ -657,10 +658,16 @@ export class HostAdminController {
   private renderSummarySection(stage: HTMLElement) {
     const event = this.currentEvent;
     const venue = this.activeVenue;
-    const participantsCount = event?.participants?.length || 24;
+    const participantsCount = event?.participants?.length ?? 0;
     const tablesCount = venue?.tablesCount || 12;
     const minDrinks = participantsCount * 1;
     const guaranteedRev = minDrinks * 22000;
+
+    // La carta mostrada en el resumen sale del evento (o de la carta por defecto).
+    const menuNames = normalizeNightMenu(event?.menu).cocktails.map((c) => c.name);
+    const menuSummary = menuNames.length > 1
+      ? `${menuNames.slice(0, -1).join(', ')} y ${menuNames[menuNames.length - 1]}`
+      : (menuNames[0] || '—');
 
     stage.innerHTML = `
       <div style="max-width:1400px; margin:0 auto; display:flex; flex-direction:column; gap:28px;">
@@ -698,14 +705,14 @@ export class HostAdminController {
         <div style="display:grid; grid-template-columns:1fr 420px; gap:24px;">
           
           <!-- Tarjeta Destacada: Próxima Noche -->
-          <div style="background:#160F1D; border:1px solid var(--ambar); border-radius:18px; padding:28px 30px; position:relative; overflow:hidden;">
+          <div style="background:#160F1D; border:1px solid var(--luz); border-radius:18px; padding:28px 30px; position:relative; overflow:hidden;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
               <div>
                 <span style="font-family:var(--font-mono); font-size:10px; color:var(--luz); letter-spacing:0.12em; text-transform:uppercase; font-weight:700;">
                   PRÓXIMA NOCHE · SPEED DATING
                 </span>
                 <h2 style="font-family:'Bodoni Moda',serif; font-size:30px; color:var(--papel); margin:4px 0 0;">
-                  ${event?.dayDate || 'Martes 25 · 20:00 - 21:45'}
+                  ${escapeHtml(event?.dayDate || 'Martes 25 · 20:00 - 21:45')}
                 </h2>
               </div>
               <span style="background:rgba(240,168,48,0.15); border:1px solid var(--luz); color:var(--luz); font-family:var(--font-mono); font-size:11px; font-weight:700; padding:6px 12px; border-radius:999px;">
@@ -717,7 +724,7 @@ export class HostAdminController {
               <div style="background:rgba(243,237,226,0.03); border:1px solid rgba(243,237,226,0.06); border-radius:10px; padding:14px;">
                 <div style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">ASISTENTES CONFIRMADOS</div>
                 <div style="font-size:22px; font-weight:700; color:var(--papel); font-family:var(--font-mono); margin-top:4px;">
-                  ${participantsCount} <span style="font-size:13px; color:var(--humo); font-weight:400;">(12 mujeres + 12 hombres)</span>
+                  ${participantsCount} <span style="font-size:13px; color:var(--humo); font-weight:400;">confirmados en sala</span>
                 </div>
               </div>
 
@@ -772,7 +779,7 @@ export class HostAdminController {
 
                 <div style="background:rgba(121,211,172,0.08); border-left:3px solid #79D3AC; padding:10px 12px; border-radius:6px; font-size:12px;">
                   <b style="color:var(--papel); display:block; margin-bottom:2px;">✓ Carta de Bienvenida Lista</b>
-                  <span style="color:var(--humo);">Coctel de bienvenida: <i>Penicillin Ahumado</i> y <i>Caronte Sour</i>.</span>
+                  <span style="color:var(--humo);">Coctel de bienvenida: <i>${escapeHtml(menuSummary)}</i>.</span>
                 </div>
 
                 <div style="background:rgba(243,237,226,0.03); border-left:3px solid var(--humo); padding:10px 12px; border-radius:6px; font-size:12px;">
@@ -833,7 +840,7 @@ export class HostAdminController {
       capacity: e.capacity || (e.tables ? e.tables * 2 : 24),
       tables: e.tables || e.tablesCount || (venue?.tablesCount || 12),
       hostName: this.currentUser?.name || 'Anfitrión Asignado',
-      menuReady: true
+      menuReady: (e.menu?.cocktails?.length ?? 0) > 0
     }));
 
     const filteredNights = nights.filter(n => {
@@ -854,24 +861,24 @@ export class HostAdminController {
           </div>
 
           <div style="font-size:12px; color:var(--humo); font-family:var(--font-mono);">
-            Sede: <b style="color:var(--papel);">${venue?.name}</b> (${venue?.zone})
+            Sede: <b style="color:var(--papel);">${escapeHtml(venue?.name || '—')}</b> (${escapeHtml(venue?.zone || '—')})
           </div>
         </div>
 
         <!-- Lista de Tarjetas de Noches -->
         <div style="display:flex; flex-direction:column; gap:16px;">
           ${filteredNights.map(n => `
-            <div style="background:#160F1D; border:1px solid ${n.status === 'waiting' ? 'var(--ambar)' : 'var(--linea)'}; border-radius:16px; padding:22px 24px;">
+            <div style="background:#160F1D; border:1px solid ${n.status === 'waiting' ? 'var(--luz)' : 'var(--linea)'}; border-radius:16px; padding:22px 24px;">
               <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
                 <div>
                   <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                    <span style="font-family:var(--font-mono); font-size:10px; color:var(--luz); letter-spacing:0.1em; text-transform:uppercase;">ID: ${n.id}</span>
+                    <span style="font-family:var(--font-mono); font-size:10px; color:var(--luz); letter-spacing:0.1em; text-transform:uppercase;">ID: ${escapeHtml(n.id)}</span>
                     <span style="background:${n.status === 'waiting' ? 'rgba(240,168,48,0.15)' : n.status === 'completed' ? 'rgba(121,211,172,0.15)' : 'rgba(243,237,226,0.06)'}; color:${n.status === 'waiting' ? 'var(--luz)' : n.status === 'completed' ? '#79D3AC' : 'var(--humo)'}; font-family:var(--font-mono); font-size:9.5px; padding:2px 8px; border-radius:999px; font-weight:700;">
                       ${n.status === 'waiting' ? '⚡ EN PREPARACIÓN' : n.status === 'completed' ? '✓ CERRADA' : '⏳ PROGRAMADA'}
                     </span>
                   </div>
-                  <h3 style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--papel); margin:0;">${n.title}</h3>
-                  <div style="font-size:13px; color:var(--humo); font-family:var(--font-mono); margin-top:2px;">${n.date}</div>
+                  <h3 style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--papel); margin:0;">${escapeHtml(n.title)}</h3>
+                  <div style="font-size:13px; color:var(--humo); font-family:var(--font-mono); margin-top:2px;">${escapeHtml(n.date)}</div>
                 </div>
 
                 <div style="display:flex; gap:8px;">
@@ -908,7 +915,7 @@ export class HostAdminController {
                 <div>
                   <span style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">ANFITRIÓN RESPONSABLE</span>
                   <div style="font-size:14px; font-weight:700; color:var(--papel); font-family:var(--font-mono); margin-top:2px;">
-                    ${n.hostName}
+                    ${escapeHtml(n.hostName)}
                   </div>
                 </div>
 
@@ -948,8 +955,9 @@ export class HostAdminController {
         const evtId = (e.currentTarget as HTMLElement).getAttribute('data-event-id');
         const confirmed = await RondaDialog.confirm({
           title: 'Duplicar Noche como Borrador',
-          message: `¿Deseas crear un nuevo borrador basado en la noche <b>${evtId}</b>?<br><br><small style="color:var(--humo);">Nota canónica: No se copiarán asistentes, pagos ni resultados pasados.</small>`,
+          message: `¿Deseas crear un nuevo borrador basado en la noche <b>${escapeHtml(evtId || '')}</b>?<br><br><small style="color:var(--humo);">Nota canónica: No se copiarán asistentes, pagos ni resultados pasados.</small>`,
           icon: '📋',
+          html: true,
           confirmText: 'Crear Borrador',
           cancelText: 'Cancelar'
         });
@@ -1069,7 +1077,7 @@ export class HostAdminController {
         <!-- Filtros y Búsqueda de Asistentes -->
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:#160F1D; border:1px solid var(--linea); border-radius:14px; padding:14px 20px;">
           <div style="display:flex; gap:10px; flex:1; max-width:360px;">
-            <input id="input-booking-search" type="text" value="${this.bookingSearchQuery}" placeholder="🔍 Buscar por nombre, correo o código..." class="ronda-input" style="margin-bottom:0; font-size:12px; padding:8px 12px; width:100%;">
+            <input id="input-booking-search" type="text" value="${escapeHtml(this.bookingSearchQuery)}" placeholder="🔍 Buscar por nombre, correo o código..." class="ronda-input" style="margin-bottom:0; font-size:12px; padding:8px 12px; width:100%;">
           </div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -1107,11 +1115,11 @@ export class HostAdminController {
               ` : filtered.map(a => `
                 <tr style="border-bottom:1px solid rgba(243,237,226,0.04); transition:background 0.15s ease;" onmouseover="this.style.background='rgba(243,237,226,0.02)'" onmouseout="this.style.background='transparent'">
                   <td style="padding:14px 18px;">
-                    <div style="font-weight:700; color:var(--papel); font-size:13px;">${a.name}</div>
-                    <div style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${a.age} años · ${a.email}</div>
+                    <div style="font-weight:700; color:var(--papel); font-size:13px;">${escapeHtml(a.name)}</div>
+                    <div style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">${escapeHtml(String(a.age))} años · ${escapeHtml(a.email)}</div>
                   </td>
                   <td style="padding:14px 14px; font-family:var(--font-mono); color:var(--luz); font-weight:700;">
-                    ${a.code}
+                    ${escapeHtml(a.code)}
                   </td>
                   <td style="padding:14px 14px;">
                     ${a.trustTier >= 2 ? `
@@ -1125,10 +1133,10 @@ export class HostAdminController {
                     `}
                   </td>
                   <td style="padding:14px 14px; font-style:italic; color:var(--papel);">
-                    ${a.cocktail}
+                    ${escapeHtml(a.cocktail)}
                   </td>
                   <td style="padding:14px 14px; font-family:var(--font-mono); font-weight:700; color:var(--papel);">
-                    Mesa ${a.table}
+                    Mesa ${escapeHtml(String(a.table))}
                   </td>
                   <td style="padding:14px 14px;">
                     ${a.paymentStatus === 'paid' ? `
@@ -1136,7 +1144,7 @@ export class HostAdminController {
                     ` : `
                       <span style="color:var(--luz); font-family:var(--font-mono); font-size:11px; font-weight:700;">⚠️ COBRAR EN PUERTA</span>
                     `}
-                    <div style="font-size:9.5px; color:var(--humo);">${a.paymentMethod}</div>
+                    <div style="font-size:9.5px; color:var(--humo);">${escapeHtml(a.paymentMethod)}</div>
                   </td>
                   <td style="padding:14px 18px; text-align:right;">
                     ${a.checkedIn ? `
@@ -1144,7 +1152,7 @@ export class HostAdminController {
                         ✓ EN SALA
                       </span>
                     ` : `
-                      <button class="btn ambar btn-manual-checkin-row" data-uid="${a.uid}" data-name="${a.name}" data-payment="${a.paymentStatus}" style="font-size:11px; font-weight:700; padding:6px 12px;">
+                      <button class="btn ambar btn-manual-checkin-row" data-uid="${escapeHtml(a.uid)}" data-name="${escapeHtml(a.name)}" data-payment="${escapeHtml(a.paymentStatus)}" style="font-size:11px; font-weight:700; padding:6px 12px;">
                         Registrar Entrada
                       </button>
                     `}
@@ -1265,8 +1273,9 @@ export class HostAdminController {
     if (payStatus === 'pending_door') {
       const confirmedPay = await RondaDialog.confirm({
         title: '💵 Cobro Pendiente en Puerta',
-        message: `El asistente <b>${name}</b> tiene pago pendiente.<br><br>¿Confirmas que recibiste el valor de la boleta ($45.000 COP) vía Nequi o Efectivo?`,
+        message: `El asistente <b>${escapeHtml(name)}</b> tiene pago pendiente.<br><br>¿Confirmas que recibiste el valor de la boleta ($45.000 COP) vía Nequi o Efectivo?`,
         icon: '💵',
+        html: true,
         confirmText: '✓ Pago Recibido y Permitir Ingreso',
         cancelText: '✕ Denegar Ingreso'
       });
@@ -1283,7 +1292,7 @@ export class HostAdminController {
         participants: arrayUnion(uid),
         updatedAt: serverTimestamp()
       });
-      this.currentEvent.participants = [...(this.currentEvent.participants || []), uid];
+      this.currentEvent.participants = Array.from(new Set([...(this.currentEvent.participants || []), uid]));
     }
 
     // 3. Notificación de éxito
@@ -1368,12 +1377,10 @@ export class HostAdminController {
   public async buildV2Plan(force = false): Promise<any> {
     if (!this.currentEvent) return null;
 
-    // Asegurar participantes de muestra si la sala está vacía en local
+    // Sin asistentes reales no hay plan: nunca se inyectan participantes
+    // ficticios, porque acabarían persistidos como matches en Firestore.
     if (!this.currentEvent.participants || this.currentEvent.participants.length < 2) {
-      this.currentEvent.participants = [
-        'usr-camila-01', 'usr-felipe-02', 'usr-daniela-03', 'usr-alejandro-04',
-        'usr-sofia-05', 'usr-mateo-06', 'usr-lucia-07', 'usr-santiago-08'
-      ];
+      return null;
     }
 
     const uids = this.currentEvent.participants.slice().sort().join(',');
@@ -1431,7 +1438,16 @@ export class HostAdminController {
     if (!this.currentEvent) return false;
 
     const plan = await this.buildV2Plan();
-    if (!plan || plan.rounds.length === 0) return false;
+    if (!plan || plan.rounds.length === 0) {
+      await RondaDialog.alert({
+        title: 'Sala sin asistentes suficientes',
+        message: 'Para arrancar una ronda hacen falta al menos <b>2 asistentes reales</b> con check-in registrado en esta noche.<br><br>Registra las entradas desde <b>Reservas &amp; Recepción</b> y vuelve a intentarlo.',
+        icon: '👥',
+        html: true,
+        type: 'danger'
+      });
+      return false;
+    }
 
     this.currentEvent.currentRound = (this.currentEvent.currentRound || 0) + 1;
     this.currentEvent.status = 'in_progress';
@@ -1575,6 +1591,7 @@ export class HostAdminController {
       title: 'Finalizar Noche y Procesar Matches',
       message: '¿Estás seguro de finalizar la sesión de Speed Dating?<br><br>Se calcularán los matches mutuos entre los asistentes y se emitirán las pruebas de asistencia.',
       icon: '🍸',
+      html: true,
       confirmText: '✓ Finalizar Noche',
       cancelText: '✕ Continuar en Sala'
     });
@@ -1619,7 +1636,7 @@ export class HostAdminController {
       <div style="max-width:1400px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
         
         <!-- Tablero de Mando Central: Temporizador & Control de Rondas -->
-        <div style="background:#160F1D; border:1px solid ${isLive ? 'var(--ambar)' : 'var(--linea)'}; border-radius:18px; padding:26px 30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+        <div style="background:#160F1D; border:1px solid ${isLive ? 'var(--luz)' : 'var(--linea)'}; border-radius:18px; padding:26px 30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
           
           <div>
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
@@ -1631,10 +1648,10 @@ export class HostAdminController {
               </span>
             </div>
             <h2 style="font-family:'Bodoni Moda',serif; font-size:26px; color:var(--papel); margin:0;">
-              ${event?.dayDate || 'Noche Activa'}
+              ${escapeHtml(event?.dayDate || 'Noche Activa')}
             </h2>
             <div style="font-size:11.5px; color:var(--humo); font-family:var(--font-mono); margin-top:2px;">
-              Sincronización sincrónica activa con ${event?.participants?.length || 24} asistentes
+              Sincronización sincrónica activa con ${event?.participants?.length ?? 0} asistentes
             </div>
           </div>
 
@@ -1730,14 +1747,14 @@ export class HostAdminController {
                   <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(243,237,226,0.03); border:1px solid rgba(243,237,226,0.06); border-radius:10px; padding:12px 14px; margin-bottom:12px;">
                     <div style="flex:1; text-align:left;">
                       <div style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">LADO A</div>
-                      <div style="font-weight:700; color:var(--papel); font-size:13px; margin-top:2px;">${m.p1.name}</div>
+                      <div style="font-weight:700; color:var(--papel); font-size:13px; margin-top:2px;">${escapeHtml(m.p1.name)}</div>
                     </div>
                     
                     <span style="font-family:var(--font-serif); font-size:14px; color:var(--luz); margin:0 8px;">✕</span>
 
                     <div style="flex:1; text-align:right;">
                       <div style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">LADO B</div>
-                      <div style="font-weight:700; color:var(--papel); font-size:13px; margin-top:2px;">${m.p2.name}</div>
+                      <div style="font-weight:700; color:var(--papel); font-size:13px; margin-top:2px;">${escapeHtml(m.p2.name)}</div>
                     </div>
                   </div>
 
@@ -1763,7 +1780,7 @@ export class HostAdminController {
               ${resting.map((r: any) => `
                 <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:8px; padding:8px 14px; font-size:12px; color:var(--papel); display:flex; align-items:center; gap:8px;">
                   <span>🍸</span>
-                  <b>${r.name}</b>
+                  <b>${escapeHtml(r.name)}</b>
                   <span style="font-size:10px; color:var(--humo); font-family:var(--font-mono);">(En barra)</span>
                 </div>
               `).join('')}
@@ -1804,19 +1821,17 @@ export class HostAdminController {
 
     stage.querySelectorAll('.btn-report-table-issue').forEach(btn => {
       btn.addEventListener('click', async (e) => {
-        const table = (e.currentTarget as HTMLElement).getAttribute('data-table');
-        const reason = await (RondaDialog as any).prompt?.({
+        const table = (e.currentTarget as HTMLElement).getAttribute('data-table') || '—';
+        const reason = await RondaDialog.prompt({
           title: `Incidencia en Mesa ${table}`,
           message: 'Describe la novedad observada:',
-          placeholder: 'Ej: Asistente requirió cambio o se retiró anticipadamente'
-        }) || await RondaDialog.confirm({
-          title: `Incidencia en Mesa ${table}`,
-          message: '¿Registrar incidencia de sala en esta mesa?',
-          confirmText: 'Registrar'
+          icon: '⚠️',
+          placeholder: 'Ej: Asistente requirió cambio o se retiró anticipadamente',
+          confirmText: '✓ Registrar',
+          cancelText: '✕ Cancelar'
         });
-        if (reason) {
-          notifications.showLegacyToast(`✓ Incidencia en Mesa ${table} registrada para el reporte final.`);
-        }
+        if (!reason) return;
+        notifications.showLegacyToast(`✓ Incidencia en Mesa ${table} registrada para el reporte final.`);
       });
     });
   }
@@ -1825,7 +1840,7 @@ export class HostAdminController {
     const event = this.currentEvent;
     const venue = this.activeVenue;
     const closingId = `${venue?.id}_${event?.id}`;
-    const participantsDefault = event?.participants?.length || 24;
+    const participantsDefault = event?.participants?.length ?? 0;
 
     stage.innerHTML = `
       <div class="settlements-wrap" style="display:flex; flex-direction:column; gap:26px;">
@@ -1912,11 +1927,12 @@ export class HostAdminController {
         <div id="st-feedback" style="font-size:12px; font-family:var(--font-mono); min-height:20px;"></div>
       </div>
     `;
+    // `$` ya antepone '#': pasarle ids sin almohadilla ('##id' es un selector inválido).
     const $ = (id: string) => stage.querySelector<HTMLInputElement>(`#${id}`);
     const badge = document.getElementById('st-status-badge');
     const feedback = document.getElementById('st-feedback')!;
 
-    const readNum = (id: string) => Math.max(0, Number(($(`#${id}`) as HTMLInputElement)?.value || 0) || 0);
+    const readNum = (id: string) => Math.max(0, Number(($(id) as HTMLInputElement)?.value || 0) || 0);
     const disp = (id: string, text: string) => { const el = $(id) as HTMLElement | null; if (el) el.textContent = text; };
 
     const recalculate = () => {
@@ -1970,8 +1986,8 @@ export class HostAdminController {
         const el = $(id) as HTMLInputElement | null;
         if (el) el.disabled = disabled;
       });
-      const b1 = $('#st-save-draft') as HTMLButtonElement | null;
-      const b2 = $('#st-submit-closing') as HTMLButtonElement | null;
+      const b1 = $('st-save-draft') as HTMLButtonElement | null;
+      const b2 = $('st-submit-closing') as HTMLButtonElement | null;
       if (b1) b1.disabled = disabled;
       if (b2) b2.disabled = disabled;
     };
@@ -2018,8 +2034,8 @@ export class HostAdminController {
       }
     };
 
-    $('#st-save-draft')?.addEventListener('click', () => saveAndClose('draft'));
-    $('#st-submit-closing')?.addEventListener('click', () => saveAndClose('submitted'));
+    $('st-save-draft')?.addEventListener('click', () => saveAndClose('draft'));
+    $('st-submit-closing')?.addEventListener('click', () => saveAndClose('submitted'));
   }
 
   private async renderPerksSection(stage: HTMLElement) {
@@ -2115,7 +2131,8 @@ export class HostAdminController {
           await RondaDialog.alert({
             title: 'Beneficio ya canjeado',
             message: `El asistente <b>${escapeHtml(userId)}</b> ya canjeó el beneficio <b>${benefitType === 'welcome_cocktail' ? 'Cóctel de Bienvenida' : 'Bono 10% 2ª Cita'}</b> esta noche. No se permite canje doble.`,
-            icon: '🚫'
+            icon: '🚫',
+            html: true
           });
           return;
         }
@@ -2154,7 +2171,7 @@ export class HostAdminController {
   private renderAnalyticsSection(stage: HTMLElement) {
     const event = this.currentEvent;
     const venue = this.activeVenue;
-    const attendees = event?.participants?.length || 24;
+    const attendees = event?.participants?.length ?? 0;
     const capacity = event?.capacity || 24;
     const occupancy = capacity > 0 ? Math.round((attendees / capacity) * 100) : 0;
 
@@ -2320,12 +2337,12 @@ export class HostAdminController {
             </div>
 
             <div style="display:flex; gap:10px; margin-top:8px;">
-              <button type="button" id="btn-venue-save-draft"
-                style="flex:1; padding:12px; background:rgba(243,237,226,0.06); border:1px solid var(--linea); color:var(--papel); border-radius:10px; font-size:13px; font-weight:600; cursor:pointer;">
+              <button type="button" id="btn-venue-save-draft" class="btn"
+                style="flex:1; padding:12px; font-size:13px; font-weight:600; border-radius:10px;">
                 💾 Guardar Borrador
               </button>
-              <button type="button" id="btn-venue-request-publish"
-                style="flex:1; padding:12px; background:linear-gradient(135deg, var(--luz), var(--oro)); border:none; color:#110A15; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">
+              <button type="button" id="btn-venue-request-publish" class="btn ambar"
+                style="flex:1; padding:12px; font-size:13px; font-weight:700; border-radius:10px;">
                 🚀 Solicitar Publicación
               </button>
             </div>
@@ -2390,6 +2407,7 @@ export class HostAdminController {
       const ok = await RondaDialog.confirm({
         title: 'Solicitar Publicación',
         message: '¿Deseas enviar las actualizaciones de la ficha a revisión del equipo central de RONDA?<br><br><small style="color:var(--humo);">Una vez aprobada, se reflejará de inmediato en la landing y partners.</small>',
+        html: true,
         confirmText: 'Enviar a Revisión',
         cancelText: 'Cancelar'
       });
@@ -2414,7 +2432,7 @@ export class HostAdminController {
 
     document.getElementById('btn-venue-preview-modal')?.addEventListener('click', async () => {
       await RondaDialog.alert({
-        title: `Vista Previa: ${escapeHtml(name)}`,
+        title: `Vista Previa: ${name}`,
         message: `
           <div style="border-radius:12px; overflow:hidden; border:1px solid var(--linea); margin-bottom:12px;">
             <img src="${escapeHtml(photos[0] || '')}" style="width:100%; height:160px; object-fit:cover;">
@@ -2426,7 +2444,8 @@ export class HostAdminController {
             Código de Vestimenta: ${escapeHtml(dressCode)}
           </div>
         `,
-        icon: '👁️'
+        icon: '👁️',
+        html: true
       });
     });
   }
@@ -2457,8 +2476,8 @@ export class HostAdminController {
                 Asigna colaboradores para control de puerta, barra o anfitriones con roles aislados.
               </p>
             </div>
-            <button type="button" id="btn-add-staff"
-              style="padding:10px 18px; background:linear-gradient(135deg, var(--luz), var(--oro)); border:none; color:#110A15; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">
+            <button type="button" id="btn-add-staff" class="btn ambar"
+              style="padding:10px 18px; border-radius:10px; font-size:13px; font-weight:700;">
               ➕ Invitar Colaborador
             </button>
           </div>
@@ -2599,8 +2618,8 @@ export class HostAdminController {
                 style="width:100%; background:#0e0a12; border:1px solid var(--linea); color:var(--papel); padding:10px 14px; border-radius:10px; font-size:13px; font-family:inherit;"></textarea>
             </div>
 
-            <button type="button" id="btn-submit-ticket"
-              style="padding:12px; background:linear-gradient(135deg, var(--luz), var(--oro)); border:none; color:#110A15; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">
+            <button type="button" id="btn-submit-ticket" class="btn ambar"
+              style="padding:12px; border-radius:10px; font-size:13px; font-weight:700;">
               📨 Enviar Ticket a Operaciones
             </button>
           </div>
@@ -2645,6 +2664,7 @@ export class HostAdminController {
       title: 'Proponer Nueva Noche',
       message: '¿Deseas proponer una nueva fecha de Speed Dating para este local?<br><br><small style="color:var(--humo);">Se enviará como borrador para revisión del equipo central de RONDA.</small>',
       icon: '📅',
+      html: true,
       confirmText: 'Enviar Propuesta',
       cancelText: 'Cancelar'
     });
@@ -2653,12 +2673,82 @@ export class HostAdminController {
     }
   }
 
+  /**
+   * Despliega la carta de la noche (cócteles de cortesía + precio acordado) y
+   * permite ajustar el precio de la consumición incluida.
+   *
+   * La carta vive en `event.menu` y el precio en `event.price`: ambos se
+   * persisten en Firestore. Antes esta acción mostraba una lista fija con
+   * markup que el diálogo escapaba (se veían las etiquetas `<br>`/`<b>`) y no
+   * guardaba nada.
+   */
   private async promptMenuCarta() {
-    await RondaDialog.alert({
+    const event = this.currentEvent;
+    if (!event) {
+      await RondaDialog.alert({
+        title: 'Sin noche activa',
+        message: 'No hay una noche cargada para este local. Vuelve a abrir la consola.',
+        icon: '⚠️',
+        type: 'danger'
+      });
+      return;
+    }
+
+    const menu = normalizeNightMenu(event.menu);
+    const price = event.price ?? menu.priceCop ?? DEFAULT_DRINK_PRICE_COP;
+
+    const wantsEdit = await RondaDialog.confirm({
       title: 'Carta de la Noche',
-      message: 'Cócteles de cortesía confirmados para la sala:<br><br>1. <b>Penicillin Ahumado</b> (Whisky escocés, jengibre, miel, limón)<br>2. <b>Caronte Sour</b> (Pisco acholado, infusión botánica, angostura)',
-      icon: '🍸'
+      message: buildNightMenuHtml(menu, price),
+      icon: '🍸',
+      html: true,
+      confirmText: '✏️ Ajustar Precio',
+      cancelText: '✓ Cerrar'
     });
+    if (!wantsEdit) return;
+
+    const raw = await RondaDialog.prompt({
+      title: 'Precio de la Consumición',
+      message: 'Valor acordado por cada consumición incluida en la entrada (COP).',
+      icon: '💵',
+      inputType: 'number',
+      defaultValue: String(price),
+      placeholder: '45000',
+      confirmText: '✓ Guardar Carta',
+      cancelText: '✕ Cancelar'
+    });
+    if (raw === null) return;
+
+    const newPrice = parseInt(raw.replace(/[^\d]/g, ''), 10);
+    if (!Number.isFinite(newPrice) || newPrice <= 0) {
+      await RondaDialog.alert({
+        title: 'Precio inválido',
+        message: 'Ingresa un valor mayor a cero, sin puntos ni símbolos (ej. 45000).',
+        icon: '⚠️',
+        type: 'danger'
+      });
+      return;
+    }
+
+    event.price = newPrice;
+    event.priceFormatted = `$${newPrice.toLocaleString('es-CO')} COP`;
+    event.menu = {
+      ...menu,
+      priceCop: newPrice,
+      updatedAt: new Date().toISOString(),
+      updatedBy: this.currentUser?.uid || ''
+    };
+
+    try {
+      await DB.saveEvent(event);
+      notifications.showLegacyToast(`✓ Carta guardada · $${newPrice.toLocaleString('es-CO')} COP por consumición.`);
+      const elPrice = document.getElementById('nn-price');
+      if (elPrice) elPrice.textContent = event.priceFormatted;
+      this.renderSectionContent(this.currentSection);
+    } catch (err) {
+      console.error('[HostAdmin] No se pudo guardar la carta:', err);
+      notifications.showLegacyToast('❌ No se pudo guardar la carta. Revisa tu conexión.');
+    }
   }
 
   private formatCop(n: number): string {

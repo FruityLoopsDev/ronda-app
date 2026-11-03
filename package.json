@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "node scripts/sync-version.cjs",
+    "prebuild": "node scripts/sync-version.cjs && node scripts/check-html-integrity.cjs",
+    "check:html": "node scripts/check-html-integrity.cjs",
     "sync-version": "node scripts/sync-version.cjs",
     "bump": "node scripts/sync-version.cjs",
     "dev": "vite",

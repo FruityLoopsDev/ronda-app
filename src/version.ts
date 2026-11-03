@@ -10,9 +10,9 @@ export const APP_COPYRIGHT = 'RONDA System © 2026';
 export const APP_MADE_IN = 'Hecho por amor ❤️ a Colombia';
 
 // Métricas de Ingeniería y Control de Versiones (Auditable)
-export const APP_COMMIT_COUNT = 109;
-export const APP_UNIQUE_DEV_DAYS = 19;
+export const APP_COMMIT_COUNT = 110;
+export const APP_UNIQUE_DEV_DAYS = 20;
 export const APP_CALENDAR_DAYS = 72;
-export const APP_DEV_HOURS = 279;
+export const APP_DEV_HOURS = 288;
 export const APP_FIRST_COMMIT = '2026-08-23';
-export const APP_LAST_COMMIT = '2026-11-01';
+export const APP_LAST_COMMIT = '2026-11-02';

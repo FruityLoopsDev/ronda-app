@@ -1,5 +1,6 @@
 import { HostAdmin } from './host-admin.js';
 import { setupIndependentPortal, PORTALS } from './portal-auth.js';
+import notifications from './notifications.js';
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
@@ -72,19 +73,14 @@ function renderErrorFallback(message: string): void {
   `;
 }
 
+/**
+ * Aviso de conectividad del anfitrión.
+ *
+ * Antes buscaba `#toast-container` en el DOM de admin.html, que no existe: el
+ * aviso de "sin conexión" nunca llegaba a mostrarse. Ahora se delega en el
+ * sistema de notificaciones, que crea el contenedor si hace falta.
+ */
 function showAdminAlert(message: string, type: 'warning' | 'success'): void {
-  const toastContainer = document.getElementById('toast-container');
-  if (!toastContainer) return;
-
-  const toast = document.createElement('div');
-  toast.className = `toast-v2 show ${type === 'warning' ? 'reservation' : 'match'}`;
-  toast.innerHTML = `
-    <div class="toast-icon">${type === 'warning' ? '📡' : '✅'}</div>
-    <div class="toast-text">
-      <h4>${type === 'warning' ? 'Alerta de Red' : 'En línea'}</h4>
-      <p>${message}</p>
-    </div>
-  `;
-  toastContainer.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
+  const icon = type === 'warning' ? '📡' : '✅';
+  notifications.showLegacyToast(`${icon} ${message}`);
 }

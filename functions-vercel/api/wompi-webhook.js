@@ -70,6 +70,35 @@ module.exports = async function handler(req, res) {
             return res.status(409).send('Invalid Amount');
           }
 
+          // Idempotencia: si el usuario ya tiene una reserva confirmada con este tx.id, no duplicar.
+          const userDoc = await db.collection('users').doc(uid).get();
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            const reservations = userData.reservations || [];
+            const alreadyConfirmed = reservations.some(
+              (r) => r.wompiTransactionId === tx.id && r.status === 'confirmed'
+            );
+            if (alreadyConfirmed) {
+              console.log(`✓ Wompi: tx ${tx.id} ya procesado para usuario ${uid}; respuesta 200 sin duplicar.`);
+              return res.status(200).send('OK');
+            }
+          }
+
+          // Validar precio del evento contra el monto pagado
+          const eventDoc = await db.collection('events').doc(eventId).get();
+          if (eventDoc.exists) {
+            const eventData = eventDoc.data();
+            const expectedAmount = Math.round(Number(eventData.price || 0) * 100);
+            if (amount < expectedAmount) {
+              console.error(`Wompi: monto insuficiente para evento ${eventId}. Pagado: ${amount} centavos, esperado: ${expectedAmount} centavos.`);
+              await db.collection('payment_alerts').add({
+                uid, eventId, txId: tx.id, amount, expectedAmount, currency: tx.currency,
+                status: 'UNDERPAID', createdAt: adminFirestoreTimestamp(db)
+              });
+              return res.status(409).send('Underpaid Amount');
+            }
+          }
+
           // 1. Guardar registro de transacción
           await db.collection('transactions').doc(tx.id).set({
             transactionId: tx.id,
@@ -106,7 +135,7 @@ module.exports = async function handler(req, res) {
 
           console.log(`✓ User ${uid} approved and activated for event ${eventId}`);
         }
-      } else if (status === 'DECLINED' || status === 'ERROR') {
+      } else if (status === 'DECLINED' || status === 'ERROR' || status === 'VOIDED') {
         // Transacción rechazada o con error: liberar el pago pendiente para que el
         // usuario pueda reintentar sin quedar bloqueado con paymentPending: true.
         if (reference) {
