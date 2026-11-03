@@ -7,6 +7,8 @@ import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
 import { pairKey } from './mem-rr-v2/weights.ts';
 import { RRHistory } from './mem-rr-history.js';
 import { escapeHtml } from './utils.js';
+import { db } from './firebase-config.js';
+import { doc, updateDoc, arrayUnion, increment, serverTimestamp } from 'firebase/firestore';
 
 // bar.js: Motor de Rotación y Consola del Anfitrión (Producción)
 
@@ -233,7 +235,12 @@ class HostConsoleService {
     }
 
     this.currentEvent.activeMatches = activeMatches;
-    await DB.saveEvent(this.currentEvent);
+    // Mutación transacional: solo actualizar activeMatches, no el objeto completo
+    const eventRef = doc(db, 'events', this.currentEvent.id);
+    await updateDoc(eventRef, {
+      activeMatches,
+      updatedAt: serverTimestamp()
+    });
     console.log(`[Motor] Ronda ${r} generada en Firestore.`);
   }
 
@@ -404,7 +411,14 @@ class HostConsoleService {
       this.currentEvent.activeMatches = activeMatches;
       this.currentEvent.resting = resting;
       this.currentEvent.playedPairs = this.playedPairs;
-      await DB.saveEvent(this.currentEvent);
+      // Mutación transacional: solo actualizar los campos del motor, no el objeto completo
+      const eventRef = doc(db, 'events', this.currentEvent.id);
+      await updateDoc(eventRef, {
+        activeMatches,
+        resting,
+        playedPairs: this.playedPairs,
+        updatedAt: serverTimestamp()
+      });
       await RRHistory.recordPairs(recordedPairs);
       console.log(`[Motor v2] Ronda ${r} generada · ${activeMatches.length} mesas · ${resting.length} en barra · ${recordedPairs.length} encuentros registrados.`);
       return true;

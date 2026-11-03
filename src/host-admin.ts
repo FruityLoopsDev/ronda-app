@@ -12,7 +12,12 @@ import {
   getDocs,
   query,
   setDoc,
-  where
+  updateDoc,
+  serverTimestamp,
+  where,
+  Timestamp,
+  arrayUnion,
+  increment
 } from 'firebase/firestore';
 import { buildNightPlan } from './mem-rr-v2/engine.ts';
 import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
@@ -75,10 +80,11 @@ export class HostAdminController {
   // Filtro de Noches
   private nightsFilterStatus: string = 'all';
 
-  // --- Estado del Motor MEM-RR v2 & Temporizador de Sala ---
+  // --- Estado del Motor MEM-RR v2 & Temporizador de Sala (Server-Side Time) ---
   private timerInterval: any = null;
-  private timerSeconds: number = 360; // 6 minutos por defecto
+  private timerSeconds: number = 360; // 6 minutos por defecto (valor inicial)
   private timerRunning: boolean = false;
+  private roundEndsAt: number | null = null; // Timestamp (ms) de fin de ronda, fuente de verdad en Firestore
   private nightPlan: any = null;
   private nightPlanFor: string = '';
   private nightPlanStartRound: number = 0;
@@ -1270,14 +1276,14 @@ export class HostAdminController {
       }
     }
 
-    // 2. Registro idempotente en el evento
+    // 2. Registro idempotente en el evento (mutación transacional con arrayUnion)
     if (this.currentEvent) {
-      const parts = this.currentEvent.participants || [];
-      if (!parts.includes(uid)) {
-        parts.push(uid);
-        this.currentEvent.participants = parts;
-        await DB.saveEvent(this.currentEvent);
-      }
+      const eventRef = doc(db, 'events', this.currentEvent.id);
+      await updateDoc(eventRef, {
+        participants: arrayUnion(uid),
+        updatedAt: serverTimestamp()
+      });
+      this.currentEvent.participants = [...(this.currentEvent.participants || []), uid];
     }
 
     // 3. Notificación de éxito
@@ -1317,6 +1323,31 @@ export class HostAdminController {
       notifications.showLegacyToast('🔔 Campanazo de sala emitido.');
     } catch (e) {
       console.warn('[HostAdmin] Audio de campana no disponible:', e);
+    }
+  }
+
+  /**
+   * Desbloquea el AudioContext en iOS/Safari reproduciendo un silencio de 0.1s
+   * amarrado al primer gesto de interacción del usuario (click en "Abrir Consola").
+   * Sin esto, el navegador bloquea la inicialización de AudioContext hasta que
+   * haya una interacción directa del usuario.
+   */
+  public async initAudioContext(): Promise<void> {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      if (this.bellAudioCtx) return;
+      this.bellAudioCtx = new AudioCtx();
+      const ctx = this.bellAudioCtx;
+      if (ctx.state === 'suspended') await ctx.resume();
+      // Silencio de 0.1s para desbloquear el contexto de audio
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch (e) {
+      console.warn('[HostAdmin] No se pudo inicializar AudioContext:', e);
     }
   }
 
@@ -1441,10 +1472,23 @@ export class HostAdminController {
     this.currentEvent.activeMatches = activeMatches;
     (this.currentEvent as any).resting = resting;
     this.currentEvent.playedPairs = this.playedPairs;
-    await DB.saveEvent(this.currentEvent);
+    this.currentEvent.roundEndsAt = Date.now() + 360000; // 6 minutos desde ahora (epoch ms)
+
+    // Mutación transacional: solo actualizar los campos que cambiaron, no el objeto completo
+    const eventRef = doc(db, 'events', this.currentEvent.id);
+    await updateDoc(eventRef, {
+      activeMatches,
+      resting,
+      playedPairs: this.playedPairs,
+      currentRound: this.currentEvent.currentRound,
+      status: this.currentEvent.status,
+      roundEndsAt: this.currentEvent.roundEndsAt,
+      updatedAt: serverTimestamp()
+    });
     await RRHistory.recordPairs(recordedPairs);
 
-    // Reiniciar temporizador a 6 minutos y hacer sonar campanazo
+    // Reiniciar temporizador basado en hora del servidor (resiliente a suspensión del dispositivo)
+    this.roundEndsAt = this.currentEvent.roundEndsAt;
     this.timerSeconds = 360;
     this.startRoundTimer();
     this.playBellSound();
@@ -1456,15 +1500,36 @@ export class HostAdminController {
   private startRoundTimer() {
     this.stopRoundTimer();
     this.timerRunning = true;
+    // Sincronizar timerSeconds desde roundEndsAt si existe
+    if (this.roundEndsAt) {
+      const remaining = Math.max(0, Math.floor((this.roundEndsAt - Date.now()) / 1000));
+      this.timerSeconds = remaining;
+    }
+    this.updateTimerDisplay();
     this.timerInterval = setInterval(() => {
-      if (this.timerSeconds > 0) {
-        this.timerSeconds--;
-        this.updateTimerDisplay();
+      if (this.roundEndsAt) {
+        // Calcular tiempo restante basado en timestamp absoluto (resiliente a suspensión)
+        const remaining = Math.max(0, Math.floor((this.roundEndsAt - Date.now()) / 1000));
+        this.timerSeconds = remaining;
+        if (remaining > 0) {
+          this.updateTimerGranular();
+        } else {
+          this.stopRoundTimer();
+          this.playBellSound();
+          notifications.showLegacyToast('🔔 ¡Tiempo cumplido! Fin de la ronda (6 minutos).');
+          this.renderSectionContent('live');
+        }
       } else {
-        this.stopRoundTimer();
-        this.playBellSound();
-        notifications.showLegacyToast('🔔 ¡Tiempo cumplido! Fin de la ronda (6 minutos).');
-        this.renderSectionContent('live');
+        // Fallback: contador local descendente
+        if (this.timerSeconds > 0) {
+          this.timerSeconds--;
+          this.updateTimerGranular();
+        } else {
+          this.stopRoundTimer();
+          this.playBellSound();
+          notifications.showLegacyToast('🔔 ¡Tiempo cumplido! Fin de la ronda (6 minutos).');
+          this.renderSectionContent('live');
+        }
       }
     }, 1000);
   }
@@ -1485,6 +1550,25 @@ export class HostAdminController {
     el.textContent = `${mins}:${secs}`;
   }
 
+  /**
+   * Actualización granular del temporizador: solo toca el nodo del DOM del
+   * cronómetro sin re-renderizar toda la sección en vivo (evita re-flows masivos).
+   */
+  private updateTimerGranular() {
+    const el = document.getElementById('host-live-timer-digits');
+    if (!el) return;
+    let mins: number, secs: number;
+    if (this.roundEndsAt) {
+      const remaining = Math.max(0, Math.floor((this.roundEndsAt - Date.now()) / 1000));
+      mins = Math.floor(remaining / 60);
+      secs = remaining % 60;
+    } else {
+      mins = Math.floor(this.timerSeconds / 60);
+      secs = this.timerSeconds % 60;
+    }
+    el.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
   private async endEventAndMint() {
     if (!this.currentEvent) return;
     const confirmEnd = await RondaDialog.confirm({
@@ -1498,7 +1582,12 @@ export class HostAdminController {
     if (confirmEnd) {
       this.stopRoundTimer();
       this.currentEvent.status = 'finished';
-      await DB.saveEvent(this.currentEvent);
+      // Mutación transacional: solo actualizar estado y timestamp, no el objeto completo
+      const eventRef = doc(db, 'events', this.currentEvent.id);
+      await updateDoc(eventRef, {
+        status: this.currentEvent.status,
+        updatedAt: serverTimestamp()
+      });
       await DB.confirmarSala(this.currentEvent.id, this.currentEvent.participants);
       notifications.showLegacyToast('✨ Noche finalizada con éxito. Matches calculados.');
       this.renderSectionContent('live');
@@ -1513,8 +1602,18 @@ export class HostAdminController {
     const resting = (event as any)?.resting || [];
     const m = this.currentMetrics;
 
-    const mins = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
-    const secs = (this.timerSeconds % 60).toString().padStart(2, '0');
+    // Calcular tiempo restante desde roundEndsAt (server-side time) si está disponible
+    let mins: number, secs: number;
+    if (this.roundEndsAt) {
+      const remaining = Math.max(0, Math.floor((this.roundEndsAt - Date.now()) / 1000));
+      mins = Math.floor(remaining / 60);
+      secs = remaining % 60;
+    } else {
+      mins = Math.floor(this.timerSeconds / 60);
+      secs = this.timerSeconds % 60;
+    }
+    const minsStr = mins.toString().padStart(2, '0');
+    const secsStr = secs.toString().padStart(2, '0');
 
     stage.innerHTML = `
       <div style="max-width:1400px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
@@ -1544,7 +1643,7 @@ export class HostAdminController {
             <div style="text-align:center;">
               <div style="font-family:var(--font-mono); font-size:9.5px; color:var(--humo); text-transform:uppercase; letter-spacing:0.1em;">Tiempo de Ronda</div>
               <div id="host-live-timer-digits" style="font-family:var(--font-mono); font-size:38px; font-weight:700; color:${this.timerRunning ? 'var(--luz)' : 'var(--papel)'}; letter-spacing:0.04em;">
-                ${mins}:${secs}
+                ${minsStr}:${secsStr}
               </div>
             </div>
 

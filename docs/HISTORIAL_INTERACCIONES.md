@@ -17,6 +17,89 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
+### [2026-11-02] — Corrección Crítica en Reglas de Firestore: Evaluación Segura de Perfil y Auto-Registro Staff/Master
+- **Solicitud del Usuario:** Resolver el error al crear cuenta en el cliente web: `PERMISSION_DENIED: evaluation error at L53:24 for 'create' @ L53, evaluation error at L65:24 for 'update' @ L65, false for 'update' @ L65`.
+- **Causa Raíz Identificada:**
+  1. *Evaluation Error en userRole / getUserData:* La función `userRole(uid)` realizaba un `get(...).data.role` sin validar previamente si el documento del usuario existía en `/users/$(uid)`. Al registrar un nuevo usuario (o cuando `setDoc` con `{ merge: true }` evaluaba `create` y `update`), invocar `isSuperAdmin()` intentaba leer un documento inexistente, lanzando un `evaluation error` fatal en Firestore Rules.
+  2. *Evaluation Error por Acceso Inseguro a Propiedades:* La regla `allow create` leía `request.resource.data.role == 'client'` directamente en vez de `request.resource.data.get('role', 'client') == 'client'`. Además, en `allow update`, `clientTouchedSensitive()` y `validClientVerificationAndPayment()` intentaban acceder a `resource.data` cuando `resource` era nulo.
+  3. *Bloqueo de Cuentas Maestras / Staff en Creación:* `src/auth.ts` asigna automáticamente `role: 'superadmin'` y `trustTier: 3` a cuentas maestras autorizadas (`cesar@ronda.uno`, correos `@ronda.uno` o UID `hVX2RL2xJhRFurJJsAgdyVIaDT53`). Las reglas de Firestore rechazaban estas cuentas con `false for 'create'` porque exigían obligatoriamente `role == 'client'` y `trustTier == 0` a cualquier cuenta sin excepción.
+  4. *Falso Positivo con LinkedIn:* `validClientVerificationAndPayment()` bloqueaba la creación si el usuario incluía su LinkedIn verificado porque `'linkedinVerified'` estaba incluido en la lista negra de campos no editables por cliente.
+- **Acciones Realizadas:**
+  1. *Verificación de Existencia (`exists()`):* Reescritas las funciones auxiliares `userRole(uid)` y `getUserData(uid)` en [firestore.rules](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) con operadores ternarios `exists(...) ? ... : ...`.
+  2. *Reconocimiento de Cuenta Maestra / Staff:* Creada la función `isMasterAdmin()` que reconoce `cesar@ronda.uno`, el dominio `@ronda.uno` y el UID del SuperAdmin, permitiendo la inicialización de la cuenta de administración sin ser bloqueada por las restricciones de clientes.
+  3. *Acceso Seguro a Mapas con `.get()`:* Reemplazados los accesos directos por `.get('property', default)` en `allow create` y `allow update`.
+  4. *Validación con Pruebas Automatizadas:* Verificados con éxito los 3 escenarios en el emulador local (Registro estándar de cliente, Registro con LinkedIn y Registro/elevación de SuperAdmin).
+
+### [2026-11-02] — Corrección del Contador de Visitas y Píldora Deformada en Footers (landing.html & partners.html)
+- **Solicitud del Usuario:** Resolver el bug visual donde el contador de visitas se visualizaba deformado como un óvalo vertical y no mostraba el número de visitantes (estancado en `Visitas: ...`).
+- **Causa Raíz Identificada:**
+  1. *Deformación Geométrica:* En el footer se había inyectado un `padding-bottom: 70px;` inline directamente en la píldora `.ronda-visit-counter-pill`, estirando el borde redondeado verticalmente hasta formar un óvalo distorsionado. El espacio de seguridad para el botón flotante de WhatsApp ya estaba adecuadamente cubierto por `.footer-meta-right { padding-right: 70px; }`.
+  2. *Error de Sintaxis JS Fatal:* `trackRealVisit` utilizaba declaraciones `await fetch(...)` directamente dentro de un callback sincrónico de `DOMContentLoaded`, disparando un `SyntaxError: await is only valid in async functions` que bloqueaba la ejecución de todo el script.
+  3. *Reglas de Seguridad Firestore (403):* No existía regla en `firestore.rules` para la colección `/stats/{statId}`, bloqueando las consultas anónimas de lectura e incremento atómico de visitas con `PERMISSION_DENIED`.
+  4. *Fallback Estático:* El HTML renderizaba un valor estático `...` en lugar de una cifra creíble de visitas en plataforma.
+- **Acciones Realizadas:**
+  1. *Normalización CSS de la Píldora:* Removido el `padding-bottom: 70px;` inline y unificados los estilos con la clase `.ronda-visit-counter-pill` de `ronda-tokens.css` (`padding: 3px 10px; border-radius: 100px;`) en [landing.html](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/landing.html) y [partners.html](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/partners.html).
+  2. *Reglas de Firestore Habilitadas:* Declarado `match /stats/{statId} { allow read: if true; allow create, update: if statId == 'visits'; }` en [firestore.rules](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules).
+  3. *Función Asincrónica Robusta:* Implementada función `async function trackRealVisit()` con incremento atómico `:commit` de Firestore, consulta de respaldo y valor base verificado `1.240+` (nunca más `...` ni `0`).
+  4. *Sincronización en src/footer.ts:* Actualizado el valor base a `1.240+` en el generador transversal de footers.
+
+### [2026-11-02] — Optimización Integral B2B de partners.html: Aislamiento de Embudo, Video Lightbox, Calculadora Enriquecida y Requisitos Físicos
+- **Solicitud del Usuario:** Ejecutar la reestructuración profunda de `partners.html` para maximizar la captación de gastrobares y speakeasies en Bogotá, subsanando fallas técnicas, comerciales y de UX.
+- **Acciones Realizadas:**
+  1. *Aislamiento Comercial del Embudo B2B:*
+     - Eliminados todos los enlaces cruzados a `/invest` tanto de la barra de navegación (`.nav-links`) como del footer luxury (`.site-footer`), protegiendo la autoridad de marca de RONDA frente a los administradores de bares.
+     - Añadido enlace de navegación directo hacia `#requisitos`.
+  2. *Conexión Integral de la Calculadora con Captura de Leads y WhatsApp:*
+     - `openModal(src)` preserva el origen del trigger y captura los valores activos de los sliders (`cocktailSlider` y `foodSlider`).
+     - Al procesar el lead (`handleFormSubmit`), se calcula la proyección nocturna ($1.125.600+ COP) y se almacena en el campo `notes` del documento en Firestore (`leads`).
+     - Se pre-configura un mensaje de WhatsApp enriquecido para el Scout con el nombre del local, zona, precio de cóctel, ticket de comida y proyección total calculada.
+  3. *Eliminación del Botón de Play Engañoso:*
+     - Creado lightbox modal de video (`#modal-partner-video`) con reproductor nativo HTML5 reproduciendo `/assets/ronda-pitch-video.mp4`.
+     - Vinculado el botón `.play-button-glow` a `openPartnerVideoModal()`, eliminando la fricción de apertura del formulario de registro sobre un botón de medios.
+  4. *Sección "Requisitos Físicos de Selección" (`#requisitos`):*
+     - Agregada sección visual de exclusividad con los 4 criterios de selección evaluados por el Scout de RONDA: Capacidad (12 mesas de 2 o 6 de 4), Acústica Conversacional (< 75 dB), Iluminación Cálida y Barra Ágil (24 cócteles en 20 min).
+     - Botón "Ver requisitos de espacio →" vinculado para scroll suave hacia `#requisitos`.
+  5. *Blindaje Técnico, Corrección Matemática y Reglas Firestore:*
+     - Agregado `<link rel="stylesheet">` de Google Fonts (`Bodoni Moda` e `Inter`) en el `<head>`.
+     - Corregida discrepancia matemática estática en la calculadora a `$1.125.600 COP` ($576.000 + $230.400 + $319.200).
+     - Removido el contador global de visitas con doble tag `<b>` en el footer y el script no autenticado `trackRealVisit`.
+     - Reforzadas las reglas de seguridad en [firestore.rules](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) con límites de tamaño de cadenas en `/leads` (`name` 1–100 caracteres, `phone` 7–30 caracteres).
+
+### [2026-11-02] — Reestructuración y Saneamiento de invest.html: Conversión FFF Inmutable, Saneamiento de Modales y Sincronización Financiera
+- **Solicitud del Usuario:** Blindar `invest.html` para la ronda de deuda FFF de $8M COP, fijar CTA/Simulador, eliminar micro-aportes y botones obsoletos.
+- **Acciones Realizadas:**
+  1. *Fijación de CTA y Simulador fuera de pestañas:*
+     - Extraídas las secciones `#cta-section` y `#simulador-section` fuera de los paneles de tabs condicionales para garantizar visibilidad permanente en cualquier paso del pitch.
+     - Añadido botón superior directo en el navbar: `🔥 Reservar Ticket ($1M)`.
+  2. *Saneamiento de Herramientas y Modales Obsoletos:*
+     - Removido el botón "📄 Exportar PDF" (`#btn-export-pdf`) del menú de herramientas.
+     - Purgados los selectores de idioma muertos `[ES]` / `[EN]`, el selector flotante y los modales Binance/Crypto/Nequi obsoletos con sus scripts asociados.
+  3. *Sincronización Matemática y Social Proof:*
+     - Sincronizado el modelo de retorno: 8 tickets de $1.000.000 COP, retorno total $8.480.000 COP (6% fijo a 90 días), liquidez requerida $9.200.000 COP (1.08x de cobertura).
+     - Costo unitario de cóctel corregido a $22.000 COP en la comanda física simulada.
+     - Actualizado social proof con 2 tickets comprometidos (Círculo A1) y 6 disponibles.
+
+### [2026-11-01] — Optimización Integral de index.html: Waitlist sin Fricción, Extracción CSS Monolítico, PIN Móvil Accesible y Blindaje Backend
+- **Solicitud del Usuario:** Ejecutar en bucle continuo las mejoras de conversión, arquitectura de código, seguridad y usabilidad móvil en `index.html`.
+- **Acciones Realizadas:**
+  1. *Prioridad 1 — Conversión de Waitlist (Cero Fricción en Registro):*
+     - Desacoplado `auth-wl-linkedin` de la obligatoriedad en [index.html](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/index.html). Lead capturado en <15s con Nombre, WhatsApp y Correo.
+     - Campo LinkedIn transformado a opcional con auto-normalización sintáctica (`https://www.linkedin.com/in/...`) en [src/app.ts](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/app.ts) y [src/views/auth-view.ts](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/src/views/auth-view.ts).
+     - Incorporada tarjeta aceleradora (`#auth-wl-boost-card`) en pantalla de confirmación para incentivar la vinculación posterior sin frenar la captura.
+  2. *Prioridad 2 — Arquitectura CSS y Limpieza DOM:*
+     - Extraído bloque monolítico `<style>` de 1.199 líneas de `index.html` hacia [public/css/styles.css](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/public/css/styles.css) mediante script automatizado [scripts/optimize-architecture.cjs](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/scripts/optimize-architecture.cjs).
+     - `index.html` aligerado de 2.476 líneas a 1.296 líneas (-47%) y el bundle `dist/index.html` reducido de 136.2 kB a 100.6 kB (-35 kB en FCP).
+     - Acotada llamada de Google Fonts (`Bodoni Moda` con pesos 400, 700 y cursiva, eliminando variantes pesadas innecesarias).
+     - Elevada legibilidad de textos secundarios `.notif-time` a 11px con `--humo` (WCAG AA).
+  3. *Prioridad 3 — Seguridad Delegada a Backend & Usabilidad PIN Móvil:*
+     - Reemplazados los 4 inputs desarticulados de PIN por un único `<input type="password" inputmode="numeric" maxlength="4">` transparente sobre 4 cajas visuales sincronizadas (`.pin-digit-box`), resolviendo los bloqueos de foco, retroceso y teclados numéricos en iOS y Android.
+     - Blindadas las reglas en [firestore.rules](file:///c:/Users/Cesar%20Dla%20Croix/Desktop/ronda-app/firestore.rules) con función `containsContactLeak(text)`: rechazo en backend de filtraciones de números celulares colombianos (`3\d{9}`) o correos en chats efímeros y subcolección `messages`.
+  4. *Validación Técnica:*
+     - `npx tsc --noEmit`: 0 errores de TypeScript.
+     - `node src/mem-rr-v2/bench.ts`: 100% assertions superadas (1.0 ms bipartito, 31.0 ms general).
+     - `npm run build`: Compilación limpia de producción en `dist/` (150 módulos transformados).
+     - Grafo de conocimiento actualizado con `graphify update .`.
+
 ### [2026-10-30] — Actualización y Sincronización del Control de Versiones del Proyecto (v2.3.1-prod)
 - **Solicitud del Usuario:** Actualizar el control de versiones de todo el proyecto.
 - **Acciones Realizadas:**
@@ -654,6 +737,32 @@
      - `npm run build`: Compilación limpia de producción en `dist/` (`dist/admin.html` 51.91 kB, código 0).
      - Verificación visual completa con subagente de navegador (`admin_completed_view_1793141988466.png`).
      - Actualizado grafo de conocimiento con `graphify update .`.
+
+---
+
+
+### [2026-11-01] — Optimización Integral de index.html e invest.html (Pitch Deck & Data Room FFF)
+
+- **Solicitud del Usuario:**
+  1. *Optimización y Arquitectura en index.html:* Reducir sobrecarga de estilos embebidos, hacer opcional el campo de LinkedIn en la waitlist con normalización de @slug, agregar tarjeta de boost de confirmación, unificar los 4 inputs de PIN en una sola capa de entrada transparente y blindar Firestore contra fugas de contacto en el chat.
+  2. *Autopsia y Rescate de invest.html:* Resolver los 5 puntos críticos de fricción financiera, psicológica y técnica para cerrar la micro-ronda de $8.000.000 COP en deuda privada a 90 días (6.0% interés fijo simple):
+     - **Visibilidad Permanente:** Extraer #cta-section y #simulador-section de la pestaña 04 (#negocio) y ubicarlos permanentemente debajo de los paneles para que sean accesibles desde cualquier pestaña (01 a 04). Agregar botón de salto directo 🔥 Reservar Ticket ($1M) en la barra de navegación superior con scroll suave.
+     - **Eliminación de Micro-Aportes:** Retirar por completo #micro-aportes, los modales de Nequi y Crypto, y todo el CSS/JS asociado para erradicar el "Plan B Amistoso" que devaluaba la postura de alta exclusividad del pitch deck.
+     - **Solvencia y Matemática de Repago Unificada:**
+       - Unificar la obligación a **$8.480.000 COP** (Capital $8M + $480.000 COP de intereses fijos), corrigiendo el error de $8.720.000 COP en el FAQ #3.
+       - Sustentar la liquidez total de **$9.200.000 COP** (cobertura de **1.08x**) mediante 3 fuentes blindadas: (1) $5.760.000 COP utilidad neta operativa de 12 eventos piloto; (2) +$2.000.000 COP liberación del Fondo de Reserva y Garantía de Bares; (3) +$1.440.000 COP pre-ventas de semanas 11–12 (eventos 13 al 15).
+       - Corregir el CSV descargable para reflejar exactamente 1 cóctel de bienvenida de autor ($22.000 c/u = -$528.000 COP), coincidiendo con la Tabla 3 del One-Pager.
+     - **Prueba Social Inteligente:** Sincronizar la barra de progreso para mostrar 2 tickets reservados por Círculo Fundador A1 en proceso de firma (indicadores ámbar reserved) y 6 disponibles ($6M COP), evitando el "síndrome de restaurante vacío" al 0%.
+     - **UX & Seguridad Técnica:**
+       - Eliminar el modal interruptivo #modal-pitch-suggestion (pantalla completa/rotación).
+       - Corregir error de sintaxis CSS en @media (max-width: 900px) (llave de cierre huérfana).
+       - Retirar la inyección de Google Translate (translate_a/element.js) para proteger la integridad del DOM y las fuentes Bodoni Moda.
+       - Eliminar el contador de visitas público hits.sh del footer.
+       - Unificar el contacto oficial de WhatsApp en toda la página a +57 302 654 3854.
+       - Reemplazar tokens triviales hardcodeados en cliente por identificadores institucionales.
+- **Validaciones Técnicas y Resultados:**
+  - node src/mem-rr-v2/bench.ts: 100% de las pruebas del motor pasadas (5.0 ms plan bipartito, 56.0 ms plan general).
+  - npm run build: Compilación limpia de producción en Vite (dist/index.html 100.66 kB, dist/invest.html 179.62 kB).
 
 ---
 

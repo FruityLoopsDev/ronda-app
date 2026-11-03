@@ -1,6 +1,29 @@
-import { doc, getDoc, setDoc, updateDoc, deleteField, deleteDoc, onSnapshot, collection, getDocs, writeBatch, arrayUnion, Unsubscribe, serverTimestamp, query, where } from "firebase/firestore";
+import { 
+  doc, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  deleteField, 
+  deleteDoc, 
+  onSnapshot, 
+  collection, 
+  getDocs, 
+  writeBatch, 
+  arrayUnion, 
+  Unsubscribe, 
+  serverTimestamp, 
+  query, 
+  where,
+  getCountFromServer,
+  FirestoreError
+} from "firebase/firestore";
 import { RondaServices } from "./firebase-config.js";
 import { Matches } from "./matches.js";
+
+// =========================================================================
+// Tipos de Roles y Sistema
+// =========================================================================
+export type UserRole = 'superadmin' | 'admin' | 'sales' | 'network' | 'client';
 
 // Basic Types
 export interface Reservation {
@@ -23,7 +46,7 @@ export interface Reservation {
 
 export interface User {
   uid: string;
-  role: string;
+  role: UserRole | string;
   name?: string;
   email?: string;
   username?: string;
@@ -166,6 +189,7 @@ export interface RondaEvent {
   price?: number;
   priceFormatted?: string;
   dayDate?: string;
+  roundEndsAt?: number; // Timestamp (epoch ms) de fin de ronda activa
 }
 
 export interface NightClosing {
@@ -207,7 +231,7 @@ export interface VenueStaffMember {
   uid: string;
   name: string;
   email: string;
-  role: string;
+  role: UserRole | string;
   capabilities: ('read' | 'reception' | 'operation' | 'cashier' | 'config' | 'team')[];
   assignedAt: string;
 }
@@ -438,12 +462,18 @@ export interface Lead {
   risk_review_id?: string;
 }
 
-function cleanFirestoreData(obj: any): any {
+export function cleanFirestoreData(obj: any): any {
   if (obj === null || obj === undefined) return null;
+  // Preservar instancias de Date
+  if (obj instanceof Date) return obj;
+  // Preservar FieldValues de Firestore (deleteField, serverTimestamp, arrayUnion, etc.)
+  if (typeof obj === 'object' && (obj.constructor?.name === 'FieldValue' || '_methodName' in obj || typeof obj.isEqual === 'function')) {
+    return obj;
+  }
   if (Array.isArray(obj)) {
     return obj.map(item => cleanFirestoreData(item)).filter(item => item !== undefined);
   }
-  if (typeof obj === 'object') {
+  if (typeof obj === 'object' && (obj.constructor === Object || !obj.constructor)) {
     const cleaned: any = {};
     for (const [key, value] of Object.entries(obj)) {
       if (value !== undefined) {
@@ -550,11 +580,18 @@ export class DatabaseInterface {
 
   async countUsers(): Promise<number> {
     try {
-      const snap = await getDocs(collection(this._getFirestore(), 'users'));
-      return snap.docs.length;
+      const colRef = collection(this._getFirestore(), 'users');
+      const snapshot = await getCountFromServer(colRef);
+      return snapshot.data().count;
     } catch (err) {
-      console.error('[DB] Error contando usuarios:', err);
-      return 0;
+      console.warn('[DB] Fallback a getDocs para conteo de usuarios:', err);
+      try {
+        const snap = await getDocs(collection(this._getFirestore(), 'users'));
+        return snap.docs.length;
+      } catch (innerErr) {
+        console.error('[DB] Error contando usuarios:', innerErr);
+        return 0;
+      }
     }
   }
 
@@ -574,18 +611,26 @@ export class DatabaseInterface {
   async getUpcomingEvents(): Promise<any[]> {
     try {
       const colRef = collection(this._getFirestore(), 'events');
-      const snap = await getDocs(colRef);
-      const events: any[] = [];
-      snap.forEach(doc => {
-        const data = doc.data();
-        if (data.status === 'upcoming' || data.status === 'active' || data.status === 'waiting' || data.status === 'in_progress') {
-          events.push({ id: doc.id, ...data });
-        }
-      });
-      return events;
+      const q = query(colRef, where('status', 'in', ['upcoming', 'active', 'waiting', 'in_progress']));
+      const snap = await getDocs(q);
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (e) {
-      console.warn("getUpcomingEvents no implementado o falló", e);
-      return [];
+      console.warn("getUpcomingEvents con query optimizado falló, usando fallback:", e);
+      try {
+        const colRef = collection(this._getFirestore(), 'events');
+        const snap = await getDocs(colRef);
+        const events: any[] = [];
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (data.status === 'upcoming' || data.status === 'active' || data.status === 'waiting' || data.status === 'in_progress') {
+            events.push({ id: doc.id, ...data });
+          }
+        });
+        return events;
+      } catch (fallbackErr) {
+        console.error("Fallback de getUpcomingEvents falló:", fallbackErr);
+        return [];
+      }
     }
   }
 
@@ -792,47 +837,67 @@ export class DatabaseInterface {
   async getVenues(): Promise<Venue[]> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'venues'));
-      return snap.docs.map(d => d.data() as Venue);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as Venue) }));
     } catch (e) {
-      console.error("Error obteniendo venues:", e);
+      console.error("[DB] Error obteniendo venues:", e);
       return [];
     }
+  }
+
+  subscribeToVenues(callback: (venues: Venue[]) => void, onError?: (err: Error) => void): Unsubscribe {
+    const colRef = collection(this._getFirestore(), 'venues');
+    return onSnapshot(colRef, (snap) => {
+      const venues = snap.docs.map(d => ({ id: d.id, ...(d.data() as Venue) }));
+      callback(venues);
+    }, (err) => {
+      console.error("[DB] Error en suscripción a venues:", err);
+      onError?.(err);
+    });
   }
 
   // Conversión Lead -> Venue oficial (Tarea 3 CRM). Requiere permiso de escritura
   // en `venues` (superadmin según firestore.rules).
   async saveVenue(venue: Venue): Promise<void> {
     const docRef = doc(this._getFirestore(), 'venues', venue.id);
-    await setDoc(docRef, venue);
+    const sanitized = cleanFirestoreData({
+      ...venue,
+      updatedAt: new Date().toISOString()
+    });
+    await setDoc(docRef, sanitized, { merge: true });
   }
 
   // --- Leads (CRM) ---
   async getLeads(salesUid?: string): Promise<Lead[]> {
     try {
-      const snap = await getDocs(collection(this._getFirestore(), 'leads'));
-      let leads = snap.docs.map(d => d.data() as Lead);
-      if (salesUid) leads = leads.filter(l => l.sales_uid === salesUid);
-      return leads;
+      const colRef = collection(this._getFirestore(), 'leads');
+      const q = salesUid ? query(colRef, where('sales_uid', '==', salesUid)) : colRef;
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as Lead) }));
     } catch (e) {
-      console.error("Error obteniendo leads:", e);
+      console.error("[DB] Error obteniendo leads:", e);
       return [];
     }
   }
 
-  subscribeToLeads(callback: (leads: Lead[]) => void, salesUid?: string): Unsubscribe {
+  subscribeToLeads(callback: (leads: Lead[]) => void, salesUid?: string, onError?: (err: Error) => void): Unsubscribe {
     const colRef = collection(this._getFirestore(), 'leads');
-    return onSnapshot(colRef, (snap) => {
-      let leads = snap.docs.map(d => d.data() as Lead);
-      if (salesUid) leads = leads.filter(l => l.sales_uid === salesUid);
+    const q = salesUid ? query(colRef, where('sales_uid', '==', salesUid)) : colRef;
+    return onSnapshot(q, (snap) => {
+      const leads = snap.docs.map(d => ({ id: d.id, ...(d.data() as Lead) }));
       callback(leads);
     }, (err) => {
       console.error("[DB] Error en suscripción a leads:", err);
+      onError?.(err);
     });
   }
 
   async saveLead(lead: Lead): Promise<void> {
     const docRef = doc(this._getFirestore(), 'leads', lead.id);
-    await setDoc(docRef, lead);
+    const sanitized = cleanFirestoreData({
+      ...lead,
+      updatedAt: new Date().toISOString()
+    });
+    await setDoc(docRef, sanitized, { merge: true });
   }
 
   async deleteLead(leadId: string): Promise<void> {
@@ -842,15 +907,15 @@ export class DatabaseInterface {
 
   async updateLeadStatus(leadId: string, status: 'lead' | 'negotiating' | 'signed'): Promise<void> {
     const docRef = doc(this._getFirestore(), 'leads', leadId);
-    await setDoc(docRef, { status }, { merge: true });
+    await setDoc(docRef, { status, updatedAt: new Date().toISOString() }, { merge: true });
   }
 
   // --- Waitlist (Lista de Espera) ---
   async saveWaitlistEntry(entry: { name: string; linkedin?: string; whatsapp: string; email: string; interestZone?: string; source?: string }): Promise<void> {
-    const data = {
+    const data = cleanFirestoreData({
       ...entry,
       createdAt: new Date().toISOString()
-    };
+    });
     try {
       const id = 'wl_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
       const docRef = doc(this._getFirestore(), 'waitlist', id);
@@ -866,13 +931,13 @@ export class DatabaseInterface {
   async getScout(uid: string): Promise<Scout | null> {
     const docRef = doc(this._getFirestore(), 'scouts', uid);
     const snap = await getDoc(docRef);
-    return snap.exists() ? (snap.data() as Scout) : null;
+    return snap.exists() ? ({ uid: snap.id, ...(snap.data() as Scout) }) : null;
   }
 
   async getScouts(): Promise<Scout[]> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'scouts'));
-      return snap.docs.map(d => d.data() as Scout);
+      return snap.docs.map(d => ({ uid: d.id, ...(d.data() as Scout) }));
     } catch (err) {
       console.error("[DB] Error obteniendo scouts:", err);
       return [];
@@ -882,7 +947,7 @@ export class DatabaseInterface {
   async getHosts(): Promise<Host[]> {
     try {
       const snap = await getDocs(collection(this._getFirestore(), 'hosts'));
-      return snap.docs.map(d => d.data() as Host);
+      return snap.docs.map(d => ({ uid: d.id, ...(d.data() as Host) }));
     } catch (err) {
       console.error("[DB] Error obteniendo hosts:", err);
       return [];
@@ -897,7 +962,7 @@ export class DatabaseInterface {
   async getHost(uid: string): Promise<Host | null> {
     const docRef = doc(this._getFirestore(), 'hosts', uid);
     const snap = await getDoc(docRef);
-    return snap.exists() ? (snap.data() as Host) : null;
+    return snap.exists() ? ({ uid: snap.id, ...(snap.data() as Host) }) : null;
   }
 
   async saveHost(host: Host): Promise<void> {
@@ -908,10 +973,9 @@ export class DatabaseInterface {
   async getLedgerEntries(payeeUid?: string): Promise<LedgerEntry[]> {
     try {
       const colRef = collection(this._getFirestore(), 'commission_ledger');
-      const snap = await getDocs(colRef);
-      let entries = snap.docs.map(d => d.data() as LedgerEntry);
-      if (payeeUid) entries = entries.filter(e => e.payee_uid === payeeUid);
-      return entries;
+      const q = payeeUid ? query(colRef, where('payee_uid', '==', payeeUid)) : colRef;
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as LedgerEntry) }));
     } catch (err) {
       console.error("[DB] Error obteniendo commission_ledger:", err);
       return [];
@@ -926,10 +990,9 @@ export class DatabaseInterface {
   async getPayouts(payeeUid?: string): Promise<Payout[]> {
     try {
       const colRef = collection(this._getFirestore(), 'payouts');
-      const snap = await getDocs(colRef);
-      let payouts = snap.docs.map(d => d.data() as Payout);
-      if (payeeUid) payouts = payouts.filter(p => p.payee_uid === payeeUid);
-      return payouts;
+      const q = payeeUid ? query(colRef, where('payee_uid', '==', payeeUid)) : colRef;
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as Payout) }));
     } catch (err) {
       console.error("[DB] Error obteniendo payouts:", err);
       return [];
@@ -954,10 +1017,9 @@ export class DatabaseInterface {
   async getHostOffers(hostUid?: string): Promise<HostOffer[]> {
     try {
       const colRef = collection(this._getFirestore(), 'host_offers');
-      const snap = await getDocs(colRef);
-      let offers = snap.docs.map(d => d.data() as HostOffer);
-      if (hostUid) offers = offers.filter(o => o.accepted_host_uid === hostUid || o.offer_status === 'offered');
-      return offers;
+      const q = hostUid ? query(colRef, where('accepted_host_uid', '==', hostUid)) : colRef;
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as HostOffer) }));
     } catch (err) {
       console.error("[DB] Error obteniendo host_offers:", err);
       return [];
@@ -1064,10 +1126,9 @@ export class DatabaseInterface {
   async getBenefitRedemptions(venueId: string): Promise<BenefitRedemption[]> {
     try {
       const colRef = collection(this._getFirestore(), 'benefit_redemptions');
-      const snap = await getDocs(colRef);
-      return snap.docs
-        .map(d => d.data() as BenefitRedemption)
-        .filter(r => r.venueId === venueId);
+      const q = query(colRef, where('venueId', '==', venueId));
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...(d.data() as BenefitRedemption) }));
     } catch (e) {
       console.error("[DB] Error getting benefit redemptions:", e);
       return [];
@@ -1083,10 +1144,9 @@ export class DatabaseInterface {
   async getSupportTickets(venueId?: string): Promise<any[]> {
     try {
       const colRef = collection(this._getFirestore(), 'support_tickets');
-      const snap = await getDocs(colRef);
-      let tickets = snap.docs.map(d => d.data());
-      if (venueId) tickets = tickets.filter(t => t.venueId === venueId);
-      return tickets;
+      const q = venueId ? query(colRef, where('venueId', '==', venueId)) : colRef;
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (e) {
       console.error("[DB] Error getting support tickets:", e);
       return [];

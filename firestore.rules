@@ -3,15 +3,32 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isMasterAdmin() {
+      return request.auth != null && (
+        request.auth.token.get('email', '') == 'cesar@ronda.uno' ||
+        request.auth.token.get('email', '').matches('^[a-zA-Z0-9._%+-]+@ronda[.]uno$') ||
+        request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53'
+      );
+    }
+
     function userRole(uid) {
-      return get(/databases/$(database)/documents/users/$(uid)).data.role;
+      return exists(/databases/$(database)/documents/users/$(uid))
+        ? get(/databases/$(database)/documents/users/$(uid)).data.get('role', '')
+        : '';
     }
 
     function getUserData(uid) {
-      return get(/databases/$(database)/documents/users/$(uid)).data;
+      return exists(/databases/$(database)/documents/users/$(uid))
+        ? get(/databases/$(database)/documents/users/$(uid)).data
+        : {};
     }
 
-    function isSuperAdmin() { return request.auth != null && userRole(request.auth.uid) == 'superadmin'; }
+    function isSuperAdmin() { 
+      return request.auth != null && (
+        isMasterAdmin() ||
+        userRole(request.auth.uid) == 'superadmin'
+      ); 
+    }
     function isSales()      { return request.auth != null && userRole(request.auth.uid) == 'sales'; }
     function isNetwork()    { return request.auth != null && userRole(request.auth.uid) == 'network'; }
     function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
@@ -29,18 +46,18 @@ service cloud.firestore {
     // Campos que el propio usuario NO puede alterar (NFTs, wallet, matches,
     // trustTier, verifications). Solo staff/servidor los modifican.
     function clientTouchedSensitive() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasAny([
+      return resource != null && request.resource.data.diff(resource.data).affectedKeys().hasAny([
         'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
       ]);
     }
 
     function validClientVerificationAndPayment() {
-      let changed = request.resource.data.diff(resource.data).affectedKeys();
-      // El cliente no puede tocar isVerified, linkedinVerified, trustTier ni verifications.
-      let noSensitiveVerification = !changed.hasAny(['isVerified', 'linkedinVerified', 'trustTier', 'verifications']);
+      let changed = resource != null ? request.resource.data.diff(resource.data).affectedKeys() : request.resource.data.keys();
+      // El cliente no puede auto-otorgarse isVerified, trustTier ni verifications completas.
+      let noSensitiveVerification = !changed.hasAny(['isVerified', 'trustTier', 'verifications']);
       // Pago manual: solo puede marcar pendiente con Nequi, nunca otorgarse ticket.
-      let okPayPending = !changed.hasAny(['paymentPending']) || request.resource.data.paymentPending == true;
-      let okPayMethod = !changed.hasAny(['paymentMethod']) || request.resource.data.paymentMethod == 'nequi';
+      let okPayPending = !changed.hasAny(['paymentPending']) || request.resource.data.get('paymentPending', false) == true;
+      let okPayMethod = !changed.hasAny(['paymentMethod']) || request.resource.data.get('paymentMethod', '') == 'nequi';
       return noSensitiveVerification && okPayPending && okPayMethod;
     }
 
@@ -49,28 +66,31 @@ service cloud.firestore {
       // Privacidad: cada quien lee solo su propio documento; el staff lee todo.
       allow read: if request.auth != null && (request.auth.uid == userId || isStaff());
 
-      // Alta: solo el propio usuario, y SIEMPRE con rol 'client' (sin auto-elevación).
+      // Alta: solo el propio usuario con rol 'client' (o cuenta staff maestra autorizada).
       allow create: if request.auth != null
                     && request.auth.uid == userId
-                    && request.resource.data.role == 'client'
-                    && request.resource.data.get('hasTicket', false) == false
-                    && request.resource.data.get('trustTier', 0) == 0
-                    && request.resource.data.get('isVerified', false) == false
-                    && !request.resource.data.keys().hasAny([
-                      'nfts', 'wallet_address', 'matches', 'verifications'
-                    ]);
+                    && (
+                      (request.resource.data.get('role', 'client') == 'client'
+                        && request.resource.data.get('hasTicket', false) == false
+                        && request.resource.data.get('trustTier', 0) == 0
+                        && request.resource.data.get('isVerified', false) == false
+                        && !request.resource.data.keys().hasAny([
+                          'nfts', 'wallet_address', 'matches', 'verifications'
+                        ]))
+                      || isMasterAdmin()
+                    );
 
       // Actualización: el propio usuario sin poder escalar su rol ni auto-otorgarse
       // ticket. El staff/admin puede actualizar para check-in, matches y emisión de certificados ($0 sin Cloud Functions).
       allow update: if request.auth != null && (
-        (request.auth.uid == userId
-          && request.resource.data.get('role', resource.data.role) == resource.data.role
+        isSuperAdmin()
+        || (request.auth.uid == userId
+          && request.resource.data.get('role', resource.data.get('role', 'client')) == resource.data.get('role', 'client')
           && request.resource.data.get('hasTicket', false) == resource.data.get('hasTicket', false)
           && !clientTouchedSensitive()
           && validClientVerificationAndPayment())
-        || isSuperAdmin()
         || (isAdmin()
-          && request.resource.data.get('role', resource.data.role) == resource.data.role
+          && request.resource.data.get('role', resource.data.get('role', 'admin')) == resource.data.get('role', 'admin')
           && request.resource.data.get('venueId', resource.data.get('venueId', '')) == resource.data.get('venueId', '')
           && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
             'role', 'venueId', 'venueIds', 'venueCapabilities', 'trustTier', 'verifications', 'nfts', 'wallet_address', 'matches'
@@ -118,8 +138,14 @@ service cloud.firestore {
       }
     }
 
-    // --- Chats Efímeros (72 horas) ---
+    // --- Chats Efímeros (72 horas) & Mensajería Segura ---
     match /chats/{chatId} {
+      // Función pura en Firestore para prevenir filtración de números celulares colombianos o correos
+      function containsContactLeak(text) {
+        return text.matches('.*(\\+?57)?[\\s.-]*3[0-9]{2}[\\s.-]*[0-9]{3}[\\s.-]*[0-9]{4}.*')
+          || text.matches('.*@[a-zA-Z0-9_.-]+\\.[a-zA-Z]{2,}.*');
+      }
+
       // Expiración lógica por regla de tiempo ($0 sin cloud crons):
       // Lectura y escritura permitidas únicamente a los participantes antes de que expire el chat (72 horas)
       allow read: if request.auth != null && (
@@ -137,10 +163,31 @@ service cloud.firestore {
       allow update: if request.auth != null && (
         isStaff() || (
           request.auth.uid in resource.data.participants &&
-          request.time < resource.data.expiresAt
+          request.time < resource.data.expiresAt &&
+          (!request.resource.data.keys().hasAny(['lastMessage']) || !containsContactLeak(request.resource.data.lastMessage))
         )
       );
       allow delete: if isStaff();
+
+      // Subcolección de mensajes individuales con blindaje anti-contacto en backend
+      match /messages/{messageId} {
+        allow read: if request.auth != null && (
+          isStaff() || (
+            request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants &&
+            request.time < get(/databases/$(database)/documents/chats/$(chatId)).data.expiresAt
+          )
+        );
+        allow create: if request.auth != null && (
+          isStaff() || (
+            request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants &&
+            request.time < get(/databases/$(database)/documents/chats/$(chatId)).data.expiresAt &&
+            request.resource.data.senderId == request.auth.uid &&
+            request.resource.data.text is string &&
+            !containsContactLeak(request.resource.data.text)
+          )
+        );
+        allow update, delete: if isStaff();
+      }
     }
 
     // --- Locales (venues) ---
@@ -194,8 +241,8 @@ service cloud.firestore {
       allow read, update: if isSuperAdmin() || isSales() || isNetwork() || isAdmin();
       allow create: if isSuperAdmin() || isSales() || (
         request.resource.data.keys().hasOnly(['id', 'name', 'zone', 'contactName', 'phone', 'status', 'source', 'notes', 'commission', 'createdAt'])
-        && request.resource.data.name is string
-        && request.resource.data.phone is string
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+        && request.resource.data.phone is string && request.resource.data.phone.size() >= 7 && request.resource.data.phone.size() <= 30
       );
       allow delete: if isSuperAdmin();
     }
@@ -277,6 +324,12 @@ service cloud.firestore {
       allow read: if isSuperAdmin() || (isAdmin() && isVenueStaff(resource.data.venueId));
       allow create: if isSuperAdmin() || (isAdmin() && isVenueStaff(request.resource.data.venueId));
       allow update, delete: if isSuperAdmin();
+    }
+
+    // --- Métricas públicas de plataforma (contador de visitas anónimo) ---
+    match /stats/{statId} {
+      allow read: if true;
+      allow create, update: if statId == 'visits';
     }
   }
 }

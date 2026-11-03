@@ -17,32 +17,6 @@
       "source_location": "L5"
     },
     {
-      "id": "src_mem_rr_v2_engine_nightmode",
-      "label": "NightMode",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "nightmode",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L31"
-    },
-    {
-      "id": "src_mem_rr_v2_exact_exactmatchingresult",
-      "label": "ExactMatchingResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "exactmatchingresult",
-      "source_file": "src/mem-rr-v2/exact.ts",
-      "source_location": "L7"
-    },
-    {
       "id": "src_icebreakers_icebreakers",
       "label": "Icebreakers",
       "_callable": true,
@@ -166,37 +140,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": "venue",
       "source_file": "src/db.ts",
       "source_location": "L371"
-    },
-    {
-      "id": "src_dialog_dialogoptions",
-      "label": "DialogOptions",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": "dialogoptions",
-      "source_file": "src/dialog.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_dialog_rondadialog",
-      "label": "RondaDialog",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": "rondadialog",
-      "source_file": "src/dialog.ts",
-      "source_location": "L18"
     },
     {
       "id": "src_network_networkcontroller",
@@ -205,7 +153,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": "networkcontroller",
       "source_file": "src/network.ts",
@@ -251,6 +199,136 @@
       "source_location": "L18"
     },
     {
+      "id": "src_db_host",
+      "label": "Host",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "host",
+      "source_file": "src/db.ts",
+      "source_location": "L240"
+    },
+    {
+      "id": "src_db_hostreport",
+      "label": "HostReport",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "hostreport",
+      "source_file": "src/db.ts",
+      "source_location": "L359"
+    },
+    {
+      "id": "src_db_match",
+      "label": "Match",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "match",
+      "source_file": "src/db.ts",
+      "source_location": "L146"
+    },
+    {
+      "id": "src_db_milestonestate",
+      "label": "MilestoneState",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "milestonestate",
+      "source_file": "src/db.ts",
+      "source_location": "L215"
+    },
+    {
+      "id": "src_db_reservation",
+      "label": "Reservation",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "reservation",
+      "source_file": "src/db.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_db_venuestaffmember",
+      "label": "VenueStaffMember",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "venuestaffmember",
+      "source_file": "src/db.ts",
+      "source_location": "L206"
+    },
+    {
+      "id": "src_superadmin_adminsection",
+      "label": "AdminSection",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "adminsection",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_superadmin_investtoken",
+      "label": "InvestToken",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "investtoken",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_superadmin_kycreviewcase",
+      "label": "KycReviewCase",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "kycreviewcase",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_api_client_apiclient",
+      "label": "ApiClient",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 153,
+      "community_name": "ApiClient",
+      "file_type": "code",
+      "norm_label": "apiclient",
+      "source_file": "src/api-client.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "src_db_databaseinterface",
       "label": "DatabaseInterface",
       "_callable": true,
@@ -277,69 +355,108 @@
       "source_location": "L356"
     },
     {
-      "id": "src_db_benefitredemption",
-      "label": "BenefitRedemption",
+      "id": "src_client_drinkoption",
+      "label": "DrinkOption",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "benefitredemption",
-      "source_file": "src/db.ts",
-      "source_location": "L195"
+      "norm_label": "drinkoption",
+      "source_file": "src/client.ts",
+      "source_location": "L12"
     },
     {
-      "id": "src_db_nightclosing",
-      "label": "NightClosing",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "host-admin.ts",
-      "file_type": "code",
-      "norm_label": "nightclosing",
-      "source_file": "src/db.ts",
-      "source_location": "L171"
-    },
-    {
-      "id": "src_db_rondaevent",
+      "id": "src_client_rondaevent",
       "label": "RondaEvent",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
       "norm_label": "rondaevent",
-      "source_file": "src/db.ts",
-      "source_location": "L153"
+      "source_file": "src/client.ts",
+      "source_location": "L21"
     },
     {
-      "id": "src_host_admin_hostsection",
-      "label": "HostSection",
+      "id": "src_dialog_dialogoptions",
+      "label": "DialogOptions",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "hostsection",
-      "source_file": "src/host-admin.ts",
-      "source_location": "L22"
+      "norm_label": "dialogoptions",
+      "source_file": "src/dialog.ts",
+      "source_location": "L3"
     },
     {
-      "id": "src_host_admin_hostsectionconfig",
-      "label": "HostSectionConfig",
+      "id": "src_dialog_rondadialog",
+      "label": "RondaDialog",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "hostsectionconfig",
-      "source_file": "src/host-admin.ts",
-      "source_location": "L34"
+      "norm_label": "rondadialog",
+      "source_file": "src/dialog.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_payment_paymentcheckoutoptions",
+      "label": "PaymentCheckoutOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "paymentcheckoutoptions",
+      "source_file": "src/payment.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_privacy_policy_contactviolationresult",
+      "label": "ContactViolationResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "contactviolationresult",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_privacy_policy_privacypolicy",
+      "label": "PrivacyPolicy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "privacypolicy",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_nightmode",
+      "label": "NightMode",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "nightmode",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L31"
     },
     {
       "id": "src_mem_rr_v2_types_engineconfig",
@@ -348,7 +465,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "engineconfig",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -361,7 +478,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "enginemetrics",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -374,7 +491,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "gender",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -387,7 +504,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "nightparams",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -400,7 +517,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "nightplan",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -413,7 +530,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "perpersonfreshness",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -426,7 +543,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "roomgraph",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -439,7 +556,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "roundresult",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -452,7 +569,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "sidename",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -465,7 +582,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "tableassignment",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -550,43 +667,17 @@
       "source_location": "L21"
     },
     {
-      "id": "src_api_client_apiclient",
-      "label": "ApiClient",
+      "id": "src_db_user",
+      "label": "User",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 29,
       "community_name": "app.ts",
       "file_type": "code",
-      "norm_label": "apiclient",
-      "source_file": "src/api-client.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_client_drinkoption",
-      "label": "DrinkOption",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "drinkoption",
-      "source_file": "src/client.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_client_rondaevent",
-      "label": "RondaEvent",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "rondaevent",
-      "source_file": "src/client.ts",
-      "source_location": "L21"
+      "norm_label": "user",
+      "source_file": "src/db.ts",
+      "source_location": "L24"
     },
     {
       "id": "src_icebreakers_icebreakerquestion",
@@ -600,45 +691,6 @@
       "norm_label": "icebreakerquestion",
       "source_file": "src/icebreakers.ts",
       "source_location": "L5"
-    },
-    {
-      "id": "src_notifications_appnotification",
-      "label": "AppNotification",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "appnotification",
-      "source_file": "src/notifications.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_privacy_policy_contactviolationresult",
-      "label": "ContactViolationResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "contactviolationresult",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_privacy_policy_privacypolicy",
-      "label": "PrivacyPolicy",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "privacypolicy",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L14"
     },
     {
       "id": "src_satisfaction_satisfactiondata",
@@ -719,19 +771,6 @@
       "source_location": "L13"
     },
     {
-      "id": "src_mem_rr_history_recordedpair",
-      "label": "RecordedPair",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "pairKey",
-      "file_type": "code",
-      "norm_label": "recordedpair",
-      "source_file": "src/mem-rr-history.ts",
-      "source_location": "L13"
-    },
-    {
       "id": "src_mem_rr_history_rondahistoryadapter",
       "label": "RondaHistoryAdapter",
       "_callable": true,
@@ -743,6 +782,19 @@
       "norm_label": "rondahistoryadapter",
       "source_file": "src/mem-rr-history.ts",
       "source_location": "L28"
+    },
+    {
+      "id": "src_mem_rr_v2_bench_maphistory",
+      "label": "MapHistory",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": "maphistory",
+      "source_file": "src/mem-rr-v2/bench.ts",
+      "source_location": "L34"
     },
     {
       "id": "src_mem_rr_v2_stress_maphistory",
@@ -782,19 +834,6 @@
       "norm_label": "history",
       "source_file": "src/mem-rr-v2/types.ts",
       "source_location": "L31"
-    },
-    {
-      "id": "src_mem_rr_v2_types_participant",
-      "label": "Participant",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "pairKey",
-      "file_type": "code",
-      "norm_label": "participant",
-      "source_file": "src/mem-rr-v2/types.ts",
-      "source_location": "L7"
     },
     {
       "id": "src_qrcode_generator_d_qrcode",
@@ -979,6 +1018,19 @@
       "source_location": "L51"
     },
     {
+      "id": "src_db_scout",
+      "label": "Scout",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "scout",
+      "source_file": "src/db.ts",
+      "source_location": "L217"
+    },
+    {
       "id": "src_portal_auth_portalconfig",
       "label": "PortalConfig",
       "_callable": true,
@@ -992,108 +1044,69 @@
       "source_location": "L7"
     },
     {
-      "id": "src_db_host",
-      "label": "Host",
+      "id": "src_db_benefitredemption",
+      "label": "BenefitRedemption",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "host",
+      "norm_label": "benefitredemption",
       "source_file": "src/db.ts",
-      "source_location": "L240"
+      "source_location": "L195"
     },
     {
-      "id": "src_db_hostreport",
-      "label": "HostReport",
+      "id": "src_db_nightclosing",
+      "label": "NightClosing",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "hostreport",
+      "norm_label": "nightclosing",
       "source_file": "src/db.ts",
-      "source_location": "L359"
+      "source_location": "L171"
     },
     {
-      "id": "src_db_match",
-      "label": "Match",
+      "id": "src_db_rondaevent",
+      "label": "RondaEvent",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "match",
+      "norm_label": "rondaevent",
       "source_file": "src/db.ts",
-      "source_location": "L146"
+      "source_location": "L153"
     },
     {
-      "id": "src_db_milestonestate",
-      "label": "MilestoneState",
+      "id": "src_host_admin_hostsection",
+      "label": "HostSection",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "milestonestate",
-      "source_file": "src/db.ts",
-      "source_location": "L215"
+      "norm_label": "hostsection",
+      "source_file": "src/host-admin.ts",
+      "source_location": "L22"
     },
     {
-      "id": "src_db_reservation",
-      "label": "Reservation",
+      "id": "src_host_admin_hostsectionconfig",
+      "label": "HostSectionConfig",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "reservation",
-      "source_file": "src/db.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_db_scout",
-      "label": "Scout",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 77,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "scout",
-      "source_file": "src/db.ts",
-      "source_location": "L217"
-    },
-    {
-      "id": "src_db_user",
-      "label": "User",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 77,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "user",
-      "source_file": "src/db.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_db_venuestaffmember",
-      "label": "VenueStaffMember",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 77,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "venuestaffmember",
-      "source_file": "src/db.ts",
-      "source_location": "L206"
+      "norm_label": "hostsectionconfig",
+      "source_file": "src/host-admin.ts",
+      "source_location": "L34"
     },
     {
       "id": "src_kyc_review_kycreviewdata",
@@ -1102,76 +1115,63 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "kycreviewdata",
       "source_file": "src/kyc-review.ts",
       "source_location": "L4"
     },
     {
-      "id": "src_payment_paymentcheckoutoptions",
-      "label": "PaymentCheckoutOptions",
+      "id": "src_mem_rr_history_recordedpair",
+      "label": "RecordedPair",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "paymentcheckoutoptions",
-      "source_file": "src/payment.ts",
-      "source_location": "L4"
+      "norm_label": "recordedpair",
+      "source_file": "src/mem-rr-history.ts",
+      "source_location": "L13"
     },
     {
-      "id": "src_superadmin_adminsection",
-      "label": "AdminSection",
+      "id": "src_mem_rr_v2_types_participant",
+      "label": "Participant",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "adminsection",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L10"
+      "norm_label": "participant",
+      "source_file": "src/mem-rr-v2/types.ts",
+      "source_location": "L7"
     },
     {
-      "id": "src_superadmin_investtoken",
-      "label": "InvestToken",
+      "id": "src_notifications_appnotification",
+      "label": "AppNotification",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "investtoken",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L36"
+      "norm_label": "appnotification",
+      "source_file": "src/notifications.ts",
+      "source_location": "L6"
     },
     {
-      "id": "src_superadmin_kycreviewcase",
-      "label": "KycReviewCase",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 77,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "kycreviewcase",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_mem_rr_v2_bench_maphistory",
-      "label": "MapHistory",
+      "id": "src_mem_rr_v2_exact_exactmatchingresult",
+      "label": "ExactMatchingResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 80,
       "community_name": "bench.ts",
       "file_type": "code",
-      "norm_label": "maphistory",
-      "source_file": "src/mem-rr-v2/bench.ts",
-      "source_location": "L34"
+      "norm_label": "exactmatchingresult",
+      "source_file": "src/mem-rr-v2/exact.ts",
+      "source_location": "L7"
     },
     {
       "id": "src_config_b2b_policies_complianceconfig",
@@ -1489,162 +1489,6 @@
       "norm_label": "run()",
       "source_file": "src/mem-rr-v2/stress.ts",
       "source_location": "L89"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_buildbipartitenight",
-      "label": "buildBipartiteNight()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "buildbipartitenight()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L153"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_buildgeneralnight",
-      "label": "buildGeneralNight()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "buildgeneralnight()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L291"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_buildnightplan",
-      "label": "buildNightPlan()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "buildnightplan()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_buildtable4night",
-      "label": "buildTable4Night()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "buildtable4night()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L59"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_computemetrics",
-      "label": "computeMetrics()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "computemetrics()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L337"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_gini",
-      "label": "gini()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "gini()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L438"
-    },
-    {
-      "id": "src_mem_rr_v2_engine_nowms",
-      "label": "nowMs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "nowms()",
-      "source_file": "src/mem-rr-v2/engine.ts",
-      "source_location": "L453"
-    },
-    {
-      "id": "src_mem_rr_v2_exact_dpperfectmatching",
-      "label": "dpPerfectMatching()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "dpperfectmatching()",
-      "source_file": "src/mem-rr-v2/exact.ts",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_mem_rr_v2_exact_lowestunsetbit",
-      "label": "lowestUnsetBit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "lowestunsetbit()",
-      "source_file": "src/mem-rr-v2/exact.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_mem_rr_v2_weights_blockedpair",
-      "label": "blockedPair()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "blockedpair()",
-      "source_file": "src/mem-rr-v2/weights.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_mem_rr_v2_weights_compatibilityok",
-      "label": "compatibilityOk()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "compatibilityok()",
-      "source_file": "src/mem-rr-v2/weights.ts",
-      "source_location": "L23"
-    },
-    {
-      "id": "src_mem_rr_v2_weights_mergeconfig",
-      "label": "mergeConfig()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "mergeconfig()",
-      "source_file": "src/mem-rr-v2/weights.ts",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_mem_rr_v2_weights_pairweight",
-      "label": "pairWeight()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 101,
-      "community_name": "engine.ts",
-      "file_type": "code",
-      "norm_label": "pairweight()",
-      "source_file": "src/mem-rr-v2/weights.ts",
-      "source_location": "L78"
     },
     {
       "id": "src_icebreakers_icebreakers_close",
@@ -2667,72 +2511,12 @@
       "source_location": "L86"
     },
     {
-      "id": "src_dialog_escapehtml",
-      "label": "escapeHtml()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": "escapehtml()",
-      "source_file": "src/dialog.ts",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_dialog_rondadialog_close",
-      "label": ".close()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": ".close()",
-      "source_file": "src/dialog.ts",
-      "source_location": "L186"
-    },
-    {
-      "id": "src_dialog_rondadialog_init",
-      "label": ".init()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": ".init()",
-      "source_file": "src/dialog.ts",
-      "source_location": "L23"
-    },
-    {
-      "id": "src_dialog_rondadialog_prompt",
-      "label": ".prompt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": ".prompt()",
-      "source_file": "src/dialog.ts",
-      "source_location": "L167"
-    },
-    {
-      "id": "src_dialog_rondadialog_show",
-      "label": ".show()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": ".show()",
-      "source_file": "src/dialog.ts",
-      "source_location": "L96"
-    },
-    {
       "id": "src_network_networkcontroller_attachdynamiclisteners",
       "label": ".attachDynamicListeners()",
       "_callable": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": ".attachdynamiclisteners()",
       "source_file": "src/network.ts",
@@ -2744,7 +2528,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/network.ts",
@@ -2756,7 +2540,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": ".getdistance()",
       "source_file": "src/network.ts",
@@ -2768,7 +2552,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": ".init()",
       "source_file": "src/network.ts",
@@ -2780,7 +2564,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": ".render()",
       "source_file": "src/network.ts",
@@ -2792,7 +2576,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 134,
-      "community_name": "RondaDialog",
+      "community_name": "Venue",
       "file_type": "code",
       "norm_label": ".setupeventlisteners()",
       "source_file": "src/network.ts",
@@ -3589,6 +3373,42 @@
       "norm_label": "manualchunks()",
       "source_file": "vite.config.ts",
       "source_location": "L62"
+    },
+    {
+      "id": "src_api_client_apiclient_baseurl",
+      "label": ".baseUrl()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 153,
+      "community_name": "ApiClient",
+      "file_type": "code",
+      "norm_label": ".baseurl()",
+      "source_file": "src/api-client.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_api_client_apiclient_isconfigured",
+      "label": ".isConfigured()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 153,
+      "community_name": "ApiClient",
+      "file_type": "code",
+      "norm_label": ".isconfigured()",
+      "source_file": "src/api-client.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_api_client_apiclient_post",
+      "label": ".post()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 153,
+      "community_name": "ApiClient",
+      "file_type": "code",
+      "norm_label": ".post()",
+      "source_file": "src/api-client.ts",
+      "source_location": "L13"
     },
     {
       "id": "src_db_cleanfirestoredata",
@@ -4407,6 +4227,66 @@
       "source_location": "L644"
     },
     {
+      "id": "src_dialog_escapehtml",
+      "label": "escapeHtml()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "escapehtml()",
+      "source_file": "src/dialog.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_dialog_rondadialog_close",
+      "label": ".close()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": ".close()",
+      "source_file": "src/dialog.ts",
+      "source_location": "L186"
+    },
+    {
+      "id": "src_dialog_rondadialog_init",
+      "label": ".init()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": ".init()",
+      "source_file": "src/dialog.ts",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_dialog_rondadialog_prompt",
+      "label": ".prompt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": ".prompt()",
+      "source_file": "src/dialog.ts",
+      "source_location": "L167"
+    },
+    {
+      "id": "src_dialog_rondadialog_show",
+      "label": ".show()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": ".show()",
+      "source_file": "src/dialog.ts",
+      "source_location": "L96"
+    },
+    {
       "id": "scripts_git_lean_commit_infercommitmessage",
       "label": "inferCommitMessage()",
       "_callable": true,
@@ -4431,12 +4311,84 @@
       "source_location": "L42"
     },
     {
+      "id": "src_mem_rr_v2_engine_buildbipartitenight",
+      "label": "buildBipartiteNight()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "buildbipartitenight()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L153"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_buildgeneralnight",
+      "label": "buildGeneralNight()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "buildgeneralnight()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L291"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_buildtable4night",
+      "label": "buildTable4Night()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "buildtable4night()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L59"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_computemetrics",
+      "label": "computeMetrics()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "computemetrics()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L337"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_gini",
+      "label": "gini()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "gini()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L438"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_nowms",
+      "label": "nowMs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "nowms()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L453"
+    },
+    {
       "id": "src_mem_rr_v2_types_history_get",
       "label": ".get()",
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": ".get()",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -4448,7 +4400,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": ".distance()",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -4460,11 +4412,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "affinity()",
       "source_file": "src/mem-rr-v2/weights.ts",
       "source_location": "L35"
+    },
+    {
+      "id": "src_mem_rr_v2_weights_blockedpair",
+      "label": "blockedPair()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "blockedpair()",
+      "source_file": "src/mem-rr-v2/weights.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_mem_rr_v2_weights_compatibilityok",
+      "label": "compatibilityOk()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "compatibilityok()",
+      "source_file": "src/mem-rr-v2/weights.ts",
+      "source_location": "L23"
     },
     {
       "id": "src_mem_rr_v2_weights_distancecost",
@@ -4472,7 +4448,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "distancecost()",
       "source_file": "src/mem-rr-v2/weights.ts",
@@ -4484,11 +4460,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "freshness()",
       "source_file": "src/mem-rr-v2/weights.ts",
       "source_location": "L49"
+    },
+    {
+      "id": "src_mem_rr_v2_weights_pairweight",
+      "label": "pairWeight()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "pairweight()",
+      "source_file": "src/mem-rr-v2/weights.ts",
+      "source_location": "L78"
     },
     {
       "id": "src_mem_rr_v2_weights_repetition",
@@ -4496,7 +4484,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "repetition()",
       "source_file": "src/mem-rr-v2/weights.ts",
@@ -5715,42 +5703,6 @@
       "source_location": "L41"
     },
     {
-      "id": "src_api_client_apiclient_baseurl",
-      "label": ".baseUrl()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": ".baseurl()",
-      "source_file": "src/api-client.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_api_client_apiclient_isconfigured",
-      "label": ".isConfigured()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": ".isconfigured()",
-      "source_file": "src/api-client.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_api_client_apiclient_post",
-      "label": ".post()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": ".post()",
-      "source_file": "src/api-client.ts",
-      "source_location": "L13"
-    },
-    {
       "id": "src_utils_calculateage",
       "label": "calculateAge()",
       "_callable": true,
@@ -6315,18 +6267,6 @@
       "source_location": "L4"
     },
     {
-      "id": "src_mem_rr_history_mulberry32",
-      "label": "mulberry32()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "pairKey",
-      "file_type": "code",
-      "norm_label": "mulberry32()",
-      "source_file": "src/mem-rr-history.ts",
-      "source_location": "L19"
-    },
-    {
       "id": "src_mem_rr_history_rondahistoryadapter_get",
       "label": ".get()",
       "_callable": true,
@@ -6399,6 +6339,78 @@
       "source_location": "L402"
     },
     {
+      "id": "src_mem_rr_v2_bench_countblockedinv1",
+      "label": "countBlockedInV1()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": "countblockedinv1()",
+      "source_file": "src/mem-rr-v2/bench.ts",
+      "source_location": "L379"
+    },
+    {
+      "id": "src_mem_rr_v2_bench_maphistory_get",
+      "label": ".get()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": ".get()",
+      "source_file": "src/mem-rr-v2/bench.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_mem_rr_v2_bench_maphistory_set",
+      "label": ".set()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": ".set()",
+      "source_file": "src/mem-rr-v2/bench.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_mem_rr_v2_bench_planv1",
+      "label": "planV1()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": "planv1()",
+      "source_file": "src/mem-rr-v2/bench.ts",
+      "source_location": "L86"
+    },
+    {
+      "id": "src_mem_rr_v2_bench_planv2",
+      "label": "planV2()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": "planv2()",
+      "source_file": "src/mem-rr-v2/bench.ts",
+      "source_location": "L134"
+    },
+    {
+      "id": "src_mem_rr_v2_engine_buildnightplan",
+      "label": "buildNightPlan()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": "buildnightplan()",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L33"
+    },
+    {
       "id": "src_mem_rr_v2_stress_maphistory_get",
       "label": ".get()",
       "_callable": true,
@@ -6421,6 +6433,18 @@
       "norm_label": ".set()",
       "source_file": "src/mem-rr-v2/stress.ts",
       "source_location": "L33"
+    },
+    {
+      "id": "src_mem_rr_v2_weights_mergeconfig",
+      "label": "mergeConfig()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "pairKey",
+      "file_type": "code",
+      "norm_label": "mergeconfig()",
+      "source_file": "src/mem-rr-v2/weights.ts",
+      "source_location": "L18"
     },
     {
       "id": "src_mem_rr_v2_weights_pairkey",
@@ -6709,18 +6733,6 @@
       "norm_label": "hydraterondafooter()",
       "source_file": "src/footer.ts",
       "source_location": "L188"
-    },
-    {
-      "id": "src_footer_renderrondafooter",
-      "label": "renderRondaFooter()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "footer.ts",
-      "file_type": "code",
-      "norm_label": "renderrondafooter()",
-      "source_file": "src/footer.ts",
-      "source_location": "L297"
     },
     {
       "id": "src_footer_synclivegitmetrics",
@@ -7980,7 +7992,7 @@
       "file_type": "code",
       "norm_label": ".handlehashrouting()",
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L496"
+      "source_location": "L548"
     },
     {
       "id": "src_views_auth_view_authview_init",
@@ -8076,7 +8088,7 @@
       "file_type": "code",
       "norm_label": ".setupwaitlist()",
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L447"
+      "source_location": "L483"
     },
     {
       "id": "src_views_auth_view_authview_setupzodiacpreview",
@@ -8511,6 +8523,18 @@
       "source_location": "L10"
     },
     {
+      "id": "src_footer_renderrondafooter",
+      "label": "renderRondaFooter()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "renderrondafooter()",
+      "source_file": "src/footer.ts",
+      "source_location": "L297"
+    },
+    {
       "id": "src_portal_auth_getassignedpanelurl",
       "label": "getAssignedPanelUrl()",
       "_callable": true,
@@ -8576,11 +8600,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "submitkycreview()",
       "source_file": "src/kyc-review.ts",
       "source_location": "L16"
+    },
+    {
+      "id": "src_mem_rr_history_mulberry32",
+      "label": "mulberry32()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 77,
+      "community_name": "host-admin.ts",
+      "file_type": "code",
+      "norm_label": "mulberry32()",
+      "source_file": "src/mem-rr-history.ts",
+      "source_location": "L19"
     },
     {
       "id": "src_mem_rr_v2_bench_brutebipartite",
@@ -8643,18 +8679,6 @@
       "source_location": "L218"
     },
     {
-      "id": "src_mem_rr_v2_bench_countblockedinv1",
-      "label": "countBlockedInV1()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "bench.ts",
-      "file_type": "code",
-      "norm_label": "countblockedinv1()",
-      "source_file": "src/mem-rr-v2/bench.ts",
-      "source_location": "L379"
-    },
-    {
       "id": "src_mem_rr_v2_bench_exit",
       "label": "exit()",
       "_callable": true,
@@ -8691,30 +8715,6 @@
       "source_location": "L46"
     },
     {
-      "id": "src_mem_rr_v2_bench_maphistory_get",
-      "label": ".get()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "bench.ts",
-      "file_type": "code",
-      "norm_label": ".get()",
-      "source_file": "src/mem-rr-v2/bench.ts",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_mem_rr_v2_bench_maphistory_set",
-      "label": ".set()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "bench.ts",
-      "file_type": "code",
-      "norm_label": ".set()",
-      "source_file": "src/mem-rr-v2/bench.ts",
-      "source_location": "L39"
-    },
-    {
       "id": "src_mem_rr_v2_bench_mulberry32",
       "label": "mulberry32()",
       "_callable": true,
@@ -8727,30 +8727,6 @@
       "source_location": "L25"
     },
     {
-      "id": "src_mem_rr_v2_bench_planv1",
-      "label": "planV1()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "bench.ts",
-      "file_type": "code",
-      "norm_label": "planv1()",
-      "source_file": "src/mem-rr-v2/bench.ts",
-      "source_location": "L86"
-    },
-    {
-      "id": "src_mem_rr_v2_bench_planv2",
-      "label": "planV2()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "bench.ts",
-      "file_type": "code",
-      "norm_label": "planv2()",
-      "source_file": "src/mem-rr-v2/bench.ts",
-      "source_location": "L134"
-    },
-    {
       "id": "src_mem_rr_v2_bench_section",
       "label": "section()",
       "_callable": true,
@@ -8761,6 +8737,30 @@
       "norm_label": "section()",
       "source_file": "src/mem-rr-v2/bench.ts",
       "source_location": "L222"
+    },
+    {
+      "id": "src_mem_rr_v2_exact_dpperfectmatching",
+      "label": "dpPerfectMatching()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "bench.ts",
+      "file_type": "code",
+      "norm_label": "dpperfectmatching()",
+      "source_file": "src/mem-rr-v2/exact.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_mem_rr_v2_exact_lowestunsetbit",
+      "label": "lowestUnsetBit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "bench.ts",
+      "file_type": "code",
+      "norm_label": "lowestunsetbit()",
+      "source_file": "src/mem-rr-v2/exact.ts",
+      "source_location": "L15"
     },
     {
       "id": "src_b2b_engine_rondab2bengine_constructor",
@@ -10861,26 +10861,125 @@
       "source_location": "L38"
     },
     {
-      "id": "src_mem_rr_v2_engine",
-      "label": "engine.ts",
+      "id": "scripts_optimize_architecture",
+      "label": "optimize-architecture.cjs",
       "_origin": "ast",
       "community": 101,
-      "community_name": "engine.ts",
+      "community_name": "optimize-architecture.cjs",
       "file_type": "code",
-      "norm_label": "engine.ts",
-      "source_file": "src/mem-rr-v2/engine.ts",
+      "norm_label": "optimize-architecture.cjs",
+      "source_file": "scripts/optimize-architecture.cjs",
       "source_location": "L1"
     },
     {
-      "id": "src_mem_rr_v2_exact",
-      "label": "exact.ts",
+      "id": "scripts_optimize_architecture_csspath",
+      "label": "cssPath",
       "_origin": "ast",
       "community": 101,
-      "community_name": "engine.ts",
+      "community_name": "optimize-architecture.cjs",
       "file_type": "code",
-      "norm_label": "exact.ts",
-      "source_file": "src/mem-rr-v2/exact.ts",
+      "norm_label": "csspath",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L6"
+    },
+    {
+      "id": "scripts_optimize_architecture_currentcss",
+      "label": "currentCss",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "currentcss",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L10"
+    },
+    {
+      "id": "scripts_optimize_architecture_embeddedcss",
+      "label": "embeddedCss",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "embeddedcss",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L24"
+    },
+    {
+      "id": "scripts_optimize_architecture_endindex",
+      "label": "endIndex",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "endindex",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L17"
+    },
+    {
+      "id": "scripts_optimize_architecture_fs",
+      "label": "fs",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "fs",
+      "source_file": "scripts/optimize-architecture.cjs",
       "source_location": "L1"
+    },
+    {
+      "id": "scripts_optimize_architecture_indexhtml",
+      "label": "indexHtml",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "indexhtml",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L9"
+    },
+    {
+      "id": "scripts_optimize_architecture_indexpath",
+      "label": "indexPath",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "indexpath",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L5"
+    },
+    {
+      "id": "scripts_optimize_architecture_path",
+      "label": "path",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "path",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L2"
+    },
+    {
+      "id": "scripts_optimize_architecture_rootdir",
+      "label": "rootDir",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "rootdir",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L4"
+    },
+    {
+      "id": "scripts_optimize_architecture_startindex",
+      "label": "startIndex",
+      "_origin": "ast",
+      "community": 101,
+      "community_name": "optimize-architecture.cjs",
+      "file_type": "code",
+      "norm_label": "startindex",
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L16"
     },
     {
       "id": "test_test_b2b_scouts_hosters_assert",
@@ -14398,37 +14497,15 @@
       "source_location": "L42"
     },
     {
-      "id": "src_dialog",
-      "label": "dialog.ts",
+      "id": "ref_html5_qrcode",
+      "label": "html5-qrcode",
       "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": "dialog.ts",
-      "source_file": "src/dialog.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_network",
-      "label": "network.ts",
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": "network.ts",
-      "source_file": "src/network.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_network_network",
-      "label": "Network",
-      "_origin": "ast",
-      "community": 134,
-      "community_name": "RondaDialog",
-      "file_type": "code",
-      "norm_label": "network",
-      "source_file": "src/network.ts",
-      "source_location": "L189"
+      "community": 135,
+      "community_name": "HostAdminController",
+      "file_type": "concept",
+      "norm_label": "html5-qrcode",
+      "source_file": "package.json",
+      "source_location": "L47"
     },
     {
       "id": "vite_config",
@@ -15493,6 +15570,182 @@
       "source_location": "L1"
     },
     {
+      "id": "localforage",
+      "label": "localforage",
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "confidence": "EXTRACTED",
+      "file_type": "code",
+      "norm_label": "localforage",
+      "source_file": "localforage"
+    },
+    {
+      "id": "src_db",
+      "label": "db.ts",
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "db.ts",
+      "source_file": "src/db.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_db_client_allowed_user_fields",
+      "label": "CLIENT_ALLOWED_USER_FIELDS",
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "client_allowed_user_fields",
+      "source_file": "src/db.ts",
+      "source_location": "L462"
+    },
+    {
+      "id": "src_superadmin",
+      "label": "superadmin.ts",
+      "_origin": "ast",
+      "community": 152,
+      "community_name": "db.ts",
+      "file_type": "code",
+      "norm_label": "superadmin.ts",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_historial_interacciones",
+      "label": "HISTORIAL_INTERACCIONES.md",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "historial_interacciones.md",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_27_blindaje_de_reglas_firestore_anti_auto_verificaci\u00f3n_gating_de_venues_t1_y_flujo_kycreviews",
+      "label": "[2026-10-27] \u2014 Blindaje de Reglas Firestore: Anti-Auto-Verificaci\u00f3n, Gating de Venues (T1+) y Flujo kycReviews",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-27] \u2014 blindaje de reglas firestore: anti-auto-verificacion, gating de venues (t1+) y flujo kycreviews",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L675"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_27_despliegue_de_emuladores_locales_y_persistencia_temporal_sessionstorage_browsersessionpersistence",
+      "label": "[2026-10-27] \u2014 Despliegue de Emuladores Locales y Persistencia Temporal (sessionStorage + browserSessionPersistence)",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-27] \u2014 despliegue de emuladores locales y persistencia temporal (sessionstorage + browsersessionpersistence)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L697"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_27_escudo_verde_de_verificaci\u00f3n_integridad_de_botones_de_perfil_enlaces_legales_absolutos_y_dominio_can\u00f3nico",
+      "label": "[2026-10-27] \u2014 Escudo Verde de Verificaci\u00f3n, Integridad de Botones de Perfil, Enlaces Legales Absolutos y Dominio Can\u00f3nico",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-27] \u2014 escudo verde de verificacion, integridad de botones de perfil, enlaces legales absolutos y dominio canonico",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L657"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_27_implementaci\u00f3n_del_challenge_de_bienvenida_tu_pasaporte_a_la_noche",
+      "label": "[2026-10-27] \u2014 Implementaci\u00f3n del Challenge de Bienvenida \"Tu Pasaporte a la Noche\"",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-27] \u2014 implementacion del challenge de bienvenida \"tu pasaporte a la noche\"",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L684"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_10_27_transformaci\u00f3n_integral_de_admin_consola_operativa_y_anfitri\u00f3n_de_establecimiento",
+      "label": "[2026-10-27] \u2014 Transformaci\u00f3n Integral de /admin (Consola Operativa y Anfitri\u00f3n de Establecimiento)",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-10-27] \u2014 transformacion integral de /admin (consola operativa y anfitrion de establecimiento)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L708"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_11_01_optimizaci\u00f3n_integral_de_index_html_e_invest_html_pitch_deck_data_room_fff",
+      "label": "[2026-11-01] \u2014 Optimizaci\u00f3n Integral de index.html e invest.html (Pitch Deck & Data Room FFF)",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-11-01] \u2014 optimizacion integral de index.html e invest.html (pitch deck & data room fff)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L744"
+    },
+    {
+      "id": "docs_historial_interacciones_estado_actual_del_proyecto_resumen_ejecutivo",
+      "label": "\ud83d\udccc Estado Actual del Proyecto (Resumen Ejecutivo)",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udccc estado actual del proyecto (resumen ejecutivo)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "docs_historial_interacciones_historial_de_interacciones_y_registro_de_decisiones_ronda",
+      "label": "\ud83d\udcdc HISTORIAL DE INTERACCIONES Y REGISTRO DE DECISIONES (RONDA)",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcdc historial de interacciones y registro de decisiones (ronda)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_historial_interacciones_reglas_contextuales_recordatorias_para_los_agentes",
+      "label": "\ud83d\udca1 Reglas Contextuales Recordatorias para los Agentes",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udca1 reglas contextuales recordatorias para los agentes",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L769"
+    },
+    {
+      "id": "docs_historial_interacciones_tareas_pendientes_y_pr\u00f3ximos_pasos_hoja_de_ruta_inmediata",
+      "label": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "_origin": "ast",
+      "community": 154,
+      "community_name": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83c\udfaf tareas pendientes y proximos pasos (hoja de ruta inmediata)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L647"
+    },
+    {
       "id": "ronda_files_ronda_documentos_completos_01_ronda_plan_marketing_colombia_v2_1_final",
       "label": "01_RONDA_Plan_Marketing_Colombia_v2.1_FINAL.md",
       "_origin": "ast",
@@ -16127,92 +16380,92 @@
       "source_location": "L1"
     },
     {
-      "id": "html5_qrcode",
-      "label": "html5-qrcode",
+      "id": "src_client",
+      "label": "client.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
-      "confidence": "EXTRACTED",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "html5-qrcode",
-      "source_file": "html5-qrcode"
-    },
-    {
-      "id": "src_bar",
-      "label": "bar.ts",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "host-admin.ts",
-      "file_type": "code",
-      "norm_label": "bar.ts",
-      "source_file": "src/bar.ts",
+      "norm_label": "client.ts",
+      "source_file": "src/client.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_bar_admin",
-      "label": "Admin",
+      "id": "src_client_ronda_events",
+      "label": "RONDA_EVENTS",
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "admin",
-      "source_file": "src/bar.ts",
-      "source_location": "L823"
+      "norm_label": "ronda_events",
+      "source_file": "src/client.ts",
+      "source_location": "L53"
     },
     {
-      "id": "src_bar_hostconsole",
-      "label": "HostConsole",
+      "id": "src_dialog",
+      "label": "dialog.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "hostconsole",
-      "source_file": "src/bar.ts",
-      "source_location": "L822"
-    },
-    {
-      "id": "src_host_admin",
-      "label": "host-admin.ts",
-      "_origin": "ast",
-      "community": 19,
-      "community_name": "host-admin.ts",
-      "file_type": "code",
-      "norm_label": "host-admin.ts",
-      "source_file": "src/host-admin.ts",
+      "norm_label": "dialog.ts",
+      "source_file": "src/dialog.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_host_admin_host_sections",
-      "label": "HOST_SECTIONS",
+      "id": "src_notifications_notifications",
+      "label": "notifications",
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "host_sections",
-      "source_file": "src/host-admin.ts",
-      "source_location": "L42"
+      "norm_label": "notifications",
+      "source_file": "src/notifications.ts",
+      "source_location": "L224"
     },
     {
-      "id": "src_host_admin_hostadmin",
-      "label": "HostAdmin",
+      "id": "src_payment",
+      "label": "payment.ts",
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "hostadmin",
-      "source_file": "src/host-admin.ts",
-      "source_location": "L2614"
+      "norm_label": "payment.ts",
+      "source_file": "src/payment.ts",
+      "source_location": "L1"
     },
     {
-      "id": "src_mem_rr_history_rrhistory",
-      "label": "RRHistory",
+      "id": "src_payment_payment",
+      "label": "Payment",
       "_origin": "ast",
       "community": 19,
-      "community_name": "host-admin.ts",
+      "community_name": "client.ts",
       "file_type": "code",
-      "norm_label": "rrhistory",
-      "source_file": "src/mem-rr-history.ts",
-      "source_location": "L108"
+      "norm_label": "payment",
+      "source_file": "src/payment.ts",
+      "source_location": "L133"
+    },
+    {
+      "id": "src_privacy_policy",
+      "label": "privacy-policy.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "privacy-policy.ts",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_privacy_policy_number_words_map",
+      "label": "NUMBER_WORDS_MAP",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "client.ts",
+      "file_type": "code",
+      "norm_label": "number_words_map",
+      "source_file": "src/privacy-policy.ts",
+      "source_location": "L9"
     },
     {
       "id": "scripts_git_lean_commit",
@@ -16720,11 +16973,22 @@
       "source_location": "L80"
     },
     {
+      "id": "src_mem_rr_v2_engine",
+      "label": "engine.ts",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "engine.ts",
+      "file_type": "code",
+      "norm_label": "engine.ts",
+      "source_file": "src/mem-rr-v2/engine.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_mem_rr_v2_types",
       "label": "types.ts",
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "types.ts",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -16735,7 +16999,7 @@
       "label": "DEFAULT_CONFIG",
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "default_config",
       "source_file": "src/mem-rr-v2/types.ts",
@@ -16746,7 +17010,7 @@
       "label": "weights.ts",
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "weights.ts",
       "source_file": "src/mem-rr-v2/weights.ts",
@@ -16757,7 +17021,7 @@
       "label": "HARD_COST",
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "hard_cost",
       "source_file": "src/mem-rr-v2/weights.ts",
@@ -16768,7 +17032,7 @@
       "label": "HARD_PENALTY",
       "_origin": "ast",
       "community": 20,
-      "community_name": "types.ts",
+      "community_name": "engine.ts",
       "file_type": "code",
       "norm_label": "hard_penalty",
       "source_file": "src/mem-rr-v2/weights.ts",
@@ -16894,17 +17158,6 @@
       "norm_label": "firebase",
       "source_file": "package.json",
       "source_location": "L46"
-    },
-    {
-      "id": "ref_html5_qrcode",
-      "label": "html5-qrcode",
-      "_origin": "ast",
-      "community": 203,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "html5-qrcode",
-      "source_file": "package.json",
-      "source_location": "L47"
     },
     {
       "id": "ref_localforage",
@@ -19324,17 +19577,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_client",
-      "label": "client.ts",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "client.ts",
-      "source_file": "src/client.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_client_clientapp",
       "label": "ClientApp",
       "_origin": "ast",
@@ -19344,17 +19586,6 @@
       "norm_label": "clientapp",
       "source_file": "src/client.ts",
       "source_location": "L1877"
-    },
-    {
-      "id": "src_client_ronda_events",
-      "label": "RONDA_EVENTS",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "ronda_events",
-      "source_file": "src/client.ts",
-      "source_location": "L53"
     },
     {
       "id": "src_db_db",
@@ -19388,50 +19619,6 @@
       "norm_label": "icebreaker_questions",
       "source_file": "src/icebreakers.ts",
       "source_location": "L11"
-    },
-    {
-      "id": "src_notifications",
-      "label": "notifications.ts",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "notifications.ts",
-      "source_file": "src/notifications.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_notifications_notifications",
-      "label": "notifications",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "notifications",
-      "source_file": "src/notifications.ts",
-      "source_location": "L224"
-    },
-    {
-      "id": "src_privacy_policy",
-      "label": "privacy-policy.ts",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "privacy-policy.ts",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_privacy_policy_number_words_map",
-      "label": "NUMBER_WORDS_MAP",
-      "_origin": "ast",
-      "community": 29,
-      "community_name": "app.ts",
-      "file_type": "code",
-      "norm_label": "number_words_map",
-      "source_file": "src/privacy-policy.ts",
-      "source_location": "L9"
     },
     {
       "id": "src_profile",
@@ -21112,17 +21299,6 @@
       "file_type": "code",
       "norm_label": "stress-test.ts",
       "source_file": "scripts/stress-test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_mem_rr_history",
-      "label": "mem-rr-history.ts",
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "pairKey",
-      "file_type": "code",
-      "norm_label": "mem-rr-history.ts",
-      "source_file": "src/mem-rr-history.ts",
       "source_location": "L1"
     },
     {
@@ -28290,6 +28466,28 @@
       "source_location": "L12"
     },
     {
+      "id": "src_crm",
+      "label": "crm.ts",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "crm.ts",
+      "source_file": "src/crm.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_crm_crm",
+      "label": "CRM",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "crm",
+      "source_file": "src/crm.ts",
+      "source_location": "L777"
+    },
+    {
       "id": "src_entry_admin",
       "label": "entry-admin.ts",
       "_origin": "ast",
@@ -28334,6 +28532,39 @@
       "source_location": "L1"
     },
     {
+      "id": "src_host_admin_hostadmin",
+      "label": "HostAdmin",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "hostadmin",
+      "source_file": "src/host-admin.ts",
+      "source_location": "L2614"
+    },
+    {
+      "id": "src_network",
+      "label": "network.ts",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "network.ts",
+      "source_file": "src/network.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_network_network",
+      "label": "Network",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "network",
+      "source_file": "src/network.ts",
+      "source_location": "L189"
+    },
+    {
       "id": "src_portal_auth",
       "label": "portal-auth.ts",
       "_origin": "ast",
@@ -28354,6 +28585,17 @@
       "norm_label": "portals",
       "source_file": "src/portal-auth.ts",
       "source_location": "L18"
+    },
+    {
+      "id": "src_superadmin_superadmin",
+      "label": "SuperAdmin",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "portal-auth.ts",
+      "file_type": "code",
+      "norm_label": "superadmin",
+      "source_file": "src/superadmin.ts",
+      "source_location": "L2245"
     },
     {
       "id": "docs_plan_challenge_perfil_humano",
@@ -28560,66 +28802,55 @@
       "source_location": "L102"
     },
     {
-      "id": "localforage",
-      "label": "localforage",
+      "id": "html5_qrcode",
+      "label": "html5-qrcode",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "confidence": "EXTRACTED",
       "file_type": "code",
-      "norm_label": "localforage",
-      "source_file": "localforage"
+      "norm_label": "html5-qrcode",
+      "source_file": "html5-qrcode"
     },
     {
-      "id": "src_crm",
-      "label": "crm.ts",
+      "id": "src_bar",
+      "label": "bar.ts",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "crm.ts",
-      "source_file": "src/crm.ts",
+      "norm_label": "bar.ts",
+      "source_file": "src/bar.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_crm_crm",
-      "label": "CRM",
+      "id": "src_bar_admin",
+      "label": "Admin",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "crm",
-      "source_file": "src/crm.ts",
-      "source_location": "L777"
+      "norm_label": "admin",
+      "source_file": "src/bar.ts",
+      "source_location": "L823"
     },
     {
-      "id": "src_db",
-      "label": "db.ts",
+      "id": "src_bar_hostconsole",
+      "label": "HostConsole",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "db.ts",
-      "source_file": "src/db.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_db_client_allowed_user_fields",
-      "label": "CLIENT_ALLOWED_USER_FIELDS",
-      "_origin": "ast",
-      "community": 77,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "client_allowed_user_fields",
-      "source_file": "src/db.ts",
-      "source_location": "L462"
+      "norm_label": "hostconsole",
+      "source_file": "src/bar.ts",
+      "source_location": "L822"
     },
     {
       "id": "src_firebase_config",
       "label": "firebase-config.ts",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "firebase-config.ts",
       "source_file": "src/firebase-config.ts",
@@ -28630,7 +28861,7 @@
       "label": "app",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "app",
       "source_file": "src/firebase-config.ts",
@@ -28641,7 +28872,7 @@
       "label": "auth",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "auth",
       "source_file": "src/firebase-config.ts",
@@ -28652,7 +28883,7 @@
       "label": "RondaConfig",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "rondaconfig",
       "source_file": "src/firebase-config.ts",
@@ -28663,77 +28894,76 @@
       "label": "RondaServices",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "rondaservices",
       "source_file": "src/firebase-config.ts",
       "source_location": "L71"
     },
     {
+      "id": "src_host_admin",
+      "label": "host-admin.ts",
+      "_origin": "ast",
+      "community": 77,
+      "community_name": "host-admin.ts",
+      "file_type": "code",
+      "norm_label": "host-admin.ts",
+      "source_file": "src/host-admin.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_host_admin_host_sections",
+      "label": "HOST_SECTIONS",
+      "_origin": "ast",
+      "community": 77,
+      "community_name": "host-admin.ts",
+      "file_type": "code",
+      "norm_label": "host_sections",
+      "source_file": "src/host-admin.ts",
+      "source_location": "L42"
+    },
+    {
       "id": "src_kyc_review",
       "label": "kyc-review.ts",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
       "norm_label": "kyc-review.ts",
       "source_file": "src/kyc-review.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_payment",
-      "label": "payment.ts",
+      "id": "src_mem_rr_history",
+      "label": "mem-rr-history.ts",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "payment.ts",
-      "source_file": "src/payment.ts",
+      "norm_label": "mem-rr-history.ts",
+      "source_file": "src/mem-rr-history.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_payment_payment",
-      "label": "Payment",
+      "id": "src_mem_rr_history_rrhistory",
+      "label": "RRHistory",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "payment",
-      "source_file": "src/payment.ts",
-      "source_location": "L133"
+      "norm_label": "rrhistory",
+      "source_file": "src/mem-rr-history.ts",
+      "source_location": "L108"
     },
     {
-      "id": "src_superadmin",
-      "label": "superadmin.ts",
+      "id": "src_notifications",
+      "label": "notifications.ts",
       "_origin": "ast",
       "community": 77,
-      "community_name": "db.ts",
+      "community_name": "host-admin.ts",
       "file_type": "code",
-      "norm_label": "superadmin.ts",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_superadmin_superadmin",
-      "label": "SuperAdmin",
-      "_origin": "ast",
-      "community": 77,
-      "community_name": "db.ts",
-      "file_type": "code",
-      "norm_label": "superadmin",
-      "source_file": "src/superadmin.ts",
-      "source_location": "L2245"
-    },
-    {
-      "id": "docs_historial_interacciones",
-      "label": "HISTORIAL_INTERACCIONES.md",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "historial_interacciones.md",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "norm_label": "notifications.ts",
+      "source_file": "src/notifications.ts",
       "source_location": "L1"
     },
     {
@@ -28746,7 +28976,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-08-27] \u2014 consolidacion de evidencia tecnica del motor `mem-rr-v2` (patente/bench)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L455"
+      "source_location": "L538"
     },
     {
       "id": "docs_historial_interacciones_2026_10_06_auditor\u00eda_verificaci\u00f3n_completa_y_reparaci\u00f3n_de_bugs_en_app_cliente",
@@ -28758,7 +28988,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-06] \u2014 auditoria, verificacion completa y reparacion de bugs en app cliente",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L416"
+      "source_location": "L499"
     },
     {
       "id": "docs_historial_interacciones_2026_10_06_creaci\u00f3n_del_historial_persistente_inicio_de_remedici\u00f3n_due_diligence",
@@ -28770,7 +29000,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-06] \u2014 creacion del historial persistente & inicio de remedicion due diligence",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L429"
+      "source_location": "L512"
     },
     {
       "id": "docs_historial_interacciones_2026_10_07_optimizaci\u00f3n_y_aceleraci\u00f3n_webgl_del_motor_kyc_biom\u00e9trico",
@@ -28782,7 +29012,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-07] \u2014 optimizacion y aceleracion webgl del motor kyc biometrico",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L436"
+      "source_location": "L519"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_blindaje_due_diligence_tasa_mutuo_6_0_26_2_e_a_disclaimer_legal_invest_y_ley_1581",
@@ -28794,7 +29024,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 blindaje due diligence: tasa mutuo 6.0% (26.2% e.a.), disclaimer legal /invest y ley 1581",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L378"
+      "source_location": "L461"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_despliegue_exitoso_a_producci\u00f3n_firebase_hosting",
@@ -28806,7 +29036,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 despliegue exitoso a produccion (firebase hosting)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L348"
+      "source_location": "L431"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_pivot_estrat\u00e9gico_lanzamiento_expr\u00e9s_fff_100_whatsapp_descarte_de_linkedin",
@@ -28818,7 +29048,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 pivot estrategico: lanzamiento expres fff 100% whatsapp (descarte de linkedin)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L356"
+      "source_location": "L439"
     },
     {
       "id": "docs_historial_interacciones_2026_10_20_plan_maestro_de_lanzamiento_fff_growth_marketing_y_especificaci\u00f3n_de_blindaje",
@@ -28830,7 +29060,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-20] \u2014 plan maestro de lanzamiento fff (growth marketing) y especificacion de blindaje",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L364"
+      "source_location": "L447"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_arquitectura_de_privacidad_t\u00e9rminos_condiciones_y_flujo_de_baja_ley_1581",
@@ -28842,7 +29072,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 arquitectura de privacidad, terminos & condiciones y flujo de baja (ley 1581)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L294"
+      "source_location": "L377"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_auditor\u00eda_forense_y_blueprint_de_soluci\u00f3n_para_face_verify_entrega_a_argon_gemini",
@@ -28854,7 +29084,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 auditoria forense y blueprint de solucion para face-verify (entrega a argon / gemini)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L528"
+      "source_location": "L611"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_auditor\u00eda_integral_de_seguridad_vulnerabilidades_duplicaci\u00f3n_y_bugs_fase_18_para_cline",
@@ -28866,7 +29096,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 auditoria integral de seguridad, vulnerabilidades, duplicacion y bugs (fase 18 para cline)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L544"
+      "source_location": "L627"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_automatizaci\u00f3n_de_m\u00e9tricas_git_kit_fundador_y_blindaje_fff",
@@ -28878,7 +29108,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 automatizacion de metricas git, kit fundador y blindaje fff",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L402"
+      "source_location": "L485"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_banner_rotativo_din\u00e1mico_en_hero_de_landing_principal",
@@ -28890,7 +29120,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 banner rotativo dinamico en hero de landing principal",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L275"
+      "source_location": "L358"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_banner_rotativo_hero_y_estandarizaci\u00f3n_transversal_de_footers_2_niveles_luxury",
@@ -28902,7 +29132,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 banner rotativo hero y estandarizacion transversal de footers (2 niveles luxury)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L469"
+      "source_location": "L552"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_correcci\u00f3n_de_narrativa_de_entrada_2_c\u00f3cteles_1_c\u00f3ctel_de_autor",
@@ -28914,7 +29144,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 correccion de narrativa de entrada: 2 cocteles \u2192 1 coctel de autor",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L485"
+      "source_location": "L568"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_dise\u00f1o_viabilidad_financiera_kit_de_bienvenida_club_fundador_100",
@@ -28926,7 +29156,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 diseno & viabilidad financiera: kit de bienvenida \u00abclub fundador 100\u00bb",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L323"
+      "source_location": "L406"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_especificaci\u00f3n_fase_12_redise\u00f1o_y_elevaci\u00f3n_del_footer_b2b_en_partners_html",
@@ -28938,7 +29168,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 especificacion fase 12: rediseno y elevacion del footer b2b en `/partners.html`",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L269"
+      "source_location": "L352"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_estandarizaci\u00f3n_visual_de_modales_sistema_global_rondadialog_y_contadores_de_visitas",
@@ -28950,7 +29180,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 estandarizacion visual de modales, sistema global rondadialog y contadores de visitas",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L520"
+      "source_location": "L603"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_eventos_especiales_de_ticket_alto_dossier_subasta_de_citas_para_perplexity",
@@ -28962,7 +29192,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 eventos especiales de ticket alto & dossier \u00absubasta de citas\u00bb para perplexity",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L302"
+      "source_location": "L385"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_fase_16_reparaci\u00f3n_y_blindaje_de_la_consola_de_anfitri\u00f3n_admin_fase_17_depuraci\u00f3n_de_copywriting_humano",
@@ -28974,7 +29204,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 fase 16: reparacion y blindaje de la consola de anfitrion (/admin) + fase 17: depuracion de copywriting humano",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L501"
+      "source_location": "L584"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_integraci\u00f3n_narrativa_220h_de_ingenier\u00eda_badges_de_confianza",
@@ -28986,7 +29216,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 integracion narrativa: +220h de ingenieria & badges de confianza",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L312"
+      "source_location": "L395"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_modal_de_bienvenida_en_invest_despliegue_a_producci\u00f3n",
@@ -28998,7 +29228,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 modal de bienvenida en `/invest` & despliegue a produccion",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L336"
+      "source_location": "L419"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_protocolo_de_cierre_de_waitlist_onboarding_club_fundador_100",
@@ -29010,7 +29240,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 protocolo de cierre de waitlist & onboarding club fundador 100",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L282"
+      "source_location": "L365"
     },
     {
       "id": "docs_historial_interacciones_2026_10_26_soluci\u00f3n_integral_de_previews_para_whatsapp_open_graph_index_invest_landing_partners",
@@ -29022,7 +29252,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-26] \u2014 solucion integral de previews para whatsapp / open graph (`index`, `invest`, `landing`, `partners`)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L255"
+      "source_location": "L338"
     },
     {
       "id": "docs_historial_interacciones_2026_10_27_admin_global_de_ronda_separaci\u00f3n_del_anfitri\u00f3n_bar_fase_1_concluida",
@@ -29034,55 +29264,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-27] \u2014 admin global de ronda (separacion del anfitrion bar) \u2014 fase 1 concluida",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L166"
-    },
-    {
-      "id": "docs_historial_interacciones_2026_10_27_blindaje_de_reglas_firestore_anti_auto_verificaci\u00f3n_gating_de_venues_t1_y_flujo_kycreviews",
-      "label": "[2026-10-27] \u2014 Blindaje de Reglas Firestore: Anti-Auto-Verificaci\u00f3n, Gating de Venues (T1+) y Flujo kycReviews",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "[2026-10-27] \u2014 blindaje de reglas firestore: anti-auto-verificacion, gating de venues (t1+) y flujo kycreviews",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L592"
-    },
-    {
-      "id": "docs_historial_interacciones_2026_10_27_despliegue_de_emuladores_locales_y_persistencia_temporal_sessionstorage_browsersessionpersistence",
-      "label": "[2026-10-27] \u2014 Despliegue de Emuladores Locales y Persistencia Temporal (sessionStorage + browserSessionPersistence)",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "[2026-10-27] \u2014 despliegue de emuladores locales y persistencia temporal (sessionstorage + browsersessionpersistence)",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L614"
-    },
-    {
-      "id": "docs_historial_interacciones_2026_10_27_escudo_verde_de_verificaci\u00f3n_integridad_de_botones_de_perfil_enlaces_legales_absolutos_y_dominio_can\u00f3nico",
-      "label": "[2026-10-27] \u2014 Escudo Verde de Verificaci\u00f3n, Integridad de Botones de Perfil, Enlaces Legales Absolutos y Dominio Can\u00f3nico",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "[2026-10-27] \u2014 escudo verde de verificacion, integridad de botones de perfil, enlaces legales absolutos y dominio canonico",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L574"
-    },
-    {
-      "id": "docs_historial_interacciones_2026_10_27_implementaci\u00f3n_del_challenge_de_bienvenida_tu_pasaporte_a_la_noche",
-      "label": "[2026-10-27] \u2014 Implementaci\u00f3n del Challenge de Bienvenida \"Tu Pasaporte a la Noche\"",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "[2026-10-27] \u2014 implementacion del challenge de bienvenida \"tu pasaporte a la noche\"",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L601"
+      "source_location": "L249"
     },
     {
       "id": "docs_historial_interacciones_2026_10_27_plan_maestro_de_lanzamiento_a_producci\u00f3n_cero_excusas_y_100_de_botones_activos",
@@ -29094,7 +29276,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-27] \u2014 plan maestro de lanzamiento a produccion: \"cero excusas y 100% de botones activos\"",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L199"
+      "source_location": "L282"
     },
     {
       "id": "docs_historial_interacciones_2026_10_27_ronda_admin_entrega_1_pasos_1_3_arquitectura_can\u00f3nica_contratos_compartidos_y_aislamiento_por_local_concluidos",
@@ -29106,7 +29288,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-27] \u2014 ronda /admin: entrega 1 (pasos 1\u20133) \u2014 arquitectura canonica, contratos compartidos y aislamiento por local concluidos",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L139"
+      "source_location": "L222"
     },
     {
       "id": "docs_historial_interacciones_2026_10_27_ronda_admin_entrega_2_pasos_4_6_shell_visual_noches_y_recepci\u00f3n_reservas_con_qr_idempotente_concluidos",
@@ -29118,7 +29300,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-27] \u2014 ronda /admin: entrega 2 (pasos 4\u20136) \u2014 shell visual, noches y recepcion/reservas con qr idempotente concluidos",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L116"
+      "source_location": "L199"
     },
     {
       "id": "docs_historial_interacciones_2026_10_27_superadmin_reestructuraci\u00f3n_modular_de_liquidaciones_b2b_tesorer\u00eda",
@@ -29130,19 +29312,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-27] \u2014 superadmin: reestructuracion modular de \"liquidaciones b2b & tesoreria\"",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L157"
-    },
-    {
-      "id": "docs_historial_interacciones_2026_10_27_transformaci\u00f3n_integral_de_admin_consola_operativa_y_anfitri\u00f3n_de_establecimiento",
-      "label": "[2026-10-27] \u2014 Transformaci\u00f3n Integral de /admin (Consola Operativa y Anfitri\u00f3n de Establecimiento)",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "[2026-10-27] \u2014 transformacion integral de /admin (consola operativa y anfitrion de establecimiento)",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L625"
+      "source_location": "L240"
     },
     {
       "id": "docs_historial_interacciones_2026_10_27_unificaci\u00f3n_can\u00f3nica_en_dominio_oficial_https_ronda_uno",
@@ -29154,7 +29324,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-27] \u2014 unificacion canonica en dominio oficial: `https://ronda.uno`",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L221"
+      "source_location": "L304"
     },
     {
       "id": "docs_historial_interacciones_2026_10_29_despliegue_de_emuladores_firebase_en_local_creaci\u00f3n_de_skill_firebase_emulator",
@@ -29166,7 +29336,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-29] \u2014 despliegue de emuladores firebase en local & creacion de skill `firebase-emulator`",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L88"
+      "source_location": "L171"
     },
     {
       "id": "docs_historial_interacciones_2026_10_29_dossier_maestro_de_evaluaci\u00f3n_multi_contextual_due_diligence_evaluaci\u00f3n_externa",
@@ -29178,7 +29348,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-29] \u2014 dossier maestro de evaluacion multi-contextual (due diligence & evaluacion externa)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L106"
+      "source_location": "L189"
     },
     {
       "id": "docs_historial_interacciones_2026_10_30_actualizaci\u00f3n_y_sincronizaci\u00f3n_del_control_de_versiones_del_proyecto_v2_3_1_prod",
@@ -29190,7 +29360,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-30] \u2014 actualizacion y sincronizacion del control de versiones del proyecto (v2.3.1-prod)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L20"
+      "source_location": "L103"
     },
     {
       "id": "docs_historial_interacciones_2026_10_30_fase_1_concluida_erradicaci\u00f3n_quir\u00fargica_de_mocks_en_c\u00f3digo_y_conexi\u00f3n_en_vivo_de_paneles",
@@ -29202,7 +29372,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-30] \u2014 fase 1 concluida: erradicacion quirurgica de mocks en codigo y conexion en vivo de paneles",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L66"
+      "source_location": "L149"
     },
     {
       "id": "docs_historial_interacciones_2026_10_30_fase_2_concluida_ejecuci\u00f3n_paso_a_producci\u00f3n_backup_limpieza_purga_y_evento_real",
@@ -29214,7 +29384,7 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-30] \u2014 fase 2 concluida: ejecucion paso a produccion (backup, limpieza, purga y evento real)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L34"
+      "source_location": "L117"
     },
     {
       "id": "docs_historial_interacciones_2026_10_30_implementaci\u00f3n_del_flujo_completo_olvid\u00e9_mi_contrase\u00f1a_web_app_portales",
@@ -29226,31 +29396,67 @@
       "node_kind": "heading",
       "norm_label": "[2026-10-30] \u2014 implementacion del flujo completo \"olvide mi contrasena\" (web app & portales)",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L50"
+      "source_location": "L133"
     },
     {
-      "id": "docs_historial_interacciones_estado_actual_del_proyecto_resumen_ejecutivo",
-      "label": "\ud83d\udccc Estado Actual del Proyecto (Resumen Ejecutivo)",
+      "id": "docs_historial_interacciones_2026_11_01_optimizaci\u00f3n_integral_de_index_html_waitlist_sin_fricci\u00f3n_extracci\u00f3n_css_monol\u00edtico_pin_m\u00f3vil_accesible_y_blindaje_backend",
+      "label": "[2026-11-01] \u2014 Optimizaci\u00f3n Integral de index.html: Waitlist sin Fricci\u00f3n, Extracci\u00f3n CSS Monol\u00edtico, PIN M\u00f3vil Accesible y Blindaje Backend",
       "_origin": "ast",
       "community": 78,
       "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "\ud83d\udccc estado actual del proyecto (resumen ejecutivo)",
+      "norm_label": "[2026-11-01] \u2014 optimizacion integral de index.html: waitlist sin friccion, extraccion css monolitico, pin movil accesible y blindaje backend",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L11"
+      "source_location": "L82"
     },
     {
-      "id": "docs_historial_interacciones_historial_de_interacciones_y_registro_de_decisiones_ronda",
-      "label": "\ud83d\udcdc HISTORIAL DE INTERACCIONES Y REGISTRO DE DECISIONES (RONDA)",
+      "id": "docs_historial_interacciones_2026_11_02_correcci\u00f3n_cr\u00edtica_en_reglas_de_firestore_evaluaci\u00f3n_segura_de_perfil_y_auto_registro_staff_master",
+      "label": "[2026-11-02] \u2014 Correcci\u00f3n Cr\u00edtica en Reglas de Firestore: Evaluaci\u00f3n Segura de Perfil y Auto-Registro Staff/Master",
       "_origin": "ast",
       "community": 78,
       "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "\ud83d\udcdc historial de interacciones y registro de decisiones (ronda)",
+      "norm_label": "[2026-11-02] \u2014 correccion critica en reglas de firestore: evaluacion segura de perfil y auto-registro staff/master",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L1"
+      "source_location": "L20"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_11_02_correcci\u00f3n_del_contador_de_visitas_y_p\u00edldora_deformada_en_footers_landing_html_partners_html",
+      "label": "[2026-11-02] \u2014 Correcci\u00f3n del Contador de Visitas y P\u00edldora Deformada en Footers (landing.html & partners.html)",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-11-02] \u2014 correccion del contador de visitas y pildora deformada en footers (landing.html & partners.html)",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_11_02_optimizaci\u00f3n_integral_b2b_de_partners_html_aislamiento_de_embudo_video_lightbox_calculadora_enriquecida_y_requisitos_f\u00edsicos",
+      "label": "[2026-11-02] \u2014 Optimizaci\u00f3n Integral B2B de partners.html: Aislamiento de Embudo, Video Lightbox, Calculadora Enriquecida y Requisitos F\u00edsicos",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-11-02] \u2014 optimizacion integral b2b de partners.html: aislamiento de embudo, video lightbox, calculadora enriquecida y requisitos fisicos",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "docs_historial_interacciones_2026_11_02_reestructuraci\u00f3n_y_saneamiento_de_invest_html_conversi\u00f3n_fff_inmutable_saneamiento_de_modales_y_sincronizaci\u00f3n_financiera",
+      "label": "[2026-11-02] \u2014 Reestructuraci\u00f3n y Saneamiento de invest.html: Conversi\u00f3n FFF Inmutable, Saneamiento de Modales y Sincronizaci\u00f3n Financiera",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "[2026-11-02] \u2014 reestructuracion y saneamiento de invest.html: conversion fff inmutable, saneamiento de modales y sincronizacion financiera",
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L68"
     },
     {
       "id": "docs_historial_interacciones_previo_arquitectura_de_m\u00f3dulos_y_servidor_vercel",
@@ -29262,7 +29468,7 @@
       "node_kind": "heading",
       "norm_label": "[previo] \u2014 arquitectura de modulos y servidor vercel",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L463"
+      "source_location": "L546"
     },
     {
       "id": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
@@ -29275,30 +29481,6 @@
       "norm_label": "\ud83d\udcc5 registro historico de interacciones y decisiones clave",
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
       "source_location": "L18"
-    },
-    {
-      "id": "docs_historial_interacciones_reglas_contextuales_recordatorias_para_los_agentes",
-      "label": "\ud83d\udca1 Reglas Contextuales Recordatorias para los Agentes",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "\ud83d\udca1 reglas contextuales recordatorias para los agentes",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L660"
-    },
-    {
-      "id": "docs_historial_interacciones_tareas_pendientes_y_pr\u00f3ximos_pasos_hoja_de_ruta_inmediata",
-      "label": "\ud83c\udfaf Tareas Pendientes y Pr\u00f3ximos Pasos (Hoja de Ruta Inmediata)",
-      "_origin": "ast",
-      "community": 78,
-      "community_name": "\ud83d\udcc5 Registro Hist\u00f3rico de Interacciones y Decisiones Clave",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "\ud83c\udfaf tareas pendientes y proximos pasos (hoja de ruta inmediata)",
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L564"
     },
     {
       "id": "package_scripts",
@@ -29785,6 +29967,17 @@
       "norm_label": "interests",
       "source_file": "src/mem-rr-v2/bench.ts",
       "source_location": "L44"
+    },
+    {
+      "id": "src_mem_rr_v2_exact",
+      "label": "exact.ts",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "bench.ts",
+      "file_type": "code",
+      "norm_label": "exact.ts",
+      "source_file": "src/mem-rr-v2/exact.ts",
+      "source_location": "L1"
     },
     {
       "id": "docs_kyc_multiagent_execution_plan",
@@ -41292,7 +41485,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L499",
+      "source_location": "L551",
       "weight": 1.0
     },
     {
@@ -41304,7 +41497,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L505",
+      "source_location": "L557",
       "weight": 1.0
     },
     {
@@ -41508,7 +41701,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L456",
+      "source_location": "L492",
       "weight": 1.0
     },
     {
@@ -50458,7 +50651,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L564",
+      "source_location": "L647",
       "weight": 1.0
     },
     {
@@ -50469,73 +50662,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L660",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_29_dossier_maestro_de_evaluaci\u00f3n_multi_contextual_due_diligence_evaluaci\u00f3n_externa",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L106",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_27_ronda_admin_entrega_2_pasos_4_6_shell_visual_noches_y_recepci\u00f3n_reservas_con_qr_idempotente_concluidos",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L116",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_27_ronda_admin_entrega_1_pasos_1_3_arquitectura_can\u00f3nica_contratos_compartidos_y_aislamiento_por_local_concluidos",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L139",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_27_superadmin_reestructuraci\u00f3n_modular_de_liquidaciones_b2b_tesorer\u00eda",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L157",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_27_admin_global_de_ronda_separaci\u00f3n_del_anfitri\u00f3n_bar_fase_1_concluida",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L166",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_27_plan_maestro_de_lanzamiento_a_producci\u00f3n_cero_excusas_y_100_de_botones_activos",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L199",
+      "source_location": "L769",
       "weight": 1.0
     },
     {
@@ -50546,117 +50673,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_27_unificaci\u00f3n_can\u00f3nica_en_dominio_oficial_https_ronda_uno",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L221",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_soluci\u00f3n_integral_de_previews_para_whatsapp_open_graph_index_invest_landing_partners",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L255",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_especificaci\u00f3n_fase_12_redise\u00f1o_y_elevaci\u00f3n_del_footer_b2b_en_partners_html",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L269",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_banner_rotativo_din\u00e1mico_en_hero_de_landing_principal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L275",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_protocolo_de_cierre_de_waitlist_onboarding_club_fundador_100",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L282",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_arquitectura_de_privacidad_t\u00e9rminos_condiciones_y_flujo_de_baja_ley_1581",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L294",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_eventos_especiales_de_ticket_alto_dossier_subasta_de_citas_para_perplexity",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L302",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_integraci\u00f3n_narrativa_220h_de_ingenier\u00eda_badges_de_confianza",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L312",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_dise\u00f1o_viabilidad_financiera_kit_de_bienvenida_club_fundador_100",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L323",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_modal_de_bienvenida_en_invest_despliegue_a_producci\u00f3n",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L336",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
@@ -50667,139 +50684,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L34",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_despliegue_exitoso_a_producci\u00f3n_firebase_hosting",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L348",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_pivot_estrat\u00e9gico_lanzamiento_expr\u00e9s_fff_100_whatsapp_descarte_de_linkedin",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L356",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_plan_maestro_de_lanzamiento_fff_growth_marketing_y_especificaci\u00f3n_de_blindaje",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L364",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_20_blindaje_due_diligence_tasa_mutuo_6_0_26_2_e_a_disclaimer_legal_invest_y_ley_1581",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L378",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_automatizaci\u00f3n_de_m\u00e9tricas_git_kit_fundador_y_blindaje_fff",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L402",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_06_auditor\u00eda_verificaci\u00f3n_completa_y_reparaci\u00f3n_de_bugs_en_app_cliente",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L416",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_06_creaci\u00f3n_del_historial_persistente_inicio_de_remedici\u00f3n_due_diligence",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L429",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_07_optimizaci\u00f3n_y_aceleraci\u00f3n_webgl_del_motor_kyc_biom\u00e9trico",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L436",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_08_27_consolidaci\u00f3n_de_evidencia_t\u00e9cnica_del_motor_mem_rr_v2_patente_bench",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L455",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_previo_arquitectura_de_m\u00f3dulos_y_servidor_vercel",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L463",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_banner_rotativo_hero_y_estandarizaci\u00f3n_transversal_de_footers_2_niveles_luxury",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L469",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_correcci\u00f3n_de_narrativa_de_entrada_2_c\u00f3cteles_1_c\u00f3ctel_de_autor",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L485",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -50810,51 +50695,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L50",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_fase_16_reparaci\u00f3n_y_blindaje_de_la_consola_de_anfitri\u00f3n_admin_fase_17_depuraci\u00f3n_de_copywriting_humano",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L501",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_estandarizaci\u00f3n_visual_de_modales_sistema_global_rondadialog_y_contadores_de_visitas",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L520",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_auditor\u00eda_forense_y_blueprint_de_soluci\u00f3n_para_face_verify_entrega_a_argon_gemini",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L528",
-      "weight": 1.0
-    },
-    {
-      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
-      "target": "docs_historial_interacciones_2026_10_26_auditor\u00eda_integral_de_seguridad_vulnerabilidades_duplicaci\u00f3n_y_bugs_fase_18_para_cline",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L544",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -50865,7 +50706,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L66",
+      "source_location": "L149",
       "weight": 1.0
     },
     {
@@ -50876,7 +50717,414 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L88",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_29_dossier_maestro_de_evaluaci\u00f3n_multi_contextual_due_diligence_evaluaci\u00f3n_externa",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_27_ronda_admin_entrega_2_pasos_4_6_shell_visual_noches_y_recepci\u00f3n_reservas_con_qr_idempotente_concluidos",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_11_02_correcci\u00f3n_cr\u00edtica_en_reglas_de_firestore_evaluaci\u00f3n_segura_de_perfil_y_auto_registro_staff_master",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_27_ronda_admin_entrega_1_pasos_1_3_arquitectura_can\u00f3nica_contratos_compartidos_y_aislamiento_por_local_concluidos",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_27_superadmin_reestructuraci\u00f3n_modular_de_liquidaciones_b2b_tesorer\u00eda",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L240",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_27_admin_global_de_ronda_separaci\u00f3n_del_anfitri\u00f3n_bar_fase_1_concluida",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L249",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_27_plan_maestro_de_lanzamiento_a_producci\u00f3n_cero_excusas_y_100_de_botones_activos",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L282",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_27_unificaci\u00f3n_can\u00f3nica_en_dominio_oficial_https_ronda_uno",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_11_02_correcci\u00f3n_del_contador_de_visitas_y_p\u00edldora_deformada_en_footers_landing_html_partners_html",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_soluci\u00f3n_integral_de_previews_para_whatsapp_open_graph_index_invest_landing_partners",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L338",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_especificaci\u00f3n_fase_12_redise\u00f1o_y_elevaci\u00f3n_del_footer_b2b_en_partners_html",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L352",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_banner_rotativo_din\u00e1mico_en_hero_de_landing_principal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L358",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_protocolo_de_cierre_de_waitlist_onboarding_club_fundador_100",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L365",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_arquitectura_de_privacidad_t\u00e9rminos_condiciones_y_flujo_de_baja_ley_1581",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L377",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_eventos_especiales_de_ticket_alto_dossier_subasta_de_citas_para_perplexity",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_integraci\u00f3n_narrativa_220h_de_ingenier\u00eda_badges_de_confianza",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L395",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_dise\u00f1o_viabilidad_financiera_kit_de_bienvenida_club_fundador_100",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L406",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_modal_de_bienvenida_en_invest_despliegue_a_producci\u00f3n",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L419",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_despliegue_exitoso_a_producci\u00f3n_firebase_hosting",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L431",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_pivot_estrat\u00e9gico_lanzamiento_expr\u00e9s_fff_100_whatsapp_descarte_de_linkedin",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L439",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_plan_maestro_de_lanzamiento_fff_growth_marketing_y_especificaci\u00f3n_de_blindaje",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L447",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_11_02_optimizaci\u00f3n_integral_b2b_de_partners_html_aislamiento_de_embudo_video_lightbox_calculadora_enriquecida_y_requisitos_f\u00edsicos",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_20_blindaje_due_diligence_tasa_mutuo_6_0_26_2_e_a_disclaimer_legal_invest_y_ley_1581",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L461",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_automatizaci\u00f3n_de_m\u00e9tricas_git_kit_fundador_y_blindaje_fff",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L485",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_06_auditor\u00eda_verificaci\u00f3n_completa_y_reparaci\u00f3n_de_bugs_en_app_cliente",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L499",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_06_creaci\u00f3n_del_historial_persistente_inicio_de_remedici\u00f3n_due_diligence",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L512",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_07_optimizaci\u00f3n_y_aceleraci\u00f3n_webgl_del_motor_kyc_biom\u00e9trico",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L519",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_08_27_consolidaci\u00f3n_de_evidencia_t\u00e9cnica_del_motor_mem_rr_v2_patente_bench",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L538",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_previo_arquitectura_de_m\u00f3dulos_y_servidor_vercel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L546",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_banner_rotativo_hero_y_estandarizaci\u00f3n_transversal_de_footers_2_niveles_luxury",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L552",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_correcci\u00f3n_de_narrativa_de_entrada_2_c\u00f3cteles_1_c\u00f3ctel_de_autor",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L568",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_fase_16_reparaci\u00f3n_y_blindaje_de_la_consola_de_anfitri\u00f3n_admin_fase_17_depuraci\u00f3n_de_copywriting_humano",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L584",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_estandarizaci\u00f3n_visual_de_modales_sistema_global_rondadialog_y_contadores_de_visitas",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L603",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_auditor\u00eda_forense_y_blueprint_de_soluci\u00f3n_para_face_verify_entrega_a_argon_gemini",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L611",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_10_26_auditor\u00eda_integral_de_seguridad_vulnerabilidades_duplicaci\u00f3n_y_bugs_fase_18_para_cline",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L627",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_11_02_reestructuraci\u00f3n_y_saneamiento_de_invest_html_conversi\u00f3n_fff_inmutable_saneamiento_de_modales_y_sincronizaci\u00f3n_financiera",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_registro_hist\u00f3rico_de_interacciones_y_decisiones_clave",
+      "target": "docs_historial_interacciones_2026_11_01_optimizaci\u00f3n_integral_de_index_html_waitlist_sin_fricci\u00f3n_extracci\u00f3n_css_monol\u00edtico_pin_m\u00f3vil_accesible_y_blindaje_backend",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -50887,7 +51135,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L574",
+      "source_location": "L657",
       "weight": 1.0
     },
     {
@@ -50898,7 +51146,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L592",
+      "source_location": "L675",
       "weight": 1.0
     },
     {
@@ -50909,7 +51157,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L601",
+      "source_location": "L684",
       "weight": 1.0
     },
     {
@@ -50920,7 +51168,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L614",
+      "source_location": "L697",
       "weight": 1.0
     },
     {
@@ -50931,7 +51179,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/HISTORIAL_INTERACCIONES.md",
-      "source_location": "L625",
+      "source_location": "L708",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_historial_interacciones_tareas_pendientes_y_pr\u00f3ximos_pasos_hoja_de_ruta_inmediata",
+      "target": "docs_historial_interacciones_2026_11_01_optimizaci\u00f3n_integral_de_index_html_e_invest_html_pitch_deck_data_room_fff",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/HISTORIAL_INTERACCIONES.md",
+      "source_location": "L744",
       "weight": 1.0
     },
     {
@@ -63651,6 +63910,116 @@
       "weight": 1.0
     },
     {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_fs",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_currentcss",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_startindex",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_endindex",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_path",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_embeddedcss",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_rootdir",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_indexpath",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_csspath",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_optimize_architecture",
+      "target": "scripts_optimize_architecture_indexhtml",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/optimize-architecture.cjs",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "scripts_purge_db",
       "target": "scripts_purge_db_main",
       "relation": "contains",
@@ -74116,7 +74485,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L447",
+      "source_location": "L483",
       "weight": 1.0
     },
     {
@@ -74127,7 +74496,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/views/auth-view.ts",
-      "source_location": "L496",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -74765,5 +75134,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a186d115612e68caf92a16b3962edf594b6c318a"
+  "built_at_commit": "d86aad45fad1bf2f613299f2702060335b14d14f"
 }

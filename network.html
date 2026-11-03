@@ -1238,138 +1238,31 @@
     </head>
 <body class="dark-theme">
 <section id="view-auth" class="panel on">
-    <div class="auth-card" style="margin-top: 20px;">
-      
-      <!-- FORM LISTA DE ESPERA (Flujo Principal) -->
-      <div id="waitlist-container" style="text-align: left;">
-        <span class="badge luz" style="margin-bottom: 8px; text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">✦ PRÓXIMO LANZAMIENTO BOGOTÁ</span>
-        <h3 style="font-family: var(--font-serif); font-size: 24px; margin-bottom: 6px; color: var(--papel);">Lista de Espera Exclusiva</h3>
-        <p class="detalle" style="margin-bottom: 18px; font-size: 13px; color: var(--humo); line-height: 1.4;">
-          RONDA está diseñada exclusivamente para solteros profesionales de alto valor. Para garantizar la seguridad de nuestros eventos, el requisito indispensable para verificar tu identidad es contar con un perfil de LinkedIn actualizado. Déjanos tus datos para recibir tu invitación prioritaria.
-        </p>
+    <div class="auth-card pa-4">
+      <!-- FORM LOGIN INTERNO (Solo anfitrión/admin) -->
 
-        <div id="auth-waitlist-form" class="acciones" style="flex-direction: column; gap: 14px; text-align: left;">
-          <div>
-            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">Nombre completo</label>
-            <input type="text" id="auth-wl-name" required placeholder="Tu nombre" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
-          </div>
-          <div>
-            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">URL de tu perfil de LinkedIn</label>
-            <input type="url" id="auth-wl-linkedin" required placeholder="https://linkedin.com/in/tu-perfil" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
-          </div>
-          <div>
-            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">WhatsApp (+57...)</label>
-            <input type="tel" id="auth-wl-phone" required placeholder="Ej. 3001234567" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
-          </div>
-          <div>
-            <label style="display: block; font-size: 11.5px; color: var(--humo); margin-bottom: 4px; font-family: var(--font-mono);">Correo electrónico</label>
-            <input type="email" id="auth-wl-email" required placeholder="tu@correo.com" style="width: 100%; padding: 12px 14px; background: rgba(22,16,27,0.6); border: 1px solid var(--linea); color: var(--papel); border-radius: 8px; font-family: inherit; font-size: 14px;">
-          </div>
-          <button id="btn-submit-auth-waitlist" class="btn luz" style="width: 100%; margin-top: 6px; font-weight: 700;">
-            ✨ Unirme a la Lista de Espera
-          </button>
-        </div>
+      <form id="login-form" class="acciones flex flex-column hidden" onsubmit="event.preventDefault();">
+        <h4 class="font-display text-xl color-paper mb-2">Acceso del Equipo</h4>
+        <p class="detalle mb-4 text-sm color-humo">Acceso para pruebas y administración.</p>
+        <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
 
-        <div id="auth-waitlist-success" style="display: none; background: rgba(46,107,84,0.18); border: 1px solid rgba(46,107,84,0.5); border-radius: 12px; padding: 22px 16px; text-align: center; margin-top: 14px;">
-          <div style="font-size: 36px; margin-bottom: 8px;">🥂</div>
-          <h4 style="font-family: var(--font-serif); font-size: 20px; color: var(--papel); margin: 0 0 6px;">¡Estás en la Lista de Espera!</h4>
-          <p style="font-size: 13px; color: var(--humo); margin: 0; line-height: 1.45;">
-            Hemos registrado tus datos. Te contactaremos vía WhatsApp con la invitación anticipada y exclusiva antes de abrir la sala al público general.
-          </p>
-        </div>
-
-        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--linea); font-size: 11.5px; color: var(--humo);">
+        <div class="mt-6 pt-4 border-t color-humo text-sm">
           <span>¿Equipo o anfitrión? </span>
-          <button id="btn-toggle-admin-login" style="background: none; border: none; color: var(--luz); cursor: pointer; text-decoration: underline; font-family: inherit; font-size: 11.5px; padding: 0;">
-            Acceso a pruebas
-          </button>
+          <button id="btn-toggle-admin-login" class="color-luz text-sm">Acceso a pruebas</button>
         </div>
       </div>
-
-      <!-- FORM LOGIN INTERNO (Para pruebas / administradores) -->
-      <form id="login-form" class="acciones" style="flex-direction: column; display: none;" onsubmit="event.preventDefault();">
-        <h4 style="font-family: var(--font-display); font-size: 20px; color: var(--papel); margin-bottom: 4px;">Acceso del Equipo</h4>
-        <p class="detalle" style="margin-bottom: 16px; font-size: 11.5px;">Acceso para pruebas y administración.</p>
-        <input type="email" id="login-email" placeholder="Correo electrónico" class="ronda-input">
-        <input type="password" id="login-password" placeholder="Contraseña" class="ronda-input" autocomplete="current-password">
-        <button type="submit" id="btn-real-login" class="btn ambar" style="margin-top: 6px;">Ingresar</button>
-        <button type="button" id="btn-back-to-waitlist" class="btn" style="background: transparent; margin-top: 8px; font-size: 12px; border: none; color: var(--humo);">← Volver a Lista de Espera</button>
-        <button type="button" id="btn-show-register" class="btn" style="background: transparent; margin-top: 6px; font-size: 11px; border: none; color: rgba(243,237,226,0.4);">Registro interno</button>
-      </form>
-
-      <!-- FORM REGISTRO SUTIL (2 PASOS) -->
-      <form id="register-form" class="acciones" style="flex-direction: column; display: none;" onsubmit="event.preventDefault();">
-        
-        <!-- Paso 1 -->
-        <div id="reg-step-1">
-          <input type="email" id="reg-email" placeholder="Correo electrónico" class="ronda-input">
-          <div style="position: relative; width: 100%;">
-            <input type="password" id="reg-password" placeholder="Crea una contraseña" class="ronda-input" autocomplete="new-password" style="padding-right: 40px; margin-bottom: 4px;">
-            <button type="button" id="btn-toggle-reg-password" style="position: absolute; right: 12px; top: 21px; transform: translateY(-50%); background: none; border: none; color: var(--humo); cursor: pointer; padding: 4px; font-size: 14px;" title="Mostrar / Ocultar contraseña">👁️</button>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0 10px; font-size: 11px;">
-            <button type="button" id="btn-generate-secure-password" style="background: none; border: none; color: var(--luz); cursor: pointer; padding: 0; font-family: var(--font-mono); font-size: 11px; display: inline-flex; align-items: center; gap: 4px; text-decoration: underline;">
-              ✨ Generar contraseña segura
-            </button>
-            <span id="reg-pwd-copied" style="color: #79D3AC; font-size: 10px; font-family: var(--font-mono); display: none;">✓ Copiada</span>
-          </div>
-          <button type="button" id="btn-next-step" class="btn ambar" style="margin-top: 4px; width: 100%;">Continuar</button>
-        </div>
-
-        <!-- Paso 2 -->
-        <div id="reg-step-2" style="display: none; text-align: left;">
-          <p style="font-size: 11.5px; margin-bottom: 12px; color: var(--humo);">Último paso para completar tu perfil</p>
-          <input type="text" id="reg-name" placeholder="Tu Nombre (Ej. Juan)" class="ronda-input">
-          
-          <!-- Fecha de Nacimiento y Cálculo de Zodíaco en Vivo -->
-          <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--humo); font-family: var(--font-mono); display: block; margin-bottom: 4px;">Fecha de Nacimiento</label>
-            <input type="date" id="reg-birthdate" class="ronda-input" style="margin-bottom: 4px;" max="2008-01-01">
-            <div id="reg-zodiac-preview" style="font-family: var(--font-mono); font-size: 11.5px; color: var(--luz); background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.25); padding: 5px 10px; border-radius: 8px; display: none; margin-top: 4px; align-items: center; gap: 6px;">
-              <!-- e.g. 🎂 29 años · ♏ Escorpio -->
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <select id="reg-gender" class="ronda-input" style="flex: 1;">
-              <option value="" disabled selected>Género</option>
-              <option value="Hombre">Hombre</option>
-              <option value="Mujer">Mujer</option>
-              <option value="Otro">Otro</option>
-            </select>
-            <select id="reg-interest" class="ronda-input" style="flex: 1;">
-              <option value="" disabled selected>Busco conocer</option>
-              <option value="Mujeres">Mujeres</option>
-              <option value="Hombres">Hombres</option>
-              <option value="Ambos">Ambos</option>
-            </select>
-          </div>
-
-          <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--luz); font-family: var(--font-mono); display: block; margin-bottom: 4px; font-weight: 700;">💼 Perfil de LinkedIn (Opcional · Recomendado)</label>
-            <input type="url" id="reg-linkedin" placeholder="https://linkedin.com/in/tu-perfil" class="ronda-input" style="margin-bottom: 2px;">
-            <span style="font-size: 9.5px; color: var(--humo); display: block; line-height: 1.3;">RONDA valida perfiles profesionales. Puedes enlazar tu LinkedIn ahora o más tarde desde tu perfil.</span>
-          </div>
-
-          <button type="button" id="btn-real-register" class="btn ambar" style="margin-top: 15px; width: 100%;">Crear Cuenta y Entrar</button>
-        </div>
-
-        <button type="button" id="btn-show-login" class="btn" style="background: transparent; margin-top: 10px; font-size: 18px; line-height: 1; padding: 6px; color: var(--humo); border: none;" title="Atrás">←</button>
-      </form>
-
-    </div>
   </section>
 
   <!-- Vista: Lobby / Discovery (Esta Semana) -->
 
   <section id="view-network" class="panel">
-    <div style="padding: 24px 16px; color: var(--papel); font-family: var(--font-body); max-width: 960px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+    <div class="pa-6 color-paper font-body max-w-960 mx-auto">
+      <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
         <div>
-          <h2 style="font-family: var(--font-display); font-size: 28px; margin: 0; color: var(--papel);">🗺️ Red de Bares Aliados</h2>
-          <p style="color: var(--humo); font-size: 12px; margin: 4px 0 0;">Gestión de Cobertura y Verificación de Exclusividad Territorial (500m)</p>
+          <h2 class="font-display text-2xl color-paper m-0">🗺️ Red de Bares Aliados</h2>
+          <p class="color-humo text-sm mb-0">Gestión de Cobertura y Verificación de Exclusividad Territorial (500m)</p>
         </div>
-        <span class="chip verde" style="font-size: 10.5px; padding: 4px 10px;">Radar Activo</span>
+        <span class="chip verde text-sm pa-3">Radar Activo</span>
       </div>
       <div id="network-container"></div>
     </div>

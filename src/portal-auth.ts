@@ -1,21 +1,23 @@
 import { Auth } from './auth.js';
-import { User } from './db.js';
+import { User, UserRole } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { renderRondaFooter } from './footer.js';
 import { APP_VERSION } from './version.js';
 
+export type PortalId = 'superadmin' | 'admin' | 'crm' | 'network';
+
 export interface PortalConfig {
-  id: 'superadmin' | 'admin' | 'crm' | 'network';
+  id: PortalId;
   title: string;
   subtitle: string;
   badge: string;
   icon: string;
-  allowedRoles: ('superadmin' | 'admin' | 'sales' | 'network' | 'client')[];
+  allowedRoles: UserRole[];
   viewSectionId: string;
   roleDescription: string;
 }
 
-export const PORTALS: Record<string, PortalConfig> = {
+export const PORTALS: Record<PortalId, PortalConfig> = {
   superadmin: {
     id: 'superadmin',
     title: 'Super Admin Global',
@@ -58,11 +60,45 @@ export const PORTALS: Record<string, PortalConfig> = {
   }
 };
 
+let activeAuthUnsubscribe: (() => void) | null = null;
+let activeWatchdog: any = null;
+
+function getFriendlyAuthErrorMessage(err: any): string {
+  const code = String(err?.code || '');
+  if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
+    return 'Correo o contraseña incorrectos. Por favor, verifica tus datos.';
+  }
+  if (code === 'auth/user-not-found') {
+    return 'No existe una cuenta registrada con este correo electrónico.';
+  }
+  if (code === 'auth/too-many-requests') {
+    return 'Demasiados intentos fallidos. Por seguridad, espera unos minutos o restablece tu contraseña.';
+  }
+  if (code === 'auth/network-request-failed' || !navigator.onLine) {
+    return 'Sin conexión a internet. Revisa tu conexión de red e intenta nuevamente.';
+  }
+  return err?.message || 'Credenciales incorrectas o error de comunicación.';
+}
+
 /**
  * Configura la autenticación y control de acceso estricto para un portal independiente.
+ * Retorna una función de limpieza para evitar fugas de memoria al desmontar vistas.
  */
-export function setupIndependentPortal(config: PortalConfig, onReady: (user: User) => void) {
+export function setupIndependentPortal(
+  config: PortalConfig, 
+  onReady: (user: User) => void
+): () => void {
   console.log(`[PortalAuth] Configurando portal independiente: ${config.id}`);
+
+  // Cancelar suscripción previa si existe
+  if (activeAuthUnsubscribe) {
+    try {
+      activeAuthUnsubscribe();
+    } catch (e) {
+      console.warn('[PortalAuth] Error al limpiar suscripción previa de auth:', e);
+    }
+    activeAuthUnsubscribe = null;
+  }
 
   const authSection = document.getElementById('view-auth');
   const portalSection = document.getElementById(config.viewSectionId);
@@ -70,7 +106,7 @@ export function setupIndependentPortal(config: PortalConfig, onReady: (user: Use
   // Inyectar el formulario de inicio de sesión dedicado al portal
   renderPortalLoginForm(config);
 
-  Auth.onAuthStateChanged(async (user) => {
+  const unsub = Auth.onAuthStateChanged(async (user) => {
     if (!user) {
       // Sesión no iniciada: mostrar formulario de login del portal
       portalSection?.classList.remove('on');
@@ -79,13 +115,14 @@ export function setupIndependentPortal(config: PortalConfig, onReady: (user: Use
       return;
     }
 
-    // Comprobar criterios de acceso / roles permitidos
+    // Comprobar criterios de acceso / roles permitidos con soporte maestro
     const isMasterSuperAdmin = user.email === 'cesar@ronda.uno' || user.uid === 'hVX2RL2xJhRFurJJsAgdyVIaDT53';
-    if (isMasterSuperAdmin) {
+    const effectiveRole = (isMasterSuperAdmin ? 'superadmin' : user.role) as UserRole;
+    if (isMasterSuperAdmin && user.role !== 'superadmin') {
       user.role = 'superadmin';
     }
 
-    const hasAccess = config.allowedRoles.includes(user.role as any) || (isMasterSuperAdmin && config.allowedRoles.includes('superadmin'));
+    const hasAccess = config.allowedRoles.includes(effectiveRole) || (isMasterSuperAdmin && config.allowedRoles.includes('superadmin'));
 
     if (!hasAccess) {
       console.warn(`[PortalAuth] Acceso denegado: Usuario ${user.email} con rol ${user.role} no tiene acceso a ${config.id}`);
@@ -107,8 +144,24 @@ export function setupIndependentPortal(config: PortalConfig, onReady: (user: Use
     renderRondaFooter(portalSection);
 
     // Inicializar controlador del panel
-    onReady(user);
+    try {
+      onReady(user);
+    } catch (controllerErr) {
+      console.error(`[PortalAuth] Error fatal al inicializar el panel ${config.id}:`, controllerErr);
+    }
   });
+
+  activeAuthUnsubscribe = () => {
+    if (activeWatchdog) {
+      clearTimeout(activeWatchdog);
+      activeWatchdog = null;
+    }
+    if (typeof unsub === 'function') {
+      unsub();
+    }
+  };
+
+  return activeAuthUnsubscribe;
 }
 
 function renderPortalLoginForm(config: PortalConfig) {
@@ -138,10 +191,10 @@ function renderPortalLoginForm(config: PortalConfig) {
         </div>
 
         <!-- Formulario -->
-        <form id="portal-login-form" style="display: flex; flex-direction: column; gap: 14px;" onsubmit="event.preventDefault();">
+        <form id="portal-login-form" style="display: flex; flex-direction: column; gap: 14px;">
           <div>
             <label style="display: block; font-size: 11px; font-family: var(--font-mono); color: var(--humo); margin-bottom: 5px;">Correo electrónico</label>
-            <input type="email" id="portal-email" required placeholder="tu@correo.com" class="ronda-input" style="width: 100%; box-sizing: border-box; margin-bottom: 0;">
+            <input type="email" id="portal-email" required placeholder="tu@correo.com" class="ronda-input" autocomplete="username" style="width: 100%; box-sizing: border-box; margin-bottom: 0;">
           </div>
 
           <div>
@@ -151,7 +204,7 @@ function renderPortalLoginForm(config: PortalConfig) {
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
-            <input type="password" id="portal-password" required placeholder="••••••••" class="ronda-input" style="width: 100%; box-sizing: border-box; margin-bottom: 0;">
+            <input type="password" id="portal-password" required placeholder="••••••••" class="ronda-input" autocomplete="current-password" style="width: 100%; box-sizing: border-box; margin-bottom: 0;">
           </div>
 
           <div id="portal-login-error" style="display: none; background: rgba(142,36,58,0.2); border: 1px solid var(--vino); border-radius: 8px; padding: 10px; font-size: 11.5px; color: #ff8ca8; text-align: center;"></div>
@@ -176,81 +229,89 @@ function renderPortalLoginForm(config: PortalConfig) {
   renderRondaFooter(authSection);
 
   // Listener para recuperar contraseña
-  document.getElementById('btn-portal-forgot')?.addEventListener('click', async () => {
-    const emailInput = document.getElementById('portal-email') as HTMLInputElement | null;
-    const currentEmail = emailInput?.value?.trim() || '';
+  const btnForgot = document.getElementById('btn-portal-forgot');
+  if (btnForgot) {
+    btnForgot.onclick = async () => {
+      const emailInput = document.getElementById('portal-email') as HTMLInputElement | null;
+      const currentEmail = emailInput?.value?.trim() || '';
 
-    const targetEmail = await RondaDialog.prompt({
-      title: 'Recuperar Contraseña',
-      message: 'Ingresa tu correo corporativo o registrado para enviarte el enlace seguro de restablecimiento:',
-      icon: '🔑',
-      placeholder: currentEmail || 'tu@correo.com',
-      confirmText: 'Enviar Enlace',
-      cancelText: 'Cancelar'
-    });
-
-    const emailToSend = (targetEmail || currentEmail).trim();
-    if (!emailToSend) return;
-
-    try {
-      await Auth.sendPasswordReset(emailToSend);
-      await RondaDialog.alert({
-        title: 'Enlace Enviado',
-        message: `Hemos enviado un correo a <b>${emailToSend}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
-        icon: '✉️'
+      const targetEmail = await RondaDialog.prompt({
+        title: 'Recuperar Contraseña',
+        message: 'Ingresa tu correo corporativo o registrado para enviarte el enlace seguro de restablecimiento:',
+        icon: '🔑',
+        placeholder: currentEmail || 'tu@correo.com',
+        confirmText: 'Enviar Enlace',
+        cancelText: 'Cancelar'
       });
-    } catch (err: any) {
-      await RondaDialog.alert({
-        title: 'Error al Enviar',
-        message: err.message || 'No se pudo enviar el correo de recuperación. Verifica la dirección.',
-        icon: '⚠️'
-      });
-    }
-  });
 
-  const form = document.getElementById('portal-login-form');
-  const btn = document.getElementById('btn-portal-login') as HTMLButtonElement;
+      const emailToSend = (targetEmail || currentEmail).trim();
+      if (!emailToSend) return;
+
+      try {
+        await Auth.sendPasswordReset(emailToSend);
+        await RondaDialog.alert({
+          title: 'Enlace Enviado',
+          message: `Hemos enviado un correo a <b>${emailToSend}</b> con las instrucciones para restablecer tu contraseña.<br><br><small style="color:var(--humo);">Si no lo ves en tu bandeja principal, revisa la carpeta de spam o correo no deseado.</small>`,
+          icon: '✉️'
+        });
+      } catch (err: any) {
+        await RondaDialog.alert({
+          title: 'Error al Enviar',
+          message: getFriendlyAuthErrorMessage(err),
+          icon: '⚠️'
+        });
+      }
+    };
+  }
+
+  const form = document.getElementById('portal-login-form') as HTMLFormElement | null;
+  const btn = document.getElementById('btn-portal-login') as HTMLButtonElement | null;
   const errorBox = document.getElementById('portal-login-error');
 
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = (document.getElementById('portal-email') as HTMLInputElement)?.value?.trim();
-    const password = (document.getElementById('portal-password') as HTMLInputElement)?.value;
+  if (form) {
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = (document.getElementById('portal-email') as HTMLInputElement)?.value?.trim();
+      const password = (document.getElementById('portal-password') as HTMLInputElement)?.value;
 
-    if (!email || !password) return;
+      if (!email || !password) return;
 
-    if (errorBox) errorBox.style.display = 'none';
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = 'Verificando credenciales…';
-    }
+      if (errorBox) errorBox.style.display = 'none';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Verificando credenciales…';
+      }
 
-    const watchdog = setTimeout(() => {
-      if (btn && btn.disabled) {
-        btn.disabled = false;
-        btn.textContent = 'Ingresar al Panel';
+      if (activeWatchdog) clearTimeout(activeWatchdog);
+      activeWatchdog = setTimeout(() => {
+        if (btn && btn.disabled) {
+          btn.disabled = false;
+          btn.textContent = 'Ingresar al Panel';
+          if (errorBox) {
+            errorBox.textContent = 'Tiempo de espera agotado. Verifica tu conexión e intenta de nuevo.';
+            errorBox.style.display = 'block';
+          }
+        }
+      }, 10000);
+
+      try {
+        await Auth.loginWithEmail(email, password);
+        clearTimeout(activeWatchdog);
+        activeWatchdog = null;
+      } catch (err: any) {
+        clearTimeout(activeWatchdog);
+        activeWatchdog = null;
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Ingresar al Panel';
+        }
         if (errorBox) {
-          errorBox.textContent = 'Tiempo de espera agotado. Por favor, reintenta.';
+          errorBox.textContent = getFriendlyAuthErrorMessage(err);
           errorBox.style.display = 'block';
         }
       }
-    }, 10000);
-
-    try {
-      await Auth.loginWithEmail(email, password);
-      // onAuthStateChanged se encargará de comprobar los roles
-    } catch (err: any) {
-      clearTimeout(watchdog);
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = 'Ingresar al Panel';
-      }
-      if (errorBox) {
-        errorBox.textContent = err.message || 'Credenciales incorrectas.';
-        errorBox.style.display = 'block';
-      }
-    }
-  });
+    };
+  }
 }
 
 function renderAccessDenied(config: PortalConfig, user: User) {
@@ -272,7 +333,7 @@ function renderAccessDenied(config: PortalConfig, user: User) {
 
         <div style="background: rgba(142,36,58,0.18); border: 1px solid rgba(142,36,58,0.4); border-radius: 12px; padding: 14px; text-align: left; margin-bottom: 20px;">
           <div style="font-size: 11.5px; color: var(--humo); margin-bottom: 6px;">
-            Tu rol actual: <span class="chip" style="background: rgba(243,237,226,0.1); color: var(--papel); font-family: var(--font-mono);">${user.role.toUpperCase()}</span>
+            Tu rol actual: <span class="chip" style="background: rgba(243,237,226,0.1); color: var(--papel); font-family: var(--font-mono);">${String(user.role).toUpperCase()}</span>
           </div>
           <div style="font-size: 11.5px; color: var(--humo);">
             Roles requeridos para <b>${config.title}</b>: <span style="color: var(--luz); font-family: var(--font-mono);">${config.allowedRoles.join(', ').toUpperCase()}</span>
@@ -301,10 +362,13 @@ function renderAccessDenied(config: PortalConfig, user: User) {
 
   renderRondaFooter(authSection);
 
-  document.getElementById('btn-portal-logout')?.addEventListener('click', async () => {
-    await Auth.logout();
-    window.location.reload();
-  });
+  const btnLogout = document.getElementById('btn-portal-logout');
+  if (btnLogout) {
+    btnLogout.onclick = async () => {
+      await Auth.logout();
+      window.location.reload();
+    };
+  }
 }
 
 function getAssignedPanelUrl(role: string): { url: string; name: string } | null {
@@ -325,10 +389,10 @@ function getAssignedPanelUrl(role: string): { url: string; name: string } | null
 }
 
 /**
- * Inyecta una barra superior persistente con identidad de usuario y botón de logout
+ * Inyecta una barra superior persistente con identidad de usuario y selector de portal
  */
 function injectPortalHeaderBar(config: PortalConfig, user: User) {
-  // SuperAdmin gestiona su propio shell integrado con sidebar, perfil y un único botón de logout
+  // SuperAdmin gestiona su propio shell integrado
   if (config.id === 'superadmin') return;
 
   let nav = document.getElementById('portal-top-bar');
@@ -351,7 +415,8 @@ function injectPortalHeaderBar(config: PortalConfig, user: User) {
 
   // Si es superadmin, dar acceso a saltar entre paneles
   const currentId = config.id as string;
-  const switcherHtml = user.role === 'superadmin' ? `
+  const isSuper = user.role === 'superadmin' || user.email === 'cesar@ronda.uno';
+  const switcherHtml = isSuper ? `
     <select id="portal-quick-switch" style="background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-family: var(--font-mono); outline: none; cursor: pointer;">
       <option value="/superadmin.html" ${currentId === 'superadmin' ? 'selected' : ''}>👑 SuperAdmin</option>
       <option value="/admin.html" ${currentId === 'admin' ? 'selected' : ''}>🏢 Anfitrión Bar</option>
@@ -381,16 +446,21 @@ function injectPortalHeaderBar(config: PortalConfig, user: User) {
     </div>
   `;
 
-  document.getElementById('btn-top-logout')?.addEventListener('click', async () => {
-    await Auth.logout();
-    window.location.reload();
-  });
+  const btnLogout = document.getElementById('btn-top-logout');
+  if (btnLogout) {
+    btnLogout.onclick = async () => {
+      await Auth.logout();
+      window.location.reload();
+    };
+  }
 
-  const switcher = document.getElementById('portal-quick-switch') as HTMLSelectElement;
-  switcher?.addEventListener('change', (e) => {
-    const url = (e.target as HTMLSelectElement).value;
-    if (url && url !== window.location.pathname) {
-      window.location.href = url;
-    }
-  });
+  const switcher = document.getElementById('portal-quick-switch') as HTMLSelectElement | null;
+  if (switcher) {
+    switcher.onchange = (e) => {
+      const url = (e.target as HTMLSelectElement).value;
+      if (url && url !== window.location.pathname) {
+        window.location.href = url;
+      }
+    };
+  }
 }

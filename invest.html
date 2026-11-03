@@ -594,7 +594,6 @@ footer.site-footer {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-right: 70px;
 }
 
 @media (max-width: 900px) {
@@ -608,11 +607,9 @@ footer.site-footer {
     gap: 14px;
   }
   .footer-meta-right {
-    padding-right: 70px;
     width: 100%;
     justify-content: space-between;
   }
-}
   .pl-body{grid-template-columns:1fr}
   .pl-col+.pl-col{border-left:none;border-top:1px solid var(--linea)}
   .kpi{border-right:none;border-bottom:1px solid var(--linea)}
@@ -927,6 +924,38 @@ iframe.skiptranslate { display: none !important; }
   border: 1px dashed rgba(243,237,226,0.15);
   color: rgba(243,237,226,0.25);
 }
+
+/* CTA Directo en Top Nav */
+.btn-invest-direct {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(240, 168, 48, 0.22) 0%, rgba(240, 168, 48, 0.08) 100%);
+  border: 1px solid rgba(240, 168, 48, 0.55);
+  color: #F0A830 !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  letter-spacing: 0.03em;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.btn-invest-direct:hover {
+  background: rgba(240, 168, 48, 0.35);
+  border-color: #F0A830;
+  box-shadow: 0 0 16px rgba(240, 168, 48, 0.35);
+  transform: translateY(-1px);
+}
+.ticket-dot.reserved {
+  background: linear-gradient(135deg, rgba(240,168,48,0.22), rgba(240,168,48,0.08));
+  border: 1px solid rgba(240,168,48,0.6);
+  color: #F0A830;
+  box-shadow: 0 0 10px rgba(240,168,48,0.2);
+}
+
 .ticket-dot.next {
   background: rgba(240,168,48,0.08);
   border: 1px dashed rgba(240,168,48,0.45);
@@ -1017,171 +1046,6 @@ iframe.skiptranslate { display: none !important; }
 }
 
 
-/* ---- 12. SECCIÓN MICRO-APORTES ("PLAN B" AMISTOSO) ---- */
-.micro-aportes-section {
-  margin: 44px 0 24px;
-  background: linear-gradient(145deg, rgba(34, 24, 38, 0.95) 0%, rgba(44, 32, 51, 0.8) 100%);
-  border: 1px solid rgba(240, 168, 48, 0.28);
-  border-radius: 24px;
-  padding: 34px 26px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 25px rgba(240, 168, 48, 0.08);
-}
-.micro-aportes-section::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 10%; right: 10%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(240, 168, 48, 0.5), transparent);
-}
-.micro-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--luz);
-  background: rgba(240, 168, 48, 0.1);
-  border: 1px solid rgba(240, 168, 48, 0.3);
-  padding: 5px 14px;
-  border-radius: 999px;
-  margin-bottom: 14px;
-}
-.micro-title {
-  font-family: "Bodoni Moda", serif;
-  font-size: clamp(24px, 3.5vw, 32px);
-  margin: 0 0 14px;
-  color: var(--papel);
-  font-weight: 700;
-}
-.micro-title em {
-  font-style: italic;
-  color: var(--luz);
-}
-.micro-desc {
-  color: var(--humo);
-  font-size: 14.5px;
-  max-width: 66ch;
-  margin: 0 auto 28px;
-  line-height: 1.6;
-}
-.micro-buttons-grid {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.btn-micro-nequi {
-  appearance: none;
-  background: linear-gradient(135deg, #1C0A35 0%, #301050 100%);
-  border: 1px solid #FF007A;
-  color: #fff !important;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 13px 26px;
-  border-radius: 99px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 20px rgba(255, 0, 122, 0.25);
-  transition: all 0.25s ease;
-  text-decoration: none !important;
-}
-.btn-micro-nequi:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 0, 122, 0.45);
-  border-color: #ff3399;
-}
-.btn-micro-paypal {
-  appearance: none;
-  background: linear-gradient(135deg, #003087 0%, #0079C1 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff !important;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 13px 26px;
-  border-radius: 99px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 20px rgba(0, 121, 193, 0.25);
-  transition: all 0.25s ease;
-  text-decoration: none !important;
-}
-.btn-micro-paypal:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 121, 193, 0.45);
-}
-.btn-micro-crypto {
-  appearance: none;
-  background: linear-gradient(135deg, #181A20 0%, #2B313A 100%);
-  border: 1px solid #F0B90B;
-  color: #F0B90B !important;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 13px 26px;
-  border-radius: 99px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 20px rgba(240, 185, 11, 0.2);
-  transition: all 0.25s ease;
-  text-decoration: none !important;
-}
-.btn-micro-crypto:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(240, 185, 11, 0.45);
-  background: linear-gradient(135deg, #22262E 0%, #363D49 100%);
-  border-color: #FFD026;
-  color: #FFF !important;
-}
-.crypto-tab-btn.active {
-  background: #F0B90B !important;
-  color: #121418 !important;
-  box-shadow: 0 2px 10px rgba(240, 185, 11, 0.35);
-}
-.crypto-tab-btn:not(.active) {
-  background: transparent !important;
-  color: var(--humo) !important;
-}
-.crypto-tab-btn:not(.active):hover {
-  color: var(--papel) !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-.net-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 4px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--linea);
-  border-radius: 10px;
-  color: var(--papel);
-  cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-  transition: all 0.2s ease;
-}
-.net-btn:hover {
-  border-color: #26A17B;
-  background: rgba(38, 161, 123, 0.08);
-}
-.net-btn.active {
-  background: rgba(38, 161, 123, 0.16);
-  border-color: #26A17B;
-  color: #4EEDB2;
-  box-shadow: 0 0 12px rgba(38, 161, 123, 0.25);
-}
 </style>
 </head>
 <body>
@@ -1190,14 +1054,10 @@ iframe.skiptranslate { display: none !important; }
   <header class="top">
     <div class="top-nav-bar">
       <div class="top-nav-controls">
-        <div class="lang-switch notranslate" translate="no" id="lang-switch">
-          <button class="lang-btn active" data-lang="es">ES</button>
-          <button class="lang-btn" data-lang="en">EN</button>
-        </div>
+        <a href="#cta-section" class="btn-invest-direct" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_top_cta_click');}">🔥 Reservar Ticket ($1M)</a>
         <div class="nav-dropdown">
           <button class="nav-dropdown-btn">🛠️ Herramientas ▾</button>
           <div class="nav-dropdown-content">
-            <button onclick="window.print()">📄 Exportar PDF</button>
             <button onclick="document.getElementById('modal-proyecciones').classList.add('active')">📈 Proyecciones</button>
             <button onclick="document.getElementById('modal-video').classList.add('active')">🎥 Pitch Video</button>
             <button onclick="document.getElementById('modal-dataroom').classList.add('active')">🔒 Data Room</button>
@@ -1652,71 +1512,15 @@ iframe.skiptranslate { display: none !important; }
         </ul>
       </div>
     </div>
-    <!-- Llamado a la Acción -->
-    <div class="cta-gold" id="cta-section">
-      <span class="cta-badge"><span class="badge-dot"></span> RONDA ABIERTA</span>
-      <h3>Únete a la Micro-Ronda FFF</h3>
-      <p class="cta-subtitle">Buscamos <b>$8.000.000 COP</b> para financiar los primeros 12 eventos piloto.<br>Préstamo a Corto Plazo (90 días) al <b>6.0% de interés fijo</b> (26.2% E.A., dentro del límite legal). Cero dilución de equity.</p>
-      
-      <div id="investor-welcome-badge" style="display:none; background:rgba(121,211,172,0.1); border:1px solid rgba(121,211,172,0.35); border-radius:8px; padding:8px 14px; margin:12px auto; max-width:460px; font-size:12px; color:#79D3AC; font-family:'JetBrains Mono',monospace; text-align:center;">
-        ✨ <b>Acceso Autorizado:</b> <span id="investor-welcome-name">Invitado</span> (<span id="investor-welcome-id"></span>)
-      </div>
-
-      <div style="background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.25); border-radius:10px; padding:10px 14px; margin:16px auto; max-width:460px; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; line-height:1.45; text-align:left;">
-        ⚖️ <b>Aviso Legal / Modelo Ilustrativo:</b> Presentación dirigida estrictamente a círculo privado (Friends, Family &amp; Founders) bajo contrato de mutuo mercantil (Código de Comercio Art. 1163 y Ley 527 de 1999). No constituye captación masiva ni oferta pública de valores. Cifras y slots representan modelos ilustrativos de la fase piloto.
-      </div>
-      
-      <!-- Barra de Progreso y Contador de Tickets (Transparente y Sincronizada) -->
-      <div class="round-progress-box" id="round-progress-container">
-        <div class="round-progress-labels">
-          <span class="round-progress-status" id="round-progress-status">🌱 <b>0 de 8 tickets confirmados</b> (0%)</span>
-          <span class="round-progress-goal">Meta: <b>$8M COP</b></span>
-        </div>
-
-        <!-- Ticket dots: visual indicator of each slot -->
-        <div class="ticket-dots" id="round-ticket-dots">
-          <div class="ticket-dot next" title="Ticket #1 — ¡Sé el primero!">1</div>
-          <div class="ticket-dot empty" title="Ticket #2">2</div>
-          <div class="ticket-dot empty" title="Ticket #3">3</div>
-          <div class="ticket-dot empty" title="Ticket #4">4</div>
-          <div class="ticket-dot empty" title="Ticket #5">5</div>
-          <div class="ticket-dot empty" title="Ticket #6">6</div>
-          <div class="ticket-dot empty" title="Ticket #7">7</div>
-          <div class="ticket-dot empty" title="Ticket #8">8</div>
-        </div>
-
-        <div class="round-progress-track">
-          <div class="round-progress-fill" id="round-progress-fill" style="width: 0%;"></div>
-        </div>
-        <div class="round-progress-sub">
-          <span id="round-progress-recaudado">Recaudado: <b>$0 COP</b></span>
-          <span id="round-progress-disponibles">Disponibles: <b>8 tickets (Ronda Abierta)</b></span>
-        </div>
-      </div>
-
-      <div style="max-width:440px; margin:0 auto; padding-top:4px;">
-        <div class="form-commit">
-          <input type="text" id="commit-name" placeholder="Tu Nombre o Entidad" required>
-          <select id="commit-ticket">
-            <option value="">Selecciona Ticket Estimado (COP)</option>
-            <option value="$1.000.000 COP">$1.000.000 COP</option>
-            <option value="$2.000.000 COP">$2.000.000 COP (1 Ticket)</option>
-            <option value="Más de $2M COP">Más de $2.000.000 COP</option>
-          </select>
-        </div>
-        <div class="cta-actions-grid">
-          <button type="button" onclick="sendCommit()" class="btn-gold" style="width:100%; border:none; cursor:pointer;">
-            💬 Confirmar Interés (WhatsApp)
-          </button>
-          <a href="https://wa.me/573026543854?text=Hola%20C%C3%A9sar%2C%20quisiera%20agendar%20una%20llamada%20de%2015%20min%20sobre%20la%20inversi%C3%B3n%20en%20RONDA" target="_blank" class="btn-outline-gold" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_schedule_call_click');}">
-            📅 Agendar Llamada de 15 min
-          </a>
-        </div>
-        <p style="margin-top:14px; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; letter-spacing:0.02em;">🔒 Contrato de mutuo con pagaré digital · Primer pago en 90 días</p>
-      </div>
+    
+    <!-- Enlace a la sección permanente de inversión -->
+    <div style="text-align: center; margin-top: 24px; padding: 16px; background: rgba(240,168,48,0.04); border: 1px dashed rgba(240,168,48,0.25); border-radius: 12px;">
+      <p style="margin: 0 0 10px; font-size: 13px; color: var(--papel);">¿Listo para revisar los términos de la micro-ronda o calcular tu retorno?</p>
+      <a href="#cta-section" class="btn-gold" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 10px 20px; font-size: 13px;">
+        🔥 Ver Oferta de Inversión y Simulador FFF ↓
+      </a>
     </div>
-
-    <div class="grid3" style="margin-top:16px">
+<div class="grid3" style="margin-top:16px">
       <div class="caja">
         <p class="quien">Métricas que gobiernan</p>
         <ul>
@@ -1749,6 +1553,74 @@ iframe.skiptranslate { display: none !important; }
     </div>
 
 
+    </section>
+
+  <!-- ==================== CIERRE PERMANENTE: OFERTA FFF & SIMULADOR ==================== -->
+  <section class="permanent-invest-offer" style="margin-top: 36px;">
+    <!-- Llamado a la Acción -->
+    <div class="cta-gold" id="cta-section">
+      <span class="cta-badge"><span class="badge-dot"></span> RONDA ABIERTA</span>
+      <h3>Únete a la Micro-Ronda FFF</h3>
+      <p class="cta-subtitle">Buscamos <b>$8.000.000 COP</b> para financiar los primeros 12 eventos piloto.<br>Préstamo a Corto Plazo (90 días) al <b>6.0% de interés fijo</b> (26.2% E.A., dentro del límite legal). Cero dilución de equity.</p>
+      
+      <div id="investor-welcome-badge" style="display:none; background:rgba(121,211,172,0.1); border:1px solid rgba(121,211,172,0.35); border-radius:8px; padding:8px 14px; margin:12px auto; max-width:460px; font-size:12px; color:#79D3AC; font-family:'JetBrains Mono',monospace; text-align:center;">
+        ✨ <b>Acceso Autorizado:</b> <span id="investor-welcome-name">Invitado</span> (<span id="investor-welcome-id"></span>)
+      </div>
+
+      <div style="background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.25); border-radius:10px; padding:10px 14px; margin:16px auto; max-width:460px; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; line-height:1.45; text-align:left;">
+        ⚖️ <b>Aviso Legal / Modelo Ilustrativo:</b> Presentación dirigida estrictamente a círculo privado (Friends, Family &amp; Founders) bajo contrato de mutuo mercantil (Código de Comercio Art. 1163 y Ley 527 de 1999). No constituye captación masiva ni oferta pública de valores. Cifras y slots representan modelos ilustrativos de la fase piloto.
+      </div>
+      
+      <!-- Barra de Progreso y Contador de Tickets (Transparente y Sincronizada) -->
+      <div class="round-progress-box" id="round-progress-container">
+        <div class="round-progress-labels">
+          <span class="round-progress-status" id="round-progress-status">⏳ <b>2 de 8 tickets en proceso de firma</b> (25%) · <b>6 disponibles</b></span>
+          <span class="round-progress-goal">Meta: <b>$8M COP</b></span>
+        </div>
+
+        <!-- Ticket dots: visual indicator of each slot -->
+        <div class="ticket-dots" id="round-ticket-dots">
+          <div class="ticket-dot reserved" title="Ticket #1 — Reservado Círculo A1 (En proceso de firma)">⏳</div>
+          <div class="ticket-dot reserved" title="Ticket #2 — Reservado Círculo A1 (En proceso de firma)">⏳</div>
+          <div class="ticket-dot next" title="Ticket #3 — ¡Primer ticket disponible para ti!">3</div>
+          <div class="ticket-dot empty" title="Ticket #4 — Disponible">4</div>
+          <div class="ticket-dot empty" title="Ticket #5 — Disponible">5</div>
+          <div class="ticket-dot empty" title="Ticket #6 — Disponible">6</div>
+          <div class="ticket-dot empty" title="Ticket #7 — Disponible">7</div>
+          <div class="ticket-dot empty" title="Ticket #8 — Disponible">8</div>
+        </div>
+
+        <div class="round-progress-track">
+          <div class="round-progress-fill" id="round-progress-fill" style="width: 25%;"></div>
+        </div>
+        <div class="round-progress-sub">
+          <span id="round-progress-recaudado">Compromiso Activo: <b>$2.000.000 COP (25%)</b></span>
+          <span id="round-progress-disponibles">Disponibles: <b>6 tickets ($6M COP)</b></span>
+        </div>
+      </div>
+
+      <div style="max-width:440px; margin:0 auto; padding-top:4px;">
+        <div class="form-commit">
+          <input type="text" id="commit-name" placeholder="Tu Nombre o Entidad" required>
+          <select id="commit-ticket">
+            <option value="">Selecciona Ticket Estimado (COP)</option>
+            <option value="$1.000.000 COP">$1.000.000 COP</option>
+            <option value="$2.000.000 COP">$2.000.000 COP (1 Ticket)</option>
+            <option value="Más de $2M COP">Más de $2.000.000 COP</option>
+          </select>
+        </div>
+        <div class="cta-actions-grid">
+          <button type="button" onclick="sendCommit()" class="btn-gold" style="width:100%; border:none; cursor:pointer;">
+            💬 Confirmar Interés (WhatsApp)
+          </button>
+          <a href="https://wa.me/573026543854?text=Hola%20C%C3%A9sar%2C%20quisiera%20agendar%20una%20llamada%20de%2015%20min%20sobre%20la%20inversi%C3%B3n%20en%20RONDA" target="_blank" class="btn-outline-gold" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_schedule_call_click');}">
+            📅 Agendar Llamada de 15 min
+          </a>
+        </div>
+        <p style="margin-top:14px; font-size:11px; color:var(--humo); font-family:'JetBrains Mono',monospace; letter-spacing:0.02em;">🔒 Contrato de mutuo con pagaré digital · Primer pago en 90 días</p>
+      </div>
+    </div>
+
     <!-- Simulador Préstamo FFF -->
     <div class="simulador" id="simulador-section">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -1769,10 +1641,8 @@ iframe.skiptranslate { display: none !important; }
         *Tasa de remuneración del 6.0% simple a 90 días (equivalente a 26.2% E.A., dentro del límite legal de usura de Colombia).
       </div>
     </div>
-
-
-
   </section>
+
 
   <!-- Modal Proyecciones -->
   <div class="modal-overlay" id="modal-proyecciones">
@@ -2603,7 +2473,7 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
 "2. UNIT ECONOMICS POR EVENTO PILOTO (24 ASISTENTES)"
 "Concepto","Ingreso/Costo (COP)","% del Total","Notas"
 "Venta de Boletería (24 pax x $55.000)","1320000","100.0%","Ingreso bruto por noche"
-"Bebidas / Cócteles Bar Aliado","-528000","-40.0%","2 cócteles negociados por asistente"
+"Bebidas / Cócteles Bar Aliado","-528000","-40.0%","1 cóctel de autor negociado por asistente ($22.000 c/u)"
 "Anfitrión Presencial en Sala","-250000","-18.9%","Turno operativo de 3 horas"
 "Pasarela de Pago & Operación","-62000","-4.7%","Nequi/Daviplata y logística"
 "MARGEN NETO RONDA POR EVENTO","480000","36.4%","Punto de equilibrio: 16 personas"
@@ -2680,153 +2550,11 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
     </div>
   </div>
 
-  <!-- Modal Nequi Micro-Aportes -->
-  <div class="modal-overlay" id="modal-nequi">
-    <div class="modal-content" style="max-width: 440px; text-align: center;">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
-      <div style="font-size: 40px; margin-bottom: 8px;">💜☕</div>
-      <h3 style="font-size: 24px; margin-bottom: 8px; color: #FF007A;">Aporte por Nequi</h3>
-      <p style="margin-bottom: 18px; font-size: 13.5px; color: var(--humo);">¡Gracias por sumarte a la visión de <span translate="no" class="notranslate">RONDA</span>! Cualquier aporte acelera nuestros eventos piloto en Bogotá.</p>
-      
-      <div style="background: rgba(28, 10, 53, 0.7); border: 1px solid rgba(255, 0, 122, 0.4); border-radius: 16px; padding: 20px; margin-bottom: 18px;">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--humo); margin-bottom: 6px;">Número de Celular Nequi</div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 0.05em; margin-bottom: 4px;" id="nequi-phone-number">316 974 9677</div>
-        <div style="font-size: 12px; color: var(--humo); margin-bottom: 14px;">Titular: Julio César Fermín De La Cruz</div>
-        
-        <button type="button" onclick="copyNequiNumber()" id="btn-copy-nequi" class="btn-micro-nequi" style="width: 100%; justify-content: center; padding: 11px; font-size: 13.5px;">
-          📋 Copiar Número Nequi
-        </button>
-      </div>
+  
 
-      <p style="font-size: 12px; color: var(--humo); line-height: 1.5; margin: 0;">
-        Puedes avisarnos por WhatsApp al mismo número con tu nombre para darte una mención de agradecimiento especial en la noche inaugural de RONDA 🍸
-      </p>
-    </div>
-  </div>
+  
 
-  <!-- Modal Binance / USDT Micro-Aportes -->
-  <div class="modal-overlay" id="modal-crypto" role="dialog" aria-modal="true" aria-labelledby="crypto-modal-title">
-    <div class="modal-content" style="max-width: 480px; text-align: center; padding: 28px 24px;">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">&times;</button>
-      
-      <div style="display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; background: rgba(240, 185, 11, 0.12); border: 1px solid rgba(240, 185, 11, 0.35); margin-bottom: 12px;">
-        <span style="font-size: 26px;">🟡</span>
-      </div>
-      <h3 id="crypto-modal-title" style="font-size: 22px; margin-bottom: 6px; color: #F0B90B; font-family: 'Bodoni Moda', serif;">Aporte en Binance / USDT</h3>
-      <p style="margin-bottom: 18px; font-size: 13px; color: var(--humo); line-height: 1.45;">
-        Elige tu método preferido: transferencia directa sin comisión con <b>Binance Pay</b> o envío descentralizado a nuestra <b>billetera USDT multi-red</b>.
-      </p>
-
-      <!-- Selector de Modo: Binance Pay vs Billetera USDT -->
-      <div class="crypto-mode-switcher" style="display: flex; background: rgba(0,0,0,0.4); border: 1px solid var(--linea); border-radius: 12px; padding: 4px; margin-bottom: 20px; gap: 4px;">
-        <button type="button" id="tab-btn-binance" class="crypto-tab-btn active" onclick="switchCryptoTab('binance')" style="flex: 1; padding: 9px 12px; border-radius: 9px; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
-          ⚡ Binance Pay (Directo)
-        </button>
-        <button type="button" id="tab-btn-wallet" class="crypto-tab-btn" onclick="switchCryptoTab('wallet')" style="flex: 1; padding: 9px 12px; border-radius: 9px; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
-          💎 Billetera USDT (On-Chain)
-        </button>
-      </div>
-
-      <!-- PANEL 1: Binance Pay Directo -->
-      <div id="crypto-panel-binance" class="crypto-panel active">
-        <div style="background: rgba(240, 185, 11, 0.05); border: 1px solid rgba(240, 185, 11, 0.3); border-radius: 16px; padding: 20px; margin-bottom: 16px; text-align: center;">
-          <div style="display: inline-block; background: rgba(240, 185, 11, 0.15); color: #F0B90B; font-size: 10.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; padding: 3px 10px; border-radius: 99px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
-            0% Comisión · Instantáneo entre usuarios Binance
-          </div>
-          
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--humo); margin-bottom: 4px;">
-            Binance Pay ID (UID)
-          </div>
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 0.06em; margin-bottom: 4px;" id="binance-pay-id-val">
-            573169749
-          </div>
-          <div style="font-size: 12px; color: var(--humo); margin-bottom: 16px;">
-            Cuenta Binance: <span style="color: var(--papel);">invest@ronda.uno</span> · Titular: RONDA Founders
-          </div>
-
-          <!-- QR Binance Pay -->
-          <div style="display: flex; justify-content: center; margin-bottom: 16px;">
-            <div style="background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: inline-block;">
-              <img id="binance-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=573169749&amp;color=1e2026" alt="QR Binance Pay ID 573169749" width="130" height="130" style="display: block; border-radius: 6px;">
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 8px; flex-direction: column;">
-            <button type="button" onclick="copyCryptoData('573169749', 'btn-copy-binance', '¡Binance Pay ID Copiado!')" id="btn-copy-binance" class="btn-micro-crypto" style="width: 100%; justify-content: center; padding: 11px; font-size: 13px;">
-              📋 Copiar Binance Pay ID
-            </button>
-            <a href="https://app.binance.com" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; font-size: 12px; color: var(--humo); text-decoration: none; border: 1px dashed rgba(240,185,11,0.3); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.color='#F0B90B'; this.style.borderColor='#F0B90B';" onmouseout="this.style.color='var(--humo)'; this.style.borderColor='rgba(240,185,11,0.3)';">
-              ↗️ Abrir App / Web de Binance
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- PANEL 2: Billetera USDT On-Chain -->
-      <div id="crypto-panel-wallet" class="crypto-panel" style="display: none;">
-        <!-- Selector de Red -->
-        <div style="margin-bottom: 14px; text-align: left;">
-          <label style="font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; color: var(--humo); letter-spacing: 0.1em; display: block; margin-bottom: 6px;">
-            1. Selecciona la Red de Envío:
-          </label>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-            <button type="button" class="net-btn active" id="net-btn-trc20" onclick="selectCryptoNetwork('trc20')">
-              <span style="font-weight:700;">TRC-20</span>
-              <span style="font-size:10px; opacity:0.75;">Tron</span>
-            </button>
-            <button type="button" class="net-btn" id="net-btn-bep20" onclick="selectCryptoNetwork('bep20')">
-              <span style="font-weight:700;">BEP-20</span>
-              <span style="font-size:10px; opacity:0.75;">BNB Chain</span>
-            </button>
-            <button type="button" class="net-btn" id="net-btn-polygon" onclick="selectCryptoNetwork('polygon')">
-              <span style="font-weight:700;">Polygon</span>
-              <span style="font-size:10px; opacity:0.75;">PoS</span>
-            </button>
-          </div>
-        </div>
-
-        <div style="background: rgba(38, 161, 123, 0.06); border: 1px solid rgba(38, 161, 123, 0.35); border-radius: 16px; padding: 18px 16px; margin-bottom: 16px; text-align: center;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-            <span id="wallet-network-tag" style="background: rgba(38, 161, 123, 0.18); color: #26A17B; font-size: 10.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; padding: 2px 8px; border-radius: 6px;">
-              USDT (TRC-20)
-            </span>
-            <span id="wallet-fee-estimate" style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">
-              Comisión estimada: ~1.0 USDT
-            </span>
-          </div>
-
-          <!-- QR Wallet Address -->
-          <div style="display: flex; justify-content: center; margin-bottom: 12px;">
-            <div style="background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: inline-block;">
-              <img id="wallet-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=TYDnyPZ5yK8hK1c9D2fG5hJ7kL3mN4pQ5r&amp;color=1e2026" alt="QR Dirección USDT" width="130" height="130" style="display: block; border-radius: 6px;">
-            </div>
-          </div>
-
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--humo); margin-bottom: 4px;">
-            Dirección Pública de Depósito
-          </div>
-          <div id="wallet-address-display" style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; color: #fff; background: rgba(0,0,0,0.5); padding: 8px 10px; border-radius: 8px; word-break: break-all; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px; user-select: all;">
-            TYDnyPZ5yK8hK1c9D2fG5hJ7kL3mN4pQ5r
-          </div>
-
-          <button type="button" onclick="copyCurrentWalletAddress()" id="btn-copy-wallet" class="btn-micro-crypto" style="width: 100%; justify-content: center; padding: 11px; font-size: 13px; background: linear-gradient(135deg, #163628 0%, #1e4a37 100%); border-color: #26A17B; color: #4EEDB2 !important; box-shadow: 0 4px 15px rgba(38, 161, 123, 0.25);">
-            📋 Copiar Dirección USDT
-          </button>
-        </div>
-
-        <div style="background: rgba(240, 168, 48, 0.08); border-left: 3px solid var(--luz); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 11px; color: var(--humo); text-align: left; line-height: 1.45; margin-bottom: 14px;">
-          ⚠️ <b>Nota de seguridad:</b> Envía <b>únicamente USDT</b> a través de la red seleccionada (<span id="warn-network-name">TRC-20</span>). Los depósitos desde otras redes o tokens diferentes podrían no recuperarse.
-        </div>
-      </div>
-
-      <!-- Footer Común: WhatsApp confirmación -->
-      <a id="btn-crypto-whatsapp" href="https://wa.me/573169749677?text=Hola%20C%C3%A9sar,%20acabo%20de%20enviar%20un%20aporte%20por%20Binance/USDT%20para%20apoyar%20a%20RONDA%20%F0%9F%8D%B8" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border-radius: 12px; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.35); color: #25d366; text-decoration: none; font-size: 12.5px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.18)';" onmouseout="this.style.background='rgba(37,211,102,0.1)';">
-        💬 Notificar aporte o compartir TxID por WhatsApp
-      </a>
-    </div>
-  </div>
-
-  <!-- Floating Action Button -->
+          <!-- Floating Action Button -->
   <button onclick="document.getElementById('modal-contact').classList.add('active')" class="fab-btn" id="fab-btn" style="border: none; font-family: inherit; font-size: inherit;">
     <span class="fab-icon">💬</span> Contactar Founders
   </button>
@@ -2859,25 +2587,7 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
 
   </section>
 
-  <!-- ============ MICRO-APORTES ("PLAN B" AMISTOSO) ============ -->
-  <section class="micro-aportes-section" id="micro-aportes">
-    <div class="micro-badge">☕🍸 Plan B Amistoso</div>
-    <h2 class="micro-title">¿Quieres apoyarnos con un <em>café o un cóctel</em>?</h2>
-    <p class="micro-desc">
-      ¿Te encanta la idea pero el ticket de inversión se sale de tu presupuesto ahora mismo? ¡No pasa nada! Si quieres darnos un empujoncito para arrancar esta primera ronda, puedes invitarnos un cóctel (o un café ☕). ¡Cualquier aporte nos ayuda un montón a hacerlo realidad!
-    </p>
-    <div class="micro-buttons-grid">
-      <button type="button" class="btn-micro-nequi" onclick="document.getElementById('modal-nequi').classList.add('active'); if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_nequi_open');}">
-        💜 Aportar por Nequi (Colombia)
-      </button>
-      <a href="https://paypal.me/kakaobit?locale.x=es_XC&amp;country.x=CO" target="_blank" rel="noopener noreferrer" class="btn-micro-paypal" onclick="if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_paypal_click');}">
-        🌐 Aportar por PayPal (Internacional)
-      </a>
-      <button type="button" class="btn-micro-crypto" onclick="document.getElementById('modal-crypto').classList.add('active'); if(typeof RondaTracker!=='undefined'){RondaTracker.track('investor_micro_crypto_open');}">
-        🟡 Aportar con Binance / USDT (Cripto)
-      </button>
-    </div>
-  </section>
+  
 
   <!-- Footer Luxury Semántico (2 Niveles) -->
   <footer class="site-footer">
@@ -2908,9 +2618,9 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
         <!-- Columna 3: Contacto Directo Fundadores -->
         <div class="footer-contact-box">
           <div class="footer-nav-title">Mesa Directa Fundadores</div>
-          <a href="https://wa.me/573169749677?text=Hola%20C%C3%A9sar,%20revis%C3%A9%20la%20propuesta%20de%20inversi%C3%B3n%20FFF%20de%20RONDA" target="_blank" rel="noopener noreferrer" class="footer-founder-badge">
+          <a href="https://wa.me/573026543854?text=Hola%20C%C3%A9sar,%20revis%C3%A9%20la%20propuesta%20de%20inversi%C3%B3n%20FFF%20de%20RONDA" target="_blank" rel="noopener noreferrer" class="footer-founder-badge">
             <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#25d366; box-shadow:0 0 6px #25d366;"></span>
-            <span>WhatsApp Fundadores (+57 316 974 9677)</span>
+            <span>WhatsApp Fundadores (+57 302 654 3854)</span>
           </a>
           <div style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">
             Canales Oficiales RONDA:
@@ -2946,12 +2656,7 @@ Por favor envíame el link oficial de ZapSign/Notaría Digital para proceder con
 
         <div class="footer-meta-right">
           <span style="font-size: 11px; color: var(--humo); font-family: 'JetBrains Mono', monospace;">Bogotá D.C.</span>
-          <span id="footer-counter" class="ronda-visit-counter-pill" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:var(--font-mono, 'JetBrains Mono', monospace); font-size:10.5px; color:var(--humo, #8c8378); letter-spacing:0.04em; white-space:nowrap; padding-bottom: 70px;">
-            <span class="ronda-pulse-dot" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
-            <span>Visitas:</span>
-            <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;" id="visit-count-num">--</b>
-          </span>
-        </div>
+          </div>
       </div>
     </div>
   </footer>
@@ -3040,27 +2745,7 @@ const RondaTracker = {
 };
 RondaTracker.init();
 
-/* ---- Contador de Visitas en Vivo ---- */
-(function initVisitorCounter() {
-  const el = document.getElementById('visit-count-num');
-  if (!el) return;
-  fetch('https://hits.sh/ronda.uno/invest.svg?color=f0a830&label=Visitas&labelColor=221826')
-    .then(r => r.text())
-    .then(svg => {
-      const match = svg.match(/aria-label="Visitas:\s*([0-9]+)"/i);
-      if (match && match[1]) {
-        const count = parseInt(match[1], 10);
-        el.textContent = count.toLocaleString('es-CO');
-      } else {
-        el.textContent = '1+';
-      }
-    })
-    .catch(() => {
-      const local = parseInt(localStorage.getItem('ronda_invest_local_views') || '1', 10) + 1;
-      localStorage.setItem('ronda_invest_local_views', local.toString());
-      el.textContent = local.toLocaleString('es-CO');
-    });
-})();
+
 
 /* ---- simulador Préstamo FFF ---- */
 let simTrackTimer = null;
@@ -3140,139 +2825,7 @@ function sendContact() {
   window.open(whatsappUrl, '_blank');
 }
 
-/* ---- micro-aportes nequi copy ---- */
-function copyNequiNumber() {
-  const num = '3169749677';
-  const btn = document.getElementById('btn-copy-nequi');
-  const fallback = () => {
-    if (window.RondaDialog) {
-      RondaDialog.alert({ title: 'Número Nequi', message: 'Número de celular Nequi: 316 974 9677', icon: '📱' });
-    } else {
-      alert('Número de celular Nequi: 316 974 9677');
-    }
-  };
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(num).then(() => {
-      if (btn) {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '✅ ¡Número Nequi Copiado!';
-        btn.style.background = '#2E6B54';
-        btn.style.borderColor = '#2E6B54';
-        setTimeout(() => {
-          btn.innerHTML = orig;
-          btn.style.background = '';
-          btn.style.borderColor = '';
-        }, 3000);
-      }
-      if (typeof RondaTracker !== 'undefined') {
-        RondaTracker.track('investor_nequi_copy_click', { phone: num });
-      }
-    }).catch(fallback);
-  } else {
-    fallback();
-  }
-}
-
-/* ---- micro-aportes cripto (binance & usdt) ---- */
-const RONDA_CRYPTO_NETWORKS = {
-  trc20: {
-    name: 'USDT (TRC-20)',
-    short: 'TRC-20',
-    fee: '~1.0 USDT',
-    address: 'TYDnyPZ5yK8hK1c9D2fG5hJ7kL3mN4pQ5r'
-  },
-  bep20: {
-    name: 'USDT (BEP-20 · BNB Chain)',
-    short: 'BEP-20',
-    fee: '< 0.30 USDT',
-    address: '0x71C94b8e2A9cD76d1e4344d9354Db925b33B18F9'
-  },
-  polygon: {
-    name: 'USDT (Polygon PoS)',
-    short: 'Polygon',
-    fee: '< 0.05 USDT',
-    address: '0x71C94b8e2A9cD76d1e4344d9354Db925b33B18F9'
-  }
-};
-let currentCryptoNet = 'trc20';
-
-function switchCryptoTab(mode) {
-  const isBinance = mode === 'binance';
-  const tabBinance = document.getElementById('tab-btn-binance');
-  const tabWallet = document.getElementById('tab-btn-wallet');
-  const panelBinance = document.getElementById('crypto-panel-binance');
-  const panelWallet = document.getElementById('crypto-panel-wallet');
-
-  if (tabBinance && tabWallet && panelBinance && panelWallet) {
-    tabBinance.classList.toggle('active', isBinance);
-    tabWallet.classList.toggle('active', !isBinance);
-    panelBinance.style.display = isBinance ? 'block' : 'none';
-    panelWallet.style.display = isBinance ? 'none' : 'block';
-  }
-  if (typeof RondaTracker !== 'undefined') {
-    RondaTracker.track('investor_crypto_tab_switch', { tab: mode });
-  }
-}
-
-function selectCryptoNetwork(netKey) {
-  const net = RONDA_CRYPTO_NETWORKS[netKey];
-  if (!net) return;
-  currentCryptoNet = netKey;
-
-  document.querySelectorAll('.net-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.id === `net-btn-${netKey}`);
-  });
-
-  const tagEl = document.getElementById('wallet-network-tag');
-  const feeEl = document.getElementById('wallet-fee-estimate');
-  const addrEl = document.getElementById('wallet-address-display');
-  const warnEl = document.getElementById('warn-network-name');
-  const qrEl = document.getElementById('wallet-qr-img');
-
-  if (tagEl) tagEl.textContent = net.name;
-  if (feeEl) feeEl.textContent = `Comisión estimada: ${net.fee}`;
-  if (addrEl) addrEl.textContent = net.address;
-  if (warnEl) warnEl.textContent = net.short;
-  if (qrEl) qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(net.address)}&color=1e2026`;
-
-  if (typeof RondaTracker !== 'undefined') {
-    RondaTracker.track('investor_crypto_net_change', { network: netKey });
-  }
-}
-
-function copyCryptoData(text, btnId, successLabel) {
-  const btn = document.getElementById(btnId);
-  const fallback = () => {
-    if (window.RondaDialog) {
-      RondaDialog.alert({ title: 'Dirección Copiada', message: 'Dirección copiada: ' + text, icon: '📋' });
-    } else {
-      alert('Dirección copiada: ' + text);
-    }
-  };
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
-      if (btn) {
-        const orig = btn.innerHTML;
-        btn.innerHTML = `✅ ${successLabel || '¡Copiado con éxito!'}`;
-        setTimeout(() => { btn.innerHTML = orig; }, 2600);
-      }
-      if (typeof RondaTracker !== 'undefined') {
-        RondaTracker.track('investor_crypto_copy', { content: text });
-      }
-    }).catch(fallback);
-  } else {
-    fallback();
-  }
-}
-
-function copyCurrentWalletAddress() {
-  const net = RONDA_CRYPTO_NETWORKS[currentCryptoNet];
-  if (net) {
-    copyCryptoData(net.address, 'btn-copy-wallet', `¡Dirección ${net.short} Copiada!`);
-  }
-}
 
 /* ---- modo presentacion teclado ---- */
 document.addEventListener('keydown', (e) => {
@@ -3431,13 +2984,13 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
   const WELCOME_KEY = 'ronda_invest_welcome_seen';
   const modal = document.getElementById('modal-welcome');
-  const openPitch = () => { if (typeof window.openPitchSuggestion === 'function') window.openPitchSuggestion(); };
+  
 
   let seen = false;
   try { seen = localStorage.getItem(WELCOME_KEY) === '1'; } catch(e) {}
 
   if (!modal || seen) {
-    setTimeout(openPitch, 400);
+    
     return;
   }
 
@@ -3481,7 +3034,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof RondaTracker !== 'undefined') {
       RondaTracker.track('investor_welcome_dismiss', { via: via });
     }
-    setTimeout(openPitch, 380);
+    
   }
 
   setTimeout(openWelcome, 400);
@@ -3535,94 +3088,8 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
-<!-- Modal Sugerencia de Pantalla Completa / Orientación -->
-<div id="modal-pitch-suggestion" class="pitch-modal-overlay">
-  <div class="pitch-modal-card">
-    <button id="pitch-modal-close" class="pitch-modal-close" title="Cerrar">✕</button>
-    <div id="pitch-modal-icon" class="pitch-modal-icon">🖥️</div>
-    <div id="pitch-modal-tag" class="pitch-modal-tag">Experiencia Pitch Inmersiva</div>
-    <h3 id="pitch-modal-title" class="pitch-modal-title">Modo Pantalla Completa</h3>
-    <p id="pitch-modal-desc" class="pitch-modal-desc">
-      Te recomendamos presionar <span class="pitch-modal-kbd">F11</span> para disfrutar la presentación ejecutiva y modelo de negocio en pantalla completa.
-    </p>
-    <div class="pitch-modal-actions">
-      <button id="pitch-btn-fullscreen" class="pitch-btn-primary">
-        ⛶ Activar Pantalla Completa (F11)
-      </button>
-      <button id="pitch-btn-dismiss" class="pitch-btn-secondary">
-        Continuar a la lectura
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Language Switcher + FAQ Accordion -->
+<!-- FAQ Accordion -->
 <script>
-/* ---- Language Switcher (Instant Programmatic Translate) ---- */
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
-}
-
-function updateLangUI(lang) {
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    const isActive = b.dataset.lang === lang;
-    b.classList.toggle('active', isActive);
-  });
-}
-
-function triggerGoogleTranslate(lang) {
-  const select = document.querySelector('.goog-te-combo');
-  if (select) {
-    if (select.value !== lang) {
-      select.value = lang;
-      select.dispatchEvent(new Event('change'));
-    }
-    return true;
-  }
-  return false;
-}
-
-function setLanguage(lang) {
-  updateLangUI(lang);
-  const cookieVal = lang === 'en' ? '/es/en' : '/es/es';
-  document.cookie = "googtrans=" + cookieVal + "; path=/";
-
-  if (!triggerGoogleTranslate(lang)) {
-    setTimeout(() => {
-      if (!triggerGoogleTranslate(lang)) {
-        window.location.reload();
-      }
-    }, 250);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const cookie = getCookie('googtrans');
-  const currentLang = (cookie && cookie.includes('/en')) ? 'en' : 'es';
-  updateLangUI(currentLang);
-
-  const checkSelect = setInterval(() => {
-    const select = document.querySelector('.goog-te-combo');
-    if (select) {
-      clearInterval(checkSelect);
-      if (currentLang === 'en' && select.value !== 'en') {
-        select.value = 'en';
-        select.dispatchEvent(new Event('change'));
-      }
-    }
-  }, 150);
-  setTimeout(() => clearInterval(checkSelect), 4000);
-});
-
-document.getElementById('lang-switch')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('.lang-btn');
-  if (!btn || btn.classList.contains('active')) return;
-  setLanguage(btn.dataset.lang);
-});
-
 /* ---- FAQ Accordion ---- */
 document.querySelectorAll('.faq-q').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -3645,17 +3112,7 @@ document.querySelectorAll('.faq-q').forEach(btn => {
 </script>
 
 <!-- Google Translate Script -->
-<div id="google_translate_element" style="display:none;"></div>
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'es',
-    includedLanguages: 'en,de,es',
-    autoDisplay: false
-  }, 'google_translate_element');
-}
-</script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <script type="module" src="/src/entry-footer.ts"></script>
 
 </body>

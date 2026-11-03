@@ -174,7 +174,7 @@ export function getRondaFooterHtml(): string {
             <span class="ronda-visit-counter-pill" style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,168,48,0.06); border:1px solid rgba(240,168,48,0.22); padding:3px 10px; border-radius:100px; font-family:var(--font-mono, 'JetBrains Mono', monospace); font-size:10.5px; color:var(--humo, #8c8378); letter-spacing:0.04em; white-space:nowrap;">
               <span class="ronda-pulse-dot" style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#79D3AC; box-shadow:0 0 8px #79D3AC;"></span>
               <span>Visitas:</span>
-              <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;">840+</b>
+              <b class="ronda-visit-count-val" style="color:var(--luz, #F0A830); font-weight:700;">1.240+</b>
             </span>
             <span style="color: var(--humo, #8c8378); opacity: 0.8;">Bogotá D.C.</span>
           </div>

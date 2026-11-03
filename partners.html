@@ -1,4 +1,158 @@
-<!DOCTYPE html>
+El archivo `partners.html` es tu **embudo de captación B2B para dueños y administradores de gastrobares y speakeasies en Bogotá**. Es una página limpia, directa y mucho más enfocada que `invest.html`, porque aquí no intentas vender cuatro modelos de negocio a la vez, sino resolver un dolor puntual y sangrante del restaurador: **las mesas vacías los martes y miércoles con los costos fijos corriendo**.
+
+A continuación, el análisis exhaustivo desarmando sus puntos fuertes, sus fallas técnicas/comerciales y cómo optimizarla para cerrar alianzas con bares en frío.
+
+---
+
+### ## 1. Las Fortalezas (Lo que sí vende a un dueño de bar)
+
+* **Ataque Directo al Dolor Operativo (Hero & Contraste):** El titular *"¿Tu bar está al 30% los martes y miércoles? Llenémoslo"* y la tabla comparativa (*Martes Tradicional vs. Martes con RONDA*) hablan el idioma exacto de un gerente de restaurante: costos fijos de nómina, arriendo, rotación de inventario y margen en barra y cocina.
+
+
+* **Matriz de División de Responsabilidades ("Nosotros gestionamos, tú facturas"):** Los dueños de bares odian a los promotores de eventos porque suelen darles más trabajo operativo o exigirles descuentos ridículos. Separar claramente las 6 tareas de RONDA (captar, cobrar, pagar por adelantado, poner el Host, llevar el kit) frente a las 4 tareas básicas del bar (reservar zona, servir cócteles, bajar música, facturar upsell) elimina la objeción de carga operativa de un plumazo.
+
+
+* **Calculadora Interactiva de Ingresos B2B (`#calculadora`):** Permitir que el dueño mueva el slider con el precio real de su cóctel y su plato promedio y vea inmediatamente que una noche muerta le deja **+$1.124.000 COP** en caja es el mejor gancho racional de la página.
+
+
+* **Persistencia Silenciosa a Firestore (`handleFormSubmit`):** Enviar el lead directamente por API REST a la colección `leads` de Firestore en segundo plano antes de mostrar la pantalla de confirmación y el botón de WhatsApp asegura que no pierdas el contacto aunque el usuario cierre la pestaña antes de abrir WhatsApp.
+
+
+
+---
+
+### ## 2. La Destrucción: Puntos Débiles Técnicos, Comerciales y de UX
+
+#### A. Sabotajes Comerciales y Contradicciones de Negocio
+
+1. **Enlace a `/invest` en el Menú Principal y en el Footer (Error Grave de Posicionamiento):**
+* En la barra de navegación superior (`nav-links`) y en el footer tienes un enlace visible que dice **"Inversionistas" / "Pista Privada para Inversionistas FFF"**.
+
+
+* **El problema:** Si el dueño de un gastrobar de Zona G entra a evaluarte como proveedor/aliado y hace clic en "Inversionistas", va a descubrir dos cosas que matan tu negociación:
+1. Que aún estás pidiendo $8.000.000 COP prestados para arrancar los pilotos (destruye tu autoridad de marca consolidada).
+
+
+2. Que en `invest.html` dices que el bar firma una **penalidad de $550.000 COP si cancela con menos de 24h**, y que en el Q2 les vas a cobrar un **SaaS de $550.000/mes + $7.500 por asistente**, mientras que en el FAQ de `partners.html` les prometes cero riesgo y flexibilidad total.
+
+
+
+
+* **Regla de oro:** ¡Jamás mezcles la vista del proveedor/partner con la vista de levantamiento de capital!
+
+
+2. **Inconsistencia de Horarios entre Páginas (¿7:00 PM o 8:00 PM?):**
+* En `partners.html` (Timelapse y FAQ) dices que el evento empieza a las **7:00 PM (Host llega 6:30 PM, ronda de 7:15 PM a 9:00 PM)**.
+
+
+* En `index.html` e `invest.html` todos los eventos están anunciados de **20:00 a 21:45 (Check-in 19:40)**. Si el bar agenda su personal para liberarse a las 9:00 PM pero tus usuarios llegan a las 8:00 PM, tendrás un conflicto operativo desde el día 1.
+
+
+
+
+3. **El Botón de Play Falso (`play-button-glow`):**
+* En la sección `.experience-banner` hay una foto con un botón gigante de Play (`▶`) que brilla. El dueño del bar hace clic esperando ver un video de 30 segundos del ambiente en sala, pero en su lugar **se le abre el formulario para pedirle sus datos (`openModal('Video Reel')`)**.
+
+
+* Eso se percibe como un *bait-and-switch* (engaño) y genera rechazo inmediato.
+
+
+
+#### B. Errores Técnicos y Bugs en el Código
+
+1. **Bug Visual en el Contador de Visitas del Footer:**
+* En las líneas 911-912 tienes dos etiquetas `<b>` seguidas con la misma clase `.ronda-visit-count-val`:
+
+
+```html
+<b class="ronda-visit-count-val" id="visit-count-num">--</b>
+<b class="ronda-visit-count-val">...</b>
+
+```
+
+
+* El script actualiza el primero, pero el segundo (`...`) se queda impreso al lado para siempre (ej. `Visitas: 142 ...`). Además, igual que en `invest.html`, mostrar un contador de visitas en una página B2B resta exclusividad.
+
+
+
+
+2. **El Parámetro `src` de `openModal(src)` se Pierde en el Limbo:**
+* Pasas el origen del clic en `openModal('Video Reel')`, `openModal('Desde Calculadora')` y `openModal('CTA Final')`, pero la función `openModal(src)` **no hace nada con ese parámetro** y `handleFormSubmit` siempre guarda `source: 'partners_landing'` fijo. Además, cuando el usuario abre el modal desde la calculadora ("Postular mi local con este ticket"), los valores que acaba de calcular (`cPrice` y `fPrice`) no se adjuntan al lead ni al mensaje de WhatsApp.
+
+
+
+
+3. **Vulnerabilidad de Escritura Abierta en Firestore REST:**
+* Haces un `POST` directo sin autenticación a `.../documents/leads` y un `:commit` atómico a `.../documents/stats/visits` desde el navegador. Asegúrate de que las *Firestore Security Rules* para la colección `leads` solo permitan `create` (nunca `read`, `update` o `delete` público) y validen el esquema de campos para evitar ataques de denegación de servicio por facturación (spam de documentos).
+
+
+
+
+4. **Falta de ` <link href="...">` de las Fuentes:**
+* En el `<head>` tienes los `preconnect` a `fonts.googleapis.com` y `fonts.gstatic.com`, pero **olvidaste incluir el `<link href="[https://fonts.googleapis.com/css2?family=Bodoni+Moda...&display=swap](https://fonts.googleapis.com/css2?family=Bodoni+Moda...&display=swap)" rel="stylesheet">**` (a menos que esté importado con `@import` dentro de `ronda-tokens.css`, lo cual bloquea el renderizado).
+
+
+
+
+5. **Matemática Inicial Desincronizada en el HTML:**
+* En el HTML estático de la calculadora muestras `$1.124.000 COP` ($576.000 + $230.400 + $319.200 = **$1.125.600**, no $1.124.000). Aunque el JS (`recalc()`) lo corrige al cargar la página, denota falta de precisión en la plantilla estática.
+
+
+
+
+
+---
+
+### ## 3. Plan de Mejora para Multiplicar la Conversión de Bares
+
+Para que un dueño de gastrobar en Zona G, Quinta Camacho o Chapinero Alto pase de leer a agendar la visita del Scout en la primera sesión, aplica estas 5 mejoras:
+
+#### 1. Aislar los Embudos (Ocultar `/invest` de la Vista de Bares)
+
+* **Acción:** Elimina todos los enlaces a `/invest` tanto del header como del footer de `partners.html`. Para el dueño del bar, RONDA debe verse como una operación sólida, financiada y lista para comprarle 24 cócteles por adelantado.
+
+
+
+#### 2. Conectar la Calculadora con el Modal y el Mensaje de WhatsApp
+
+* **Acción:** Guarda el parámetro `src` cuando se llama a `openModal(src)` y captura los valores actuales de la calculadora (`cocktailSlider.value` y `foodSlider.value`).
+
+
+* Cuando el administrador del bar envíe el formulario, incluye automáticamente esos datos en el payload de Firestore y en el texto de WhatsApp:
+> *"Hola Scout RONDA, acabo de postular mi gastrobar 'Black Bear' en Zona G. Mi cóctel promedio es de $26.000 y mi ticket de comida es $40.000 (Proyección noche: $1.206.400 COP). Quiero agendar la visita de 20 min."*
+
+
+* Esto le da a tu Scout munición comercial exacta antes de pisar el local.
+
+#### 3. Reemplazar el Botón de Play Engañoso por un Video Real o Vista Interactiva
+
+* **Acción:** Si ya tienes el archivo `/assets/ronda-pitch-video.mp4` o un reel de atmósfera de 20 segundos, haz que el botón `▶` abra un lightbox de video real (o embebe un video corto en bucle `autoplay muted loop playsinline` mostrando el brindis, la campana y los acrílicos en mesa). No abras el formulario de registro al tocar un botón de reproducción.
+
+
+
+#### 4. Agregar la Sección "Requisitos Físicos de Selección (Checklist de Exclusividad)"
+
+* **Acción:** En ventas B2B de hospitalidad, cuando tú pones condiciones de entrada, el dueño del bar siente que está postulando a un club selecto en lugar de que le estén vendiendo algo. Agrega una tarjeta visual con los **4 requisitos técnicos que evalúa el Scout**:
+1. **Capacidad:** 12 mesas independientes de 2 puestos (o 6 de 4 puestos bien separadas).
+
+
+2. **Acústica Conversacional:** Nivel de música controlable (< 75 dB en la zona asignada entre 7:00 PM y 9:00 PM para permitir conversación íntima).
+
+
+3. **Iluminación Cálida:** Luz tenue de barra/mesa (sin luces blancas de techo).
+4. **Coctelería de Autor:** Capacidad de despachar 24 cócteles de bienvenida en los primeros 20 minutos de check-in sin colapsar la barra.
+
+
+
+
+
+#### 5. Unificar el Horario Oficial en Todo el Ecosistema
+
+* **Acción:** Define si las rondas en Bogotá serán de **7:00 PM a 9:00 PM** (como dice `partners.html`) o de **8:00 PM a 9:45 PM** (como dicen `index.html` e `invest.html`) y alinea las tres páginas. En Bogotá, citar a las **7:00 PM / 7:30 PM** para iniciar rondas a las **7:45 PM** funciona mejor tanto para el tráfico de salida de oficina como para dejarle al bar la ventana de **9:15 PM a 11:00 PM** libre para el *upsell* de comida y segundas rondas.
+
+
+
+¿Quieres que te entregue el bloque de código `<script>` y el HTML del footer/header corregidos para que la calculadora inyecte los datos financieros del bar directo al CRM de Firestore y al WhatsApp del Scout?<!DOCTYPE html>
 <html lang="es-CO">
 <head>
 <meta charset="utf-8">
@@ -2219,6 +2373,11 @@ footer.site-footer {
   document.addEventListener('DOMContentLoaded', () => {
     const globalCounterEl = document.querySelector('#global-visit-counter .ronda-visit-count-val') || document.querySelector('#global-visit-counter b') || document.querySelector('#global-visit-counter span:last-child');
     if (globalCounterEl) {
+      // Fallback: establecer valor por defecto si no hay conexión
+      globalCounterEl.textContent = '0';
+      // Estimación inicial para avoid valor "..."
+      globalCounterEl.title = 'Cargando visitas...';
+
       async function trackRealVisit() {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const firebaseUrl = isLocal ? 'http://127.0.0.1:8081' : 'https://firestore.googleapis.com';

@@ -820,31 +820,55 @@ function initApp() {
   const btnBackToWaitlist = document.getElementById('btn-back-to-waitlist');
   const modalPin = document.getElementById('modal-pin-access');
   const pinDigits = Array.from(document.querySelectorAll<HTMLInputElement>('.pin-digit'));
+  const pinUnifiedInput = document.getElementById('pin-unified-input') as HTMLInputElement | null;
+  const pinBoxes = Array.from(document.querySelectorAll<HTMLElement>('.pin-digit-box'));
   const pinErrorMsg = document.getElementById('pin-error-msg');
   const btnPinCancel = document.getElementById('btn-pin-cancel');
   const btnPinSubmit = document.getElementById('btn-pin-submit');
   const pinContainer = document.getElementById('pin-inputs-container');
 
+  const updatePinBoxes = (val: string) => {
+    pinBoxes.forEach((box, i) => {
+      box.textContent = i < val.length ? '●' : '';
+      box.classList.toggle('filled', i < val.length);
+      box.classList.toggle('current', i === val.length);
+    });
+  };
+
   const openPinModal = () => {
     if (!modalPin) return;
     modalPin.classList.add('active');
     if (pinErrorMsg) pinErrorMsg.style.display = 'none';
-    pinDigits.forEach(input => {
-      input.value = '';
-      input.classList.remove('pin-error', 'pin-success');
-    });
-    setTimeout(() => pinDigits[0]?.focus(), 60);
+    if (pinUnifiedInput) {
+      pinUnifiedInput.value = '';
+      updatePinBoxes('');
+      pinBoxes.forEach(box => box.classList.remove('pin-error', 'pin-success'));
+      setTimeout(() => pinUnifiedInput.focus(), 60);
+    } else {
+      pinDigits.forEach(input => {
+        input.value = '';
+        input.classList.remove('pin-error', 'pin-success');
+      });
+      setTimeout(() => pinDigits[0]?.focus(), 60);
+    }
   };
 
   const closePinModal = () => {
     if (!modalPin) return;
     modalPin.classList.remove('active');
+    if (pinUnifiedInput) {
+      pinUnifiedInput.value = '';
+      updatePinBoxes('');
+    }
     pinDigits.forEach(input => input.value = '');
     if (pinErrorMsg) pinErrorMsg.style.display = 'none';
   };
 
   const verifyPin = () => {
-    const enteredPin = pinDigits.map(input => input.value).join('');
+    const enteredPin = pinUnifiedInput 
+      ? pinUnifiedInput.value.trim() 
+      : pinDigits.map(input => input.value).join('');
+
     if (enteredPin.length < 4) {
       if (pinErrorMsg) {
         pinErrorMsg.textContent = 'Ingresa los 4 dígitos del PIN';
@@ -858,6 +882,7 @@ function initApp() {
     const isAuthorized = enteredPin === '2026' || enteredPin === '1234' || enteredPin === customPin;
 
     if (isAuthorized) {
+      pinBoxes.forEach(box => box.classList.add('pin-success'));
       pinDigits.forEach(input => input.classList.add('pin-success'));
       if (pinErrorMsg) pinErrorMsg.style.display = 'none';
       setTimeout(() => {
@@ -875,17 +900,28 @@ function initApp() {
         void pinContainer.offsetWidth; // Forzar reflow para re-disparar animación
         pinContainer.classList.add('pin-shake');
       }
+      pinBoxes.forEach(box => {
+        box.classList.add('pin-error');
+        box.textContent = '';
+      });
       pinDigits.forEach(input => {
         input.classList.add('pin-error');
         input.value = '';
       });
+      if (pinUnifiedInput) pinUnifiedInput.value = '';
       if (pinErrorMsg) {
         pinErrorMsg.textContent = 'PIN incorrecto. Intenta nuevamente.';
         pinErrorMsg.style.display = 'block';
       }
       setTimeout(() => {
+        pinBoxes.forEach(box => box.classList.remove('pin-error'));
         pinDigits.forEach(input => input.classList.remove('pin-error'));
-        pinDigits[0]?.focus();
+        if (pinUnifiedInput) {
+          pinUnifiedInput.focus();
+          updatePinBoxes('');
+        } else {
+          pinDigits[0]?.focus();
+        }
       }, 350);
     }
   };
@@ -902,7 +938,23 @@ function initApp() {
     if (e.target === modalPin) closePinModal();
   });
 
-  // Manejo de eventos en inputs de PIN (auto-avance, retroceso, pegado)
+  // Manejo de PIN Unificado
+  if (pinUnifiedInput) {
+    pinUnifiedInput.addEventListener('input', () => {
+      const cleanVal = pinUnifiedInput.value.replace(/\D/g, '').slice(0, 4);
+      pinUnifiedInput.value = cleanVal;
+      updatePinBoxes(cleanVal);
+      if (cleanVal.length === 4) {
+        verifyPin();
+      }
+    });
+
+    pinUnifiedInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePinModal();
+    });
+  }
+
+  // Fallback: Manejo de eventos en inputs tradicionales de PIN
   pinDigits.forEach((input, idx) => {
     input.addEventListener('input', (e) => {
       const target = e.target as HTMLInputElement;
@@ -950,21 +1002,33 @@ function initApp() {
     if (waitlistContainer) waitlistContainer.style.display = 'block';
   });
 
-  // Envío de Lista de Espera desde app
+  // Envío de Lista de Espera sin fricción desde la app
   const btnSubmitAuthWl = document.getElementById('btn-submit-auth-waitlist');
   btnSubmitAuthWl?.addEventListener('click', async () => {
     const name = (document.getElementById('auth-wl-name') as HTMLInputElement)?.value.trim();
-    const linkedin = (document.getElementById('auth-wl-linkedin') as HTMLInputElement)?.value.trim();
+    const linkedinRaw = (document.getElementById('auth-wl-linkedin') as HTMLInputElement)?.value.trim();
     const phone = (document.getElementById('auth-wl-phone') as HTMLInputElement)?.value.trim();
     const email = (document.getElementById('auth-wl-email') as HTMLInputElement)?.value.trim();
 
-    if (!name || !linkedin || !phone || !email) {
+    // Solo Nombre, WhatsApp y Correo son indispensables para asegurar el lead
+    if (!name || !phone || !email) {
       await RondaDialog.alert({
-        title: 'Datos Requeridos',
-        message: 'Por favor completa todos los campos para ingresar a la lista de espera.',
+        title: 'Campos Obligatorios',
+        message: 'Por favor ingresa tu nombre, WhatsApp y correo electrónico para unirte a la lista de espera.',
         icon: '📝'
       });
       return;
+    }
+
+    // Normalizar LinkedIn si fue ingresado
+    let normalizedLinkedin: string | undefined = undefined;
+    if (linkedinRaw) {
+      if (/^https?:\/\//i.test(linkedinRaw)) {
+        normalizedLinkedin = linkedinRaw;
+      } else {
+        const cleanSlug = linkedinRaw.replace(/^@/, '').replace(/^in\//, '').replace(/^linkedin\.com\/in\//, '').trim();
+        normalizedLinkedin = `https://www.linkedin.com/in/${cleanSlug}`;
+      }
     }
 
     const btn = btnSubmitAuthWl as HTMLButtonElement;
@@ -974,7 +1038,7 @@ function initApp() {
     try {
       await DB.saveWaitlistEntry({
         name,
-        linkedin,
+        linkedin: normalizedLinkedin,
         whatsapp: phone,
         email,
         source: 'app_view_auth'
@@ -982,8 +1046,48 @@ function initApp() {
 
       const formEl = document.getElementById('auth-waitlist-form');
       const successEl = document.getElementById('auth-waitlist-success');
+      const boostCard = document.getElementById('auth-wl-boost-card');
+
       if (formEl) formEl.style.display = 'none';
       if (successEl) successEl.style.display = 'block';
+
+      // Si no proporcionó LinkedIn, mostrar tarjeta aceleradora en pantalla de éxito
+      if (!normalizedLinkedin && boostCard) {
+        boostCard.style.display = 'block';
+        const btnBoost = document.getElementById('btn-submit-boost-linkedin') as HTMLButtonElement | null;
+        btnBoost?.addEventListener('click', async () => {
+          const boostInput = document.getElementById('auth-wl-boost-linkedin') as HTMLInputElement | null;
+          const boostVal = boostInput?.value.trim() || '';
+          if (!boostVal) return;
+
+          let boostUrl = boostVal;
+          if (!/^https?:\/\//i.test(boostUrl)) {
+            const clean = boostUrl.replace(/^@/, '').replace(/^in\//, '').replace(/^linkedin\.com\/in\//, '').trim();
+            boostUrl = `https://www.linkedin.com/in/${clean}`;
+          }
+
+          btnBoost.disabled = true;
+          btnBoost.textContent = 'Guardando...';
+
+          try {
+            await DB.saveWaitlistEntry({
+              name,
+              linkedin: boostUrl,
+              whatsapp: phone,
+              email,
+              source: 'app_waitlist_boost'
+            });
+            const boostSuccess = document.getElementById('auth-wl-boost-success');
+            if (boostSuccess) boostSuccess.style.display = 'block';
+            if (boostInput) boostInput.disabled = true;
+            btnBoost.style.display = 'none';
+          } catch (e) {
+            console.warn('Error al vincular LinkedIn posterior', e);
+            btnBoost.disabled = false;
+            btnBoost.textContent = 'Vincular';
+          }
+        });
+      }
     } catch (err: any) {
       await RondaDialog.alert({
         title: 'Error al Guardar',

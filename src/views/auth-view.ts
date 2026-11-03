@@ -309,6 +309,8 @@ export class AuthView {
   private setupPinModal() {
     const modalPin = document.getElementById('modal-pin-access');
     const pinDigits = Array.from(document.querySelectorAll<HTMLInputElement>('.pin-digit'));
+    const pinUnifiedInput = document.getElementById('pin-unified-input') as HTMLInputElement | null;
+    const pinBoxes = Array.from(document.querySelectorAll<HTMLElement>('.pin-digit-box'));
     const pinErrorMsg = document.getElementById('pin-error-msg');
     const btnPinCancel = document.getElementById('btn-pin-cancel');
     const btnPinSubmit = document.getElementById('btn-pin-submit');
@@ -316,26 +318,48 @@ export class AuthView {
     const btnToggleAdminLogin = document.getElementById('btn-toggle-admin-login');
     const btnBackToWaitlist = document.getElementById('btn-back-to-waitlist');
 
+    const updatePinBoxes = (val: string) => {
+      pinBoxes.forEach((box, i) => {
+        box.textContent = i < val.length ? '●' : '';
+        box.classList.toggle('filled', i < val.length);
+        box.classList.toggle('current', i === val.length);
+      });
+    };
+
     const openPinModal = () => {
       if (!modalPin) return;
       modalPin.classList.add('active');
       if (pinErrorMsg) pinErrorMsg.style.display = 'none';
-      pinDigits.forEach(input => {
-        input.value = '';
-        input.classList.remove('pin-error', 'pin-success');
-      });
-      setTimeout(() => pinDigits[0]?.focus(), 60);
+      if (pinUnifiedInput) {
+        pinUnifiedInput.value = '';
+        updatePinBoxes('');
+        pinBoxes.forEach(box => box.classList.remove('pin-error', 'pin-success'));
+        setTimeout(() => pinUnifiedInput.focus(), 60);
+      } else {
+        pinDigits.forEach(input => {
+          input.value = '';
+          input.classList.remove('pin-error', 'pin-success');
+        });
+        setTimeout(() => pinDigits[0]?.focus(), 60);
+      }
     };
 
     const closePinModal = () => {
       if (!modalPin) return;
       modalPin.classList.remove('active');
+      if (pinUnifiedInput) {
+        pinUnifiedInput.value = '';
+        updatePinBoxes('');
+      }
       pinDigits.forEach(input => input.value = '');
       if (pinErrorMsg) pinErrorMsg.style.display = 'none';
     };
 
     const verifyPin = () => {
-      const enteredPin = pinDigits.map(input => input.value).join('');
+      const enteredPin = pinUnifiedInput 
+        ? pinUnifiedInput.value.trim() 
+        : pinDigits.map(input => input.value).join('');
+
       if (enteredPin.length < 4) {
         if (pinErrorMsg) {
           pinErrorMsg.textContent = 'Ingresa los 4 dígitos del PIN';
@@ -349,6 +373,7 @@ export class AuthView {
       const isAuthorized = enteredPin === '2026' || enteredPin === '1234' || enteredPin === customPin;
 
       if (isAuthorized) {
+        pinBoxes.forEach(box => box.classList.add('pin-success'));
         pinDigits.forEach(input => input.classList.add('pin-success'));
         if (pinErrorMsg) pinErrorMsg.style.display = 'none';
         setTimeout(() => {
@@ -366,17 +391,28 @@ export class AuthView {
           void pinContainer.offsetWidth; // Forzar reflow para re-disparar animación
           pinContainer.classList.add('pin-shake');
         }
+        pinBoxes.forEach(box => {
+          box.classList.add('pin-error');
+          box.textContent = '';
+        });
         pinDigits.forEach(input => {
           input.classList.add('pin-error');
           input.value = '';
         });
+        if (pinUnifiedInput) pinUnifiedInput.value = '';
         if (pinErrorMsg) {
           pinErrorMsg.textContent = 'PIN incorrecto. Intenta nuevamente.';
           pinErrorMsg.style.display = 'block';
         }
         setTimeout(() => {
+          pinBoxes.forEach(box => box.classList.remove('pin-error'));
           pinDigits.forEach(input => input.classList.remove('pin-error'));
-          pinDigits[0]?.focus();
+          if (pinUnifiedInput) {
+            pinUnifiedInput.focus();
+            updatePinBoxes('');
+          } else {
+            pinDigits[0]?.focus();
+          }
         }, 350);
       }
     };
@@ -448,17 +484,27 @@ export class AuthView {
     const btnSubmitAuthWl = document.getElementById('btn-submit-auth-waitlist');
     btnSubmitAuthWl?.addEventListener('click', async () => {
       const name = (document.getElementById('auth-wl-name') as HTMLInputElement)?.value.trim();
-      const linkedin = (document.getElementById('auth-wl-linkedin') as HTMLInputElement)?.value.trim();
+      const linkedinRaw = (document.getElementById('auth-wl-linkedin') as HTMLInputElement)?.value.trim();
       const phone = (document.getElementById('auth-wl-phone') as HTMLInputElement)?.value.trim();
       const email = (document.getElementById('auth-wl-email') as HTMLInputElement)?.value.trim();
 
-      if (!name || !linkedin || !phone || !email) {
+      if (!name || !phone || !email) {
         await RondaDialog.alert({
-          title: 'Datos Requeridos',
-          message: 'Por favor completa todos los campos para ingresar a la lista de espera.',
+          title: 'Campos Obligatorios',
+          message: 'Por favor ingresa tu nombre, WhatsApp y correo electrónico para unirte a la lista de espera.',
           icon: '📝'
         });
         return;
+      }
+
+      let normalizedLinkedin: string | undefined = undefined;
+      if (linkedinRaw) {
+        if (/^https?:\/\//i.test(linkedinRaw)) {
+          normalizedLinkedin = linkedinRaw;
+        } else {
+          const cleanSlug = linkedinRaw.replace(/^@/, '').replace(/^in\//, '').replace(/^linkedin\.com\/in\//, '').trim();
+          normalizedLinkedin = `https://www.linkedin.com/in/${cleanSlug}`;
+        }
       }
 
       const btn = btnSubmitAuthWl as HTMLButtonElement;
@@ -468,7 +514,7 @@ export class AuthView {
       try {
         await DB.saveWaitlistEntry({
           name,
-          linkedin,
+          linkedin: normalizedLinkedin,
           whatsapp: phone,
           email,
           source: 'app_view_auth'
@@ -476,8 +522,14 @@ export class AuthView {
 
         const formEl = document.getElementById('auth-waitlist-form');
         const successEl = document.getElementById('auth-waitlist-success');
+        const boostCard = document.getElementById('auth-wl-boost-card');
+
         if (formEl) formEl.style.display = 'none';
         if (successEl) successEl.style.display = 'block';
+
+        if (!normalizedLinkedin && boostCard) {
+          boostCard.style.display = 'block';
+        }
       } catch (err: any) {
         await RondaDialog.alert({
           title: 'Error al Guardar',
