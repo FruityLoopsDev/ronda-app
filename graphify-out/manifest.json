@@ -234,9 +234,9 @@
     "semantic_hash": "7c3fbbc5153783679633c228f22d1978"
   },
   "src/auth.ts": {
-    "mtime": 1793681479.295312,
-    "seen": 1793681990.5658696,
-    "ast_hash": "32b394dc5d55ac3344ab6cbe078aec19",
+    "mtime": 1793719011.3147905,
+    "seen": 1793719265.485757,
+    "ast_hash": "42e1f1626075ac125a4d659d5fcab97b",
     "semantic_hash": ""
   },
   "src/bar.ts": {
@@ -306,9 +306,9 @@
     "semantic_hash": ""
   },
   "src/firebase-config.ts": {
-    "mtime": 1793130845.8536882,
-    "seen": 1793131162.6382492,
-    "ast_hash": "b187c5524b2785a2eb6234ab4f526b6d",
+    "mtime": 1793718955.7726347,
+    "seen": 1793719265.485757,
+    "ast_hash": "f13f0845e0134bc92d6c73bd5568bd08",
     "semantic_hash": ""
   },
   "src/icebreakers.ts": {
@@ -438,9 +438,9 @@
     "semantic_hash": ""
   },
   "src/superadmin.ts": {
-    "mtime": 1793681574.3950934,
-    "seen": 1793681990.5658696,
-    "ast_hash": "a81be897bcaa3aa3f80d6cf42b5df46a",
+    "mtime": 1793719082.998725,
+    "seen": 1793719265.485757,
+    "ast_hash": "dd972fb857e3a8c9a1706ceac72c63f5",
     "semantic_hash": ""
   },
   "src/utils.ts": {
@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "src/version.ts": {
-    "mtime": 1793712970.417955,
-    "seen": 1793713049.8412197,
-    "ast_hash": "d8cdf868708d70717690b1d94a7c348c",
+    "mtime": 1793719151.31495,
+    "seen": 1793719265.485757,
+    "ast_hash": "22429a081b19220317a49381787e0f04",
     "semantic_hash": ""
   },
   "test/face-verify.test.ts": {
@@ -1260,9 +1260,9 @@
     "semantic_hash": ""
   },
   "docs/HISTORIAL_INTERACCIONES.md": {
-    "mtime": 1793678588.5502355,
-    "seen": 1793681990.5658696,
-    "ast_hash": "0e5113a6d0067c57e251ffd3b1dc12b7",
+    "mtime": 1793713281.9424598,
+    "seen": 1793719265.485757,
+    "ast_hash": "d5cf1e11838445ea5fa554a248aa707c",
     "semantic_hash": ""
   },
   "docs/KYC_MULTIAGENT_EXECUTION_PLAN.md": {
@@ -1434,9 +1434,9 @@
     "semantic_hash": ""
   },
   "scripts/rotate-password.cjs": {
-    "mtime": 1793113404.3717103,
-    "seen": 1793113777.8626604,
-    "ast_hash": "dc97a1ed2aba889176d3ea0716def4e7",
+    "mtime": 1793718355.3812528,
+    "seen": 1793719265.485757,
+    "ast_hash": "097c8594f29e7a659c206a60bda4094a",
     "semantic_hash": ""
   },
   "docs/INFORME_CONFLICTO_GIT.md": {
@@ -1596,9 +1596,9 @@
     "semantic_hash": ""
   },
   "src/sw-registrar.js": {
-    "mtime": 1793665910.6331265,
-    "seen": 1793678516.270668,
-    "ast_hash": "2a5858537fab553d25993f65c83a2e7f",
+    "mtime": 1793719101.9267218,
+    "seen": 1793719265.485757,
+    "ast_hash": "fd36d542d9181358c61f69e901b13353",
     "semantic_hash": ""
   },
   "src/ui/sheet.ts": {
@@ -1647,6 +1647,12 @@
     "mtime": 1793675265.4715433,
     "seen": 1793678516.270668,
     "ast_hash": "792fe4a2f7f17f98d6600fa03d3836dd",
+    "semantic_hash": ""
+  },
+  "public/sw-registrar.js": {
+    "mtime": 1793719126.749298,
+    "seen": 1793719265.485757,
+    "ast_hash": "fd36d542d9181358c61f69e901b13353",
     "semantic_hash": ""
   }
 }

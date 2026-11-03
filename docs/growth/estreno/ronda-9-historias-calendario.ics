@@ -1,0 +1,287 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//RONDA//Campana 9 Historias//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:RONDA · Lanzamiento 9 HISTORIAS
+X-WR-TIMEZONE:America/Bogota
+BEGIN:VTIMEZONE
+TZID:America/Bogota
+BEGIN:STANDARD
+DTSTART:19700101T000000
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0500
+TZNAME:COT
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:ronda-9h-d0-01@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T110000
+DTEND;TZID=America/Bogota:20261103T120000
+SUMMARY:🎬 [RONDA] Kickoff + Guiones Finales y Redirect /estreno
+LOCATION:Antigravity IDE / Local Emulator
+DESCRIPTION:Responsables: Antigravity + Cline + Perplexity.\n- Cerrar guion de VO del teaser (15 s) y 9 captions.\n- Configurar redirect /estreno con UTMs en firebase.json.\n- Validar datos de fatiga de scroll con Perplexity.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-02@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T120000
+DTEND;TZID=America/Bogota:20261103T140000
+SUMMARY:🎥 [RONDA] Producción en Google Flow (Ingredientes + Escenas S1–S4)
+LOCATION:Google Flow (labs.google/fx/es/tools/flow)
+DESCRIPTION:Responsables: César + Prompts de Antigravity.\n1. Crear Character Ingredients (Rostro H y Rostro M fijos) y Environment Ingredient (Mesa de bar ámbar).\n2. Generar S1 (El scroll azul) -> S2 (Match cut: celular bocabajo a luz ámbar) -> S3 (La campana) -> S4 (El encuentro).\n3. Usar First-to-Last Frame / Extend para cero saltos abruptos.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-03@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T140000
+DTEND;TZID=America/Bogota:20261103T143000
+SUMMARY:🎙️ [RONDA] Grabación de Voice-Over Real (3 tomas)
+LOCATION:Nota de voz (Celular)
+DESCRIPTION:Responsable: César.\nGrabar 3 tomas naturales del teaser (15 s):\n"¿Cuántas horas llevas haciendo scroll esta semana? ¿Y a cuántas personas conociste de verdad? Nueve historias. Seis minutos cada una. Cara a cara. Deja de hacer scroll. Empieza una historia."
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-04@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T143000
+DTEND;TZID=America/Bogota:20261103T160000
+SUMMARY:✂️ [RONDA] Montaje del Teaser 15s + 3 Piezas Acto I
+LOCATION:Google Flow Scenebuilder / CapCut
+DESCRIPTION:Responsable: César.\n- Unir clips S1-S4 con transiciones encadenadas + VO real.\n- Exportar teaser_v1.mp4 (9:16) y las 3 piezas del Acto I (4:5 con zona segura 3:4).
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-05@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T160000
+DTEND;TZID=America/Bogota:20261103T170000
+SUMMARY:🍸 [RONDA] Puesta a Punto del Perfil @rondapuntouno
+LOCATION:Instagram (@rondapuntouno)
+DESCRIPTION:Responsable: César.\n- Actualizar Nombre: "RONDA · Citas cara a cara en Bogotá".\n- Bio humana + link ronda.uno/estreno.\n- Portadas de Destacados y Canal de Difusión "Detrás de cámaras".
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-06@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T170000
+DTEND;TZID=America/Bogota:20261103T180000
+SUMMARY:🛡️ [RONDA] QA de Campaña (Checklist Final)
+LOCATION:Antigravity IDE
+DESCRIPTION:Responsable: Antigravity.\n- Cero palabras prohibidas (match, swipe, like, app de citas).\n- Etiqueta de IA de Meta lista.\n- Zona segura 3:4 verificada y UTMs funcionando.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-07@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T180000
+DTEND;TZID=America/Bogota:20261103T193000
+SUMMARY:📲 [RONDA] Seeding Pre-Estreno (30 WhatsApps 1:1)
+LOCATION:WhatsApp + Instagram Close Friends
+DESCRIPTION:Responsables: César + ronda-voice-storyteller.\n- Enviar 30 mensajes 1:1 a primeros espectadores.\n- Seguir 50 cuentas ancla de Bogotá (Zona G / Chapinero Alto).
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-08@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T200000
+DTEND;TZID=America/Bogota:20261103T210000
+SUMMARY:🔴 [RONDA] LANZAMIENTO EN VIVO — Acto I + Teaser "9 HISTORIAS"
+LOCATION:Instagram (@rondapuntouno)
+DESCRIPTION:¡ESTRENO!\n1. Publicar las 3 piezas del Acto I en orden inverso.\n2. Publicar Reel Teaser "Deja de hacer scroll".\n3. Subir Story con cuenta regresiva + encuesta "¿Cuántas horas de scroll llevas hoy?".\n4. Hora dorada: responder comentarios/DMs en < 5 min.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d0-09@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261103T210000
+DTEND;TZID=America/Bogota:20261103T220000
+SUMMARY:💼 [RONDA] Alistamiento de LinkedIn + Cierre Día 0
+LOCATION:LinkedIn + docs/HISTORIAL_INTERACCIONES.md
+DESCRIPTION:Responsables: César + Antigravity.\n- Dejar listo titular, banner y sección Destacado en LinkedIn.\n- Registrar métricas del Día 0.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d1@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261104T193000
+DTEND;TZID=America/Bogota:20261104T203000
+SUMMARY:🎬 [RONDA Día 1] Carrusel: "6 min cara a cara vs 3 semanas de chat"
+LOCATION:Instagram (@rondapuntouno)
+DESCRIPTION:Publicar carrusel de utilidad + compartir resultados reales de la encuesta de horas de scroll en Stories.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d2@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261105T193000
+DTEND;TZID=America/Bogota:20261105T203000
+SUMMARY:🎬 [RONDA Día 2] Pósters 1–2 en IG + Post 1 en LinkedIn
+LOCATION:Instagram + LinkedIn
+DESCRIPTION:- IG: Publicar Pósters de personajes 1 y 2 con música de bar.\n- LinkedIn (Post 1): "Pasamos la vida haciendo scroll y nunca estuvimos tan solos. Por eso construí RONDA."
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d3@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261106T193000
+DTEND;TZID=America/Bogota:20261106T203000
+SUMMARY:📵 [RONDA Día 3] Pósters 3–5 + Reto UGC "Celular Bocabajo"
+LOCATION:Instagram (@rondapuntouno)
+DESCRIPTION:Publicar Pósters 3–5 y activar en Stories el reto de viernes: foto del celular bocabajo en una mesa con amigos etiquetando a @rondapuntouno.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d4@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261107T193000
+DTEND;TZID=America/Bogota:20261107T203000
+SUMMARY:🎥 [RONDA Día 4] Estreno del Tráiler Oficial 45s (Escenas S1–S6)
+LOCATION:Instagram Reels
+DESCRIPTION:Publicar el Tráiler completo de 45s generado en Google Flow con tu voz real. Repostear reacciones en Stories.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d5@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261108T193000
+DTEND;TZID=America/Bogota:20261108T203000
+SUMMARY:🎟️ [RONDA Día 5] Pósters 6–8 + Apertura Oficial de Casting
+LOCATION:Instagram (@rondapuntouno)
+DESCRIPTION:Publicar Pósters 6–8 y sticker de enlace directo a ronda.uno/estreno en Stories.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d6@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261109T193000
+DTEND;TZID=America/Bogota:20261109T203000
+SUMMARY:🌟 [RONDA Día 6] Póster 9 ("La novena historia es la tuya") + LinkedIn Post 2
+LOCATION:Instagram + LinkedIn
+DESCRIPTION:- IG: Publicar Póster 9 (completa el grid 3x3) + contador de inscritos en Stories.\n- LinkedIn (Post 2): Primeros números de tracción (Building in public).
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d7@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261110T193000
+DTEND;TZID=America/Bogota:20261110T203000
+SUMMARY:🍸 [RONDA Día 7] Carrusel "Cómo es una noche RONDA minuto a minuto" + Q&A
+LOCATION:Instagram (@rondapuntouno)
+DESCRIPTION:Publicar carrusel de los 5 actos de la noche y abrir caja de preguntas del fundador en Stories.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d8@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261111T193000
+DTEND;TZID=America/Bogota:20261111T203000
+SUMMARY:🛡️ [RONDA Día 8] Reel "Por qué todos llegan verificados" + Video LinkedIn
+LOCATION:Instagram + LinkedIn
+DESCRIPTION:Publicar Reel de seguridad/verificación y video vertical de 60s del fundador en LinkedIn.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ronda-9h-d9@ronda.uno
+DTSTAMP:20261103T155716Z
+DTSTART;TZID=America/Bogota:20261112T193000
+DTEND;TZID=America/Bogota:20261112T203000
+SUMMARY:🥂 [RONDA Día 9–10] GRAN ESTRENO: Acceso Prioritario al Casting + Post 3 LinkedIn
+LOCATION:Instagram + LinkedIn
+DESCRIPTION:Anuncio de cierre de primera cohorte del casting / primera noche RONDA + Post 3 en LinkedIn con aprendizajes del lanzamiento.
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT10M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio RONDA 9 HISTORIAS (10 min)
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -435,6 +435,8 @@ export interface Venue {
   accessibility?: string;
   parkingInfo?: string;
   tablesCount?: number;
+  /** Capacidad de asistentes por noche. Campo legado: se deriva de `tablesCount * 2`. */
+  capacity?: number;
   publicPublished?: boolean;
   draftContent?: Record<string, any>;
   staffUids?: string[];

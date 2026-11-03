@@ -1,0 +1,45 @@
+Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location,Private
+"🎬 [RONDA] Kickoff + Guiones Finales y Redirect /estreno",11/03/2026,11:00,11/03/2026,12:00,False,"Responsables: Antigravity + Cline + Perplexity.
+- Cerrar guion de VO del teaser (15 s) y 9 captions.
+- Configurar redirect /estreno con UTMs en firebase.json.
+- Validar datos de fatiga de scroll con Perplexity.","Antigravity IDE / Local Emulator",True
+"🎥 [RONDA] Producción en Google Flow (Ingredientes + Escenas S1–S4)",11/03/2026,12:00,11/03/2026,14:00,False,"Responsables: César + Prompts de Antigravity.
+1. Crear Character Ingredients (Rostro H y Rostro M fijos) y Environment Ingredient (Mesa de bar ámbar).
+2. Generar S1 (El scroll azul) -> S2 (Match cut: celular bocabajo a luz ámbar) -> S3 (La campana) -> S4 (El encuentro).
+3. Usar First-to-Last Frame / Extend para cero saltos abruptos.","Google Flow (labs.google/fx/es/tools/flow)",True
+"🎙️ [RONDA] Grabación de Voice-Over Real (3 tomas)",11/03/2026,14:00,11/03/2026,14:30,False,"Responsable: César.
+Grabar 3 tomas naturales del teaser (15 s):
+""¿Cuántas horas llevas haciendo scroll esta semana? ¿Y a cuántas personas conociste de verdad? Nueve historias. Seis minutos cada una. Cara a cara. Deja de hacer scroll. Empieza una historia.""","Nota de voz (Celular)",True
+"✂️ [RONDA] Montaje del Teaser 15s + 3 Piezas Acto I",11/03/2026,14:30,11/03/2026,16:00,False,"Responsable: César.
+- Unir clips S1-S4 con transiciones encadenadas + VO real.
+- Exportar teaser_v1.mp4 (9:16) y las 3 piezas del Acto I (4:5 con zona segura 3:4).","Google Flow Scenebuilder / CapCut",True
+"🍸 [RONDA] Puesta a Punto del Perfil @rondapuntouno",11/03/2026,16:00,11/03/2026,17:00,False,"Responsable: César.
+- Actualizar Nombre: ""RONDA · Citas cara a cara en Bogotá"".
+- Bio humana + link ronda.uno/estreno.
+- Portadas de Destacados y Canal de Difusión ""Detrás de cámaras"".","Instagram (@rondapuntouno)",True
+"🛡️ [RONDA] QA de Campaña (Checklist Final)",11/03/2026,17:00,11/03/2026,18:00,False,"Responsable: Antigravity.
+- Cero palabras prohibidas (match, swipe, like, app de citas).
+- Etiqueta de IA de Meta lista.
+- Zona segura 3:4 verificada y UTMs funcionando.","Antigravity IDE",True
+"📲 [RONDA] Seeding Pre-Estreno (30 WhatsApps 1:1)",11/03/2026,18:00,11/03/2026,19:30,False,"Responsables: César + ronda-voice-storyteller.
+- Enviar 30 mensajes 1:1 a primeros espectadores.
+- Seguir 50 cuentas ancla de Bogotá (Zona G / Chapinero Alto).","WhatsApp + Instagram Close Friends",True
+"🔴 [RONDA] LANZAMIENTO EN VIVO — Acto I + Teaser ""9 HISTORIAS""",11/03/2026,20:00,11/03/2026,21:00,False,"¡ESTRENO!
+1. Publicar las 3 piezas del Acto I en orden inverso.
+2. Publicar Reel Teaser ""Deja de hacer scroll"".
+3. Subir Story con cuenta regresiva + encuesta ""¿Cuántas horas de scroll llevas hoy?"".
+4. Hora dorada: responder comentarios/DMs en < 5 min.","Instagram (@rondapuntouno)",True
+"💼 [RONDA] Alistamiento de LinkedIn + Cierre Día 0",11/03/2026,21:00,11/03/2026,22:00,False,"Responsables: César + Antigravity.
+- Dejar listo titular, banner y sección Destacado en LinkedIn.
+- Registrar métricas del Día 0.","LinkedIn + docs/HISTORIAL_INTERACCIONES.md",True
+"🎬 [RONDA Día 1] Carrusel: ""6 min cara a cara vs 3 semanas de chat""",11/04/2026,19:30,11/04/2026,20:30,False,"Publicar carrusel de utilidad + compartir resultados reales de la encuesta de horas de scroll en Stories.","Instagram (@rondapuntouno)",True
+"🎬 [RONDA Día 2] Pósters 1–2 en IG + Post 1 en LinkedIn",11/05/2026,19:30,11/05/2026,20:30,False,"- IG: Publicar Pósters de personajes 1 y 2 con música de bar.
+- LinkedIn (Post 1): ""Pasamos la vida haciendo scroll y nunca estuvimos tan solos. Por eso construí RONDA.""","Instagram + LinkedIn",True
+"📵 [RONDA Día 3] Pósters 3–5 + Reto UGC ""Celular Bocabajo""",11/06/2026,19:30,11/06/2026,20:30,False,"Publicar Pósters 3–5 y activar en Stories el reto de viernes: foto del celular bocabajo en una mesa con amigos etiquetando a @rondapuntouno.","Instagram (@rondapuntouno)",True
+"🎥 [RONDA Día 4] Estreno del Tráiler Oficial 45s (Escenas S1–S6)",11/07/2026,19:30,11/07/2026,20:30,False,"Publicar el Tráiler completo de 45s generado en Google Flow con tu voz real. Repostear reacciones en Stories.","Instagram Reels",True
+"🎟️ [RONDA Día 5] Pósters 6–8 + Apertura Oficial de Casting",11/08/2026,19:30,11/08/2026,20:30,False,"Publicar Pósters 6–8 y sticker de enlace directo a ronda.uno/estreno en Stories.","Instagram (@rondapuntouno)",True
+"🌟 [RONDA Día 6] Póster 9 (""La novena historia es la tuya"") + LinkedIn Post 2",11/09/2026,19:30,11/09/2026,20:30,False,"- IG: Publicar Póster 9 (completa el grid 3x3) + contador de inscritos en Stories.
+- LinkedIn (Post 2): Primeros números de tracción (Building in public).","Instagram + LinkedIn",True
+"🍸 [RONDA Día 7] Carrusel ""Cómo es una noche RONDA minuto a minuto"" + Q&A",11/10/2026,19:30,11/10/2026,20:30,False,"Publicar carrusel de los 5 actos de la noche y abrir caja de preguntas del fundador en Stories.","Instagram (@rondapuntouno)",True
+"🛡️ [RONDA Día 8] Reel ""Por qué todos llegan verificados"" + Video LinkedIn",11/11/2026,19:30,11/11/2026,20:30,False,"Publicar Reel de seguridad/verificación y video vertical de 60s del fundador en LinkedIn.","Instagram + LinkedIn",True
+"🥂 [RONDA Día 9–10] GRAN ESTRENO: Acceso Prioritario al Casting + Post 3 LinkedIn",11/12/2026,19:30,11/12/2026,20:30,False,"Anuncio de cierre de primera cohorte del casting / primera noche RONDA + Post 3 en LinkedIn con aprendizajes del lanzamiento.","Instagram + LinkedIn",True

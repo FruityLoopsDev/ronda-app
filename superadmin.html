@@ -395,6 +395,52 @@
         }
       }
 
+      /* SuperAdmin: módulos independientes (Verificación KYC / Liquidaciones B2B) */
+      .sa-module-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+      @media (max-width: 1100px) {
+        .sa-module-grid { grid-template-columns: minmax(0, 1fr); }
+      }
+      .sa-panel-card {
+        background: rgba(20, 15, 26, 0.7);
+        border: 1px solid var(--linea);
+        border-radius: 16px;
+        padding: 22px;
+      }
+      .sa-kpi-card {
+        background: rgba(243, 237, 226, 0.03);
+        border: 1px solid var(--linea);
+        border-radius: 12px;
+        padding: 14px 16px;
+      }
+      .sa-quick-link {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        text-align: left;
+        background: rgba(20, 15, 26, 0.7);
+        border: 1px solid var(--linea);
+        border-radius: 14px;
+        padding: 18px 20px;
+        cursor: pointer;
+        font-family: var(--font-body);
+        transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      }
+      .sa-quick-link:hover {
+        border-color: rgba(240, 168, 48, 0.45);
+        background: rgba(240, 168, 48, 0.06);
+        transform: translateY(-1px);
+      }
+      .sa-quick-link:focus-visible {
+        outline: 2px solid var(--luz);
+        outline-offset: 2px;
+      }
+
       .ronda-input {
         margin-bottom: 10px; padding: 12px; border-radius: 8px; border: 1px solid var(--linea); 
         background: rgba(243,237,226,.06); color: var(--papel); outline: none; 
@@ -1804,7 +1850,33 @@
           </ul>
         </div>
 
-        <!-- Grupo 3: Sistema -->
+        <!-- Grupo 3: Cumplimiento -->
+        <div class="admin-nav-group">
+          <div class="admin-nav-group-label">Cumplimiento</div>
+          <ul class="admin-nav-list">
+            <li>
+              <button class="admin-nav-item" data-section="kyc">
+                <span class="admin-nav-icon">🛡️</span>
+                <span>Verificación KYC</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grupo 4: Finanzas -->
+        <div class="admin-nav-group">
+          <div class="admin-nav-group-label">Finanzas</div>
+          <ul class="admin-nav-list">
+            <li>
+              <button class="admin-nav-item" data-section="treasury">
+                <span class="admin-nav-icon">💸</span>
+                <span>Liquidaciones B2B</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grupo 5: Sistema -->
         <div class="admin-nav-group">
           <div class="admin-nav-group-label">Sistema</div>
           <ul class="admin-nav-list">

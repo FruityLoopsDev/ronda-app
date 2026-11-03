@@ -1,38 +1,22 @@
-import { DB, User, LedgerEntry, Payout, Scout, Host, MilestoneState, Reservation } from './db.js';
+import { DB, User, Scout, Host, Reservation } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
 import { escapeHtml } from './utils.js';
-import { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, limit, startAfter, getCountFromServer, QueryDocumentSnapshot } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
-import { RondaB2BEngine } from './b2b-engine.ts';
 import { renderRondaFooter } from './footer.js';
 import { APP_VERSION } from './version.js';
+import { KycPanel } from './panels/kyc-panel.js';
+import { TreasuryPanel } from './panels/treasury-panel.js';
+import { VenuesPanel } from './panels/venues-panel.js';
+import type { SuperAdminSection } from './panels/context.js';
 
-export type AdminSection =
-  | 'summary'
-  | 'venues'
-  | 'events'
-  | 'bookings'
-  | 'waitlist'
-  | 'users'
-  | 'metrics'
-  | 'settings';
+// El shell solo conoce identificadores de sección: cada módulo los declara en
+// `src/panels/context.ts` para poder montarse sin depender de este archivo.
+export type AdminSection = SuperAdminSection;
 
-export interface KycReviewCase {
-  reviewId: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  registeredBirthDate: string;
-  createdAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-  reasonsForManual: string[];
-  metrics: { faceDistance: number; livenessScore: number; ocrExtractedName?: string; ocrExtractedNumber?: string };
-  imageUrls: { selfie: string; docFront: string; docBack?: string };
-  reviewedBy?: string;
-  reviewedAt?: string;
-  adminNotes?: string;
-}
+// Re-export por compatibilidad: el tipo del caso KYC ahora vive con su módulo.
+export type { KycReviewCase } from './panels/kyc-panel.js';
 
 export interface InvestToken {
   token: string;
@@ -50,29 +34,15 @@ export class SuperAdminController {
   // --- Estado de Navegación del Shell Global ---
   public currentSection: AdminSection = 'summary';
   private currentUser: any = null;
-  private modalsInjected = false;
 
-  // --- Estado de paginación de la cola KYC (cursor de Firestore) ---
-  private kycLastDoc: QueryDocumentSnapshot | null = null;
-  private kycShown = 0;
-  private kycTotal: number | null = null;
-  private kycLastPageSize = 0;
-  private kycLoading = false;
-  private readonly kycPageSize = 10;
+  // --- Módulos independientes montados en #admin-stage ---
+  private readonly kyc = new KycPanel();
+  private readonly treasury = new TreasuryPanel({ navigate: (section) => void this.switchSection(section) });
+  private readonly venues = new VenuesPanel();
+
   // --- T-8.2: Tokens de inversión Pista Privada FFF ---
   private tokens: InvestToken[] = [];
   private tokensLoading = false;
-  // Fotos Base64 fuera del DOM: se sirven solo bajo demanda (Tarea 2).
-  private readonly kycPhotos = new Map<string, { selfie: string; docFront: string; docBack?: string }>();
-
-  // --- T1: Estado de Liquidaciones B2B ---
-  private readonly b2bEngine = new RondaB2BEngine();
-  private liqEntries: LedgerEntry[] = [];
-  private liqPayouts: Payout[] = [];
-  private liqPayeeNames = new Map<string, string>();
-  private payoutModalEntries: LedgerEntry[] = [];
-  private payoutModalPayee = '';
-  private reversePayoutTarget: Payout | null = null;
 
   constructor() {}
 
@@ -80,7 +50,6 @@ export class SuperAdminController {
     console.log('[SuperAdminController] Inicializando Super Admin Global...');
     this.currentUser = user || Auth.currentUser;
     this.setupShellNavigation();
-    this.ensureModalsInDom();
     renderRondaFooter();
     await this.switchSection('summary');
   }
@@ -155,73 +124,6 @@ export class SuperAdminController {
     if (avatarEl) avatarEl.textContent = initial;
   }
 
-  // Garantiza que los modales de payout existan en el DOM
-  private ensureModalsInDom() {
-    if (this.modalsInjected) return;
-    this.modalsInjected = true;
-
-    // Si ya existen por markup previo, solo asociamos listeners
-    if (!document.getElementById('sa-payout-overlay')) {
-      const modalWrapper = document.createElement('div');
-      modalWrapper.innerHTML = `
-        <!-- Modal Aprobar Desembolso B2B -->
-        <div id="sa-payout-overlay" style="display:none; position:fixed; inset:0; z-index:10001; background:rgba(10,7,14,0.88); backdrop-filter:blur(8px); padding:16px; align-items:center; justify-content:center;">
-          <div style="background: rgba(22,16,27,0.98); border: 1px solid var(--linea); border-radius: 18px; width:100%; max-width:480px; max-height:88vh; overflow-y:auto; padding: 24px 22px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-              <h4 style="font-family: var(--font-display); font-size:18px; color:var(--papel); margin:0;">💸 Aprobar desembolso</h4>
-              <button id="sa-payout-close" style="background:none; border:none; color:var(--humo); font-size:20px; cursor:pointer;" title="Cerrar">✕</button>
-            </div>
-            <div id="sa-payout-summary" style="font-size:12.5px; color:var(--humo); line-height:1.55; margin-bottom:16px;"></div>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px; background:rgba(243,237,226,0.04); border:1px dashed var(--linea); border-radius:10px; padding:14px;">
-              <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--papel); cursor:pointer;">
-                <input type="checkbox" id="sa-payout-rut"> RUT verificado
-              </label>
-              <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--papel); cursor:pointer;">
-                <input type="checkbox" id="sa-payout-pila"> PILA del mes vigente verificada
-              </label>
-              <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--papel); cursor:pointer;">
-                <input type="checkbox" id="sa-payout-bank"> Cuenta bancaria / Nequi a nombre del titular
-              </label>
-            </div>
-            <input id="sa-payout-ref" class="ronda-input" placeholder="Referencia de transferencia (requerida)" style="width:100%; box-sizing:border-box; margin-bottom:14px;">
-            <p id="sa-payout-taxwarn" style="display:none; font-size:11px; color:#ff8ca8; margin:-8px 0 12px;"></p>
-            <button id="sa-payout-confirm" class="btn ambar" disabled style="width:100%; padding:12px; font-size:13px; font-weight:700; opacity:0.5; cursor:not-allowed;">Aprobar desembolso</button>
-          </div>
-        </div>
-
-        <!-- Modal Motivo de Reverso -->
-        <div id="sa-reverse-overlay" style="display:none; position:fixed; inset:0; z-index:10001; background:rgba(10,7,14,0.88); backdrop-filter:blur(8px); padding:16px; align-items:center; justify-content:center;">
-          <div style="background: rgba(22,16,27,0.98); border: 1px solid var(--vino); border-radius: 18px; width:100%; max-width:440px; padding: 24px 22px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-              <h4 style="font-family: var(--font-display); font-size:18px; color:var(--papel); margin:0;">↩️ Reversar desembolso</h4>
-              <button id="sa-reverse-close" style="background:none; border:none; color:var(--humo); font-size:20px; cursor:pointer;">✕</button>
-            </div>
-            <p id="sa-reverse-info" style="font-size:12px; color:var(--humo); margin-bottom:12px;"></p>
-            <textarea id="sa-reverse-reason" class="ronda-input" placeholder="Motivo del reverso (obligatorio)…" rows="3" style="width:100%; box-sizing:border-box; margin-bottom:14px; resize:vertical;"></textarea>
-            <div style="display:flex; gap:10px;">
-              <button id="sa-reverse-cancel" class="btn" style="flex:1; padding:10px; font-size:12px; background:rgba(243,237,226,0.05); border-color:var(--linea);">Cancelar</button>
-              <button id="sa-reverse-confirm" class="btn" disabled style="flex:1; padding:10px; font-size:12px; background:var(--vino); border-color:var(--vino); color:#fff; opacity:0.5; cursor:not-allowed;">Generar reverso</button>
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modalWrapper);
-    }
-
-    // Listeners del modal de desembolso
-    document.getElementById('sa-payout-close')?.addEventListener('click', () => this.closePayoutModal());
-    const payoutChecks = ['sa-payout-rut', 'sa-payout-pila', 'sa-payout-bank'];
-    payoutChecks.forEach((id) => document.getElementById(id)?.addEventListener('change', () => this.validatePayoutForm()));
-    document.getElementById('sa-payout-ref')?.addEventListener('input', () => this.validatePayoutForm());
-    document.getElementById('sa-payout-confirm')?.addEventListener('click', () => void this.confirmPayout());
-
-    // Listeners del modal de reverso
-    document.getElementById('sa-reverse-close')?.addEventListener('click', () => this.closeReverseModal());
-    document.getElementById('sa-reverse-cancel')?.addEventListener('click', () => this.closeReverseModal());
-    document.getElementById('sa-reverse-reason')?.addEventListener('input', () => this.validateReverseForm());
-    document.getElementById('sa-reverse-confirm')?.addEventListener('click', () => void this.confirmReverse());
-  }
-
   // Cambia la vista activa del SuperAdmin
   public async switchSection(section: AdminSection): Promise<void> {
     this.currentSection = section;
@@ -251,10 +153,10 @@ export class SuperAdminController {
     switch (section) {
       case 'summary':
         titleEl.textContent = 'Resumen General';
-        subtitleEl.textContent = 'Indicadores clave, alertas de verificación KYC y liquidaciones operativas pendientes.';
+        subtitleEl.textContent = 'Indicadores clave del ecosistema y accesos directos a los módulos operativos.';
         actionsEl.innerHTML = `
           <button class="btn ambar" id="sa-header-refresh-summary" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
-            ↻ Actualizar Todo
+            ↻ Actualizar
           </button>
         `;
         filtersEl.innerHTML = `
@@ -266,28 +168,69 @@ export class SuperAdminController {
           </span>
         `;
         document.getElementById('sa-header-refresh-summary')?.addEventListener('click', () => {
-          void this.loadKycQueue();
-          void this.loadLiquidaciones();
           void this.loadRealMetrics();
         });
         break;
 
+      case 'kyc':
+        titleEl.textContent = 'Verificación KYC';
+        subtitleEl.textContent = 'Cola prioritaria de verificación manual: selfie vs documento y validación del umbral biométrico.';
+        actionsEl.innerHTML = `
+          <button class="btn" id="sa-kyc-refresh" style="font-size: 11.5px; padding: 8px 16px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel);">
+            ↻ Actualizar cola
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <span style="font-size: 10.5px; color: var(--luz); font-family: var(--font-mono); background: rgba(240,168,48,0.1); border: 1px solid rgba(240,168,48,0.3); padding: 4px 10px; border-radius: 999px;">
+            ● Revisión manual · Tier 2
+          </span>
+          <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
+            Aprobar eleva al usuario a Tier 2 y desbloquea reservas
+          </span>
+        `;
+        document.getElementById('sa-kyc-refresh')?.addEventListener('click', () => void this.kyc.refresh());
+        break;
+
+      case 'treasury':
+        titleEl.textContent = 'Liquidaciones B2B & Tesorería';
+        subtitleEl.textContent = 'Gestión de comisiones para Scouts de expansión y Hosters de sala, con bloqueo fiscal por RUT y PILA.';
+        actionsEl.innerHTML = `
+          <button class="btn" id="sa-liq-refresh" style="font-size: 11.5px; padding: 8px 16px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel);">
+            ↻ Actualizar
+          </button>
+        `;
+        filtersEl.innerHTML = `
+          <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono); border: 1px dashed rgba(240,168,48,0.35); background: rgba(240,168,48,0.06); padding: 4px 10px; border-radius: 999px;">
+            🛡️ Validación obligatoria: RUT activo + PILA del mes
+          </span>
+          <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
+            Desembolso exclusivamente manual aprobado por SuperAdmin
+          </span>
+        `;
+        document.getElementById('sa-liq-refresh')?.addEventListener('click', () => void this.treasury.refresh());
+        break;
+
       case 'venues':
         titleEl.textContent = 'Bares y Anfitriones';
-        subtitleEl.textContent = 'Gestión de establecimientos aliados, aforos de mesas y responsables de sala.';
+        subtitleEl.textContent = 'Alta, ficha comercial y estado operativo de los locales aliados, con exclusividad territorial de 500 m.';
         actionsEl.innerHTML = `
-          <button class="btn ambar" id="sa-btn-new-venue" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700;">
+          <button class="btn" id="sa-venues-refresh" style="font-size: 11.5px; padding: 8px 16px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel); white-space: nowrap; width: auto; flex: 0 0 auto;">
+            ↻ Actualizar
+          </button>
+          <button class="btn ambar" id="sa-btn-new-venue" style="font-size: 11.5px; padding: 8px 16px; font-weight: 700; white-space: nowrap; width: auto; flex: 0 0 auto;">
             + Registrar Local
           </button>
         `;
         filtersEl.innerHTML = `
-          <input type="text" id="sa-venues-search" class="ronda-input" placeholder="🔍 Buscar por nombre o zona…" style="margin-bottom:0; max-width:260px; font-size:11.5px; padding:6px 12px;">
+          <input type="text" id="sa-venues-search" class="ronda-input" placeholder="🔍 Buscar por nombre, zona o NIT…" style="margin-bottom:0; max-width:260px; font-size:11.5px; padding:6px 12px;">
           <select id="sa-venues-filter" class="ronda-input" style="margin-bottom:0; max-width:180px; font-size:11.5px; padding:6px 10px;">
             <option value="all">Todos los locales</option>
-            <option value="active">Activos hoy</option>
-            <option value="expansion">En expansión</option>
+            <option value="active">Activos en red</option>
+            <option value="paused">Pausados</option>
           </select>
         `;
+        document.getElementById('sa-venues-refresh')?.addEventListener('click', () => void this.venues.refresh());
+        document.getElementById('sa-btn-new-venue')?.addEventListener('click', () => this.venues.openCreate());
         break;
 
       case 'events':
@@ -396,7 +339,7 @@ export class SuperAdminController {
         this.renderSummarySection(stage);
         break;
       case 'venues':
-        await this.renderVenuesSection(stage);
+        await this.venues.render(stage);
         break;
       case 'events':
         await this.renderEventsSection(stage);
@@ -415,6 +358,13 @@ export class SuperAdminController {
         break;
       case 'settings':
         this.renderSettingsSection(stage);
+        break;
+      // Módulos independientes: cada uno se pinta a sí mismo en el escenario.
+      case 'kyc':
+        await this.kyc.render(stage);
+        break;
+      case 'treasury':
+        await this.treasury.render(stage);
         break;
     }
   }
@@ -504,251 +454,41 @@ export class SuperAdminController {
           </div>
         </div>
 
-        <!-- 2 Columnas de Acción Inmediata: KYC y Liquidaciones B2B -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px;">
-          
-          <!-- Columna 1: Revisión KYC Pendiente -->
-          <div style="background: rgba(20, 15, 26, 0.7); border: 1px solid var(--linea); border-radius: 16px; padding: 22px; display:flex; flex-direction:column;">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px;">
-              <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0;">🛡️ Revisión KYC Pendiente</h4>
-              <button class="btn" id="sa-kyc-refresh" style="font-size: 11px; padding: 6px 12px; background: rgba(243,237,226,0.06); border-color: var(--linea);">↻ Refrescar</button>
-            </div>
-            <p style="font-size: 12px; color: var(--humo); margin: 0 0 16px;">
-              Cola prioritaria de verificación manual. Compara selfie vs documento y valida el umbral biométrico.
-            </p>
-            <div id="sa-kyc-list" style="display: flex; flex-direction: column; gap: 12px; flex:1;">
-              <p style="font-size: 12px; color: var(--humo);">Cargando cola KYC…</p>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:16px; padding-top:12px; border-top:1px dashed var(--linea);">
-              <span id="sa-kyc-count" style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">Mostrando 0 casos</span>
-              <button class="btn" id="sa-kyc-more" style="font-size: 11px; padding: 6px 12px; display:none;">➕ Cargar más</button>
-            </div>
-          </div>
+        <!-- Accesos rápidos: cada bloque vive ahora en su propia sección del menú -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+          <button id="sa-goto-kyc" class="sa-quick-link">
+            <span style="font-size:22px;">🛡️</span>
+            <span style="display:flex; flex-direction:column; gap:3px; flex:1;">
+              <b style="font-family:var(--font-display); font-size:14px; color:var(--papel);">Verificación KYC</b>
+              <span style="font-size:11.5px; color:var(--humo);">Cola prioritaria de verificación manual de identidad.</span>
+            </span>
+            <span style="font-size:15px; color:var(--luz);">→</span>
+          </button>
 
-          <!-- Columna 2: Consola Modular de Liquidaciones B2B -->
-          <div style="background: rgba(20, 15, 26, 0.7); border: 1px solid var(--linea); border-radius: 16px; padding: 22px; display:flex; flex-direction:column; gap:16px;">
-            <!-- Cabecera del Módulo -->
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-              <div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-size:18px;">💸</span>
-                  <h4 style="font-family: var(--font-display); font-size: 17px; color: var(--papel); margin: 0;">Liquidaciones B2B & Tesorería</h4>
-                </div>
-                <p style="font-size: 11.5px; color: var(--humo); margin: 3px 0 0;">Gestión de comisiones para Scouts de expansión y Hosters de sala.</p>
-              </div>
-              <button class="btn" id="sa-liq-refresh" style="font-size: 11px; padding: 6px 12px; background: rgba(243,237,226,0.06); border-color: var(--linea);">↻ Actualizar</button>
-            </div>
-
-            <!-- Módulo 1: Micro-KPIs de Tesorería -->
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-              <div style="background:rgba(243,237,226,0.03); border:1px solid rgba(121,211,172,0.25); border-radius:10px; padding:10px; text-align:center;">
-                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--humo); text-transform:uppercase; display:block;">Por Pagar</span>
-                <b id="sa-kpi-liq-pending" style="font-size:15px; color:#79D3AC; font-family:var(--font-mono); display:block; margin-top:2px;">$0</b>
-                <span id="sa-badge-liq-pending" style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">0 asientos</span>
-              </div>
-              <div style="background:rgba(243,237,226,0.03); border:1px solid rgba(240,168,48,0.25); border-radius:10px; padding:10px; text-align:center;">
-                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--humo); text-transform:uppercase; display:block;">En Espera</span>
-                <b id="sa-kpi-liq-held" style="font-size:15px; color:var(--luz); font-family:var(--font-mono); display:block; margin-top:2px;">$0</b>
-                <span id="sa-badge-liq-held" style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">0 en revisión</span>
-              </div>
-              <div style="background:rgba(243,237,226,0.03); border:1px solid var(--linea); border-radius:10px; padding:10px; text-align:center;">
-                <span style="font-size:9.5px; font-family:var(--font-mono); color:var(--humo); text-transform:uppercase; display:block;">Desembolsado</span>
-                <b id="sa-kpi-liq-paid" style="font-size:15px; color:var(--papel); font-family:var(--font-mono); display:block; margin-top:2px;">$0</b>
-                <span id="sa-badge-liq-paid" style="font-size:9.5px; color:var(--humo); font-family:var(--font-mono);">0 giros</span>
-              </div>
-            </div>
-
-            <!-- Módulo 2: Pestañas Interactivas (Segmented Tabs) -->
-            <div style="display:flex; background:rgba(0,0,0,0.35); border:1px solid var(--linea); border-radius:10px; padding:3px; gap:4px;">
-              <button class="sa-liq-tab-btn active" data-tab="pending" style="flex:1; background:rgba(240,168,48,0.18); border:1px solid rgba(240,168,48,0.35); color:var(--papel); font-size:11px; font-weight:700; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
-                📥 Pendientes (<span id="sa-tab-cnt-pending">0</span>)
-              </button>
-              <button class="sa-liq-tab-btn" data-tab="held" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
-                ⏳ En Revisión (<span id="sa-tab-cnt-held">0</span>)
-              </button>
-              <button class="sa-liq-tab-btn" data-tab="history" style="flex:1; background:transparent; border:1px solid transparent; color:var(--humo); font-size:11px; font-weight:500; padding:6px 8px; border-radius:7px; cursor:pointer; font-family:var(--font-body); transition:all 0.2s;">
-                📜 Historial (<span id="sa-tab-cnt-history">0</span>)
-              </button>
-            </div>
-
-            <!-- Módulo 3: Paneles de Contenido (1 visible a la vez) -->
-            <div id="sa-liq-pane-pending" class="sa-liq-pane" style="display:flex; flex-direction:column; gap:10px; min-height:110px;">
-              <div id="sa-liq-pending" style="display:flex; flex-direction:column; gap:10px;">
-                <p style="font-size:12px; color:var(--humo);">Cargando ledger…</p>
-              </div>
-            </div>
-
-            <div id="sa-liq-pane-held" class="sa-liq-pane" style="display:none; flex-direction:column; gap:10px; min-height:110px;">
-              <div id="sa-liq-held" style="display:flex; flex-direction:column; gap:8px;">
-                <p style="font-size:12px; color:var(--humo);">Cargando ledger…</p>
-              </div>
-            </div>
-
-            <div id="sa-liq-pane-history" class="sa-liq-pane" style="display:none; flex-direction:column; gap:10px; min-height:110px;">
-              <div id="sa-liq-history" style="display:flex; flex-direction:column; gap:8px;">
-                <p style="font-size:12px; color:var(--humo);">Cargando historial…</p>
-              </div>
-            </div>
-
-            <!-- Módulo 4: Cápsula de Cumplimiento Fiscal & Acceso Directo -->
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:rgba(240,168,48,0.05); border:1px dashed rgba(240,168,48,0.25); border-radius:10px; padding:10px 14px; margin-top:auto;">
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:13px;">🛡️</span>
-                <span style="font-size:10.5px; color:var(--humo); font-family:var(--font-mono);">
-                  Validación obligatoria: <b>RUT activo</b> + <b>PILA del mes</b>.
-                </span>
-              </div>
-              <button class="btn" id="sa-btn-goto-people" style="font-size:10px; padding:4px 10px; background:rgba(243,237,226,0.06); border-color:var(--linea); color:var(--papel); white-space:nowrap;">
-                👥 Ver Agentes
-              </button>
-            </div>
-          </div>
+          <button id="sa-goto-treasury" class="sa-quick-link">
+            <span style="font-size:22px;">💸</span>
+            <span style="display:flex; flex-direction:column; gap:3px; flex:1;">
+              <b style="font-family:var(--font-display); font-size:14px; color:var(--papel);">Liquidaciones B2B & Tesorería</b>
+              <span style="font-size:11.5px; color:var(--humo);">Comisiones de Scouts y Hosters, desembolsos y validación RUT/PILA.</span>
+            </span>
+            <span style="font-size:15px; color:var(--luz);">→</span>
+          </button>
         </div>
 
       </div>
     `;
 
     this.attachSummaryListeners();
-    void this.loadKycQueue();
-    void this.loadLiquidaciones();
     void this.loadRealMetrics();
   }
 
   private attachSummaryListeners() {
-    const refreshKyc = document.getElementById('sa-kyc-refresh');
-    refreshKyc?.addEventListener('click', () => void this.loadKycQueue());
-    const moreKyc = document.getElementById('sa-kyc-more');
-    moreKyc?.addEventListener('click', () => void this.loadKycQueue({ append: true }));
-
-    const refreshLiq = document.getElementById('sa-liq-refresh');
-    refreshLiq?.addEventListener('click', () => void this.loadLiquidaciones());
-
-    // Tabs interactivos para la consola de Liquidaciones B2B
-    document.querySelectorAll<HTMLElement>('.sa-liq-tab-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const targetTab = btn.getAttribute('data-tab');
-        document.querySelectorAll<HTMLElement>('.sa-liq-tab-btn').forEach((b) => {
-          const isActive = b.getAttribute('data-tab') === targetTab;
-          b.classList.toggle('active', isActive);
-          b.style.background = isActive ? 'rgba(240,168,48,0.18)' : 'transparent';
-          b.style.borderColor = isActive ? 'rgba(240,168,48,0.35)' : 'transparent';
-          b.style.color = isActive ? 'var(--papel)' : 'var(--humo)';
-          b.style.fontWeight = isActive ? '700' : '500';
-        });
-
-        const pendingPane = document.getElementById('sa-liq-pane-pending');
-        const heldPane = document.getElementById('sa-liq-pane-held');
-        const historyPane = document.getElementById('sa-liq-pane-history');
-
-        if (pendingPane) pendingPane.style.display = targetTab === 'pending' ? 'flex' : 'none';
-        if (heldPane) heldPane.style.display = targetTab === 'held' ? 'flex' : 'none';
-        if (historyPane) historyPane.style.display = targetTab === 'history' ? 'flex' : 'none';
-      });
-    });
-
-    // Acceso directo a gestión de Scouts & Hosters
-    document.getElementById('sa-btn-goto-people')?.addEventListener('click', () => {
-      void this.switchSection('users');
-      setTimeout(() => {
-        const panel = document.getElementById('sa-people-panel');
-        if (panel) panel.style.display = 'block';
-      }, 100);
-    });
+    // Cada módulo vive ahora en su propia sección: el Resumen solo enlaza.
+    document.getElementById('sa-goto-kyc')?.addEventListener('click', () => void this.switchSection('kyc'));
+    document.getElementById('sa-goto-treasury')?.addEventListener('click', () => void this.switchSection('treasury'));
   }
 
   // --- SECCIÓN 2: BARES Y ANFITRIONES ---
-  private async renderVenuesSection(stage: HTMLElement) {
-    const venues = (await DB.getVenues()) || [];
-
-    const rows = venues.map((v: any) => `
-      <tr style="border-bottom: 1px solid rgba(243,237,226,0.06); transition: background 0.15s ease;">
-        <td style="padding: 14px 16px;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:36px; height:36px; border-radius:8px; background:rgba(240,168,48,0.12); border:1px solid rgba(240,168,48,0.3); display:flex; align-items:center; justify-content:center; font-size:16px;">🍸</div>
-            <div>
-              <b style="color:var(--papel); font-size:13.5px; display:block;">${v.name || 'Bar Aliado'}</b>
-              <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">${v.id}</span>
-            </div>
-          </div>
-        </td>
-        <td style="padding: 14px 16px;">
-          <span style="color:var(--papel); font-size:12.5px; display:block;">${v.zone || 'Bogotá D.C.'}</span>
-          <span style="font-size:11px; color:var(--humo);">${v.address || 'Zona Rosa'}</span>
-        </td>
-        <td style="padding: 14px 16px; font-family:var(--font-mono); font-size:12px; color:var(--papel);">
-          ${v.capacity || 24} personas (${Math.floor((v.capacity || 24) / 2)} mesas)
-        </td>
-        <td style="padding: 14px 16px;">
-          <span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-family:var(--font-mono); color:#79D3AC;">
-            <span style="width:6px; height:6px; border-radius:50%; background:#79D3AC;"></span>
-            ${v.assignedHost || 'Anfitrión Asignado'}
-          </span>
-        </td>
-        <td style="padding: 14px 16px;">
-          <span style="font-size:10px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); border:1px solid rgba(240,168,48,0.3); padding:3px 8px; border-radius:999px;">
-            $650.000 COP / mes
-          </span>
-        </td>
-        <td style="padding: 14px 16px; text-align:right;">
-          <a href="/admin.html?venueId=${v.id}" target="_blank" class="btn" style="font-size:11px; padding:6px 12px; text-decoration:none; background:rgba(243,237,226,0.06); border-color:var(--linea); color:var(--papel); display:inline-flex; align-items:center; gap:6px;">
-            <span>🚪 Panel Sala</span>
-          </a>
-        </td>
-      </tr>
-    `).join('');
-
-    stage.innerHTML = `
-      <div style="display:flex; flex-direction:column; gap:20px;">
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
-          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
-            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Locales Registrados</span>
-            <b style="font-size:26px; color:var(--papel); font-family:var(--font-display); display:block; margin-top:4px;">${venues.length} Bares</b>
-          </div>
-          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
-            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Capacidad Total</span>
-            <b style="font-size:26px; color:var(--luz); font-family:var(--font-display); display:block; margin-top:4px;">${venues.reduce((acc: number, v: any) => acc + (v.capacity || 24), 0)} Asientos</b>
-          </div>
-          <div style="background:rgba(243,237,226,0.04); border:1px solid var(--linea); border-radius:14px; padding:18px;">
-            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono); text-transform:uppercase;">Ingreso B2B Proyectado</span>
-            <b style="font-size:26px; color:#79D3AC; font-family:var(--font-display); display:block; margin-top:4px;">$${(venues.length * 650000).toLocaleString('es-CO')}</b>
-          </div>
-        </div>
-
-        <div style="background:rgba(20,15,26,0.8); border:1px solid var(--linea); border-radius:16px; overflow:hidden;">
-          <div style="padding:18px 20px; border-bottom:1px solid var(--linea); display:flex; justify-content:space-between; align-items:center;">
-            <h4 style="font-family:var(--font-display); font-size:16px; color:var(--papel); margin:0;">Red de Establecimientos Aliados</h4>
-            <span style="font-size:11px; color:var(--humo); font-family:var(--font-mono);">${venues.length} locales activos</span>
-          </div>
-          <div style="overflow-x:auto;">
-            <table style="width:100%; border-collapse:collapse; text-align:left;">
-              <thead>
-                <tr style="border-bottom:1px solid var(--linea); background:rgba(243,237,226,0.02);">
-                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ESTABLECIMIENTO</th>
-                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ZONA</th>
-                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">CAPACIDAD</th>
-                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">ANFITRIÓN RESPONSABLE</th>
-                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600;">PLAN SAAS</th>
-                  <th style="padding:12px 16px; font-size:11px; font-family:var(--font-mono); color:var(--humo); font-weight:600; text-align:right;">ACCIÓN</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${rows}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.getElementById('sa-btn-new-venue')?.addEventListener('click', async () => {
-      await RondaDialog.alert({
-        title: 'Alta de Bar Aliado',
-        message: 'Para vincular un nuevo bar y proteger su radio de exclusividad de 500m, utiliza el Portal Red de Bares (/network.html).',
-        icon: '🏢'
-      });
-    });
-  }
-
   // --- SECCIÓN 3: NOCHES Y EVENTOS ---
   private async renderEventsSection(stage: HTMLElement) {
     const events = await DB.getAllEvents();
@@ -825,11 +565,8 @@ export class SuperAdminController {
   // --- SECCIÓN 4: RESERVAS Y ASISTENTES ---
   private async renderBookingsSection(stage: HTMLElement) {
     const events = await DB.getAllEvents();
-    let allBookings: { user: User; reservation: Reservation }[] = [];
-    for (const ev of events) {
-      const bList = await DB.getBookingsForEvent(ev.id);
-      allBookings.push(...bList);
-    }
+    const bookingLists = await Promise.all(events.map(ev => DB.getBookingsForEvent(ev.id)));
+    const allBookings: { user: User; reservation: Reservation }[] = bookingLists.flat();
 
     stage.innerHTML = `
       <div style="display:flex; flex-direction:column; gap:20px;">
@@ -1248,306 +985,6 @@ export class SuperAdminController {
     return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
   }
 
-  private async loadKycQueue(opts: { append?: boolean } = {}): Promise<void> {
-    const list = document.getElementById('sa-kyc-list');
-    if (!list) return;
-    // Guard anti-spam: una sola lectura en vuelo para no quemar cuota Spark.
-    if (this.kycLoading) return;
-    const append = opts.append === true && this.kycLastDoc !== null;
-    this.kycLoading = true;
-    this.setRefreshState(true);
-    try {
-      if (!append) {
-        this.kycLastDoc = null;
-        this.kycShown = 0;
-        list.innerHTML = `<p style="font-size:12px;color:var(--humo);">Cargando cola…</p>`;
-        // Conteo total de pendientes (lectura agregada barata) para el contador.
-        try {
-          const agg = await getCountFromServer(query(collection(RondaServices.db, 'kycReviews'), where('status', '==', 'pending')));
-          this.kycTotal = agg.data().count;
-        } catch (e) {
-          console.warn('[SuperAdmin] No se pudo contar la cola KYC:', e);
-          this.kycTotal = null;
-        }
-      }
-
-      const base = query(collection(RondaServices.db, 'kycReviews'), where('status', '==', 'pending'), limit(this.kycPageSize));
-      const q = append && this.kycLastDoc ? query(base, startAfter(this.kycLastDoc)) : base;
-      const snap = await getDocs(q);
-
-      const cases: KycReviewCase[] = [];
-      snap.forEach((d) => cases.push({ ...(d.data() as Omit<KycReviewCase, 'reviewId'>), reviewId: d.id }));
-
-      // Cursor para la siguiente página.
-      this.kycLastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : this.kycLastDoc;
-      this.kycLastPageSize = cases.length;
-
-      // Fotos Base64 fuera del DOM: solo se guardan en memoria (Tarea 2).
-      cases.forEach((c) => {
-        if (c.imageUrls) this.kycPhotos.set(c.reviewId, c.imageUrls);
-      });
-
-      if (cases.length === 0 && !append) {
-        list.innerHTML = `<p style="font-size:12px;color:var(--botella);">✅ Sin casos pendientes.</p>`;
-      } else if (cases.length > 0) {
-        const html = cases.map((c) => this.renderKycCard(c)).join('');
-        if (append) list.insertAdjacentHTML('beforeend', html);
-        else list.innerHTML = html;
-        this.bindKycCardActions(list);
-      }
-
-      this.kycShown += cases.length;
-      this.updateKycFooter();
-    } catch (err) {
-      console.error('[SuperAdmin] Error cargando kycReviews:', err);
-      if (!append) list.innerHTML = `<p style="font-size:12px;color:var(--vino);">⚠️ No se pudo cargar la cola KYC.</p>`;
-    } finally {
-      this.kycLoading = false;
-      this.setRefreshState(false);
-    }
-  }
-
-  private updateKycFooter(): void {
-    const countEl = document.getElementById('sa-kyc-count');
-    const moreBtn = document.getElementById('sa-kyc-more') as HTMLButtonElement | null;
-    if (countEl) {
-      countEl.textContent = this.kycTotal === null
-        ? `Mostrando ${this.kycShown} casos pendientes`
-        : `Mostrando ${this.kycShown} de ${this.kycTotal} casos pendientes`;
-    }
-    if (moreBtn) {
-      const hasMore = this.kycLastDoc !== null
-        && this.kycLastPageSize >= this.kycPageSize
-        && (this.kycTotal === null || this.kycShown < this.kycTotal);
-      moreBtn.style.display = hasMore ? '' : 'none';
-      moreBtn.disabled = false;
-      moreBtn.textContent = '➕ Cargar más casos (10 más)';
-    }
-  }
-
-  private setRefreshState(loading: boolean): void {
-    const btn = document.getElementById('sa-kyc-refresh') as HTMLButtonElement | null;
-    if (!btn) return;
-    btn.disabled = loading;
-    btn.innerHTML = loading
-      ? '<span class="sa-spin">↻</span> Cargando...'
-      : '↻ Actualizar cola';
-  }
-
-  // Delegación de eventos sobre la lista: sobrevive a los re-renders de paginación.
-  private bindKycCardActions(list: HTMLElement): void {
-    if (list.dataset.bound === '1') return;
-    list.dataset.bound = '1';
-
-    list.addEventListener('click', (e) => {
-      const target = (e.target as HTMLElement).closest('.sa-kyc-approve, .sa-kyc-reject, .sa-kyc-photos-toggle') as HTMLElement | null;
-      if (!target || !list.contains(target)) return;
-
-      if (target.classList.contains('sa-kyc-photos-toggle')) {
-        this.toggleKycPhotos(target);
-        return;
-      }
-
-      const card = target.closest('article');
-      if (!card || target.dataset.busy === '1') return;
-      const approveBtn = card.querySelector('.sa-kyc-approve') as HTMLButtonElement | null;
-      const rejectBtn = card.querySelector('.sa-kyc-reject') as HTMLButtonElement | null;
-      // Tarea 3: bloquear doble clic inmediatamente (ambos botones de la tarjeta).
-      if (approveBtn && rejectBtn) {
-        approveBtn.dataset.busy = '1';
-        rejectBtn.dataset.busy = '1';
-        approveBtn.disabled = true;
-        rejectBtn.disabled = true;
-        approveBtn.textContent = 'Procesando…';
-        rejectBtn.textContent = 'Procesando…';
-      }
-
-      const reviewId = target.getAttribute('data-review') || '';
-      if (target.classList.contains('sa-kyc-approve')) {
-        void this.approveKycCase(reviewId, target.getAttribute('data-user') || '', card);
-      } else {
-        void this.rejectKycCase(reviewId, card);
-      }
-    });
-  }
-
-  // Re-habilita los botones tras un fallo para permitir reintento (Tarea 3).
-  private releaseKycCard(card: Element): void {
-    const approveBtn = card.querySelector('.sa-kyc-approve') as HTMLButtonElement | null;
-    const rejectBtn = card.querySelector('.sa-kyc-reject') as HTMLButtonElement | null;
-    if (approveBtn) {
-      approveBtn.disabled = false;
-      delete approveBtn.dataset.busy;
-      approveBtn.textContent = '✅ Aprobar Tier 2';
-    }
-    if (rejectBtn) {
-      rejectBtn.disabled = false;
-      delete rejectBtn.dataset.busy;
-      rejectBtn.textContent = '✕ Rechazar';
-    }
-  }
-
-  // Tarea 2: las fotos Base64 se sirven solo al expandir la tarjeta.
-  private toggleKycPhotos(btn: HTMLElement): void {
-    const card = btn.closest('article');
-    if (!card) return;
-    const reviewId = btn.getAttribute('data-review') || '';
-    const holder = card.querySelector('.sa-kyc-photos') as HTMLElement | null;
-    if (!holder) return;
-
-    if (holder.childElementCount > 0) {
-      // Colapsar: liberar nodos de imagen del DOM.
-      holder.innerHTML = '';
-      holder.style.display = 'none';
-      btn.textContent = '[👁️ Ver Fotografías KYC]';
-      return;
-    }
-
-    const imgs = this.kycPhotos.get(reviewId);
-    if (!imgs) {
-      btn.textContent = '[⚠️ Fotos no disponibles]';
-      return;
-    }
-    const fig = (label: string, src?: string) => src
-      ? `<figure style="margin:0; contain:content;"><figcaption style="font-size:10px;color:var(--humo);">${label}</figcaption><img src="${this.escapeKyc(src)}" alt="${label}" loading="lazy" style="width:100%;border-radius:8px;border:1px solid var(--linea);"/></figure>`
-      : '';
-    holder.innerHTML =
-      fig('SELFIE', imgs.selfie) + fig('DOC FRENTE', imgs.docFront) + fig('DOC REVERSO', imgs.docBack);
-    holder.style.display = 'grid';
-    btn.textContent = '[🙈 Ocultar Fotografías]';
-  }
-
-  private renderKycCard(c: KycReviewCase): string {
-    const dist = typeof c.metrics?.faceDistance === 'number' ? c.metrics.faceDistance : null;
-    const sim = dist === null ? '—' : Math.max(0, Math.min(100, Math.round((1 - Math.min(dist, 1)) * 100))) + '%';
-    const reasons = (c.reasonsForManual || []).map((r) => this.escapeKyc(r)).join(', ') || '—';
-    const photoCount = [c.imageUrls?.selfie, c.imageUrls?.docFront, c.imageUrls?.docBack].filter(Boolean).length;
-    return `<article style="border:1px solid var(--linea);border-radius:12px;padding:14px;background:rgba(243,237,226,.03);">
-      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-        <div><b style="color:var(--papel);font-size:13px;">${this.escapeKyc(c.userName || c.userId)}</b>
-        <div style="font-size:11px;color:var(--humo);font-family:var(--font-mono);">${this.escapeKyc(c.userEmail || '')} · ${this.escapeKyc(c.createdAt || '')}</div>
-        <div style="font-size:11px;color:var(--humo);">Motivos: ${reasons}</div></div>
-        <div style="font-size:11px;color:var(--luz);font-family:var(--font-mono);text-align:right;">distancia: <b>${dist ?? '—'}</b><br/>similitud: <b>${sim}</b><br/>liveness: <b>${c.metrics?.livenessScore ?? '—'}</b></div>
-      </div>
-      <button type="button" class="btn sa-kyc-photos-toggle" data-review="${this.escapeKyc(c.reviewId)}" style="font-size:11px;padding:8px 12px;margin-bottom:10px;">[👁️ Ver Fotografías KYC${photoCount ? ` (${photoCount})` : ''}]</button>
-      <div class="sa-kyc-photos" style="display:none;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:10px;contain:content;"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn ambar sa-kyc-approve" data-review="${this.escapeKyc(c.reviewId)}" data-user="${this.escapeKyc(c.userId)}" style="font-size:11px;padding:9px 14px;font-weight:700;">✅ Aprobar Tier 2</button>
-        <button class="btn sa-kyc-reject" data-review="${this.escapeKyc(c.reviewId)}" style="font-size:11px;padding:9px 14px;border-color:var(--vino);">✕ Rechazar</button>
-      </div>
-    </article>`;
-  }
-
-  private async approveKycCase(reviewId: string, userId: string, card?: Element): Promise<void> {
-    if (!reviewId || !userId) { if (card) this.releaseKycCard(card); return; }
-    try {
-      const reviewer = Auth.currentUser?.uid || 'superadmin';
-      const now = new Date().toISOString();
-      const userRef = doc(RondaServices.db, 'users', userId);
-      const snap = await getDoc(userRef);
-      const prev = snap.exists() ? (snap.data() as User).verifications : undefined;
-      await updateDoc(userRef, {
-        trustTier: 2, isVerified: true,
-        verifications: { ...(prev as object | undefined), identity: { method: 'manual_admin', verifiedAt: now, reviewerUid: reviewer } },
-      });
-      await updateDoc(doc(RondaServices.db, 'kycReviews', reviewId), { status: 'approved', reviewedBy: reviewer, reviewedAt: now });
-      await deleteDoc(doc(RondaServices.db, 'kycReviews', reviewId)).catch(() => undefined);
-      if (this.kycTotal !== null) this.kycTotal = Math.max(0, this.kycTotal - 1);
-      await RondaDialog.alert({ title: 'KYC Aprobado', message: `Usuario elevado a Tier 2.`, icon: '✅' });
-      await this.loadKycQueue();
-    } catch (err) {
-      console.error('[SuperAdmin] Error aprobando KYC:', err);
-      if (card) this.releaseKycCard(card);
-      await RondaDialog.alert({ title: 'Error', message: 'No se pudo aprobar el caso.', icon: '⚠️', type: 'danger' });
-    }
-  }
-
-  private async rejectKycCase(reviewId: string, card?: Element): Promise<void> {
-    if (!reviewId) { if (card) this.releaseKycCard(card); return; }
-    const rawReason = window.prompt('Motivo del rechazo (opcional):', 'documento_no_reconocido');
-    if (rawReason === null) {
-      // Cancelado por el usuario: abortar y re-habilitar para permitir reintento.
-      if (card) this.releaseKycCard(card);
-      return;
-    }
-    const reason = rawReason;
-    try {
-      const reviewer = Auth.currentUser?.uid || 'superadmin';
-      await updateDoc(doc(RondaServices.db, 'kycReviews', reviewId), {
-        status: 'rejected', reviewedBy: reviewer, reviewedAt: new Date().toISOString(), adminNotes: reason,
-      });
-      if (this.kycTotal !== null) this.kycTotal = Math.max(0, this.kycTotal - 1);
-      await RondaDialog.alert({ title: 'KYC Rechazado', message: 'Caso marcado como rechazado.', icon: '✕' });
-      await this.loadKycQueue();
-    } catch (err) {
-      console.error('[SuperAdmin] Error rechazando KYC:', err);
-      if (card) this.releaseKycCard(card);
-      await RondaDialog.alert({ title: 'Error', message: 'No se pudo rechazar el caso.', icon: '⚠️', type: 'danger' });
-    }
-  }
-
-  private setupListeners() {}
-
-  private attachListeners() {
-    document.querySelectorAll('.sa-set-role').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const role = (e.currentTarget as HTMLElement).getAttribute('data-role');
-        if (!role) return;
-
-        const user = Auth.currentUser;
-        if (user) {
-          user.role = role;
-          await DB.saveUser(user);
-        }
-
-        // Sync dropdown if exists
-        const select = document.getElementById('switcher-role-select') as HTMLSelectElement;
-        if (select) select.value = role;
-
-        await RondaDialog.alert({
-          title: 'Rol Asignado',
-          message: `Tu usuario actual ahora tiene el rol: ${role.toUpperCase()}.\nPuedes usar el Master Panel Switcher arriba para navegar a cualquier sección.`,
-          icon: '✨'
-        });
-      });
-    });
-    const refreshBtn = document.getElementById('sa-kyc-refresh') as HTMLButtonElement | null;
-    refreshBtn?.addEventListener('click', () => void this.loadKycQueue());
-    document.getElementById('sa-kyc-more')?.addEventListener('click', () => void this.loadKycQueue({ append: true }));
-    void this.loadKycQueue();
-    void this.loadRealMetrics();
-
-    // --- T1: Liquidaciones B2B ---
-    document.getElementById('sa-liq-refresh')?.addEventListener('click', () => void this.loadLiquidaciones());
-
-    // Modal de aprobación de desembolso
-    document.getElementById('sa-payout-close')?.addEventListener('click', () => this.closePayoutModal());
-    const payoutChecks = ['sa-payout-rut', 'sa-payout-pila', 'sa-payout-bank'];
-    payoutChecks.forEach(id => document.getElementById(id)?.addEventListener('change', () => this.validatePayoutForm()));
-    document.getElementById('sa-payout-ref')?.addEventListener('input', () => this.validatePayoutForm());
-    document.getElementById('sa-payout-confirm')?.addEventListener('click', () => void this.confirmPayout());
-
-    // Modal de reverso
-    document.getElementById('sa-reverse-close')?.addEventListener('click', () => this.closeReverseModal());
-    document.getElementById('sa-reverse-cancel')?.addEventListener('click', () => this.closeReverseModal());
-    document.getElementById('sa-reverse-reason')?.addEventListener('input', () => this.validateReverseForm());
-    document.getElementById('sa-reverse-confirm')?.addEventListener('click', () => void this.confirmReverse());
-
-    // --- T2: Scouts & Hosters ---
-    document.getElementById('sa-people-toggle')?.addEventListener('click', () => {
-      const panel = document.getElementById('sa-people-panel');
-      if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    });
-    document.getElementById('sa-people-form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      void this.savePerson();
-    });
-    document.getElementById('sa-token-form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      void this.emitToken();
-    });
-  }
-
   // Tarea 5: métricas reales de venues/tickets desde Firestore (lecturas agregadas baratas).
   private async loadRealMetrics(): Promise<void> {
     const valueEl = document.getElementById('sa-metric-b2c-value');
@@ -1616,11 +1053,7 @@ export class SuperAdminController {
     }
   }
 
-  // ============ T1: Liquidaciones B2B ============
-  private formatCop(n: number): string {
-    return '$' + Number(n || 0).toLocaleString('es-CO');
-  }
-
+  // ============ Perfil fiscal (compartido con Usuarios y permisos) ============
   private currentBogotaMonth(): string {
     try {
       const iso = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -1633,331 +1066,6 @@ export class SuperAdminController {
 
   private isPilaCurrent(pilaVerified?: boolean, pilaPeriod?: string): boolean {
     return !!pilaVerified && pilaPeriod === this.currentBogotaMonth();
-  }
-
-  private liqCountdown(iso?: string): string {
-    if (!iso) return 'sin fecha de liberación';
-    const diff = new Date(iso).getTime() - Date.now();
-    if (!Number.isFinite(diff)) return 'fecha inválida';
-    if (diff <= 0) return 'liberable ahora';
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    return d > 0 ? `disponible en ${d}d ${h}h` : `disponible en ${h}h`;
-  }
-
-  private async loadLiquidaciones(): Promise<void> {
-    const btn = document.getElementById('sa-liq-refresh') as HTMLButtonElement | null;
-    if (btn) { btn.disabled = true; btn.textContent = '↻ Cargando…'; }
-    try {
-      const [entries, payouts, scouts, hosts] = await Promise.all([
-        DB.getLedgerEntries(),
-        DB.getPayouts(),
-        DB.getScouts().catch(() => [] as Scout[]),
-        DB.getHosts().catch(() => [] as Host[]),
-      ]);
-      this.liqEntries = entries || [];
-      this.liqPayouts = (payouts || []).slice().sort((a, b) =>
-        String(b.reconciled_at || b.createdAt || '').localeCompare(String(a.reconciled_at || a.createdAt || '')));
-      this.liqPayeeNames.clear();
-      for (const s of scouts) this.liqPayeeNames.set(s.uid, s.name || s.email || s.uid);
-      for (const h of hosts) if (!this.liqPayeeNames.has(h.uid)) this.liqPayeeNames.set(h.uid, h.name || h.email || h.uid);
-      this.renderLiquidations();
-    } catch (err) {
-      console.error('[SuperAdmin] Error cargando liquidaciones:', err);
-      const pend = document.getElementById('sa-liq-pending');
-      if (pend) pend.innerHTML = `<p style="font-size:12px;color:var(--vino);">⚠️ No se pudo cargar el ledger.</p>`;
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = '↻ Actualizar'; }
-    }
-  }
-
-  private renderLiquidations(): void {
-    const pendEl = document.getElementById('sa-liq-pending');
-    const heldEl = document.getElementById('sa-liq-held');
-    const histEl = document.getElementById('sa-liq-history');
-    if (!pendEl || !heldEl || !histEl) return;
-
-    const pending = this.liqEntries.filter((e) => e.status === 'payable');
-    const held = this.liqEntries.filter((e) => e.status === 'accrued' || e.status === 'review');
-    const totalPend = pending.reduce((s, e) => s + (e.amount_gross_cop || 0), 0);
-    const totalHeld = held.reduce((s, e) => s + (e.amount_gross_cop || 0), 0);
-    const totalPaid = this.liqPayouts.reduce((s, p) => s + (p.gross_cop || 0), 0);
-
-    // Actualizar micro-KPIs superiores
-    const kpiPend = document.getElementById('sa-kpi-liq-pending');
-    const badgePend = document.getElementById('sa-badge-liq-pending');
-    const kpiHeld = document.getElementById('sa-kpi-liq-held');
-    const badgeHeld = document.getElementById('sa-badge-liq-held');
-    const kpiPaid = document.getElementById('sa-kpi-liq-paid');
-    const badgePaid = document.getElementById('sa-badge-liq-paid');
-
-    if (kpiPend) kpiPend.textContent = this.formatCop(totalPend);
-    if (badgePend) badgePend.textContent = `${pending.length} asiento${pending.length === 1 ? '' : 's'}`;
-    if (kpiHeld) kpiHeld.textContent = this.formatCop(totalHeld);
-    if (badgeHeld) badgeHeld.textContent = `${held.length} en espera`;
-    if (kpiPaid) kpiPaid.textContent = this.formatCop(totalPaid);
-    if (badgePaid) badgePaid.textContent = `${this.liqPayouts.length} giro${this.liqPayouts.length === 1 ? '' : 's'}`;
-
-    // Actualizar contadores de las pestañas
-    const tabCntPend = document.getElementById('sa-tab-cnt-pending');
-    const tabCntHeld = document.getElementById('sa-tab-cnt-held');
-    const tabCntHist = document.getElementById('sa-tab-cnt-history');
-
-    if (tabCntPend) tabCntPend.textContent = String(pending.length);
-    if (tabCntHeld) tabCntHeld.textContent = String(held.length);
-    if (tabCntHist) tabCntHist.textContent = String(this.liqPayouts.length);
-
-    // 1. Panel: Pendientes por Pagar
-    if (pending.length === 0) {
-      pendEl.innerHTML = `
-        <div style="text-align:center; padding:24px 16px; background:rgba(243,237,226,0.02); border:1px solid rgba(121,211,172,0.18); border-radius:12px;">
-          <span style="font-size:24px; display:block; margin-bottom:6px;">✨</span>
-          <b style="color:var(--papel); font-size:13px; display:block;">Tesorería al Día</b>
-          <span style="font-size:11px; color:var(--humo); display:block; margin-top:2px;">No hay comisiones pendientes de desembolso en este momento.</span>
-        </div>
-      `;
-    } else {
-      const byPayee = new Map<string, LedgerEntry[]>();
-      for (const e of pending) {
-        const arr = byPayee.get(e.payee_uid) || [];
-        arr.push(e);
-        byPayee.set(e.payee_uid, arr);
-      }
-      pendEl.innerHTML = [...byPayee.entries()].map(([uid, arr]) => {
-        const total = arr.reduce((s, e) => s + (e.amount_gross_cop || 0), 0);
-        const name = this.escapeKyc(this.liqPayeeNames.get(uid) || uid);
-        const tipo = arr[0]?.payee_type === 'host' ? 'hoster' : 'scout';
-        const rows = arr.map((e) => `<div style="border-top:1px dashed var(--linea);padding:6px 0;">
-          <div style="display:flex;justify-content:space-between;gap:8px;font-size:11px;font-family:var(--font-mono);color:var(--humo);">
-            <span>${this.escapeKyc(e.milestone)} · ${this.escapeKyc(e.lead_id || e.venue_id || e.id)}</span>
-            <span style="color:var(--papel);font-weight:700;">${this.formatCop(e.amount_gross_cop)}</span>
-          </div>
-          <div style="font-size:10.5px;color:var(--humo);">${this.escapeKyc(e.reason || '')}${e.payable_after ? ` · ⏳ ${this.escapeKyc(this.liqCountdown(e.payable_after))}` : ''}</div>
-        </div>`).join('');
-        return `<div style="border:1px solid var(--linea);border-radius:12px;padding:14px;background:rgba(243,237,226,.03);">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-            <div><b style="color:var(--papel);font-size:13px;">${name}</b>
-            <span style="font-size:10px;color:var(--humo);font-family:var(--font-mono);margin-left:8px;">${tipo} · ${arr.length} asientos</span></div>
-            <b style="color:var(--luz);font-family:var(--font-mono);">${this.formatCop(total)}</b>
-          </div>${rows}
-          <button class="btn ambar sa-liq-approve" data-payee="${this.escapeKyc(uid)}" style="font-size:11px;padding:9px 14px;font-weight:700;margin-top:10px;">💸 Aprobar desembolso</button>
-        </div>`;
-      }).join('');
-      pendEl.querySelectorAll('.sa-liq-approve').forEach((b) =>
-        b.addEventListener('click', () => void this.openPayoutModal((b as HTMLElement).getAttribute('data-payee') || '')));
-    }
-
-    // 2. Panel: En Revisión / Custodia
-    if (held.length === 0) {
-      heldEl.innerHTML = `
-        <div style="text-align:center; padding:24px 16px; background:rgba(243,237,226,0.02); border:1px solid var(--linea); border-radius:12px;">
-          <span style="font-size:24px; display:block; margin-bottom:6px;">⏳</span>
-          <b style="color:var(--papel); font-size:13px; display:block;">Sin Asientos en Custodia</b>
-          <span style="font-size:11px; color:var(--humo); display:block; margin-top:2px;">Todas las comisiones devengadas han completado su maduración.</span>
-        </div>
-      `;
-    } else {
-      heldEl.innerHTML = held.map((e) => {
-        const name = this.escapeKyc(this.liqPayeeNames.get(e.payee_uid) || e.payee_uid);
-        return `<div style="display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--humo);border:1px dashed var(--linea);border-radius:10px;padding:10px 12px;">
-          <span><b style="color:var(--papel);">${name}</b> · ${this.escapeKyc(e.milestone)} · ${this.escapeKyc(e.status)}<br/>
-          <span style="font-family:var(--font-mono);font-size:10.5px;">⏳ ${this.escapeKyc(this.liqCountdown(e.payable_after))}${e.payable_after ? ` (${this.escapeKyc(e.payable_after)})` : ''}</span></span>
-          <b style="color:var(--papel);font-family:var(--font-mono);white-space:nowrap;">${this.formatCop(e.amount_gross_cop)}</b>
-        </div>`;
-      }).join('');
-    }
-
-    // 3. Panel: Historial de Desembolsos
-    if (this.liqPayouts.length === 0) {
-      histEl.innerHTML = `
-        <div style="text-align:center; padding:24px 16px; background:rgba(243,237,226,0.02); border:1px solid var(--linea); border-radius:12px;">
-          <span style="font-size:24px; display:block; margin-bottom:6px;">📜</span>
-          <b style="color:var(--papel); font-size:13px; display:block;">Sin Giros Registrados</b>
-          <span style="font-size:11px; color:var(--humo); display:block; margin-top:2px;">Los desembolsos aprobados aparecerán aquí con su referencia bancaria.</span>
-        </div>
-      `;
-    } else {
-      histEl.innerHTML = this.liqPayouts.map((p) => {
-        const name = this.escapeKyc(this.liqPayeeNames.get(p.payee_uid) || p.payee_uid);
-        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;color:var(--humo);border:1px solid var(--linea);border-radius:10px;padding:10px 12px;background:rgba(46,107,84,.07);">
-          <span><b style="color:var(--papel);">${name}</b> · ${this.formatCop(p.gross_cop)} · ref <b style="font-family:var(--font-mono);">${this.escapeKyc(p.transfer_reference || '—')}</b><br/>
-          <span style="font-family:var(--font-mono);font-size:10.5px;">${this.escapeKyc(p.reconciled_at || p.createdAt || '')} · ${p.ledger_entry_ids.length} asientos</span></span>
-          <button class="btn sa-liq-reverse" data-payout="${this.escapeKyc(p.id)}" style="font-size:10.5px;padding:7px 12px;border-color:var(--vino);white-space:nowrap;">↩️ Reversar</button>
-        </div>`;
-      }).join('');
-      histEl.querySelectorAll('.sa-liq-reverse').forEach((b) =>
-        b.addEventListener('click', () => this.openReverseModal((b as HTMLElement).getAttribute('data-payout') || '')));
-    }
-  }
-
-  private async openPayoutModal(payeeUid: string): Promise<void> {
-    this.payoutModalPayee = payeeUid;
-    this.payoutModalEntries = this.liqEntries.filter((e) => e.payee_uid === payeeUid && e.status === 'payable');
-    const overlay = document.getElementById('sa-payout-overlay');
-    const summary = document.getElementById('sa-payout-summary');
-    if (!overlay || !summary) return;
-    const total = this.payoutModalEntries.reduce((s, e) => s + (e.amount_gross_cop || 0), 0);
-    const name = this.liqPayeeNames.get(payeeUid) || payeeUid;
-    const tipo = this.payoutModalEntries[0]?.payee_type === 'host' ? 'hoster' : 'scout';
-    summary.innerHTML = `<b style="color:var(--papel);">${this.escapeKyc(name)}</b> <span style="font-family:var(--font-mono);font-size:11px;">(${tipo})</span><br/>
-      Total bruto: <b style="color:var(--luz);font-family:var(--font-mono);">${this.formatCop(total)}</b> · ${this.payoutModalEntries.length} asientos incluidos.`;
-    (document.getElementById('sa-payout-rut') as HTMLInputElement | null)!.checked = false;
-    (document.getElementById('sa-payout-pila') as HTMLInputElement | null)!.checked = false;
-    (document.getElementById('sa-payout-bank') as HTMLInputElement | null)!.checked = false;
-    (document.getElementById('sa-payout-ref') as HTMLInputElement | null)!.value = '';
-    const warn = document.getElementById('sa-payout-taxwarn');
-    if (warn) warn.style.display = 'none';
-    overlay.style.display = 'flex';
-    this.validatePayoutForm();
-    const scroll = overlay.querySelector('div');
-    if (scroll) scroll.scrollTop = 0;
-  }
-
-  private closePayoutModal(): void {
-    const overlay = document.getElementById('sa-payout-overlay');
-    if (overlay) overlay.style.display = 'none';
-    this.payoutModalEntries = [];
-    this.payoutModalPayee = '';
-  }
-
-  private validatePayoutForm(): void {
-    const rut = (document.getElementById('sa-payout-rut') as HTMLInputElement | null)?.checked === true;
-    const pila = (document.getElementById('sa-payout-pila') as HTMLInputElement | null)?.checked === true;
-    const bank = (document.getElementById('sa-payout-bank') as HTMLInputElement | null)?.checked === true;
-    const ref = ((document.getElementById('sa-payout-ref') as HTMLInputElement | null)?.value || '').trim();
-    const btn = document.getElementById('sa-payout-confirm') as HTMLButtonElement | null;
-    const ok = rut && pila && bank && ref.length > 0 && this.payoutModalEntries.length > 0;
-    if (btn) {
-      btn.disabled = !ok;
-      btn.style.opacity = ok ? '1' : '0.5';
-      btn.style.cursor = ok ? 'pointer' : 'not-allowed';
-    }
-  }
-
-  private async confirmPayout(): Promise<void> {
-    const btn = document.getElementById('sa-payout-confirm') as HTMLButtonElement | null;
-    const ref = ((document.getElementById('sa-payout-ref') as HTMLInputElement | null)?.value || '').trim();
-    const warn = document.getElementById('sa-payout-taxwarn');
-    if (this.payoutModalEntries.length === 0 || !ref) return;
-    const approverUid = Auth.currentUser?.uid || 'superadmin';
-    if (btn) { btn.disabled = true; btn.textContent = 'Procesando…'; }
-    try {
-      const payeeUid = this.payoutModalPayee;
-      const taxProfile = await this.resolveTaxProfile(payeeUid, this.payoutModalEntries[0]?.payee_type);
-      if (warn) warn.style.display = 'none';
-      if (!taxProfile.rutVerified || !this.isPilaCurrent(taxProfile.pilaVerified, taxProfile.pilaPeriod)) {
-        if (warn) {
-          warn.textContent = '⛔ Sin RUT/PILA vigentes no podemos aprobar este pago. Actualiza el perfil fiscal en Scouts & Hosters.';
-          warn.style.display = 'block';
-        }
-        await RondaDialog.alert({ title: 'Bloqueo fiscal', message: 'Sin RUT/PILA vigentes no podemos aprobar tu pago.', icon: '⛔', type: 'danger' });
-        return;
-      }
-      const alreadyPaid = this.payoutModalEntries.some((e) => e.status === 'paid' || !!e.payout_id);
-      if (alreadyPaid) {
-        await RondaDialog.alert({ title: 'Ya liquidado', message: 'Uno o más asientos ya fueron pagados. Recargando el ledger…', icon: 'ℹ️' });
-        this.closePayoutModal();
-        await this.loadLiquidaciones();
-        return;
-      }
-      const { payout, updatedEntries } = this.b2bEngine.approvePayout(
-        this.payoutModalEntries, approverUid, 'superadmin', ref, true,
-        { rutVerified: taxProfile.rutVerified, pilaVerified: this.isPilaCurrent(taxProfile.pilaVerified, taxProfile.pilaPeriod) });
-      await DB.savePayout(payout);
-      for (const u of updatedEntries) await DB.saveLedgerEntry(u);
-      await DB.logAudit({
-        actor_uid: approverUid, actor_type: 'superadmin', entity_type: 'payout',
-        entity_id: payout.id, action: 'payout_approved_reconciled',
-        new_state: { payout_id: payout.id, gross_cop: payout.gross_cop, entries: payout.ledger_entry_ids, transfer_reference: ref },
-        reason: 'Desembolso manual aprobado por superadmin', timestamp: new Date().toISOString(),
-      });
-      this.closePayoutModal();
-      await this.loadLiquidaciones();
-      await RondaDialog.alert({ title: 'Desembolso registrado 💸', message: `Payout <b>${this.escapeKyc(payout.id)}</b> conciliado por <b>${this.formatCop(payout.gross_cop)}</b> con ref <b>${this.escapeKyc(ref)}</b>.`, icon: '✅', html: true });
-    } catch (err: any) {
-      console.error('[SuperAdmin] Error aprobando desembolso:', err);
-      await RondaDialog.alert({ title: 'No se pudo aprobar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
-    } finally {
-      if (btn) { btn.textContent = 'Aprobar desembolso'; this.validatePayoutForm(); }
-    }
-  }
-
-  private async resolveTaxProfile(payeeUid: string, payeeType?: string): Promise<{ rutVerified: boolean; pilaVerified: boolean; pilaPeriod?: string }> {
-    try {
-      const docProfile = payeeType === 'host' ? await DB.getHost(payeeUid) : await DB.getScout(payeeUid);
-      if (docProfile) return { rutVerified: !!docProfile.rutVerified, pilaVerified: !!docProfile.pilaVerified, pilaPeriod: docProfile.pilaPeriod };
-      const other = payeeType === 'host' ? await DB.getScout(payeeUid) : await DB.getHost(payeeUid);
-      if (other) return { rutVerified: !!other.rutVerified, pilaVerified: !!other.pilaVerified, pilaPeriod: other.pilaPeriod };
-    } catch (e) {
-      console.warn('[SuperAdmin] No se pudo leer perfil fiscal:', e);
-    }
-    return { rutVerified: false, pilaVerified: false };
-  }
-
-  private openReverseModal(payoutId: string): void {
-    const p = this.liqPayouts.find((x) => x.id === payoutId) || null;
-    this.reversePayoutTarget = p;
-    const overlay = document.getElementById('sa-reverse-overlay');
-    const info = document.getElementById('sa-reverse-info');
-    const reason = document.getElementById('sa-reverse-reason') as HTMLTextAreaElement | null;
-    if (!overlay || !p) return;
-    if (info) info.innerHTML = `Payout <b style="font-family:var(--font-mono);">${this.escapeKyc(p.id)}</b> · ${this.formatCop(p.gross_cop)} · ${p.ledger_entry_ids.length} asientos. Se generará un asiento contrario <b>sin borrar</b> el original.`;
-    if (reason) reason.value = '';
-    overlay.style.display = 'flex';
-    this.validateReverseForm();
-  }
-
-  private closeReverseModal(): void {
-    const overlay = document.getElementById('sa-reverse-overlay');
-    if (overlay) overlay.style.display = 'none';
-    this.reversePayoutTarget = null;
-  }
-
-  private validateReverseForm(): void {
-    const reason = ((document.getElementById('sa-reverse-reason') as HTMLTextAreaElement | null)?.value || '').trim();
-    const btn = document.getElementById('sa-reverse-confirm') as HTMLButtonElement | null;
-    const ok = !!this.reversePayoutTarget && reason.length >= 5;
-    if (btn) {
-      btn.disabled = !ok;
-      btn.style.opacity = ok ? '1' : '0.5';
-      btn.style.cursor = ok ? 'pointer' : 'not-allowed';
-    }
-  }
-
-  private async confirmReverse(): Promise<void> {
-    const reason = ((document.getElementById('sa-reverse-reason') as HTMLTextAreaElement | null)?.value || '').trim();
-    const btn = document.getElementById('sa-reverse-confirm') as HTMLButtonElement | null;
-    const target = this.reversePayoutTarget;
-    if (!target || reason.length < 5) return;
-    const authorizer = Auth.currentUser?.uid || 'superadmin';
-    if (btn) { btn.disabled = true; btn.textContent = 'Generando…'; }
-    try {
-      const entriesById = new Map(this.liqEntries.map((e) => [e.id, e]));
-      let created = 0;
-      for (const entryId of target.ledger_entry_ids) {
-        const orig = entriesById.get(entryId);
-        if (!orig) continue;
-        const reversal = this.b2bEngine.processReversal(orig, reason, authorizer);
-        const exists = this.liqEntries.some((e) => e.idempotency_key === reversal.idempotency_key);
-        if (exists) continue;
-        await DB.saveLedgerEntry(reversal);
-        created += 1;
-      }
-      await DB.logAudit({
-        actor_uid: authorizer, actor_type: 'superadmin', entity_type: 'payout',
-        entity_id: target.id, action: 'payout_reversed',
-        new_state: { reversed_entries: created, reason }, timestamp: new Date().toISOString(),
-        reason,
-      });
-      this.closeReverseModal();
-      await this.loadLiquidaciones();
-      await RondaDialog.alert({ title: 'Reverso generado ↩️', message: `Se crearon <b>${created}</b> asientos contrarios enlazados al payout. El original se conserva.`, icon: '✅', html: true });
-    } catch (err: any) {
-      console.error('[SuperAdmin] Error generando reverso:', err);
-      await RondaDialog.alert({ title: 'No se pudo reversar', message: err?.message || String(err), icon: '⚠️', type: 'danger' });
-    } finally {
-      if (btn) { btn.textContent = 'Generar reverso'; this.validateReverseForm(); }
-    }
   }
 
   // ============ T2: Alta/gestión de Scouts y Hosters ============
@@ -2033,7 +1141,6 @@ export class SuperAdminController {
         reason: 'Alta/gestión manual desde SuperAdmin',
       });
       await this.loadPeople();
-      await this.loadLiquidaciones();
       await RondaDialog.alert({ title: 'Guardado ✅', message: `Colaborador <b>${this.escapeKyc(uid)}</b> (${type}) guardado con RUT ${rut ? '✓' : '✕'} y PILA ${pila ? `✓ ${this.currentBogotaMonth()}` : '✕'}.`, icon: '✅', html: true });
     } catch (err: any) {
       console.error('[SuperAdmin] Error guardando persona:', err);

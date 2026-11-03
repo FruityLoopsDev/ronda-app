@@ -7,15 +7,14 @@ export class AuthService {
 
   /** Perfil guardado localmente durante registro para evitar race condition con onAuthStateChanged */
   private _pendingProfile: User | null = null;
+  private _persistencePromise: Promise<void> | null = null;
 
   constructor() {
     this.currentUser = null;
     
-    // Configurar persistencia en sesión temporal para local / emulador
-    this._ensureSessionPersistence();
-
-    // Iniciar escucha del estado de autenticación
-    setTimeout(() => this.initAuthStateListener(), 100);
+    // Configurar persistencia en sesión temporal para local / emulador e iniciar escucha inmediata
+    this._persistencePromise = this._ensureSessionPersistence();
+    void this._persistencePromise.finally(() => this.initAuthStateListener());
   }
 
   private _getAuth() {
@@ -68,16 +67,24 @@ export class AuthService {
           return;
         }
         
-        let userProfile = await DB.getUser(firebaseUser.uid);
-        
         // Blindaje permanente para cuentas staff maestras (SuperAdmin)
         const isMasterSuperAdmin = firebaseUser.email === 'cesar@ronda.uno' || firebaseUser.uid === 'hVX2RL2xJhRFurJJsAgdyVIaDT53';
 
+        let userProfile: User | null = null;
+        try {
+          userProfile = await Promise.race([
+            DB.getUser(firebaseUser.uid),
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500))
+          ]);
+        } catch (err) {
+          console.warn("[Auth] Lectura de perfil en Firestore falló, activando fallback en memoria:", err);
+        }
+
         if (!userProfile) {
-          console.warn("[Auth] No se encontró perfil de Firestore para el UID. Creando perfil inicial...");
+          console.warn("[Auth] No se encontró perfil en Firestore o tiempo agotado. Creando perfil inicial...");
           userProfile = {
             uid: firebaseUser.uid,
-            name: isMasterSuperAdmin ? 'César Dela Croix' : '',
+            name: isMasterSuperAdmin ? 'César Dela Croix' : (firebaseUser.displayName || ''),
             email: firebaseUser.email || '',
             role: isMasterSuperAdmin ? 'superadmin' : 'client',
             trustTier: isMasterSuperAdmin ? 3 : 0,
@@ -85,14 +92,14 @@ export class AuthService {
             orientation: isMasterSuperAdmin ? 'straight' : ''
           } as User;
           
-          await DB.saveUser(userProfile).catch(e => console.warn('[Auth] Error guardando perfil:', e));
+          void DB.saveUser(userProfile).catch(e => console.warn('[Auth] Error guardando perfil en segundo plano:', e));
         } else if (isMasterSuperAdmin && userProfile.role !== 'superadmin') {
           // Auto-reparación permanente: elevar cuenta staff maestra si su rol fue degradado
           console.log("[Auth] Restaurando rol superadmin para cuenta maestra...");
           userProfile.role = 'superadmin';
           userProfile.email = 'cesar@ronda.uno';
           if (!userProfile.name) userProfile.name = 'César Dela Croix';
-          await DB.saveUser(userProfile).catch(e => console.warn('[Auth] Error elevando superadmin:', e));
+          void DB.saveUser(userProfile).catch(e => console.warn('[Auth] Error elevando superadmin en segundo plano:', e));
         }
         
         this.currentUser = userProfile;
@@ -115,7 +122,7 @@ export class AuthService {
   async loginWithEmail(email: string, password: string) {
     console.log(`[Auth] Login intent: ${email}`);
     try {
-      await this._ensureSessionPersistence();
+      if (this._persistencePromise) await this._persistencePromise;
       await signInWithEmailAndPassword(this._getAuth(), email, password);
     } catch (error: any) {
       console.error("Error de login en Firebase Auth:", error);
@@ -164,7 +171,7 @@ export class AuthService {
   async registerWithEmail(email: string, password: string, profileData: Partial<User>) {
     console.log(`[Auth] Register intent: ${email}`);
     try {
-      await this._ensureSessionPersistence();
+      if (this._persistencePromise) await this._persistencePromise;
       const userCredential = await createUserWithEmailAndPassword(this._getAuth(), email, password);
       const uid = userCredential.user.uid;
 

@@ -7,14 +7,11 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // SuperAdmin de Emergencia: Exclusivo UID maestro o cesar@ronda.uno verificado
+    // SuperAdmin de Emergencia: Exclusivo UID maestro o cesar@ronda.uno
     function isMasterAdmin() {
       return isSignedIn() && (
         request.auth.uid == 'hVX2RL2xJhRFurJJsAgdyVIaDT53' ||
-        (
-          request.auth.token.email_verified == true &&
-          request.auth.token.email == 'cesar@ronda.uno'
-        )
+        request.auth.token.get('email', '') == 'cesar@ronda.uno'
       );
     }
 
@@ -39,7 +36,12 @@ service cloud.firestore {
     function isSales()      { return request.auth != null && userRole(request.auth.uid) == 'sales'; }
     function isNetwork()    { return request.auth != null && userRole(request.auth.uid) == 'network'; }
     function isAdmin()      { return request.auth != null && userRole(request.auth.uid) == 'admin'; }
-    function isStaff()      { return isSuperAdmin() || isSales() || isNetwork() || isAdmin(); }
+    function isStaff() {
+      return request.auth != null && (
+        isMasterAdmin() ||
+        userRole(request.auth.uid) in ['superadmin', 'sales', 'network', 'admin']
+      );
+    }
 
     function isVenueStaff(venueId) {
       return isSuperAdmin() || (
@@ -73,18 +75,22 @@ service cloud.firestore {
       // Privacidad: cada quien lee solo su propio documento; el staff lee todo.
       allow read: if request.auth != null && (request.auth.uid == userId || isStaff());
 
-      // Alta: solo el propio usuario con rol 'client' (o cuenta staff maestra autorizada).
-      allow create: if request.auth != null
-                    && request.auth.uid == userId
-                    && (
-                      (request.resource.data.get('role', 'client') == 'client'
-                        && request.resource.data.get('hasTicket', false) == false
-                        && request.resource.data.get('trustTier', 0) == 0
-                        && request.resource.data.get('isVerified', false) == false
-                        && !request.resource.data.keys().hasAny([
-                          'nfts', 'wallet_address', 'matches', 'verifications'
-                        ]))
-                      || isMasterAdmin()
+      // Alta: superadmin puede aprovisionar cualquier cuenta; el propio usuario solo con rol 'client' (o cuenta maestra).
+      allow create: if request.auth != null && (
+                      isSuperAdmin()
+                      || (
+                        request.auth.uid == userId
+                        && (
+                          (request.resource.data.get('role', 'client') == 'client'
+                            && request.resource.data.get('hasTicket', false) == false
+                            && request.resource.data.get('trustTier', 0) == 0
+                            && request.resource.data.get('isVerified', false) == false
+                            && !request.resource.data.keys().hasAny([
+                              'nfts', 'wallet_address', 'matches', 'verifications'
+                            ]))
+                          || isMasterAdmin()
+                        )
+                      )
                     );
 
       // Actualización: el propio usuario sin poder escalar su rol ni auto-otorgarse
@@ -286,7 +292,7 @@ service cloud.firestore {
         allow create: if request.auth != null && (isSuperAdmin() || isSales() || isNetwork());
         allow update, delete: if isSuperAdmin();
       }
-
+    }
 
     // --- Solicitudes de Alta de Locales en Red (Scouts -> SuperAdmin/Network) ---
     match /venue_requests/{reqId} {
@@ -380,19 +386,6 @@ service cloud.firestore {
       allow read: if true;
       allow create: if statId == 'visits' && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == 1;
       allow update: if statId == 'visits' && request.resource.data.keys().hasOnly(['count']) && request.resource.data.count == resource.data.count + 1;
-      allow delete: if isSuperAdmin();
-    }
-
-    // --- Chats 1:1: solo participantes del match, sin modificar participantes/id/evento ---
-    match /chats/{chatId} {
-      allow create: if request.auth != null
-        && request.resource.data.participants is list
-        && request.resource.data.participants.size() == 2
-        && request.auth.uid in request.resource.data.participants;
-      allow read: if request.auth != null && request.auth.uid in resource.data.participants;
-      allow update: if request.auth != null
-        && request.auth.uid in resource.data.participants
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['participants', 'id', 'eventId', 'createdAt']);
       allow delete: if isSuperAdmin();
     }
 

@@ -1,11 +1,11 @@
 import { DB, Venue } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { escapeHtml } from './utils.js';
-import { 
-  checkTerritorialExclusivity, 
-  detectAllNetworkCollisions, 
-  EXCLUSIVITY_CONFIG 
-} from './entry-network.js';
+import {
+  checkTerritorialExclusivity,
+  detectAllNetworkCollisions,
+  EXCLUSIVITY_CONFIG
+} from './territorial.js';
 import { Unsubscribe } from 'firebase/firestore';
 
 export class NetworkController {

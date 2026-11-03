@@ -17,6 +17,32 @@
 
 ## 📅 Registro Histórico de Interacciones y Decisiones Clave
 
+### [2026-11-03] — SuperAdmin: Alta y Administración de Bares Aliados desde el Panel
+- **Solicitud del Usuario:** El botón "+ Registrar Local" abría un aviso que remitía a `network.html`; permitir al SuperAdmin crear y administrar locales directamente.
+- **Acciones Realizadas:**
+  1. *Nuevo módulo:* `src/panels/venues-panel.ts` con tabla (búsqueda por nombre/zona/NIT y filtro todos/activos/pausados), KPIs de red, alta y edición en modal (nombre, zona, dirección, NIT, mesas, paquete de barra, coordenadas, dueño, estado), pausa/activación y validación de exclusividad de 500 m en vivo.
+  2. *Motor territorial reutilizable:* `src/territorial.ts` extrae Haversine + exclusividad de `entry-network.ts` (cuyo import arrancaba el portal de red). `entry-network` los re-exporta y `network.ts` los consume del nuevo módulo, eliminando el ciclo `network ↔ entry-network`.
+  3. *Shell:* la sección "Bares y anfitriones" delega en el módulo; la cabecera estrena "Actualizar", "Registrar Local" y filtros reales. `src/superadmin.ts` pasa de 1.439 a 1.354 líneas.
+  4. *Modelo:* `Venue.capacity` queda documentado como campo legado y se sincroniza con `tablesCount * 2` al guardar; las altas/ediciones registran auditoría (`venue_created`, `venue_updated`, `venue_activated`, `venue_paused`).
+- **Validaciones Técnicas y Resultados:**
+  - `npx tsc --noEmit`: 0 errores.
+  - `node scripts/check-html-integrity.cjs`: 11 páginas y 26 assets OK.
+  - `npx vite build`: compilación limpia (`superadmin` 140,03 kB).
+  - Pruebas con Chrome headless y `DB` simulado: alta (payload + auditoría `venue_created`), edición (vaciar NIT/precio genera `deleteField`, acción `venue_updated`), pausa (`venue_paused`), filtro de búsqueda (1 de 4), validaciones de formulario y conflicto territorial a 31 m.
+
+### [2026-11-03] — Panel SuperAdmin: KYC y Liquidaciones B2B como Módulos Independientes
+- **Solicitud del Usuario:** Separar en módulos independientes las dos tarjetas del Resumen (`/superadmin`) y agregarlas al menú lateral en sus secciones correspondientes.
+- **Acciones Realizadas:**
+  1. *Nuevos módulos:* `src/panels/kyc-panel.ts` (cola `kycReviews` paginada con cursor de 10, fotos Base64 servidas bajo demanda, aprobar Tier 2 / rechazar con motivo) y `src/panels/treasury-panel.ts` (micro-KPIs, pestañas Pendientes/En Revisión/Historial, desembolso manual con bloqueo fiscal RUT + PILA del mes, reverso auditado y modales propios).
+  2. *Contrato de navegación:* `src/panels/context.ts` define `SuperAdminSection`, `PanelContext` y `SuperAdminPanel`; el shell ya no conoce los detalles internos de cada módulo.
+  3. *Shell simplificado:* `src/superadmin.ts` pasa de 2.244 a 1.439 líneas (solo menú, cabecera y secciones existentes). El Resumen reemplaza las tarjetas embebidas por dos accesos rápidos a los módulos.
+  4. *Menú y estilos:* `superadmin.html` incorpora el grupo **Cumplimiento** (Verificación KYC) y **Finanzas** (Liquidaciones B2B), más las clases `.sa-module-grid`, `.sa-panel-card`, `.sa-kpi-card` y `.sa-quick-link`.
+- **Validaciones Técnicas y Resultados:**
+  - `npx tsc --noEmit`: 0 errores.
+  - `node scripts/check-html-integrity.cjs`: 11 páginas y 26 assets OK.
+  - `npx vite build`: compilación limpia (`superadmin` 118.61 kB).
+  - Navegación verificada con Chrome headless (CDP): Resumen → KYC → Tesorería → Resumen y accesos rápidos, con cabecera y clase activa correctas.
+
 ### [2026-11-03] — Auditoría Forense Integral y Ejecución de 4 Fases de Seguridad y Blindaje con Cline
 - **Solicitud del Usuario:** Realizar evaluación exhaustiva del proyecto, catalogar todas las vulnerabilidades y trazar un plan para ejecutar con Cline; posteriormente validar la ejecución completa de las 4 fases.
 - **Acciones Realizadas:**

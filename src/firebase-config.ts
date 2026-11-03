@@ -18,25 +18,6 @@ export const RondaConfig = {
 };
 
 const app = initializeApp(RondaConfig.firebaseConfig);
-// Carga instantánea desde IndexedDB: la caché local persistente evita round-trips
-// de red en visitas repetidas y deja que Firestore sincronice en segundo plano.
-let db: any;
-try {
-  // Carga instantánea desde IndexedDB: la caché local persistente evita round-trips
-  // de red en visitas repetidas y deja que Firestore sincronice en segundo plano.
-  db = initializeFirestore(app, {
-    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-  });
-} catch (e) {
-  console.warn("[Firebase] Falló la inicialización de caché persistente, usando Firestore estándar:", e);
-  db = getFirestore(app);
-}
-
-const auth = getAuth(app);
-let messaging: any = null;
-if (typeof window !== 'undefined') {
-  try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
-}
 
 // Persistencia del modo emulador en local a través de sesión temporal (sessionStorage)
 let useEmulator = false;
@@ -56,15 +37,37 @@ if (typeof window !== 'undefined') {
   const envEmulator = (import.meta as any).env?.VITE_USE_FIREBASE_EMULATOR === 'true';
 
   useEmulator = envEmulator || storedEmulator || urlHasEmulator;
+}
 
+// Carga instantánea: en producción usa IndexedDB persistente; en emulador usa memoria directa
+// para evitar bloqueos de lease multi-pestaña y estados obsoletos entre reinicios del emulador.
+let db: any;
+try {
   if (useEmulator) {
-    try {
-      connectFirestoreEmulator(db, 'localhost', 8081);
-      connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-      console.log("Conectado a Firebase Local Emulator Suite (Firestore: 8081, Auth: 9099) vía sesión temporal.");
-    } catch (e) {
-      console.warn("Emuladores ya conectados o no disponibles:", e);
-    }
+    db = getFirestore(app);
+  } else {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    });
+  }
+} catch (e) {
+  console.warn("[Firebase] Falló la inicialización de caché persistente, usando Firestore estándar:", e);
+  db = getFirestore(app);
+}
+
+const auth = getAuth(app);
+let messaging: any = null;
+if (typeof window !== 'undefined' && !useEmulator) {
+  try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
+}
+
+if (typeof window !== 'undefined' && useEmulator) {
+  try {
+    connectFirestoreEmulator(db, '127.0.0.1', 8081);
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+    console.log("Conectado a Firebase Local Emulator Suite (127.0.0.1 -> Firestore: 8081, Auth: 9099) vía sesión temporal.");
+  } catch (e) {
+    console.warn("Emuladores ya conectados o no disponibles:", e);
   }
 }
 
