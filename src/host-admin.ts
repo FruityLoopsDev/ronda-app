@@ -987,6 +987,13 @@ export class HostAdminController {
     const venue = this.activeVenue;
     const event = this.currentEvent;
 
+    // Si cambia la noche activa, liberar la suscripción anterior antes de cargar la nueva.
+    if (event?.id && this.bookingsEventId && this.bookingsEventId !== event.id && this.bookingsUnsubscribe) {
+      this.bookingsUnsubscribe();
+      this.bookingsUnsubscribe = null;
+      this.liveBookings = [];
+    }
+
     // Primera carga puntual; después Firestore mantiene la lista sincronizada en vivo.
     if (liveBookings) {
       this.liveBookings = liveBookings;
