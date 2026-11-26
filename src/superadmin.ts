@@ -774,7 +774,7 @@ export class SuperAdminController {
               <option value="A4">A4: Mentores</option>
               <option value="GEN">GEN: General</option>
             </select>
-            <input id="sa-token-token" class="ronda-input" placeholder="Token personalizado (opcional; 32+ chars)" style="margin-bottom:0;">
+            
             <input id="sa-token-phone" class="ronda-input" placeholder="WhatsApp (opcional)" style="margin-bottom:0;">
             <input id="sa-token-notes" class="ronda-input" placeholder="Notas (opcional)" style="margin-bottom:0;">
             <button type="submit" class="btn ambar" style="font-size:11px; padding:10px 16px; font-weight:700;">➕ Emitir Token</button>
@@ -1283,13 +1283,12 @@ export class SuperAdminController {
   private async emitToken(): Promise<void> {
     const nameEl = document.getElementById('sa-token-name') as HTMLInputElement | null;
     const ringEl = document.getElementById('sa-token-ring') as HTMLSelectElement | null;
-    const tokenEl = document.getElementById('sa-token-token') as HTMLInputElement | null;
     const phoneEl = document.getElementById('sa-token-phone') as HTMLInputElement | null;
     const notesEl = document.getElementById('sa-token-notes') as HTMLInputElement | null;
-    if (!nameEl || !ringEl || !tokenEl) return;
+    if (!nameEl || !ringEl) return;
     const name = nameEl.value.trim();
     const ring = ringEl.value || 'GEN';
-    let token = tokenEl.value.trim().toLowerCase();
+    let token = '';
     const phoneRaw = phoneEl ? phoneEl.value.trim() : '';
     const notesRaw = notesEl ? notesEl.value.trim() : '';
     const phone = phoneRaw || '';
@@ -1304,18 +1303,10 @@ export class SuperAdminController {
       await RondaDialog.alert({ title: 'Anillo inválido', message: 'Selecciona un anillo válido.', icon: '⚠️', type: 'danger' });
       return;
     }
-    if (!token) {
-      const bytes = new Uint8Array(32);
-      crypto.getRandomValues(bytes);
-      token = 'rnd-' + Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
-    } else {
-      if (!token.startsWith('rnd-')) token = `rnd-${token}`;
-      if (token.length < 36 || token.length > 128 || !/^[a-z0-9-]+$/.test(token)) {
-        await RondaDialog.alert({ title: 'Token inválido', message: 'Token personalizado: mínimo 32 caracteres de secreto además de rnd-, y solo minúsculas, números o guiones.', icon: '⚠️', type: 'danger' });
-        tokenEl.focus();
-        return;
-      }
-    }
+    // Credencial bearer: solo generación aleatoria criptográfica, sin tokens humanos.
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    token = 'rnd-' + Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
     if (phone && !/^[+0-9() .-]{7,30}$/.test(phone)) {
       await RondaDialog.alert({ title: 'WhatsApp inválido', message: 'El teléfono debe contener entre 7 y 30 caracteres válidos.', icon: '⚠️', type: 'danger' });
       phoneEl?.focus();
@@ -1340,7 +1331,9 @@ export class SuperAdminController {
       await runTransaction(RondaServices.db, async (tx) => {
         const tokenRef = doc(RondaServices.db, 'invest_tokens', token);
         const existing = await tx.get(tokenRef);
-        if (existing.exists()) throw new Error('Ese token ya existe. Genera uno nuevo.');
+        const privateRef = doc(RondaServices.db, 'invest_token_private', token);
+        const existingPrivate = await tx.get(privateRef);
+        if (existing.exists() || existingPrivate.exists()) throw new Error('Colisión de token. Intenta emitirlo nuevamente.');
         tx.set(tokenRef, entry);
         if (Object.keys(privateEntry).length) {
           tx.set(doc(RondaServices.db, 'invest_token_private', token), { ...privateEntry, updatedAt: now, updatedBy: by });
@@ -1357,7 +1350,9 @@ export class SuperAdminController {
       } catch (auditErr) {
         console.error('[SuperAdmin] Token emitido, pero falló la auditoría:', auditErr);
       }
-      tokenEl.value = '';
+      if (nameEl) nameEl.value = '';
+      if (phoneEl) phoneEl.value = '';
+      if (notesEl) notesEl.value = '';
       await this.loadTokens();
     } catch (err: any) {
       console.error('[SuperAdmin] Error emitiendo token:', err);
