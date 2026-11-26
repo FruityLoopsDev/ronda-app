@@ -496,7 +496,7 @@ export class SuperAdminController {
 
     const liveBookingsQuery = query(
       collection(RondaServices.db, 'users'),
-      where('activeReservation.status', '==', 'confirmed')
+      where('activeReservation.status', 'in', ['confirmed', 'checked_in'])
     );
     if (this.summaryBookingsUnsubscribe) this.summaryBookingsUnsubscribe();
     this.summaryBookingsUnsubscribe = onSnapshot(liveBookingsQuery, (snapshot) => {
@@ -595,7 +595,7 @@ export class SuperAdminController {
   ) {
     const bookingsQuery = query(
       collection(RondaServices.db, 'users'),
-      where('activeReservation.status', '==', 'confirmed')
+      where('activeReservation.status', 'in', ['confirmed', 'checked_in'])
     );
 
     if (liveBookings) {
@@ -1066,7 +1066,7 @@ export class SuperAdminController {
 
       // Reservas confirmadas: NO existe colección `confirmedBookings`; viven en
       // users/{uid}.activeReservation.status == 'confirmed' (client.ts:confirmBooking).
-      const bookingsAgg = await getCountFromServer(query(collection(fs, 'users'), where('activeReservation.status', '==', 'confirmed')));
+      const bookingsAgg = await getCountFromServer(query(collection(fs, 'users'), where('activeReservation.status', 'in', ['confirmed', 'checked_in'])));
       const confirmedBookings = bookingsAgg.data().count;
 
       const subText = `${closedEvents} eventos cerrados · ${confirmedBookings} reservas confirmadas`;
@@ -1080,7 +1080,7 @@ export class SuperAdminController {
 
       // Volumen B2C real: suma de priceFormatted de las reservas confirmadas (muestra limitada).
       const snap = await getDocs(query(collection(fs, 'users'),
-        where('activeReservation.status', '==', 'confirmed'),
+        where('activeReservation.status', 'in', ['confirmed', 'checked_in']),
         limit(50)));
       let sum = 0;
       let priced = 0;
