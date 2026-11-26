@@ -453,7 +453,7 @@ export class SuperAdminController {
               <span style="font-size: 20px;">🛡️</span>
               <div>
                 <b style="font-size: 12px; color: var(--papel); display: block;">Verificación biométrica</b>
-                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">⏸ Pausada durante piloto de reservas</span>
+                <span style="font-size: 10px; color: var(--luz); font-family: var(--font-mono);">⏸ Pausada durante piloto de reservas</span>
               </div>
             </div>
 
