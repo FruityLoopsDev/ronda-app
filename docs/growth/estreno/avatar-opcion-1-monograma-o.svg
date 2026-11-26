@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..800&amp;display=swap');
+      .bg { fill: #0D0D10; }
+      .ring { fill: none; stroke: #F0A830; stroke-width: 2; opacity: 0.35; stroke-dasharray: 6 8; }
+      .circle-safe { fill: none; stroke: #222228; stroke-width: 1; }
+      .glyph {
+        font-family: 'Bodoni Moda', 'Didot', 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 560px;
+        fill: url(#amberGrad);
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+    </style>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC860" />
+      <stop offset="50%" stop-color="#F0A830" />
+      <stop offset="100%" stop-color="#D48818" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" class="bg" />
+
+  <!-- Subtle luxury concentric ring matching Instagram circular profile -->
+  <circle cx="540" cy="540" r="490" class="ring" />
+
+  <!-- The signature Italic Amber O of RONDA -->
+  <!-- Slightly offset in Y to be optically centered due to italic serif slant -->
+  <text x="530" y="555" class="glyph">O</text>
+</svg>
+

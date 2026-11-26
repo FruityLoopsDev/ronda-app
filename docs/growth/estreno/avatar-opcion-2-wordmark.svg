@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&amp;display=swap');
+      .bg { fill: #0D0D10; }
+      .outer-ring { fill: none; stroke: #25252D; stroke-width: 2; }
+      .wordmark {
+        font-family: 'Bodoni Moda', 'Didot', 'Playfair Display', Georgia, serif;
+        font-weight: 800;
+        font-size: 154px;
+        letter-spacing: 24px;
+        fill: #F3EDE2;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      .italic-o {
+        fill: url(#goldGrad);
+        font-style: italic;
+        font-weight: 500;
+      }
+      .subtext {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-size: 26px;
+        font-weight: 500;
+        letter-spacing: 12px;
+        fill: #78757E;
+        text-anchor: middle;
+        text-transform: uppercase;
+      }
+    </style>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD078" />
+      <stop offset="50%" stop-color="#F0A830" />
+      <stop offset="100%" stop-color="#D48818" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" class="bg" />
+
+  <!-- Subtle circular safe border -->
+  <circle cx="540" cy="540" r="500" class="outer-ring" />
+
+  <!-- The exact RONDA wordmark centered -->
+  <text x="552" y="525" class="wordmark">R<tspan class="italic-o">O</tspan>NDA</text>
+
+  <!-- Subtle micro-subtext for circular balance -->
+  <text x="546" y="625" class="subtext">BOGOTÁ</text>
+</svg>
+
