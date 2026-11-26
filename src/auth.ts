@@ -53,7 +53,7 @@ export class AuthService {
 
         // Durante el alta, registerWithEmail se encarga de guardar el perfil completo.
         // No aprovisionar un perfil básico en paralelo mientras se calcula founderNumber.
-        if (this._registrationInProgress && (!this._pendingProfile || this._pendingProfile.uid !== firebaseUser.uid)) {
+        if (this._registrationInProgress) {
           console.log("[Auth] Registro en curso; se difiere el procesamiento del listener.");
           return;
         }
