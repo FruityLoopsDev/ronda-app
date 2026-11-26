@@ -268,13 +268,8 @@ class VerificationService {
     } catch {}
 
     if (this.failedAttempts >= 2) {
-      this.isPendingManualReview = true;
-      try {
-        sessionStorage.setItem('ronda_kyc_pending_manual', 'true');
-      } catch {}
-
-      // Registrar caso en Firestore kycReviews para que el equipo de RONDA lo apruebe en superadmin
-      await this.submitKycReview({
+      // La revisión manual solo se declara pendiente si Firestore confirmó el alta.
+      const reviewResult = await this.submitKycReview({
         reason: reason || 'manual_approval_after_2_attempts',
         distance: verdict?.distance,
         threshold: verdict?.threshold,
@@ -289,34 +284,54 @@ class VerificationService {
         status: 'pending'
       });
 
-      // Si hay usuario logueado, actualizar en DB para trazabilidad
-      const uid = Auth.currentUser?.uid;
-      if (uid && RondaServices.db) {
-        try {
-          await updateDoc(doc(RondaServices.db, 'users', uid), {
-            isPendingManualReview: true,
-            kycStatus: 'pending_manual',
-            updatedAt: new Date().toISOString()
-          });
-        } catch (e) {
-          console.warn('[KYC] No se pudo guardar estado pending_manual en perfil:', e);
-        }
-      }
-
-      this.setStatus(
-        '⏳ Tras 2 intentos, tu verificación ha pasado a aprobación manual por el equipo de Ronda (máx. 24h). Ya puedes guardar tu perfil y continuar en la app.',
-        'warn'
-      );
-
       const btnStartKyc = document.getElementById('btn-start-kyc') as HTMLButtonElement | null;
-      if (btnStartKyc) {
-        btnStartKyc.textContent = 'En revisión manual por el equipo Ronda ⏳';
-        btnStartKyc.disabled = true;
-      }
-
       const btnSave = document.getElementById('btn-save-profile') as HTMLButtonElement | null;
-      if (btnSave) {
-        btnSave.disabled = false;
+      if (reviewResult.queued) {
+        this.isPendingManualReview = true;
+        try {
+          sessionStorage.setItem('ronda_kyc_pending_manual', 'true');
+        } catch {}
+
+        // Solo sincronizar el perfil cuando la solicitud sí existe en la cola.
+        const uid = Auth.currentUser?.uid;
+        if (uid && RondaServices.db) {
+          try {
+            await updateDoc(doc(RondaServices.db, 'users', uid), {
+              isPendingManualReview: true,
+              kycStatus: 'pending_manual',
+              updatedAt: new Date().toISOString()
+            });
+          } catch (e) {
+            console.warn('[KYC] Caso en cola, pero no se pudo sincronizar pending_manual en perfil:', e);
+          }
+        }
+
+        this.setStatus(
+          '⏳ Tras 2 intentos, tu verificación ha pasado a aprobación manual por el equipo de Ronda (máx. 24h). Ya puedes guardar tu perfil y continuar en la app.',
+          'warn'
+        );
+        if (btnStartKyc) {
+          btnStartKyc.textContent = 'En revisión manual por el equipo Ronda ⏳';
+          btnStartKyc.disabled = true;
+        }
+        if (btnSave) btnSave.disabled = false;
+      } else {
+        // Evitar bloqueo falso: sin documento de revisión confirmado no hay estado pending_manual.
+        this.failedAttempts = 1;
+        this.isPendingManualReview = false;
+        try {
+          sessionStorage.setItem('ronda_kyc_failed_attempts', '1');
+          sessionStorage.removeItem('ronda_kyc_pending_manual');
+        } catch {}
+        this.setStatus(
+          '⚠️ No pudimos registrar tu solicitud de revisión manual. No quedó enviada; revisa tu conexión y vuelve a intentar la verificación.',
+          'err'
+        );
+        if (btnStartKyc) {
+          btnStartKyc.textContent = 'Reintentar Verificación KYC';
+          btnStartKyc.disabled = false;
+        }
+        if (btnSave) btnSave.disabled = true;
       }
     } else {
       const baseMsg = this.statusMessage(reason);
