@@ -655,7 +655,7 @@ export class SuperAdminController {
                       ${escapeHtml(b.reservation.venueName)} · ${escapeHtml(b.reservation.dayDate)}
                     </td>
                     <td style="padding:14px 16px;">
-                      <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : '✅ Pagado Wompi'}</span>
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : `✅ ${b.user.paymentMethod || 'Pagado'}`}</span>
                     </td>
                     <td style="padding:14px 16px;">
                       <span style="font-size:10.5px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); padding:2px 8px; border-radius:999px;">${(b.user.trustTier ?? (b.user.isVerified ? 2 : 0)) >= 2 ? '🛡️ Tier 2 verificado' : (b.user.trustTier ?? 0) >= 1 ? 'Tier 1 básico' : '⏸ Identidad pendiente · piloto'}</span>
