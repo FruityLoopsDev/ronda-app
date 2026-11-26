@@ -25,7 +25,8 @@ async function init() {
     const data = docSnap.data();
     const hasPhone = typeof data.phone === 'string' && data.phone.trim() !== '';
     const hasNotes = typeof data.notes === 'string' && data.notes.trim() !== '';
-    if (!hasPhone && !hasNotes) continue;
+    const hasLegacyTokenField = typeof data.token === 'string';
+    if (!hasPhone && !hasNotes && !hasLegacyTokenField) continue;
     found++;
     if (!apply) continue;
 
@@ -41,6 +42,7 @@ async function init() {
       const cleanPatch = {};
       if (hasPhone) cleanPatch.phone = admin.firestore.FieldValue.delete();
       if (hasNotes) cleanPatch.notes = admin.firestore.FieldValue.delete();
+      if (hasLegacyTokenField) cleanPatch.token = admin.firestore.FieldValue.delete();
       tx.update(publicRef, cleanPatch);
     });
     migrated++;
@@ -48,7 +50,7 @@ async function init() {
 
   console.log(apply
     ? `Migration completed: ${migrated} token records sanitized.`
-    : `Dry run: ${found} token records contain legacy private fields. No writes made. Re-run with --apply to migrate.`);
+    : `Dry run: ${found} token records contain legacy token/PII fields. No writes made. Re-run with --apply to migrate.`);
   await admin.app().delete();
 })().catch((err) => {
   console.error('Invest token privacy migration failed:', err.message || err);
