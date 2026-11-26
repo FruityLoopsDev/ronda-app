@@ -774,7 +774,7 @@ export class SuperAdminController {
               <option value="A4">A4: Mentores</option>
               <option value="GEN">GEN: General</option>
             </select>
-            <input id="sa-token-token" class="ronda-input" placeholder="Slug/Token (rnd-…)" required style="margin-bottom:0;">
+            <input id="sa-token-token" class="ronda-input" placeholder="Token personalizado (opcional; 32+ chars)" style="margin-bottom:0;">
             <input id="sa-token-phone" class="ronda-input" placeholder="WhatsApp (opcional)" style="margin-bottom:0;">
             <input id="sa-token-notes" class="ronda-input" placeholder="Notas (opcional)" style="margin-bottom:0;">
             <button type="submit" class="btn ambar" style="font-size:11px; padding:10px 16px; font-weight:700;">➕ Emitir Token</button>
@@ -1332,7 +1332,7 @@ export class SuperAdminController {
       return;
     }
     const now = new Date().toISOString();
-    const entry = { name, leadId: `FFF-${ring}-${token.slice(4, 12)}`, role: 'investor' as const, ring: ring as InvestToken['ring'], active: true, createdAt: now, createdBy: by };
+    const entry = { name, leadId: `FFF-${ring}-${token.slice(4, 12)}`, role: 'investor' as const, ring: ring as InvestToken['ring'], active: true, createdAt: now };
     const privateEntry: Record<string, string> = {};
     if (phone) privateEntry.phone = phone;
     if (notes) privateEntry.notes = notes;
