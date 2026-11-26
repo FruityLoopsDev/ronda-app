@@ -802,7 +802,6 @@ class ClientAppService {
   }
 
   openEventModal(eventId: string) {
-    const user = Auth.currentUser;
     const event = RONDA_EVENTS.find(e => e.id === eventId);
     if (!event) return;
 
