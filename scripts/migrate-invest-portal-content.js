@@ -5,6 +5,7 @@
 // document before replacing invest.html with the neutral access shell.
 // Run from the repository root: node scripts/migrate-invest-portal-content.js
 const fs = require('fs');
+const { execFileSync } = require('child_process');
 const path = require('path');
 const crypto = require('crypto');
 const admin = require('../functions-vercel/node_modules/firebase-admin');
@@ -18,9 +19,14 @@ const admin = require('../functions-vercel/node_modules/firebase-admin');
     projectId: serviceAccount.project_id || 'ronda-uno'
   });
   const sourcePath = path.join(__dirname, '..', 'invest.html');
-  const html = fs.readFileSync(sourcePath, 'utf8');
+  let html = fs.readFileSync(sourcePath, 'utf8');
   if (!html.includes('CONFIGURACIÓN MAESTRA DE LA MICRO-RONDA')) {
-    throw new Error('invest.html does not look like the expected source portal; refusing to migrate.');
+    const override = process.env.INVEST_PORTAL_SOURCE;
+    if (override) html = fs.readFileSync(path.resolve(override), 'utf8');
+    else html = execFileSync('git', ['show', 'origin/main:invest.html'], { cwd: path.join(__dirname, '..'), encoding: 'utf8', maxBuffer: 2 * 1024 * 1024 });
+  }
+  if (!html.includes('CONFIGURACIÓN MAESTRA DE LA MICRO-RONDA')) {
+    throw new Error('Could not locate the original portal HTML. Set INVEST_PORTAL_SOURCE to a trusted copy.');
   }
   const digest = crypto.createHash('sha256').update(html).digest('hex');
   const ref = admin.firestore().collection('invest_portal_content').doc('current');
