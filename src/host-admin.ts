@@ -1338,10 +1338,15 @@ export class HostAdminController {
       const attendee = await DB.getUser(uid);
       if (attendee) {
         const userRef = doc(db, 'users', uid);
-        batch.update(userRef, {
+        const attendeePatch: Record<string, any> = {
           checkedIn: true,
           updatedAt: serverTimestamp()
-        });
+        };
+        if (payStatus === 'pending_door') {
+          attendeePatch.paymentPending = false;
+          attendeePatch.paymentMethod = 'Nequi / Efectivo en Puerta';
+        }
+        batch.update(userRef, attendeePatch);
       }
 
       await batch.commit();
