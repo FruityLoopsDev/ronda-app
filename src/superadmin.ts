@@ -1349,6 +1349,7 @@ export class SuperAdminController {
         });
       } catch (auditErr) {
         console.error('[SuperAdmin] Token emitido, pero falló la auditoría:', auditErr);
+        await RondaDialog.alert({ title: 'Token emitido con alerta', message: 'El token se creó, pero el registro de auditoría falló. Reporta este incidente al equipo administrador.', icon: '⚠️', type: 'danger' });
       }
       if (nameEl) nameEl.value = '';
       if (phoneEl) phoneEl.value = '';
