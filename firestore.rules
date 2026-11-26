@@ -393,8 +393,10 @@ service cloud.firestore {
     // Contacto y notas de invitación: nunca se exponen por la lectura pública
     // del token. Solo SuperAdmin puede consultar o mutar estos documentos.
     match /invest_token_private/{tokenId} {
-      allow read, create, update, delete: if isSuperAdmin()
+      allow read: if isSuperAdmin();
+      allow create, update: if isSuperAdmin()
         && request.resource.data.keys().hasOnly(['phone', 'notes', 'updatedAt', 'updatedBy']);
+      allow delete: if isSuperAdmin();
     }
     match /support_tickets/{ticketId} {
       allow read: if isSuperAdmin() || (isAdmin() && isVenueStaff(resource.data.venueId));
