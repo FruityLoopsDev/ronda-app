@@ -41,7 +41,7 @@ export interface KycReviewCase {
   createdAt: string;
   status: 'pending' | 'approved' | 'rejected';
   reasonsForManual: string[];
-  metrics: { faceDistance: number; livenessScore: number; ocrExtractedName?: string; ocrExtractedNumber?: string };
+  metrics: { faceDistance?: number; livenessScore?: number | string; ocrExtractedName?: string; ocrExtractedNumber?: string };
   imageUrls: { selfie: string; docFront: string; docBack?: string };
   reviewedBy?: string;
   reviewedAt?: string;
@@ -160,7 +160,38 @@ export class KycPanel implements SuperAdminPanel {
       const snap = await getDocs(q);
 
       const cases: KycReviewCase[] = [];
-      snap.forEach((d) => cases.push({ ...(d.data() as Omit<KycReviewCase, 'reviewId'>), reviewId: d.id }));
+      snap.forEach((d) => {
+        const raw = d.data() as Record<string, any>;
+        // Normalizar esquema nuevo del verificador y esquema legado del panel.
+        const legacyImages = raw.imageUrls || {};
+        const legacyMetrics = raw.metrics || {};
+        cases.push({
+          reviewId: d.id,
+          userId: raw.userId || raw.uid || '',
+          userName: raw.userName || raw.name || raw.userId || raw.uid || 'Usuario',
+          userEmail: raw.userEmail || raw.email || '',
+          registeredBirthDate: raw.registeredBirthDate || raw.birthDate || '',
+          createdAt: raw.createdAt || '',
+          status: raw.status || 'pending',
+          reasonsForManual: Array.isArray(raw.reasonsForManual)
+            ? raw.reasonsForManual
+            : (raw.reason ? [String(raw.reason)] : []),
+          metrics: {
+            faceDistance: typeof legacyMetrics.faceDistance === 'number' ? legacyMetrics.faceDistance : raw.distance,
+            livenessScore: legacyMetrics.livenessScore ?? (raw.livenessPassed === true ? 'passed' : raw.livenessPassed === false ? 'not passed' : '—'),
+            ocrExtractedName: legacyMetrics.ocrExtractedName,
+            ocrExtractedNumber: legacyMetrics.ocrExtractedNumber
+          },
+          imageUrls: {
+            selfie: legacyImages.selfie || raw.selfieDataUrl || '',
+            docFront: legacyImages.docFront || raw.documentDataUrl || '',
+            docBack: legacyImages.docBack || raw.docBackDataUrl || ''
+          },
+          reviewedBy: raw.reviewedBy,
+          reviewedAt: raw.reviewedAt,
+          adminNotes: raw.adminNotes
+        });
+      });
 
       // Cursor para la siguiente página.
       this.lastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : this.lastDoc;
