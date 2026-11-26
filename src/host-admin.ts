@@ -18,7 +18,8 @@ import {
   where,
   Timestamp,
   arrayUnion,
-  increment
+  increment,
+  writeBatch
 } from 'firebase/firestore';
 import { buildNightPlan } from './mem-rr-v2/engine.ts';
 import type { Participant as RRParticipant } from './mem-rr-v2/types.ts';
@@ -1324,13 +1325,26 @@ export class HostAdminController {
       }
     }
 
-    // 2. Registro idempotente en el evento (mutación transacional con arrayUnion)
+    // 2. Registro idempotente del check-in en evento y perfil.
+    // La escritura en lote sincroniza el estado operativo entre /admin y /superadmin.
     if (this.currentEvent) {
       const eventRef = doc(db, 'events', this.currentEvent.id);
-      await updateDoc(eventRef, {
+      const batch = writeBatch(db);
+      batch.update(eventRef, {
         participants: arrayUnion(uid),
         updatedAt: serverTimestamp()
       });
+
+      const attendee = await DB.getUser(uid);
+      if (attendee) {
+        const userRef = doc(db, 'users', uid);
+        batch.update(userRef, {
+          checkedIn: true,
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      await batch.commit();
       this.currentEvent.participants = Array.from(new Set([...(this.currentEvent.participants || []), uid]));
     }
 
