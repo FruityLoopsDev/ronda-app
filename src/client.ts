@@ -494,7 +494,7 @@ class ClientAppService {
     // Evaluación de las 4 Misiones del Challenge
     const m1_basic = Boolean(user.name && user.name.trim() !== '' && user.name !== 'Usuario RONDA' && user.age && user.age >= 18);
     const m2_drink = Boolean(user.favoriteCocktail || (user.preferredZones && user.preferredZones.length > 0));
-    const m3_identity = Boolean(user.isVerified || (user.trustTier && user.trustTier >= 1));
+    const m3_identity = Boolean(user.isVerified || user.kycStatus === 'approved' || user.verifications?.identity?.verifiedAt);
     const m4_linkedin = Boolean(user.linkedinVerified || user.linkedinUrl);
 
     let completedCount = 0;
