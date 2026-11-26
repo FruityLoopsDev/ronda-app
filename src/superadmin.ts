@@ -41,6 +41,7 @@ export class SuperAdminController {
   private readonly treasury = new TreasuryPanel({ navigate: (section) => void this.switchSection(section) });
   private readonly venues = new VenuesPanel();
   private bookingsUnsubscribe: Unsubscribe | null = null;
+  private summaryBookingsUnsubscribe: Unsubscribe | null = null;
   private liveBookings: { user: User; reservation: Reservation }[] = [];
 
   // --- T-8.2: Tokens de inversión Pista Privada FFF ---
@@ -133,6 +134,10 @@ export class SuperAdminController {
       this.bookingsUnsubscribe();
       this.bookingsUnsubscribe = null;
       this.liveBookings = [];
+    }
+    if (section !== 'summary' && this.summaryBookingsUnsubscribe) {
+      this.summaryBookingsUnsubscribe();
+      this.summaryBookingsUnsubscribe = null;
     }
     this.currentSection = section;
 
@@ -447,8 +452,8 @@ export class SuperAdminController {
             <div style="display: flex; align-items: center; gap: 12px; background: rgba(243,237,226,0.03); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(243,237,226,0.08);">
               <span style="font-size: 20px;">🛡️</span>
               <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Biometría & OCR</b>
-                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">● MediaPipe + Tesseract</span>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Verificación biométrica</b>
+                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">⏸ Pausada durante piloto de reservas</span>
               </div>
             </div>
 
@@ -488,6 +493,19 @@ export class SuperAdminController {
 
     this.attachSummaryListeners();
     void this.loadRealMetrics();
+
+    const liveBookingsQuery = query(
+      collection(RondaServices.db, 'users'),
+      where('activeReservation.status', '==', 'confirmed')
+    );
+    if (this.summaryBookingsUnsubscribe) this.summaryBookingsUnsubscribe();
+    this.summaryBookingsUnsubscribe = onSnapshot(liveBookingsQuery, (snapshot) => {
+      if (this.currentSection !== 'summary') return;
+      const subEl = document.getElementById('sa-metric-b2c-sub');
+      if (subEl) subEl.textContent = `${snapshot.size} reservas confirmadas · sincronización en vivo`;
+    }, (error) => {
+      console.error('[SuperAdmin] Error sincronizando KPI de reservas:', error);
+    });
   }
 
   private attachSummaryListeners() {
