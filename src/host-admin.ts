@@ -69,6 +69,8 @@ export class HostAdminController {
   private qrScanner: any = null;
   private qrScanning: boolean = false;
   private bookingsUnsubscribe: any = null;
+  private liveBookings: { user: User; reservation: Reservation }[] = [];
+  private bookingsEventId: string = '';
 
   // --- FASE 21: Caja / Cierre de Noche ---
   private readonly DRINK_UNIT_PRICE_COP = 25000; // precio unitario por copa incluida (COP)
@@ -562,6 +564,12 @@ export class HostAdminController {
    * Cambia la sección activa y actualiza cabecera y escenario.
    */
   public switchSection(section: HostSection) {
+    if (section !== 'bookings' && this.bookingsUnsubscribe) {
+      this.bookingsUnsubscribe();
+      this.bookingsUnsubscribe = null;
+      this.bookingsEventId = '';
+      this.liveBookings = [];
+    }
     this.currentSection = section;
 
     // Actualizar clases activas en sidebar
@@ -972,14 +980,24 @@ export class HostAdminController {
    * PASO 6: MÓDULO RESERVAS & RECEPCIÓN CON QR IDEMPOTENTE
    * ===================================================================== */
 
-  private async renderBookingsSection(stage: HTMLElement) {
+  private async renderBookingsSection(
+    stage: HTMLElement,
+    liveBookings?: { user: User; reservation: Reservation }[]
+  ) {
     const venue = this.activeVenue;
     const event = this.currentEvent;
 
-    // Obtener asistentes reales de Firestore para la noche activa
+    // Primera carga puntual; después Firestore mantiene la lista sincronizada en vivo.
+    if (liveBookings) {
+      this.liveBookings = liveBookings;
+    } else if (event?.id && this.bookingsEventId !== event.id) {
+      this.bookingsEventId = event.id;
+      this.liveBookings = await DB.getBookingsForEvent(event.id);
+    }
+
     let attendees: any[] = [];
     if (event?.id) {
-      const bookings = await DB.getBookingsForEvent(event.id);
+      const bookings = this.liveBookings;
       attendees = bookings.map(b => {
         const u = b.user;
         const res = b.reservation;
@@ -992,7 +1010,7 @@ export class HostAdminController {
           code: res.bookingCode || `RND-${u.uid.slice(-4).toUpperCase()}`,
           cocktail: res.cocktailName || u.favoriteCocktail || 'Caronte Sour',
           table: res.tableNumber || '1',
-          trustTier: u.trustTier || (u.isVerified ? 2 : 1),
+          trustTier: u.trustTier ?? (u.isVerified ? 2 : 0),
           verifiedLinkedIn: !!(u.linkedinVerified || u.linkedinUrl),
           paymentStatus: u.paymentPending ? 'pending_door' : 'paid',
           paymentMethod: u.paymentMethod || (u.paymentPending ? 'Nequi / Efectivo en Puerta' : 'Wompi Web Checkout'),
@@ -1013,7 +1031,7 @@ export class HostAdminController {
                 code: `RND-${partUser.uid.slice(-4).toUpperCase()}`,
                 cocktail: partUser.favoriteCocktail || 'Caronte Sour',
                 table: '1',
-                trustTier: partUser.trustTier || 1,
+                trustTier: partUser.trustTier ?? (partUser.isVerified ? 2 : 0),
                 verifiedLinkedIn: !!partUser.linkedinVerified,
                 paymentStatus: 'paid',
                 paymentMethod: 'Wompi Web Checkout',
@@ -1126,9 +1144,13 @@ export class HostAdminController {
                       <span style="background:rgba(121,211,172,0.12); color:#79D3AC; border:1px solid rgba(121,211,172,0.3); padding:3px 8px; border-radius:6px; font-family:var(--font-mono); font-size:9.5px; font-weight:700;">
                         🛡️ TIER 2 VERIFICADO
                       </span>
-                    ` : `
+                    ` : a.trustTier >= 1 ? `
                       <span style="background:rgba(240,168,48,0.12); color:var(--luz); border:1px solid rgba(240,168,48,0.3); padding:3px 8px; border-radius:6px; font-family:var(--font-mono); font-size:9.5px;">
                         ⚠️ TIER 1 BÁSICO
+                      </span>
+                    ` : `
+                      <span style="background:rgba(240,168,48,0.08); color:var(--luz); border:1px solid rgba(240,168,48,0.2); padding:3px 8px; border-radius:6px; font-family:var(--font-mono); font-size:9.5px;">
+                        ⏸ IDENTIDAD PENDIENTE · PILOTO
                       </span>
                     `}
                   </td>
@@ -1212,6 +1234,14 @@ export class HostAdminController {
         await this.processCheckinFlow(uid, name, payStatus);
       });
     });
+
+    if (event?.id && !this.bookingsUnsubscribe) {
+      const subscribedEventId = event.id;
+      this.bookingsUnsubscribe = DB.subscribeToBookings(subscribedEventId, (updatedBookings) => {
+        if (this.currentSection !== 'bookings' || this.currentEvent?.id !== subscribedEventId) return;
+        void this.renderBookingsSection(stage, updatedBookings);
+      });
+    }
   }
 
   /* =====================================================================
