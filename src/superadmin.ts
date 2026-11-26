@@ -607,6 +607,7 @@ export class SuperAdminController {
         return { user, reservation: user.activeReservation! };
       }).filter(b => Boolean(b.reservation));
     }
+    if (this.currentSection !== 'bookings' || !stage.isConnected) return;
     const allBookings = this.liveBookings;
 
     stage.innerHTML = `
