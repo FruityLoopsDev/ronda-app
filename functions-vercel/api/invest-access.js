@@ -5,6 +5,7 @@ const { initAdmin } = require('./_lib');
 
 const ALLOWED_ORIGINS = new Set([
   'https://ronda.uno',
+  'https://ronda-app-silk.vercel.app',
   'https://www.ronda.uno',
   'http://localhost:5001',
   'http://localhost:5173'
