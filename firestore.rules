@@ -395,7 +395,11 @@ service cloud.firestore {
     match /invest_token_private/{tokenId} {
       allow read: if isSuperAdmin();
       allow create, update: if isSuperAdmin()
-        && request.resource.data.keys().hasOnly(['phone', 'notes', 'updatedAt', 'updatedBy']);
+        && request.resource.data.keys().hasOnly(['phone', 'notes', 'updatedAt', 'updatedBy'])
+        && (!request.resource.data.keys().hasAny(['phone']) || request.resource.data.phone is string)
+        && (!request.resource.data.keys().hasAny(['notes']) || request.resource.data.notes is string)
+        && request.resource.data.updatedAt is string
+        && request.resource.data.updatedBy is string;
       allow delete: if isSuperAdmin();
     }
     match /support_tickets/{ticketId} {
