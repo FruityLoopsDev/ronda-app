@@ -13,34 +13,33 @@ Firebase staging project ID: `ronda-staging-2026`
 
 ## Web app configuration
 
-Register a Firebase Web App named `RONDA Staging` inside the `ronda-staging-2026` project. Supply its Firebase Web App config through a local `.env.staging` file or the equivalent environment variables in a trusted Firebase build pipeline:
+The Firebase Web App `RONDA Staging` is registered in the `ronda-staging-2026` project. Its public Firebase Web SDK configuration is embedded in `src/firebase-config.ts`.
 
-```dotenv
-VITE_FIREBASE_PROJECT_ID=ronda-staging-2026
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
-VITE_FIREBASE_MEASUREMENT_ID=
-VITE_USE_FIREBASE_EMULATOR=false
-```
+The web config values are client-side configuration, not service-account credentials. Never place service-account JSON, private keys, or Admin SDK credentials in Vite variables or browser code.
 
-The web config values are Firebase client configuration, not service-account credentials. Never place service-account JSON, private keys, or admin SDK credentials in Vite variables or browser code.
-
-## Fail-closed behavior
-
-When `VITE_FIREBASE_PROJECT_ID=ronda-staging-2026`, the app requires the complete staging web config. If any required value is missing, startup fails rather than silently falling back to `ronda-uno`.
-
-If no staging project ID is supplied, the existing production configuration remains unchanged. An unrecognized project ID is rejected.
-
-## Build and deploy
-
-After adding the real web app config to `.env.staging`:
+To opt into staging, build with the explicit project ID:
 
 ```bash
 npm ci
-npm run build -- --mode staging
+VITE_FIREBASE_PROJECT_ID=ronda-staging-2026 npm run build -- --mode staging
+```
+
+For local development, set `VITE_FIREBASE_PROJECT_ID=ronda-staging-2026` in `.env.staging`. Do not set this variable for production builds.
+
+## Fail-closed behavior
+
+- When `VITE_FIREBASE_PROJECT_ID=ronda-staging-2026`, the app initializes only the dedicated staging project configuration.
+- If the variable is absent, the existing production configuration remains unchanged.
+- An unrecognized project ID is rejected.
+- Staging selection is explicit; it is never inferred from the Vite mode name alone.
+
+## Build and deploy
+
+After reviewing Authentication providers, Firestore rules, and indexes in Firebase Console:
+
+```bash
+npm ci
+VITE_FIREBASE_PROJECT_ID=ronda-staging-2026 npm run build -- --mode staging
 firebase deploy --only hosting,firestore:rules,firestore:indexes --project ronda-staging-2026
 ```
 
@@ -48,7 +47,7 @@ Do not run a deploy until the project ID displayed in Firebase Console has been 
 
 ## Firebase Console setup checklist
 
-1. Register the Firebase Web App `RONDA Staging`.
+1. Confirm the Firebase Web App `RONDA Staging` exists in project `ronda-staging-2026`.
 2. Enable only the Authentication sign-in providers required by the pilot.
 3. Create the default Firestore database in the staging project.
 4. Review `firestore.rules` and `firestore.indexes.json` before deploying them.
