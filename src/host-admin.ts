@@ -1340,6 +1340,7 @@ export class HostAdminController {
         const userRef = doc(db, 'users', uid);
         const attendeePatch: Record<string, any> = {
           checkedIn: true,
+          'activeReservation.status': 'checked_in',
           updatedAt: serverTimestamp()
         };
         if (payStatus === 'pending_door') {
