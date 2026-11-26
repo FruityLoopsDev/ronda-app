@@ -187,7 +187,7 @@ export class SuperAdminController {
 
       case 'kyc':
         titleEl.textContent = 'Verificación KYC';
-        subtitleEl.textContent = 'Cola prioritaria de verificación manual: selfie vs documento y validación del umbral biométrico.';
+        subtitleEl.textContent = 'Cola de revisión manual para casos existentes. La captura biométrica está pausada durante el piloto.';
         actionsEl.innerHTML = `
           <button class="btn" id="sa-kyc-refresh" style="font-size: 11.5px; padding: 8px 16px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel);">
             ↻ Actualizar cola
@@ -198,7 +198,7 @@ export class SuperAdminController {
             ● Revisión manual · Tier 2
           </span>
           <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
-            Aprobar eleva al usuario a Tier 2 y desbloquea reservas
+            Aprobar eleva al usuario a Tier 2; la reserva piloto no depende del KYC
           </span>
         `;
         document.getElementById('sa-kyc-refresh')?.addEventListener('click', () => void this.kyc.refresh());
@@ -1001,13 +1001,13 @@ export class SuperAdminController {
           
           <div style="display:flex; flex-direction:column; gap:12px;">
             <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--papel); cursor:pointer;">
-              <input type="checkbox" id="sa-setting-kyc-req" checked disabled>
-              <span>Exigir KYC Tier 1 (Selfie + Cédula) para visualizar sedes aliadas y reservar (Acuerdo de Negocio Vigente).</span>
+              <input type="checkbox" id="sa-setting-kyc-req" disabled>
+              <span>KYC permanece separado del flujo piloto de primera reserva; la identidad sigue pendiente hasta revisión válida.</span>
             </label>
 
             <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--papel); cursor:pointer;">
-              <input type="checkbox" id="sa-setting-biometry" checked>
-              <span>Validar prueba de vida (Liveness) con MediaPipe antes de permitir envío a cola de revisión.</span>
+              <input type="checkbox" id="sa-setting-biometry" disabled>
+              <span>Biometría y prueba de vida pausadas temporalmente; no se abre cámara ni se ejecuta liveness.</span>
             </label>
           </div>
         </div>
