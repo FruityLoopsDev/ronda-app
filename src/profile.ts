@@ -106,6 +106,11 @@ export class ProfileService {
         kycSettingsStatus.className = 'chip ambar';
         kycSettingsStatus.style.fontSize = '9.5px';
         kycSettingsStatus.style.padding = '3px 8px';
+      } else if (Verification.isBiometricPaused) {
+        kycSettingsStatus.textContent = 'Pendiente · piloto';
+        kycSettingsStatus.className = 'chip ambar';
+        kycSettingsStatus.style.fontSize = '9.5px';
+        kycSettingsStatus.style.padding = '3px 8px';
       } else {
         kycSettingsStatus.textContent = 'Pendiente';
         kycSettingsStatus.className = 'chip gris';

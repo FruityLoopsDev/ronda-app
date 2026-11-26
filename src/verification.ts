@@ -60,6 +60,10 @@ const LIVENESS_MAX_DURATION_MS = 9500;
 const OCR_NON_BLOCKING_TIMEOUT_MS = 5500;
 
 class VerificationService {
+  // Piloto de primera reserva: KYC biométrico temporalmente desactivado.
+  // No concede identidad ni trustTier; la política se reevalúa en una fase posterior.
+  readonly isBiometricPaused: boolean = true;
+
   location: { lat: number; lng: number } | null = null;
   isVerified: boolean = false;
   isPendingManualReview: boolean = false;
@@ -728,6 +732,14 @@ class VerificationService {
    *  - Fase 3: Comparación biométrica primaria (`distancia <= 0.52`) y fallback a `submitKycReview`.
    */
   async startVerification(videoId: string, canvasId: string): Promise<boolean> {
+    if (this.isBiometricPaused) {
+      this.setStatus(
+        'La verificación biométrica está pausada durante el piloto. Puedes completar tu perfil y reservar tu primera experiencia sin este paso; tu identidad seguirá pendiente.',
+        'warn'
+      );
+      return false;
+    }
+
     if (this.isPendingManualReview || this.failedAttempts >= 2) {
       this.setStatus(
         '⏳ Tu verificación ya está en aprobación manual por el equipo de Ronda (máx. 24h). Ya puedes guardar tu perfil y continuar en la app.',

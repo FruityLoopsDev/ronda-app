@@ -2,7 +2,8 @@ import { DB, User, Scout, Host, Reservation } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
 import { escapeHtml } from './utils.js';
-import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer, onSnapshot } from 'firebase/firestore';
+import type { Unsubscribe } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { renderRondaFooter } from './footer.js';
 import { APP_VERSION } from './version.js';
@@ -39,6 +40,9 @@ export class SuperAdminController {
   private readonly kyc = new KycPanel();
   private readonly treasury = new TreasuryPanel({ navigate: (section) => void this.switchSection(section) });
   private readonly venues = new VenuesPanel();
+  private bookingsUnsubscribe: Unsubscribe | null = null;
+  private summaryBookingsUnsubscribe: Unsubscribe | null = null;
+  private liveBookings: { user: User; reservation: Reservation }[] = [];
 
   // --- T-8.2: Tokens de inversión Pista Privada FFF ---
   private tokens: InvestToken[] = [];
@@ -126,6 +130,15 @@ export class SuperAdminController {
 
   // Cambia la vista activa del SuperAdmin
   public async switchSection(section: AdminSection): Promise<void> {
+    if (section !== 'bookings' && this.bookingsUnsubscribe) {
+      this.bookingsUnsubscribe();
+      this.bookingsUnsubscribe = null;
+      this.liveBookings = [];
+    }
+    if (section !== 'summary' && this.summaryBookingsUnsubscribe) {
+      this.summaryBookingsUnsubscribe();
+      this.summaryBookingsUnsubscribe = null;
+    }
     this.currentSection = section;
 
     // Actualizar clase activa en el menú lateral
@@ -174,7 +187,7 @@ export class SuperAdminController {
 
       case 'kyc':
         titleEl.textContent = 'Verificación KYC';
-        subtitleEl.textContent = 'Cola prioritaria de verificación manual: selfie vs documento y validación del umbral biométrico.';
+        subtitleEl.textContent = 'Cola de revisión manual para casos existentes. La captura biométrica está pausada durante el piloto.';
         actionsEl.innerHTML = `
           <button class="btn" id="sa-kyc-refresh" style="font-size: 11.5px; padding: 8px 16px; background: rgba(243,237,226,0.06); border: 1px solid var(--linea); color: var(--papel);">
             ↻ Actualizar cola
@@ -185,7 +198,7 @@ export class SuperAdminController {
             ● Revisión manual · Tier 2
           </span>
           <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
-            Aprobar eleva al usuario a Tier 2 y desbloquea reservas
+            Aprobar eleva al usuario a Tier 2; la reserva piloto no depende del KYC
           </span>
         `;
         document.getElementById('sa-kyc-refresh')?.addEventListener('click', () => void this.kyc.refresh());
@@ -439,8 +452,8 @@ export class SuperAdminController {
             <div style="display: flex; align-items: center; gap: 12px; background: rgba(243,237,226,0.03); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(243,237,226,0.08);">
               <span style="font-size: 20px;">🛡️</span>
               <div>
-                <b style="font-size: 12px; color: var(--papel); display: block;">Biometría & OCR</b>
-                <span style="font-size: 10px; color: #79D3AC; font-family: var(--font-mono);">● MediaPipe + Tesseract</span>
+                <b style="font-size: 12px; color: var(--papel); display: block;">Verificación biométrica</b>
+                <span style="font-size: 10px; color: var(--luz); font-family: var(--font-mono);">⏸ Pausada durante piloto de reservas</span>
               </div>
             </div>
 
@@ -480,6 +493,19 @@ export class SuperAdminController {
 
     this.attachSummaryListeners();
     void this.loadRealMetrics();
+
+    const liveBookingsQuery = query(
+      collection(RondaServices.db, 'users'),
+      where('activeReservation.status', 'in', ['confirmed', 'checked_in'])
+    );
+    if (this.summaryBookingsUnsubscribe) this.summaryBookingsUnsubscribe();
+    this.summaryBookingsUnsubscribe = onSnapshot(liveBookingsQuery, (snapshot) => {
+      if (this.currentSection !== 'summary') return;
+      const subEl = document.getElementById('sa-metric-b2c-sub');
+      if (subEl) subEl.textContent = `${snapshot.size} reservas confirmadas · sincronización en vivo`;
+    }, (error) => {
+      console.error('[SuperAdmin] Error sincronizando KPI de reservas:', error);
+    });
   }
 
   private attachSummaryListeners() {
@@ -563,10 +589,26 @@ export class SuperAdminController {
   }
 
   // --- SECCIÓN 4: RESERVAS Y ASISTENTES ---
-  private async renderBookingsSection(stage: HTMLElement) {
-    const events = await DB.getAllEvents();
-    const bookingLists = await Promise.all(events.map(ev => DB.getBookingsForEvent(ev.id)));
-    const allBookings: { user: User; reservation: Reservation }[] = bookingLists.flat();
+  private async renderBookingsSection(
+    stage: HTMLElement,
+    liveBookings?: { user: User; reservation: Reservation }[]
+  ) {
+    const bookingsQuery = query(
+      collection(RondaServices.db, 'users'),
+      where('activeReservation.status', 'in', ['confirmed', 'checked_in'])
+    );
+
+    if (liveBookings) {
+      this.liveBookings = liveBookings;
+    } else if (!this.bookingsUnsubscribe && this.liveBookings.length === 0) {
+      const initial = await getDocs(bookingsQuery);
+      this.liveBookings = initial.docs.map(d => {
+        const user = { uid: d.id, ...(d.data() as any) } as User;
+        return { user, reservation: user.activeReservation! };
+      }).filter(b => Boolean(b.reservation));
+    }
+    if (this.currentSection !== 'bookings' || !stage.isConnected) return;
+    const allBookings = this.liveBookings;
 
     stage.innerHTML = `
       <div style="display:flex; flex-direction:column; gap:20px;">
@@ -613,10 +655,10 @@ export class SuperAdminController {
                       ${escapeHtml(b.reservation.venueName)} · ${escapeHtml(b.reservation.dayDate)}
                     </td>
                     <td style="padding:14px 16px;">
-                      <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : '✅ Pagado Wompi'}</span>
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : `✅ ${b.user.paymentMethod || 'Pagado'}`}</span>
                     </td>
                     <td style="padding:14px 16px;">
-                      <span style="font-size:10.5px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); padding:2px 8px; border-radius:999px;">🛡️ Tier ${b.user.trustTier || 1}</span>
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); padding:2px 8px; border-radius:999px;">${(b.user.trustTier ?? (b.user.isVerified ? 2 : 0)) >= 2 ? '🛡️ Tier 2 verificado' : (b.user.trustTier ?? 0) >= 1 ? 'Tier 1 básico' : '⏸ Identidad pendiente · piloto'}</span>
                     </td>
                     <td style="padding:14px 16px; text-align:right;">
                       <span style="font-size:10.5px; font-family:var(--font-mono); color:${b.user.checkedIn ? '#79D3AC' : 'var(--humo)'};">${b.user.checkedIn ? '✅ En Sala' : '⏳ Esperando'}</span>
@@ -633,6 +675,21 @@ export class SuperAdminController {
     document.getElementById('sa-btn-export-bookings')?.addEventListener('click', () => {
       alert('Generando archivo CSV para personal en puerta...');
     });
+
+    if (!this.bookingsUnsubscribe) {
+      this.bookingsUnsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
+        const updated = snapshot.docs.map(d => {
+          const user = { uid: d.id, ...(d.data() as any) } as User;
+          return { user, reservation: user.activeReservation! };
+        }).filter(b => Boolean(b.reservation));
+        this.liveBookings = updated;
+        if (this.currentSection === 'bookings' && stage.isConnected) {
+          void this.renderBookingsSection(stage, updated);
+        }
+      }, (error) => {
+        console.error('[SuperAdmin] Error sincronizando reservas en vivo:', error);
+      });
+    }
   }
 
   // --- SECCIÓN 5: LISTA DE ESPERA ---
@@ -944,13 +1001,13 @@ export class SuperAdminController {
           
           <div style="display:flex; flex-direction:column; gap:12px;">
             <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--papel); cursor:pointer;">
-              <input type="checkbox" id="sa-setting-kyc-req" checked disabled>
-              <span>Exigir KYC Tier 1 (Selfie + Cédula) para visualizar sedes aliadas y reservar (Acuerdo de Negocio Vigente).</span>
+              <input type="checkbox" id="sa-setting-kyc-req" disabled>
+              <span>KYC permanece separado del flujo piloto de primera reserva; la identidad sigue pendiente hasta revisión válida.</span>
             </label>
 
             <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--papel); cursor:pointer;">
-              <input type="checkbox" id="sa-setting-biometry" checked>
-              <span>Validar prueba de vida (Liveness) con MediaPipe antes de permitir envío a cola de revisión.</span>
+              <input type="checkbox" id="sa-setting-biometry" disabled>
+              <span>Biometría y prueba de vida pausadas temporalmente; no se abre cámara ni se ejecuta liveness.</span>
             </label>
           </div>
         </div>
@@ -1009,7 +1066,7 @@ export class SuperAdminController {
 
       // Reservas confirmadas: NO existe colección `confirmedBookings`; viven en
       // users/{uid}.activeReservation.status == 'confirmed' (client.ts:confirmBooking).
-      const bookingsAgg = await getCountFromServer(query(collection(fs, 'users'), where('activeReservation.status', '==', 'confirmed')));
+      const bookingsAgg = await getCountFromServer(query(collection(fs, 'users'), where('activeReservation.status', 'in', ['confirmed', 'checked_in'])));
       const confirmedBookings = bookingsAgg.data().count;
 
       const subText = `${closedEvents} eventos cerrados · ${confirmedBookings} reservas confirmadas`;
@@ -1023,7 +1080,7 @@ export class SuperAdminController {
 
       // Volumen B2C real: suma de priceFormatted de las reservas confirmadas (muestra limitada).
       const snap = await getDocs(query(collection(fs, 'users'),
-        where('activeReservation.status', '==', 'confirmed'),
+        where('activeReservation.status', 'in', ['confirmed', 'checked_in']),
         limit(50)));
       let sum = 0;
       let priced = 0;

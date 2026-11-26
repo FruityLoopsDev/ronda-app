@@ -865,6 +865,15 @@ export class DatabaseInterface {
     return { event, matchesCount: matchResult.matchedPairsCount };
   }
 
+  subscribeToUser(userId: string, callback: (user: User) => void): Unsubscribe {
+    const userRef = doc(this._getFirestore(), 'users', userId);
+    return onSnapshot(userRef, (snap) => {
+      if (snap.exists()) callback({ uid: snap.id, ...(snap.data() as any) } as User);
+    }, (error) => {
+      console.warn('[DB] Error en suscripción al perfil del cliente:', error);
+    });
+  }
+
   subscribeToEvent(eventId: string, callback: (data: RondaEvent) => void): Unsubscribe | Function {
     const docRef = doc(this._getFirestore(), 'events', eventId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {

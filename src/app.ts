@@ -415,7 +415,28 @@ function initApp() {
       if (btnSaveProfile) btnSaveProfile.disabled = false;
     }
 
+    if (Verification.isBiometricPaused && !user?.isVerified && !user?.isPendingManualReview && user?.kycStatus !== 'pending_manual') {
+      if (kycStatus) {
+        kycStatus.textContent = 'Verificación biométrica pausada durante el piloto. No es necesaria para reservar; tu identidad permanece pendiente.';
+        kycStatus.style.color = 'var(--luz)';
+      }
+      btnStartKyc.disabled = true;
+      btnStartKyc.textContent = 'Biometría pausada durante el piloto';
+      if (btnSaveProfile) btnSaveProfile.disabled = false;
+    }
+
     btnStartKyc.addEventListener('click', async () => {
+      if (Verification.isBiometricPaused) {
+        if (kycStatus) {
+          kycStatus.textContent = 'La verificación biométrica está pausada durante el piloto. Tu identidad no se ha marcado como verificada.';
+          kycStatus.style.color = 'var(--luz)';
+        }
+        btnStartKyc.disabled = true;
+        btnStartKyc.textContent = 'Biometría pausada durante el piloto';
+        if (btnSaveProfile) btnSaveProfile.disabled = false;
+        return;
+      }
+
       const kycVideo = document.getElementById('kyc-video');
       const kycCanvas = document.getElementById('kyc-canvas');
       if (kycVideo) kycVideo.style.display = 'block';
