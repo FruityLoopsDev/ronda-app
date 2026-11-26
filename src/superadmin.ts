@@ -2,7 +2,7 @@ import { DB, User, Scout, Host, Reservation } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
 import { escapeHtml } from './utils.js';
-import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { renderRondaFooter } from './footer.js';
 import { APP_VERSION } from './version.js';
@@ -39,6 +39,8 @@ export class SuperAdminController {
   private readonly kyc = new KycPanel();
   private readonly treasury = new TreasuryPanel({ navigate: (section) => void this.switchSection(section) });
   private readonly venues = new VenuesPanel();
+  private bookingsUnsubscribe: Unsubscribe | null = null;
+  private liveBookings: { user: User; reservation: Reservation }[] = [];
 
   // --- T-8.2: Tokens de inversión Pista Privada FFF ---
   private tokens: InvestToken[] = [];
@@ -126,6 +128,11 @@ export class SuperAdminController {
 
   // Cambia la vista activa del SuperAdmin
   public async switchSection(section: AdminSection): Promise<void> {
+    if (section !== 'bookings' && this.bookingsUnsubscribe) {
+      this.bookingsUnsubscribe();
+      this.bookingsUnsubscribe = null;
+      this.liveBookings = [];
+    }
     this.currentSection = section;
 
     // Actualizar clase activa en el menú lateral
@@ -563,10 +570,25 @@ export class SuperAdminController {
   }
 
   // --- SECCIÓN 4: RESERVAS Y ASISTENTES ---
-  private async renderBookingsSection(stage: HTMLElement) {
-    const events = await DB.getAllEvents();
-    const bookingLists = await Promise.all(events.map(ev => DB.getBookingsForEvent(ev.id)));
-    const allBookings: { user: User; reservation: Reservation }[] = bookingLists.flat();
+  private async renderBookingsSection(
+    stage: HTMLElement,
+    liveBookings?: { user: User; reservation: Reservation }[]
+  ) {
+    const bookingsQuery = query(
+      collection(RondaServices.db, 'users'),
+      where('activeReservation.status', '==', 'confirmed')
+    );
+
+    if (liveBookings) {
+      this.liveBookings = liveBookings;
+    } else if (!this.bookingsUnsubscribe && this.liveBookings.length === 0) {
+      const initial = await getDocs(bookingsQuery);
+      this.liveBookings = initial.docs.map(d => {
+        const user = { uid: d.id, ...(d.data() as any) } as User;
+        return { user, reservation: user.activeReservation! };
+      }).filter(b => Boolean(b.reservation));
+    }
+    const allBookings = this.liveBookings;
 
     stage.innerHTML = `
       <div style="display:flex; flex-direction:column; gap:20px;">
@@ -616,7 +638,7 @@ export class SuperAdminController {
                       <span style="font-size:10.5px; font-family:var(--font-mono); color:#79D3AC; background:rgba(121,211,172,0.1); padding:2px 8px; border-radius:999px;">${b.user.paymentPending ? '⚠️ Pendiente Puerta' : '✅ Pagado Wompi'}</span>
                     </td>
                     <td style="padding:14px 16px;">
-                      <span style="font-size:10.5px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); padding:2px 8px; border-radius:999px;">🛡️ Tier ${b.user.trustTier || 1}</span>
+                      <span style="font-size:10.5px; font-family:var(--font-mono); color:var(--luz); background:rgba(240,168,48,0.1); padding:2px 8px; border-radius:999px;">${(b.user.trustTier ?? (b.user.isVerified ? 2 : 0)) >= 2 ? '🛡️ Tier 2 verificado' : (b.user.trustTier ?? 0) >= 1 ? 'Tier 1 básico' : '⏸ Identidad pendiente · piloto'}</span>
                     </td>
                     <td style="padding:14px 16px; text-align:right;">
                       <span style="font-size:10.5px; font-family:var(--font-mono); color:${b.user.checkedIn ? '#79D3AC' : 'var(--humo)'};">${b.user.checkedIn ? '✅ En Sala' : '⏳ Esperando'}</span>
@@ -633,6 +655,21 @@ export class SuperAdminController {
     document.getElementById('sa-btn-export-bookings')?.addEventListener('click', () => {
       alert('Generando archivo CSV para personal en puerta...');
     });
+
+    if (!this.bookingsUnsubscribe) {
+      this.bookingsUnsubscribe = onSnapshot(bookingsQuery, (snapshot) => {
+        const updated = snapshot.docs.map(d => {
+          const user = { uid: d.id, ...(d.data() as any) } as User;
+          return { user, reservation: user.activeReservation! };
+        }).filter(b => Boolean(b.reservation));
+        this.liveBookings = updated;
+        if (this.currentSection === 'bookings' && stage.isConnected) {
+          void this.renderBookingsSection(stage, updated);
+        }
+      }, (error) => {
+        console.error('[SuperAdmin] Error sincronizando reservas en vivo:', error);
+      });
+    }
   }
 
   // --- SECCIÓN 5: LISTA DE ESPERA ---
