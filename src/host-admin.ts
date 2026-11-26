@@ -1002,6 +1002,8 @@ export class HostAdminController {
       this.liveBookings = await DB.getBookingsForEvent(event.id);
     }
 
+    if (this.currentSection !== 'bookings' || !stage.isConnected) return;
+
     let attendees: any[] = [];
     if (event?.id) {
       const bookings = this.liveBookings;
