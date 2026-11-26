@@ -1,4 +1,4 @@
-import { DB, User, RondaEvent, Venue, NightClosing, BenefitRedemption } from './db.js';
+import { DB, User, RondaEvent, Venue, Reservation, NightClosing, BenefitRedemption } from './db.js';
 import { Auth } from './auth.js';
 import { RondaDialog } from './dialog.js';
 import notifications from './notifications.js';
