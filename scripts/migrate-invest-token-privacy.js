@@ -34,7 +34,7 @@ async function init() {
     await db.runTransaction(async (tx) => {
       const privateSnap = await tx.get(privateRef);
       const privateData = privateSnap.exists ? privateSnap.data() : {};
-      const merged = { ...privateData, migratedAt: new Date().toISOString() };
+      const merged = { ...privateData, updatedAt: new Date().toISOString(), updatedBy: 'migration-script' };
       if (hasPhone && !merged.phone) merged.phone = data.phone;
       if (hasNotes && !merged.notes) merged.notes = data.notes;
       tx.set(privateRef, merged, { merge: true });
