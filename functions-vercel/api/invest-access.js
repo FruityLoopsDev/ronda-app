@@ -6,6 +6,7 @@ const { initAdmin } = require('./_lib');
 const ALLOWED_ORIGINS = new Set([
   'https://ronda.uno',
   'https://ronda-app-silk.vercel.app',
+  'https://ronda-api.vercel.app',
   'https://www.ronda.uno',
   'http://localhost:5001',
   'http://localhost:5173'
@@ -114,8 +115,11 @@ module.exports = async function handler(req, res) {
         !['founder', 'investor', 'guest'].includes(record.role)) {
       return sendError(res, 401, 'invalid_invitation');
     }
-    if (record.expiresAt && Date.parse(record.expiresAt) <= now) {
-      return sendError(res, 401, 'invalid_invitation');
+    if (record.expiresAt) {
+      const expiryMs = typeof record.expiresAt.toMillis === 'function'
+        ? record.expiresAt.toMillis()
+        : Date.parse(record.expiresAt);
+      if (Number.isFinite(expiryMs) && expiryMs <= now) return sendError(res, 401, 'invalid_invitation');
     }
 
     const contentSnap = await db.collection('invest_portal_content').doc('current').get();
