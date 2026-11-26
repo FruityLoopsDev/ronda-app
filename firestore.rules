@@ -373,7 +373,7 @@ service cloud.firestore {
     match /invest_tokens/{tokenId} {
       // Token-ID es una credencial bearer aleatoria. El documento público NO
       // contiene teléfono ni notas privadas; solo permite validación del invitado.
-      allow get: if true;
+      allow get: if false;
       allow list: if isSuperAdmin();
       allow create: if isSuperAdmin()
         && request.resource.data.keys().hasOnly(['name', 'leadId', 'role', 'ring', 'active', 'createdAt'])
@@ -401,6 +401,19 @@ service cloud.firestore {
         && request.resource.data.updatedAt is string
         && request.resource.data.updatedBy is string;
       allow delete: if isSuperAdmin();
+    }
+
+    // Portal content and access telemetry are server-managed only.
+    match /invest_portal_content/{documentId} {
+      allow read: if isSuperAdmin();
+      allow write: if false;
+    }
+    match /invest_access_rate_limits/{ipHash} {
+      allow read, write: if false;
+    }
+    match /invest_access_audit/{eventId} {
+      allow read: if isSuperAdmin();
+      allow write: if false;
     }
     match /support_tickets/{ticketId} {
       allow read: if isSuperAdmin() || (isAdmin() && isVenueStaff(resource.data.venueId));

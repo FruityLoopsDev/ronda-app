@@ -11,6 +11,7 @@ así que **no requiere plan Blaze**: Firestore free tier cubre las operaciones.
 | `POST /api/wompi-webhook` | `wompiWebhook` (https.onRequest) | Webhook de pagos (server-to-server) |
 | `POST /api/mint-nft` | `mintAttendanceNFT` (https.onCall) | Acuñar NFT (admin) |
 | `POST /api/process-matches` | `processEventMatches` (https.onCall) | Procesar matches (admin) |
+| `POST /api/invest-access` | Portal privado FFF | Validación server-side de token y entrega del HTML privado |
 
 Las rutas callable requieren header `Authorization: Bearer <idToken de Firebase>`.
 
@@ -80,3 +81,42 @@ curl -X POST https://<proyecto>.vercel.app/api/process-matches \
 - Al activar la cuenta Wompi de producción: registrar
   `https://<proyecto>.vercel.app/api/wompi-webhook` como Events URL y configurar
   el mismo `WOMPI_EVENTS_SECRET` en ambos lados.
+
+
+## Portal privado de inversión (/invest)
+
+El HTML confidencial ya no debe servirse desde Firebase Hosting. El archivo público
+`invest.html` es únicamente una pantalla de acceso. El contenido completo se guarda
+en el documento Firestore `invest_portal_content/current`, y esta función solo lo
+entrega después de validar en servidor un token activo de 256 bits.
+
+### Migración inicial (obligatoria antes del deploy del nuevo Hosting)
+
+Desde la raíz del repositorio, instala primero las dependencias de Admin SDK:
+
+```bash
+cd functions-vercel && npm install && cd ..
+node scripts/migrate-invest-portal-content.js
+```
+
+El script lee el HTML original desde `origin/main:invest.html` si el archivo local
+ya es la pantalla de acceso. Revisa el SHA-256 que imprime y confirma que la
+migración terminó correctamente antes de desplegar Hosting.
+
+### Despliegue ordenado
+
+1. Desplegar Vercel API desde `functions-vercel` (Root Directory ya configurado).
+2. Confirmar `FIREBASE_SERVICE_ACCOUNT` en Vercel; no se requieren secretos nuevos.
+3. Ejecutar la migración del contenido privado y verificar el documento
+   `invest_portal_content/current` solo con una cuenta SuperAdmin.
+4. Desplegar las nuevas Firestore Rules. La lectura cliente de `invest_tokens`
+   queda denegada; la API usa Firebase Admin SDK.
+5. Desplegar Firebase Hosting con el shell nuevo de `invest.html`.
+
+La API aplica CORS por allowlist, limita a 8 intentos por IP hash cada 15 minutos,
+comprueba `active === true`, no registra el token en logs, responde con no-store y
+crea una auditoría mínima de accesos concedidos. El token se envía por POST y la
+pantalla limpia el query string antes de enviarlo. No se persiste en sessionStorage.
+
+**Importante:** la primera migración es un paso operativo manual. No desplegar el
+nuevo shell antes de que el documento privado exista y la API esté desplegada.
