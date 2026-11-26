@@ -13,43 +13,27 @@ const productionFirebaseConfig = {
   measurementId: "G-RH65BSDMP5"
 };
 
+// Firebase Web App config is public client-side configuration, not a secret.
+// Keep this dedicated to the isolated staging Firebase project.
+const stagingFirebaseConfig = {
+  apiKey: "AIzaSyCKQpjWuW2TCsbmOqAMD3y8FxU70UW-shc",
+  authDomain: "ronda-staging-2026.firebaseapp.com",
+  projectId: "ronda-staging-2026",
+  storageBucket: "ronda-staging-2026.firebasestorage.app",
+  messagingSenderId: "229663145659",
+  appId: "1:229663145659:web:aa01ccc103c5f004bfb39e",
+  measurementId: "G-7355D4K98E"
+};
+
 const env = (import.meta as any).env ?? {};
 const requestedProjectId = env.VITE_FIREBASE_PROJECT_ID as string | undefined;
 const stagingProjectId = "ronda-staging-2026";
 const isStagingRequested = requestedProjectId === stagingProjectId;
 
-function readStagingFirebaseConfig() {
-  const config = {
-    apiKey: env.VITE_FIREBASE_API_KEY,
-    authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: requestedProjectId,
-    storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: env.VITE_FIREBASE_APP_ID,
-    measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || undefined
-  };
-
-  const missing = Object.entries(config)
-    .filter(([key, value]) => key !== "measurementId" && !value)
-    .map(([key]) => key);
-
-  if (missing.length) {
-    throw new Error(
-      `Firebase staging requested for ${stagingProjectId}, but its web app configuration is incomplete: ${missing.join(", ")}. Refusing to fall back to production.`
-    );
-  }
-
-  if (config.projectId !== stagingProjectId) {
-    throw new Error("Firebase staging project ID mismatch. Refusing to initialize Firebase.");
-  }
-
-  return config;
-}
-
-// Staging is opt-in and fail-closed: setting its project ID without the full
-// Firebase Web App config must stop startup, never silently fall back to prod.
+// Staging is opt-in and fail-closed: only an explicit project ID selects it.
+// There is no silent fallback from a partially configured staging environment.
 const firebaseConfig = isStagingRequested
-  ? readStagingFirebaseConfig()
+  ? stagingFirebaseConfig
   : productionFirebaseConfig;
 
 if (requestedProjectId && requestedProjectId !== stagingProjectId && requestedProjectId !== "ronda-uno") {
