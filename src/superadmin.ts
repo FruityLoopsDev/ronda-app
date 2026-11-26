@@ -2,7 +2,7 @@ import { DB, User, Scout, Host, Reservation } from './db.js';
 import { RondaDialog } from './dialog.js';
 import { Auth } from './auth.js';
 import { escapeHtml } from './utils.js';
-import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, setDoc, updateDoc, deleteDoc, limit, getCountFromServer, runTransaction } from 'firebase/firestore';
 import { RondaServices } from './firebase-config.js';
 import { renderRondaFooter } from './footer.js';
 import { APP_VERSION } from './version.js';
@@ -1169,9 +1169,13 @@ export class SuperAdminController {
     try {
       const q = query(collection(RondaServices.db, 'invest_tokens'), limit(200));
       const snap = await getDocs(q);
+      const privateSnap = await getDocs(query(collection(RondaServices.db, 'invest_token_private'), limit(200)));
+      const privateByToken = new Map<string, Record<string, unknown>>();
+      privateSnap.forEach((d) => privateByToken.set(d.id, d.data()));
       this.tokens = [];
       snap.forEach((d) => {
         const data = d.data() as Partial<InvestToken>;
+        const privateData = privateByToken.get(d.id) || {};
         this.tokens.push({
           token: d.id,
           name: data.name || '',
@@ -1180,8 +1184,8 @@ export class SuperAdminController {
           ring: (data.ring || 'GEN') as InvestToken['ring'],
           active: data.active ?? true,
           createdAt: data.createdAt || new Date().toISOString(),
-          phone: data.phone || undefined,
-          notes: data.notes || undefined,
+          phone: String(privateData.phone || data.phone || '') || undefined,
+          notes: String(privateData.notes || data.notes || '') || undefined,
         });
       });
       this.tokens.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
@@ -1286,32 +1290,73 @@ export class SuperAdminController {
     const name = nameEl.value.trim();
     const ring = ringEl.value || 'GEN';
     let token = tokenEl.value.trim().toLowerCase();
-    const phone = phoneEl ? phoneEl.value.trim() || undefined : undefined;
-    const notes = notesEl ? notesEl.value.trim() || undefined : undefined;
-    if (!name) {
-      await RondaDialog.alert({ title: 'Nombre requerido', message: 'Ingresa el Nombre Completo del invitado.', icon: '⚠️', type: 'danger' });
+    const phoneRaw = phoneEl ? phoneEl.value.trim() : '';
+    const notesRaw = notesEl ? notesEl.value.trim() : '';
+    const phone = phoneRaw || '';
+    const notes = notesRaw || '';
+    if (!name || name.length > 100) {
+      await RondaDialog.alert({ title: 'Nombre inválido', message: 'Ingresa el nombre del invitado (1–100 caracteres).', icon: '⚠️', type: 'danger' });
       nameEl.focus();
       return;
     }
-    if (!token) token = `rnd-${ring.toLowerCase()}-${this.slugify(name)}`;
-    if (!/^[a-z0-9-]+$/.test(token)) {
-      await RondaDialog.alert({ title: 'Token inválido', message: 'Usa solo minúsculas, números y guiones (ej. rnd-a1-cesar-perez).', icon: '⚠️', type: 'danger' });
-      tokenEl.focus();
+    const validRings = ['A1', 'A2', 'A3', 'A4', 'GEN'];
+    if (!validRings.includes(ring)) {
+      await RondaDialog.alert({ title: 'Anillo inválido', message: 'Selecciona un anillo válido.', icon: '⚠️', type: 'danger' });
       return;
     }
-    if (!token.startsWith('rnd-')) token = `rnd-${token}`;
-    const by = Auth.currentUser?.uid || 'superadmin';
+    if (!token) {
+      const bytes = new Uint8Array(32);
+      crypto.getRandomValues(bytes);
+      token = 'rnd-' + Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      if (!token.startsWith('rnd-')) token = `rnd-${token}`;
+      if (token.length < 36 || token.length > 128 || !/^[a-z0-9-]+$/.test(token)) {
+        await RondaDialog.alert({ title: 'Token inválido', message: 'Token personalizado: mínimo 32 caracteres de secreto además de rnd-, y solo minúsculas, números o guiones.', icon: '⚠️', type: 'danger' });
+        tokenEl.focus();
+        return;
+      }
+    }
+    if (phone && !/^[+0-9() .-]{7,30}$/.test(phone)) {
+      await RondaDialog.alert({ title: 'WhatsApp inválido', message: 'El teléfono debe contener entre 7 y 30 caracteres válidos.', icon: '⚠️', type: 'danger' });
+      phoneEl?.focus();
+      return;
+    }
+    if (notes.length > 500) {
+      await RondaDialog.alert({ title: 'Notas demasiado largas', message: 'Las notas tienen un máximo de 500 caracteres.', icon: '⚠️', type: 'danger' });
+      notesEl?.focus();
+      return;
+    }
+    const by = Auth.currentUser?.uid;
+    if (!by) {
+      await RondaDialog.alert({ title: 'Sesión expirada', message: 'Inicia sesión nuevamente antes de emitir tokens.', icon: '⚠️', type: 'danger' });
+      return;
+    }
     const now = new Date().toISOString();
-    const entry: InvestToken = { token, name, leadId: '', role: 'investor', ring: ring as InvestToken['ring'], active: true, createdAt: now, phone, notes };
+    const entry = { name, leadId: `FFF-${ring}-${token.slice(4, 12)}`, role: 'investor' as const, ring: ring as InvestToken['ring'], active: true, createdAt: now, createdBy: by };
+    const privateEntry: Record<string, string> = {};
+    if (phone) privateEntry.phone = phone;
+    if (notes) privateEntry.notes = notes;
     try {
-      await setDoc(doc(RondaServices.db, 'invest_tokens', token), entry);
+      await runTransaction(RondaServices.db, async (tx) => {
+        const tokenRef = doc(RondaServices.db, 'invest_tokens', token);
+        const existing = await tx.get(tokenRef);
+        if (existing.exists()) throw new Error('Ese token ya existe. Genera uno nuevo.');
+        tx.set(tokenRef, entry);
+        if (Object.keys(privateEntry).length) {
+          tx.set(doc(RondaServices.db, 'invest_token_private', token), { ...privateEntry, updatedAt: now, updatedBy: by });
+        }
+      });
       try {
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token));
+        const tokenHash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
         await DB.logAudit({
-          actor_uid: by, actor_type: 'superadmin', entity_type: 'invest_token', entity_id: token,
-          action: 'invest_token_issued', new_state: { token, name, ring, active: true }, timestamp: now,
+          actor_uid: by, actor_type: 'superadmin', entity_type: 'invest_token', entity_id: tokenHash,
+          action: 'invest_token_issued', new_state: { name, ring, active: true }, timestamp: now,
           reason: 'Emisión de token Pista Privada FFF desde SuperAdmin',
         });
-      } catch {}
+      } catch (auditErr) {
+        console.error('[SuperAdmin] Token emitido, pero falló la auditoría:', auditErr);
+      }
       tokenEl.value = '';
       await this.loadTokens();
     } catch (err: any) {
@@ -1333,6 +1378,7 @@ export class SuperAdminController {
   private async deleteToken(tokenId: string): Promise<void> {
     try {
       await deleteDoc(doc(RondaServices.db, 'invest_tokens', tokenId));
+      await deleteDoc(doc(RondaServices.db, 'invest_token_private', tokenId));
       await this.loadTokens();
     } catch (err: any) {
       console.error('[SuperAdmin] Error eliminando token:', err);
