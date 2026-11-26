@@ -7,6 +7,8 @@ export class AuthService {
 
   /** Perfil guardado localmente durante registro para evitar race condition con onAuthStateChanged */
   private _pendingProfile: User | null = null;
+  /** Evita que el listener aprovisione un perfil incompleto durante el alta. */
+  private _registrationInProgress = false;
   private _persistencePromise: Promise<void> | null = null;
 
   constructor() {
@@ -48,6 +50,13 @@ export class AuthService {
     onAuthStateChanged(this._getAuth(), async (firebaseUser) => {
       if (firebaseUser) {
         console.log("[Auth] Usuario de Firebase detectado:", firebaseUser.uid);
+
+        // Durante el alta, registerWithEmail se encarga de guardar el perfil completo.
+        // No aprovisionar un perfil básico en paralelo mientras se calcula founderNumber.
+        if (this._registrationInProgress && (!this._pendingProfile || this._pendingProfile.uid !== firebaseUser.uid)) {
+          console.log("[Auth] Registro en curso; se difiere el procesamiento del listener.");
+          return;
+        }
 
         // Si registerWithEmail ya guardó el perfil, usarlo directamente
         // para evitar la race condition de Firestore read-after-write
@@ -171,6 +180,7 @@ export class AuthService {
   async registerWithEmail(email: string, password: string, profileData: Partial<User>) {
     console.log(`[Auth] Register intent: ${email}`);
     try {
+      this._registrationInProgress = true;
       if (this._persistencePromise) await this._persistencePromise;
       const userCredential = await createUserWithEmailAndPassword(this._getAuth(), email, password);
       const uid = userCredential.user.uid;
@@ -211,6 +221,7 @@ export class AuthService {
       this.currentUser = newProfile;
 
       await DB.saveUser(newProfile);
+      this._registrationInProgress = false;
       console.log("[Auth] Registro y perfil creados exitosamente.");
 
       // Si onAuthStateChanged ya se disparó y consumió _pendingProfile, bien.
@@ -222,6 +233,7 @@ export class AuthService {
 
       return newProfile;
     } catch (error: any) {
+      this._registrationInProgress = false;
       this._pendingProfile = null;
       console.error("Error durante el registro:", error);
 
