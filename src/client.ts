@@ -58,6 +58,8 @@ class ClientAppService {
   selectedDrink: DrinkOption | null = null;
   unsubscribe: any = null;
   unsubscribeLive: any = null;
+  unsubscribeUser: any = null;
+  activeEventSubscriptionId: string | null = null;
   timerInterval: any = null;
   countdownInterval: any = null;
   chatMessages: { id: string; sender: 'me' | 'partner'; text: string; time: string; timestamp: number }[] = [];
@@ -77,6 +79,10 @@ class ClientAppService {
     addEventListener('auth:logout', () => {
       if (this.unsubscribe) this.unsubscribe();
       if (this.unsubscribeLive) this.unsubscribeLive();
+      if (this.unsubscribeUser) this.unsubscribeUser();
+      this.unsubscribeLive = null;
+      this.unsubscribeUser = null;
+      this.activeEventSubscriptionId = null;
       this.stopTimer();
       this.stopCountdown();
       this.selectedEvent = null;
@@ -456,7 +462,10 @@ class ClientAppService {
 
   subscribeToActiveEvent(user: any) {
     const eventId = user?.activeEventId || user?.activeReservation?.eventId;
-    if (!eventId || this.unsubscribeLive) return;
+    if (!eventId) return;
+    if (this.activeEventSubscriptionId === eventId && this.unsubscribeLive) return;
+    if (this.unsubscribeLive) this.unsubscribeLive();
+    this.activeEventSubscriptionId = eventId;
     console.log("[Client] Suscribiéndose en vivo al evento:", eventId);
     this.unsubscribeLive = DB.subscribeToEvent(eventId, (data) => {
       this.currentEvent = data;
@@ -466,6 +475,31 @@ class ClientAppService {
 
   async initClientDashboard(user: any) {
     console.log("Iniciando Dashboard Cliente...", user);
+
+    if (this.unsubscribeUser) this.unsubscribeUser();
+    this.unsubscribeUser = DB.subscribeToUser(user.uid, (freshUser) => {
+      if (Auth.currentUser?.uid !== user.uid) return;
+      Object.assign(user, freshUser);
+      Object.assign(Auth.currentUser, freshUser);
+      window.dispatchEvent(new CustomEvent('profile:updated', { detail: Auth.currentUser }));
+
+      if (freshUser.activeEventId || freshUser.activeReservation?.eventId) {
+        this.subscribeToActiveEvent(freshUser);
+        this.renderClientView();
+      } else if (freshUser.postEventState) {
+        this.renderClientView();
+      } else if (freshUser.activeWaitlist) {
+        if (this.unsubscribeLive) this.unsubscribeLive();
+        this.unsubscribeLive = null;
+        this.activeEventSubscriptionId = null;
+        this.renderWaitlistView(freshUser.activeWaitlist);
+      } else {
+        if (this.unsubscribeLive) this.unsubscribeLive();
+        this.unsubscribeLive = null;
+        this.activeEventSubscriptionId = null;
+        this.renderDiscoveryFeed();
+      }
+    });
     
     if (user.postEventState || user.activeReservation || user.activeEventId) {
       this.renderClientView();
