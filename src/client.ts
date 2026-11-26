@@ -513,7 +513,7 @@ class ClientAppService {
             <span style="font-size: 26px;">🥂</span>
             <div>
               <b style="font-family: var(--font-display); font-size: 15px; color: var(--papel); display: block; margin-bottom: 2px;">
-                ¡Tu Pasaporte está 100% Activo!
+                ¡Tu perfil básico está listo para reservar!
               </b>
               <span style="font-size: 11.5px; color: #79D3AC; font-family: var(--font-mono);">
                 ${m3_identity ? 'Identidad verificada · Copa de autor desbloqueada en barras aliadas' : 'Perfil listo para reservar · identidad pendiente; biometría pausada durante el piloto'}
