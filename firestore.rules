@@ -371,9 +371,36 @@ service cloud.firestore {
       allow update, delete: if isSuperAdmin();
     }
     match /invest_tokens/{tokenId} {
+      // Token-ID es una credencial bearer aleatoria. El documento público NO
+      // contiene teléfono ni notas privadas; solo permite validación del invitado.
       allow get: if true;
       allow list: if isSuperAdmin();
-      allow create, update, delete: if isSuperAdmin();
+      allow create: if isSuperAdmin()
+        && request.resource.data.keys().hasOnly(['name', 'leadId', 'role', 'ring', 'active', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.leadId is string
+        && request.resource.data.role in ['founder', 'investor', 'guest']
+        && request.resource.data.ring in ['A1', 'A2', 'A3', 'A4', 'GEN']
+        && request.resource.data.active is bool
+        && request.resource.data.createdAt is string;
+      allow update: if isSuperAdmin()
+        && request.resource.data.keys().hasOnly(['name', 'leadId', 'role', 'ring', 'active', 'createdAt', 'updatedAt', 'updated_by'])
+        && request.resource.data.active is bool;
+      allow delete: if isSuperAdmin();
+    }
+    // Contacto y notas de invitación: nunca se exponen por la lectura pública
+    // del token. Solo SuperAdmin puede consultar o mutar estos documentos.
+    match /invest_token_private/{tokenId} {
+      allow read: if isSuperAdmin();
+      allow create, update: if isSuperAdmin()
+        && request.resource.data.keys().hasOnly(['phone', 'notes', 'updatedAt', 'updatedBy'])
+        && (!request.resource.data.keys().hasAny(['phone']) || request.resource.data.phone is string)
+        && (!request.resource.data.keys().hasAny(['notes']) || request.resource.data.notes is string)
+        && request.resource.data.updatedAt is string
+        && request.resource.data.updatedBy is string;
+      allow delete: if isSuperAdmin();
     }
     match /support_tickets/{ticketId} {
       allow read: if isSuperAdmin() || (isAdmin() && isVenueStaff(resource.data.venueId));
