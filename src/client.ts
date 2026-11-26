@@ -500,10 +500,9 @@ class ClientAppService {
     let completedCount = 0;
     if (m1_basic) completedCount++;
     if (m2_drink) completedCount++;
-    if (m3_identity) completedCount++;
-
-    const percent = Math.round((completedCount / 3) * 100);
-    const isAllComplete = completedCount === 3;
+    // Durante el piloto, la identidad se mantiene separada del acceso a reservas.
+    const percent = Math.round((completedCount / 2) * 100);
+    const isAllComplete = completedCount === 2;
 
     container.style.display = 'block';
 
@@ -517,12 +516,12 @@ class ClientAppService {
                 ¡Tu Pasaporte está 100% Activo!
               </b>
               <span style="font-size: 11.5px; color: #79D3AC; font-family: var(--font-mono);">
-                Identidad verificada · Copa de autor desbloqueada en barras aliadas
+                ${m3_identity ? 'Identidad verificada · Copa de autor desbloqueada en barras aliadas' : 'Perfil listo para reservar · identidad pendiente; biometría pausada durante el piloto'}
               </span>
             </div>
           </div>
           <span class="chip verde" style="font-size: 10px; padding: 4px 10px; font-weight: 700; white-space: nowrap;">
-            Acceso Total ✓
+            Listo para reservar ✓
           </span>
         </div>
       `;
@@ -534,8 +533,8 @@ class ClientAppService {
       subtitle = "Comencemos por lo esencial: tu nombre y edad para recibirte en la sala.";
     } else if (!m2_drink) {
       subtitle = "Tu primera copa va por la casa. Elige qué trago te serviremos al sonar la campana.";
-    } else if (!m3_identity) {
-      subtitle = "Cero perfiles falsos. Tu selfie de 15 segundos desbloquea los bares de la semana.";
+    } else if (m1_basic && m2_drink && !m3_identity) {
+      subtitle = "Tu perfil básico está listo. La verificación de identidad está pausada temporalmente y no bloquea tu primera reserva.";
     }
 
     container.innerHTML = `
@@ -547,7 +546,7 @@ class ClientAppService {
             <span style="font-size: 16px;">🎟️</span>
             <span style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--luz); font-weight: 700; text-transform: uppercase;">Tu Pasaporte a la Noche</span>
           </div>
-          <span class="chip ambar" style="font-size: 10px; padding: 3px 8px; font-weight: 700; font-family: var(--font-mono);">${completedCount} de 3 pasos · ${percent}%</span>
+          <span class="chip ambar" style="font-size: 10px; padding: 3px 8px; font-weight: 700; font-family: var(--font-mono);">${completedCount} de 2 pasos básicos · ${percent}%</span>
         </div>
 
         <p style="font-family: var(--font-display); font-size: 14px; color: var(--papel); font-style: italic; margin: 4px 0 14px; line-height: 1.4;">
@@ -600,7 +599,7 @@ class ClientAppService {
             }
           </div>
 
-          <!-- Misión 3: Ponle rostro a tu copa (Verificación facial) -->
+          <!-- Estado de identidad separado del flujo de reserva durante el piloto -->
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(243,237,226,0.03); border: 1px solid ${m3_identity ? 'rgba(46,107,84,0.4)' : 'rgba(240,168,48,0.35)'}; border-radius: 12px; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 10px;">
               <span style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: ${m3_identity ? '#2e6b54' : 'rgba(240,168,48,0.2)'}; color: ${m3_identity ? '#fff' : 'var(--luz)'};">
@@ -609,16 +608,16 @@ class ClientAppService {
               <div>
                 <div style="display: flex; align-items: center; gap: 6px;">
                   <b style="font-size: 12.5px; color: var(--papel);">Ponle rostro a tu copa</b>
-                  ${m3_identity ? `<span class="chip verde" style="font-size: 8px; padding: 1px 5px;">Escudo 🛡️</span>` : `<span class="chip ambar" style="font-size: 8px; padding: 1px 5px;">Clave</span>`}
+                  ${m3_identity ? `<span class="chip verde" style="font-size: 8px; padding: 1px 5px;">Escudo 🛡️</span>` : `<span class="chip ambar" style="font-size: 8px; padding: 1px 5px;">En pausa</span>`}
                 </div>
                 <span style="font-size: 10.5px; color: var(--humo); font-family: var(--font-mono);">
-                  ${m3_identity ? 'Identidad verificada · Barras aliadas desbloqueadas' : 'Selfie de 15s para una sala 100% real y segura'}
+                  ${m3_identity ? 'Identidad verificada · Barras aliadas desbloqueadas' : 'Pausada temporalmente · no bloquea tu primera reserva'}
                 </span>
               </div>
             </div>
             ${m3_identity 
-              ? `<span style="font-size: 11px; color: #79D3AC; font-weight: 700;">Listo</span>`
-              : `<button id="btn-passport-m3" class="btn ambar" style="font-size: 10.5px; padding: 6px 12px; border-radius: 999px; font-weight: 700; white-space: nowrap; background: var(--luz); color: #16101B;">Verificar 📸</button>`
+              ? `<span style="font-size: 11px; color: #79D3AC; font-weight: 700;">Verificada</span>`
+              : `<span style="font-size: 10.5px; color: var(--luz); font-weight: 700; white-space: nowrap;">No requerida para reservar</span>`
             }
           </div>
 
@@ -660,18 +659,6 @@ class ClientAppService {
         Profile.openCocktailModal();
       } catch (err) {
         document.getElementById('modal-select-cocktail')?.classList.add('active');
-      }
-    });
-
-    document.getElementById('btn-passport-m3')?.addEventListener('click', () => {
-      const modal = document.getElementById('modal-profile');
-      if (modal) {
-        modal.classList.add('active');
-        const kycContainer = document.getElementById('kyc-container');
-        if (kycContainer) {
-          kycContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          kycContainer.style.borderColor = 'var(--luz)';
-        }
       }
     });
 
@@ -816,20 +803,6 @@ class ClientAppService {
 
   openEventModal(eventId: string) {
     const user = Auth.currentUser;
-    if (user && (!user.trustTier || user.trustTier < 1) && !user.isVerified) {
-      void RondaDialog.alert({
-        title: 'Ponle Rostro a tu Copa',
-        message: 'Tu mesa está casi lista. Completa tu verificación facial de 15 segundos en tu Pasaporte para desbloquear el acceso a esta barra y reservar tu asiento.',
-        icon: '📸',
-        type: 'alert'
-      });
-      const passportEl = document.getElementById('onboarding-passport-container');
-      if (passportEl) {
-        passportEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
-
     const event = RONDA_EVENTS.find(e => e.id === eventId);
     if (!event) return;
 
