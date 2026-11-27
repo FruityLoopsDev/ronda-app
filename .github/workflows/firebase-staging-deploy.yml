@@ -1,0 +1,29 @@
+name: Deploy Firebase Hosting (staging only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-staging-hosting:
+    runs-on: ubuntu-latest
+    environment: firebase-staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build staging bundle
+        env:
+          VITE_FIREBASE_PROJECT_ID: ronda-staging-2026
+        run: npm run build -- --mode staging
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Deploy Hosting to staging project only
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_STAGING }}
+        run: firebase deploy --only hosting --project ronda-staging-2026 --non-interactive
