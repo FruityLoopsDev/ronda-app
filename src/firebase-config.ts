@@ -3,44 +3,70 @@ import { initializeFirestore, getFirestore, connectFirestoreEmulator, persistent
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 
+const productionFirebaseConfig = {
+  apiKey: "AIzaSyA55U4CwLAv5tlNPGvO-OkRBB0qJHbTNKQ",
+  authDomain: "ronda-uno.firebaseapp.com",
+  projectId: "ronda-uno",
+  storageBucket: "ronda-uno.firebasestorage.app",
+  messagingSenderId: "391712707230",
+  appId: "1:391712707230:web:3a5461ef25e71c4dc6e18f",
+  measurementId: "G-RH65BSDMP5"
+};
+
+// Firebase Web App config is public client-side configuration, not a secret.
+// Keep this dedicated to the isolated staging Firebase project.
+const stagingFirebaseConfig = {
+  apiKey: "AIzaSyCKQpjWuW2TCsbmOqAMD3y8FxU70UW-shc",
+  authDomain: "ronda-staging-2026.firebaseapp.com",
+  projectId: "ronda-staging-2026",
+  storageBucket: "ronda-staging-2026.firebasestorage.app",
+  messagingSenderId: "229663145659",
+  appId: "1:229663145659:web:aa01ccc103c5f004bfb39e",
+  measurementId: "G-7355D4K98E"
+};
+
+const env = (import.meta as any).env ?? {};
+const requestedProjectId = env.VITE_FIREBASE_PROJECT_ID as string | undefined;
+const stagingProjectId = "ronda-staging-2026";
+const isStagingRequested = requestedProjectId === stagingProjectId;
+
+// Staging is opt-in and fail-closed: only an explicit project ID selects it.
+// There is no silent fallback from a partially configured staging environment.
+const firebaseConfig = isStagingRequested
+  ? stagingFirebaseConfig
+  : productionFirebaseConfig;
+
+if (requestedProjectId && requestedProjectId !== stagingProjectId && requestedProjectId !== "ronda-uno") {
+  throw new Error(`Unrecognized Firebase project "${requestedProjectId}". Refusing to initialize Firebase.`);
+}
+
 export const RondaConfig = {
-  // false = la verificación KYC corre el flujo REAL (cámara + rostro + OCR).
   kycSimulated: false,
-  firebaseConfig: {
-    apiKey: "AIzaSyA55U4CwLAv5tlNPGvO-OkRBB0qJHbTNKQ",
-    authDomain: "ronda-uno.firebaseapp.com",
-    projectId: "ronda-uno",
-    storageBucket: "ronda-uno.firebasestorage.app",
-    messagingSenderId: "391712707230",
-    appId: "1:391712707230:web:3a5461ef25e71c4dc6e18f",
-    measurementId: "G-RH65BSDMP5"
-  }
+  firebaseConfig
 };
 
 const app = initializeApp(RondaConfig.firebaseConfig);
 
-// Persistencia del modo emulador en local a través de sesión temporal (sessionStorage)
+// Local Emulator Suite is opt-in only. It is not used by the hosted staging
+// environment; hosted staging connects to its dedicated Firebase project.
 let useEmulator = false;
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   const urlParams = new URLSearchParams(window.location.search);
-  const urlHasEmulator = urlParams.get('emulator') === 'true' || window.location.search.includes('emulator=true');
-  const urlClearsEmulator = urlParams.get('emulator') === 'false' || window.location.search.includes('emulator=false');
-  const isPort5002 = window.location.port === '5002'; // Puerto del Hosting Emulator
+  const urlHasEmulator = urlParams.get("emulator") === "true";
+  const urlClearsEmulator = urlParams.get("emulator") === "false";
+  const isPort5002 = window.location.port === "5002";
 
   if (urlClearsEmulator) {
-    sessionStorage.removeItem('ronda_use_emulator');
+    sessionStorage.removeItem("ronda_use_emulator");
   } else if (urlHasEmulator || isPort5002) {
-    sessionStorage.setItem('ronda_use_emulator', 'true');
+    sessionStorage.setItem("ronda_use_emulator", "true");
   }
 
-  const storedEmulator = sessionStorage.getItem('ronda_use_emulator') === 'true';
-  const envEmulator = (import.meta as any).env?.VITE_USE_FIREBASE_EMULATOR === 'true';
-
+  const storedEmulator = sessionStorage.getItem("ronda_use_emulator") === "true";
+  const envEmulator = env.VITE_USE_FIREBASE_EMULATOR === "true";
   useEmulator = envEmulator || storedEmulator || urlHasEmulator;
 }
 
-// Carga instantánea: en producción usa IndexedDB persistente; en emulador usa memoria directa
-// para evitar bloqueos de lease multi-pestaña y estados obsoletos entre reinicios del emulador.
 let db: any;
 try {
   if (useEmulator) {
@@ -57,15 +83,15 @@ try {
 
 const auth = getAuth(app);
 let messaging: any = null;
-if (typeof window !== 'undefined' && !useEmulator) {
-  try { messaging = getMessaging(app); } catch (e) { console.warn('FCM not supported', e); }
+if (typeof window !== "undefined" && !useEmulator) {
+  try { messaging = getMessaging(app); } catch (e) { console.warn("FCM not supported", e); }
 }
 
-if (typeof window !== 'undefined' && useEmulator) {
+if (typeof window !== "undefined" && useEmulator) {
   try {
-    connectFirestoreEmulator(db, '127.0.0.1', 8081);
-    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
-    console.log("Conectado a Firebase Local Emulator Suite (127.0.0.1 -> Firestore: 8081, Auth: 9099) vía sesión temporal.");
+    connectFirestoreEmulator(db, "127.0.0.1", 8081);
+    connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
+    console.log("Conectado a Firebase Local Emulator Suite (Firestore: 8081, Auth: 9099).");
   } catch (e) {
     console.warn("Emuladores ya conectados o no disponibles:", e);
   }
