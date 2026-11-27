@@ -1,0 +1,25 @@
+name: Firebase staging build validation
+
+on:
+  push:
+    branches:
+      - feat/firebase-ronda-staging-2026
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build with explicit staging Firebase project
+        env:
+          VITE_FIREBASE_PROJECT_ID: ronda-staging-2026
+        run: npm run build -- --mode staging
